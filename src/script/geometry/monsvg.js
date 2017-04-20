@@ -1,3 +1,5 @@
+import _ from 'lodash';
+import Color from 'ui/color';
 import Bounds from 'geometry/bounds';
 import Range from 'geometry/range';
 /*
@@ -43,23 +45,18 @@ export default class Monsvg {
     if (data == null) { data = {}; }
     this.data = data;
     this.rep = this.toSVG();
-    this.$rep = $(this.rep);
 
     this.metadata = {
       angle: 0,
       locked: false
     };
 
-    if (!this.data.dontTrack) {
-      this.metadata.uuid = uuid();
-    }
-
     this.rep.setAttribute('uuid', this.metadata.uuid);
 
     this.validateColors();
 
     if (this.type !== "text") {
-      this.data = $.extend({
+      this.data = _.defaults({
         fill:   new Color("none"),
         stroke: new Color("none")
       }
@@ -143,7 +140,7 @@ export default class Monsvg {
     if (attr != null) {
       return this.dataArchived[attr] = this.data[attr];
     } else {
-      return this.dataArchived = cloneObject(this.data);
+      return this.dataArchived = _.clone(this.data);
     }
   }
 
@@ -277,8 +274,8 @@ export default class Monsvg {
 
   clone() {
     //@commit()
-    let cloneData = cloneObject(this.data);
-    let cloneTransform = cloneObject(this.transform);
+    let cloneData = _.clone(this.data);
+    let cloneTransform = _.clone(this.transform);
     delete cloneData.id;
     let clone = new this.constructor(cloneData);
     clone.transform = cloneTransform;

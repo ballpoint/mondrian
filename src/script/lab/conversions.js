@@ -1,7 +1,6 @@
-import CONSTANTS from 'script/constants';
-import Posn from 'script/geometry/posn';
-import CubicBezier from 'script/geometry/cubic-bezier-line-segment';
-import Point from 'script/geometry/point';
+import Posn from 'geometry/posn';
+import CubicBezier from 'geometry/cubic-bezier-line-segment';
+import Point from 'geometry/point';
 import {
   MoveTo,
   LineTo,
@@ -10,12 +9,13 @@ import {
   CurveTo,
   SmoothTo,
 
-} from 'script/geometry/point';
+} from 'geometry/point';
 
-import lab from 'script/lab/lab';
+const POINT_MATCHER = /[MLCSHV][\-\de\.\,\-\s]+/gi
+
 // Geometry conversions and operations
 
-lab.conversions = {
+export default {
   pathSegment(a, b) {
     // Returns the LineSegment or BezierCurve that connects two bezier points
     //   (MoveTo, LineTo, CurveTo, SmoothTo)
@@ -77,7 +77,7 @@ lab.conversions = {
     let results = [];
     let previous = undefined;
 
-    let all_matches = string.match(CONSTANTS.MATCHERS.POINT);
+    let all_matches = string.match(POINT_MATCHER);
 
     for (let point of Array.from(all_matches)) {
       // Point's constructor decides what kind of subclass to make

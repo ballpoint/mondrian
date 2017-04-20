@@ -1,3 +1,4 @@
+import io from 'io/io';
 import Bounds from 'geometry/bounds'
 import Posn from 'geometry/posn'
 
@@ -14,11 +15,12 @@ const CHARSET  = 'utf-8';
 
 export default class SVG {
   constructor(contents) {
-
     this._ensureDoc(contents);
-
-
     this._assignMondrianNamespace();
+
+    this.root = this.doc.querySelector('svg');
+
+    this.elements = io.parse(this.root);
   }
 
   // Constructor helpers
@@ -67,10 +69,6 @@ export default class SVG {
   _assignMondrianNamespace() {
     // Make the mondrian: namespace legal
     // return this._svgRoot.setAttribute('xmlns:mondrian', 'http://mondrian.io/xml');
-  }
-
-  _elementsBounds() {
-    return new Bounds(this.elements.map(elem => elem.bounds()));
   }
 
   toString() {

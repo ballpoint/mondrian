@@ -1,4 +1,4 @@
-import lab from 'lab/lab';
+import conversions from 'lab/conversions';
 import PointsSegment from 'geometry/points-segment';
 import Point from 'geometry/point';
 import {
@@ -52,7 +52,7 @@ export default class PointsList {
     if (segments == null) { segments = []; }
     this.segments = segments;
     if (typeof alop === "string") {
-      alop = lab.conversions.stringToAlop(alop, this.owner);
+      alop = conversions.stringToAlop(alop, this.owner);
     }
 
     // Now set up some helper variables to keep track of things
