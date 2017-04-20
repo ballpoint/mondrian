@@ -9,4 +9,5 @@ let editor = new Editor('#main');
 
 editor.load(doc);
 
+
 console.log(doc);

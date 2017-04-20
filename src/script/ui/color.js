@@ -29,26 +29,24 @@ export default class Color {
 
     if (a === null) a = 1.0;
 
-    //console.log(r, g, b, a);
-
-    if (typeof this.r === "string") {
-      if ((this.r.charAt(0) === "#") || (this.r.length === 6)) {
+    if (typeof r === "string") {
+      if ((r.charAt(0) === "#") || (r.length === 6)) {
         // Convert hex to rgba
-        this.hex = this.r.toUpperCase().replace("#", "");
+        this.hex = r.toUpperCase().replace("#", "");
         let rgb = this.hexToRGB(this.hex);
-        this.r = rgb.r;
+        r = rgb.r;
         this.g = rgb.g;
         this.b = rgb.b;
-      } else if (this.r.match(/rgba?\(.*\)/gi) != null) {
+      } else if (r.match(/rgba?\(.*\)/gi) != null) {
         // rgb(r,g,b)
-        let vals = this.r.match(/[\d\.]+/gi);
+        let vals = r.match(/[\d\.]+/gi);
         this.r = vals[0];
         this.g = vals[1];
         this.b = vals[2];
         if (vals[3] != null) {
           this.a = parseFloat(vals[3]);
         }
-        this.hex = this.rgbToHex(this.r, this.g, this.b);
+        this.hex = this.rgbToHex(r, this.g, this.b);
       }
     } else {
       // Numbers

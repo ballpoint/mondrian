@@ -10,6 +10,7 @@ export default class Editor {
       this.initCanvas();
 
       this.initState();
+
     } else {
       throw new Error('root not found: ' + rootSelector);
     }
@@ -17,17 +18,31 @@ export default class Editor {
 
   load(doc) {
     this.doc = doc;
+
+    this.canvas.refresh();
   }
 
   initCanvas() {
     this.canvas = new Canvas(this.root);
 
-    this.canvas.createLayer('drawing');
+    this.canvas.createLayer('drawing', (l, c) => {
+      this.refreshDrawing(l, c);
+    });
 
-    this.canvas.setDimensions(600, 600);
+    this.canvas.updateDimensions();
+
+    this.canvas.refresh();
   }
 
   initState() {
     this.position;
+  }
+
+  refreshDrawing(layer, context) {
+    if (this.doc) {
+      for (let elem of this.doc.elements) {
+        elem.drawToCanvas(context);
+      }
+    }
   }
 }

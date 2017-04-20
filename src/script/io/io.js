@@ -36,8 +36,6 @@ let io = {
       viewbox = viewbox.split(" ");
       viewbox = new Bounds(viewbox[0], viewbox[1], viewbox[2], viewbox[3]);
     }
-      //parsed.map viewbox.adjustElemsTo bounds
-      //TODO FIX
 
     return parsed;
   },
