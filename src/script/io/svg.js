@@ -19,6 +19,7 @@ export default class SVG {
     this._assignMondrianNamespace();
 
     this.root = this.doc.querySelector('svg');
+    this._buildMetadata();
 
     this.elements = io.parse(this.root);
   }
@@ -58,8 +59,9 @@ export default class SVG {
   _buildMetadata() {
     this.metadata = {};
 
-    this.metadata.width = parseInt(this._svgAttr('width', 10));
-    this.metadata.height = parseInt(this._svgAttr('height', 10));
+    this.metadata.width = parseInt(this.root.getAttribute('width', 10));
+    this.metadata.height = parseInt(this.root.getAttribute('height', 10));
+    console.log(this.metadata);
 
     if (this._bounds == null) {
       return this._bounds = new Bounds(0, 0, this.metadata.width, this.metadata.height);

@@ -25,6 +25,7 @@ export default class Editor {
   initCanvas() {
     this.canvas = new Canvas(this.root);
 
+    this.canvas.createLayer('viewport', this.refreshViewport.bind(this));
     this.canvas.createLayer('drawing', (l, c) => {
       this.refreshDrawing(l, c);
     });
@@ -44,5 +45,10 @@ export default class Editor {
         elem.drawToCanvas(context);
       }
     }
+  }
+
+  refreshViewport(layer, context) {
+    context.fillStyle = 'lightgrey';
+    context.fillRect(0, 0, layer.width, layer.height);
   }
 }

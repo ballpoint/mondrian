@@ -10,6 +10,8 @@ export default class Layer {
   setDimensions(w, h) {
     let ratio = window.devicePixelRatio || 1;
 
+    this.width = w;
+    this.height = h;
 
     this.node.width  = w*ratio;
     this.node.height = h*ratio;

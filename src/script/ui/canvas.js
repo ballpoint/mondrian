@@ -1,4 +1,6 @@
+import CursorTracking from 'ui/cursor-tracking';
 import Layer from 'ui/layer';
+import 'canvas.scss';
 
 export default class Canvas {
   constructor(parent) {
@@ -6,7 +8,12 @@ export default class Canvas {
     this.layersMap = {};
     this.handlersMap = {};
 
-    this.parent = parent;
+    this.container = document.createElement('div');
+    this.container.className = 'canvas-container';
+
+    this.cursor = new CursorTracking(this.container);
+
+    parent.appendChild(this.container);
   }
 
   createLayer(id, handler) {
@@ -15,12 +22,12 @@ export default class Canvas {
     this.layersMap[id] = layer;
     this.handlersMap[id] = handler;
 
-    this.parent.appendChild(layer.node);
+    this.container.appendChild(layer.node);
   }
 
   updateDimensions() {
-    let w = this.parent.offsetWidth;
-    let h = this.parent.offsetHeight;
+    let w = this.container.offsetWidth;
+    let h = this.container.offsetHeight;
     for (let layer of this.layers) {
       layer.setDimensions(w, h);
     }

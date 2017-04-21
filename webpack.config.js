@@ -1,3 +1,4 @@
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const webpack = require('webpack');
 const path = require('path');
 
@@ -8,21 +9,18 @@ module.exports = {
     path: path.join(__dirname, 'build')
   },
 
-  plugins: [
-    new webpack.SourceMapDevToolPlugin({})
-  ],
-
   resolve: {
     modules: [
       path.resolve(__dirname, 'node_modules'),
       path.join(__dirname, 'src/script'),
-      path.join(__dirname, 'src/svg')
+      path.join(__dirname, 'src/svg'),
+      path.join(__dirname, 'src/styles')
     ],
     extensions: ['.js', '.svg']
   },
 
   entry: {
-    'bundles/app': 'main.js',
+    'bundles/app': 'main.js'
   },
 
   output: {
@@ -30,11 +28,23 @@ module.exports = {
     filename: '[name].bundle.js',
   },
 
+  plugins: [
+    new webpack.SourceMapDevToolPlugin({}),
+    new ExtractTextPlugin('styles.css')
+  ],
+
   module: {
     rules: [
       {
         test: /\.svg$/,
         loader: 'raw-loader'
+      },
+      {
+        test: /\.scss$/,
+        use: ExtractTextPlugin.extract({
+          fallback: "style-loader",
+          use: ['css-loader', 'sass-loader']
+        })
       }
     ],
   }
