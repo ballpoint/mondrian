@@ -53,7 +53,6 @@ export default class Editor {
   }
 
   refreshDrawing(layer, context) {
-    return;
     if (this.doc) {
       for (let elem of this.doc.elements) {
         elem.drawToCanvas(context, {
@@ -105,27 +104,21 @@ export default class Editor {
     docPosn.x = this.x.invert(docPosn.x);
     docPosn.y = this.y.invert(docPosn.y);
 
-
-    
-
-
     for (let element of this.doc.elements) {
       if (shapes.contains(element, docPosn)) {
-        //console.log(element);
-
-
-        element.drawToCanvas(context, {
-          x: this.x, y: this.y
-        });
+        let points = element.points;
+        if (points.segments) {
+          for (let segment of points.segments) {
+            for (let point of segment.points) {
+              context.fillStyle = 'white';
+              context.strokeStyle = 'black';
+              context.fillRect(this.x(point.x)-2, this.y(point.y)-1, 4, 4);
+              context.strokeRect(this.x(point.x)-2, this.y(point.y)-1, 4, 4);
+            }
+          }
+        }
       }
     }
-
-    console.log(this.canvas.cursor.currentPosn);
-    context.fillStyle = 'black'
-    context.fillRect(this.canvas.cursor.currentPosn.x, this.canvas.cursor.currentPosn.y, 2, 2);
-
-    context.fillStyle = 'purple'
-    context.fillRect(docPosn.x, docPosn.y, 2, 2);
   }
 
 

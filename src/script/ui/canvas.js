@@ -47,13 +47,13 @@ export default class Canvas {
 
   refreshAll() {
     for (let layer of this.layers) {
-      let handler = this.handlersMap[layer.id];
-      handler(layer, layer.context);
+      this.refresh(layer.id);
     }
   }
 
   refresh(id) {
     let layer = this.layersMap[id];
+    layer.clear();
     let handler = this.handlersMap[id];
     handler(layer, layer.context);
   }
