@@ -325,18 +325,18 @@ export default class Path extends Monsvg {
   }
 
 
-  drawToCanvas(context) {
+  drawToCanvas(context, scales) {
     context = this.setupToCanvas(context);
     for (let point of Array.from(this.points.all())) {
       switch (point.constructor) {
         case MoveTo:
-          context.moveTo(point.x, point.y);
+          context.moveTo(scales.x(point.x), scales.y(point.y));
           break;
         case LineTo: case HorizTo: case VertiTo:
-          context.lineTo(point.x, point.y);
+          context.lineTo(scales.x(point.x), scales.y(point.y));
           break;
         case CurveTo: case SmoothTo:
-          context.bezierCurveTo(point.x2, point.y2, point.x3, point.y3, point.x, point.y);
+          context.bezierCurveTo(scales.x(point.x2), scales.y(point.y2), scales.x(point.x3), scales.y(point.y3), scales.x(point.x), scales.y(point.y));
           break;
       }
     }

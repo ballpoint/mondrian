@@ -1,3 +1,4 @@
+import Posn from 'geometry/posn';
 import CursorTracking from 'ui/cursor-tracking';
 import Layer from 'ui/layer';
 import 'canvas.scss';
@@ -14,6 +15,11 @@ export default class Canvas {
     this.cursor = new CursorTracking(this.container);
 
     parent.appendChild(this.container);
+
+    window.onresize = () => {
+      this.updateDimensions();
+      this.refreshAll();
+    }
   }
 
   createLayer(id, handler) {
@@ -28,12 +34,18 @@ export default class Canvas {
   updateDimensions() {
     let w = this.container.offsetWidth;
     let h = this.container.offsetHeight;
+    this.width = w;
+    this.height = h;
     for (let layer of this.layers) {
       layer.setDimensions(w, h);
     }
   }
 
-  refresh() {
+  center() {
+    return new Posn(this.width/2, this.height/2);
+  }
+
+  refreshAll() {
     for (let layer of this.layers) {
       let handler = this.handlersMap[layer.id];
       handler(layer, layer.context);

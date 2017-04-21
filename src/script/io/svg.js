@@ -57,20 +57,21 @@ export default class SVG {
   }
 
   _buildMetadata() {
-    this.metadata = {};
-
-    this.metadata.width = parseInt(this.root.getAttribute('width', 10));
-    this.metadata.height = parseInt(this.root.getAttribute('height', 10));
-    console.log(this.metadata);
+    this.width = parseInt(this.root.getAttribute('width', 10));
+    this.height = parseInt(this.root.getAttribute('height', 10));
 
     if (this._bounds == null) {
-      return this._bounds = new Bounds(0, 0, this.metadata.width, this.metadata.height);
+      return this._bounds = new Bounds(0, 0, this.width, this.height);
     }
   }
 
   _assignMondrianNamespace() {
     // Make the mondrian: namespace legal
     // return this._svgRoot.setAttribute('xmlns:mondrian', 'http://mondrian.io/xml');
+  }
+
+  center() {
+    return new Posn(this.width/2, this.height/2);
   }
 
   toString() {
