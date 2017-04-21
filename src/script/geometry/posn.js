@@ -34,8 +34,8 @@ export default class Posn {
       // Support for providing an Event object as the only arg.
       // Reads the clientX and clientY values
       if ((this.x.clientX != null) && (this.x.clientY != null)) {
-        this.y = this.x.clientY;
-        this.x = this.x.clientX;
+        this.y = this.x.offsetY;
+        this.x = this.x.offsetX;
       } else if ((this.x.left != null) && (this.x.top != null)) {
         this.y = this.x.top;
         this.x = this.x.left;

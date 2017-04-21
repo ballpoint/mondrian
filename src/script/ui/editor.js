@@ -1,5 +1,6 @@
 import { scaleLinear } from 'd3-scale';
 import Canvas from 'ui/canvas';
+import shapes from 'lab/shapes';
 
 export default class Editor {
   constructor(rootSelector) {
@@ -30,12 +31,11 @@ export default class Editor {
     this.canvas = new Canvas(this.root);
 
     this.canvas.createLayer('viewport', this.refreshViewport.bind(this));
-    this.canvas.createLayer('drawing', (l, c) => {
-      this.refreshDrawing(l, c);
-    });
+    this.canvas.createLayer('drawing', this.refreshDrawing.bind(this));
+    this.canvas.createLayer('objects', this.refreshObjects.bind(this));
 
     this.canvas.cursor.on('mousemove', (e, posn) => {
-      console.log(posn);
+      this.canvas.refresh('objects');
     });
 
     this.canvas.updateDimensions();
@@ -49,12 +49,11 @@ export default class Editor {
 
   setPosition(posn) {
     this.position = posn;
-    console.log(posn);
-
     this.canvas.refreshAll();
   }
 
   refreshDrawing(layer, context) {
+    return;
     if (this.doc) {
       for (let elem of this.doc.elements) {
         elem.drawToCanvas(context, {
@@ -65,15 +64,13 @@ export default class Editor {
   }
 
   refreshViewport(layer, context) {
-    let zoomLevel = 0.6;
+    let zoomLevel = 1.2;
     if (this.doc) {
 
       let offsetLeft = (this.canvas.width - (this.doc.width*zoomLevel)) / 2;
       offsetLeft += ((this.doc.width/2)-this.position.x)*zoomLevel;
       let offsetTop  = (this.canvas.height - (this.doc.height*zoomLevel)) / 2;
       offsetTop += ((this.doc.height/2)-this.position.y)*zoomLevel;
-
-      console.log(offsetLeft, offsetTop);
 
       this.x = scaleLinear()
         .domain([0, this.doc.width])
@@ -98,4 +95,38 @@ export default class Editor {
     context.fillStyle = 'purple';
     context.fillRect(center.x-5, center.y-5, 10, 10);
   }
+
+  refreshObjects(layer, context) {
+    if (!this.doc) return;
+
+    let docPosn = this.canvas.cursor.currentPosn.clone();
+    if (!docPosn) return;
+
+    docPosn.x = this.x.invert(docPosn.x);
+    docPosn.y = this.y.invert(docPosn.y);
+
+
+    
+
+
+    for (let element of this.doc.elements) {
+      if (shapes.contains(element, docPosn)) {
+        //console.log(element);
+
+
+        element.drawToCanvas(context, {
+          x: this.x, y: this.y
+        });
+      }
+    }
+
+    console.log(this.canvas.cursor.currentPosn);
+    context.fillStyle = 'black'
+    context.fillRect(this.canvas.cursor.currentPosn.x, this.canvas.cursor.currentPosn.y, 2, 2);
+
+    context.fillStyle = 'purple'
+    context.fillRect(docPosn.x, docPosn.y, 2, 2);
+  }
+
+
 }

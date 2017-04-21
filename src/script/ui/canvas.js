@@ -51,4 +51,10 @@ export default class Canvas {
       handler(layer, layer.context);
     }
   }
+
+  refresh(id) {
+    let layer = this.layersMap[id];
+    let handler = this.handlersMap[id];
+    handler(layer, layer.context);
+  }
 }

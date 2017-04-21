@@ -2,6 +2,7 @@ import Monsvg from 'geometry/monsvg'
 import PointsList from 'geometry/points-list'
 import Range from 'geometry/range'
 import lab from 'lab/lab'
+import conversions from 'lab/conversions'
 import Posn from 'geometry/posn';
 import {
   MoveTo,
@@ -208,7 +209,7 @@ export default class Path extends Monsvg {
     } else {
       let segments = [];
       this.points.all().map((curr, ind) => {
-        return segments.push(lab.conversions.pathSegment(curr, curr.succ));
+        return segments.push(conversions.pathSegment(curr, curr.succ));
       });
       return this.lineSegmentsCached = segments;
     }

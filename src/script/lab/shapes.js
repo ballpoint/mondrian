@@ -1,8 +1,30 @@
-import Posn from 'script/geometry/posn';
-import Polynomial from 'script/geometry/polynomial';
-import CubicBezier from 'script/geometry/cubic-bezier-line-segment';
+import Posn from 'geometry/posn';
+import Polynomial from 'geometry/polynomial';
+import CubicBezier from 'geometry/cubic-bezier-line-segment';
+import Circle from 'geometry/circle';
+import Ellipse from 'geometry/ellipse';
 
 export default {
+
+  contains(shape, posn) {
+    let all = [];
+    let ray = new LineSegment(posn, {
+      x: posn.x + 1000000, y: posn.y
+    });
+    
+    for (let ls of shape.lineSegments()) {
+      let intersections = this.intersections(ray, ls);
+      if (intersections instanceof Posn) {
+        all.push(intersections);
+      } else if (intersections instanceof Array) {
+        all = all.concat(intersections.filter((x) => {
+          return x instanceof Posn
+        }));
+      }
+    }
+
+    return all.length % 2 === 1;
+  },
 
   overlap(a, b) {
     if (a.lineSegments && b.lineSegments) {

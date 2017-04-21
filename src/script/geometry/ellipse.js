@@ -8,7 +8,7 @@ import Range from 'geometry/range'
 */
 
 
-class Ellipse extends Monsvg {
+export default class Ellipse extends Monsvg {
   static initClass() {
     this.prototype.type = 'ellipse';
   }

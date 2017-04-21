@@ -1,7 +1,7 @@
 import Monsvg from 'geometry/monsvg'
 import Range from 'geometry/range'
 
-class Circle extends Monsvg {
+export default class Circle extends Monsvg {
   static initClass() {
     this.prototype.type = 'circle';
       // Conver to ellipse, then scale.
