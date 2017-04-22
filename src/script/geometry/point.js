@@ -31,14 +31,6 @@ import Posn from 'geometry/posn';
 */
 
 export default class Point extends Posn {
-  static initClass() {
-  
-    this.prototype.absoluteCached = undefined; //
-  
-    this.prototype.prec = null;
-    this.prototype.succ = null;
-  }
-
   constructor(x, y, owner) {
     super(x, y);
     this.owner = owner;
@@ -286,10 +278,10 @@ export default class Point extends Posn {
     super.nudge(x, y);
     if (checkForFirstOrLast == null) { checkForFirstOrLast = true; }
     let old = this.clone();
+
     if (this.antlers != null) {
       this.antlers.nudge(x, y);
     }
-    this.updateHandle();
 
     if (this.owner.type === 'path') {
       if (checkForFirstOrLast && this.owner.points.closed) {
@@ -346,6 +338,7 @@ export default class Point extends Posn {
 
   setSucc(succ) {
     this.succ = succ;
+    this.makeAntlers();
     return succ.prec = this;
   }
 
@@ -430,8 +423,6 @@ export default class Point extends Posn {
     return ui.annotations.drawDot(this, color, radius);
   }
 }
-Point.initClass();
-
 
 
 /*
@@ -470,10 +461,7 @@ Point.initClass();
 
 export class Antlers {
   static initClass() {
-  
     this.prototype.angleLockThreshold = 0.5;
-  
-    this.prototype.visible = false;
   }
 
   constructor(base, basep3, succp2) {
@@ -481,14 +469,14 @@ export class Antlers {
     //      basex3 - either a Posn or null
     //      succx2 - either a Posn or null
 
-    // Decide whether or not to lock the angle
-    // (ensure points are always on a straight line)
-
     if (basep3 && isNaN(basep3.x)) debugger;
 
     this.base = base;
     this.basep3 = basep3;
     this.succp2 = succp2;
+
+    // Decide whether or not to lock the angle
+    // (ensure points are always on a straight line)
     if ((this.basep3 != null) && (this.succp2 != null)) {
       let diff = Math.abs(this.basep3.angle360(this.base) - this.succp2.angle360(this.base));
       this.lockAngle = diff.within(this.angleLockThreshold, 180);
@@ -533,58 +521,17 @@ export class Antlers {
     return this.hide().show();
   }
 
-  show() {
-    this.hide();
-    this.visible = true;
-    // Actually draws it, instead of just revealing it.
-    // We don't keep the elements for this unless they're actually being shown.
-    // We refresh it whenever we want it.
-    if (this.basep3 != null) {
-      this.basep = new AntlerPoint(this.basep3.x, this.basep3.y, this.base.owner, this, -1);
-    }
-
-    if (this.succp2 != null) {
-      this.succp = new AntlerPoint(this.succp2.x, this.succp2.y, this.base.owner, this, 1);
-    }
-
-    return (() => this.hide());
-  }
-
-  hide() {
-    this.visible = false;
-    // Removes elements from DOM to avoid needlessly updating them.
-    if (this.basep != null) {
-      this.basep.remove();
-    }
-    if (this.succp != null) {
-      this.succp.remove();
-    }
-    if (this.base.owner.antlerPoints != null) {
-      this.base.owner.antlerPoints.remove([this.basep, this.succp]);
-    }
-    return this;
-  }
-
-  redraw() {
-    this.hide();
-    this.show();
-    return this;
-  }
-
-  hideTemp(p) {
-    return __guard__((p === 2 ? this.succp : this.basep), x => x.hideTemp());
-  }
-
   nudge(x, y) {
-
     if (this.basep3) this.basep3.nudge(x,y);
     if (this.succp2) this.succp2.nudge(x,y);
 
-    let succ;
+    /*
+    let succ = this.base.succ;
     if (succ instanceof CurvePoint) {
       succ.x2 += x;
       succ.y2 += y;
     }
+    */
     this.commit();
   }
 
@@ -608,10 +555,6 @@ export class Antlers {
       this.succp2.rotate(a, origin);
     }
     return this;
-  }
-
-  other(p) {
-    if (p === this.succp) { return this.basep; } else { return this.succp; }
   }
 
   angleDiff(a, b) {
@@ -701,7 +644,6 @@ export class AntlerPoint extends Point {
 
 
   nudge(x, y) {
-
     if (!this.family.lockAngle) {
       super.nudge(x, y);
       this.persist();

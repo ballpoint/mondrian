@@ -172,7 +172,7 @@ export default class Posn {
 
   nudge(x, y) {
     this.x += x;
-    this.y -= y;
+    this.y += y;
 
     return this;
   }

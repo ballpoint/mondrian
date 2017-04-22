@@ -93,6 +93,7 @@ export default class Monsvg {
 
 
   commit() {
+    return;
     // Commit any changes to its representation in the DOM
     //
     // No I/P

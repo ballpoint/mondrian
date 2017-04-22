@@ -85,7 +85,9 @@ export default {
       let p = Point.fromString(point, owner, previous);
 
       if (p instanceof Point) {
-        if (previous != null) { p.setPrec(previous); }
+        if (previous != null) {
+          previous.setSucc(p);
+        }
         previous = p; // Set it for the next point
 
         // Don't remember why I did this.

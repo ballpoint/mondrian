@@ -163,7 +163,7 @@ export default class CursorTracking extends EventEmitter {
       // Initiate dragging, or continue it if it's been initiated.
       if (this.down) {
         if (this.dragging) {
-          this.trigger('drag', e, this.currentPosn);
+          this.trigger('drag', e, this.currentPosn, this.lastPosn);
           return this.draggingJustBegan = false;
         // Allow for slight movement without triggering drag
         } else if (this.currentPosn.distanceFrom(this.lastDown) > DRAG_THRESHOLD) {

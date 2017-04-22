@@ -29,3 +29,11 @@ Array.prototype.remove = function(el) {
     }
   }
 }
+
+Number.prototype.within = function(tolerance, other) {
+  // I/P: Two numbers
+  // O/P: Is this within tolerance of other?
+  let d = this - other;
+  return (d < tolerance) && (d > -tolerance);
+};
+

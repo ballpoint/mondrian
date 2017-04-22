@@ -248,7 +248,7 @@ export default class Path extends Monsvg {
 
 
   nudge(x, y) {
-    // Nudge dis bitch
+    // Nudge
     this.points.map(p => p.nudge(x, y, false));
 
     // Nudge the cached bounds and line segments if they're there
