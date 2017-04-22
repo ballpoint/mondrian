@@ -9,6 +9,8 @@ export default class Canvas {
     this.layersMap = {};
     this.handlersMap = {};
 
+    this.refreshNeeded = {};
+
     this.container = document.createElement('div');
     this.container.className = 'canvas-container';
 
@@ -52,9 +54,24 @@ export default class Canvas {
   }
 
   refresh(id) {
-    let layer = this.layersMap[id];
+    this.refreshNeeded[id] = true;
+    if (!this.frameRequest) {
+      this.frameRequest = window.requestAnimationFrame(() => {
+        delete this.frameRequest;
+        for (let layer of this.layers) {
+          if (this.refreshNeeded[layer.id]) {
+            this._refreshLayer(layer);
+          }
+        }
+        this.refreshNeeded = {};
+      });
+    }
+  }
+
+  _refreshLayer(layer) {
     layer.clear();
-    let handler = this.handlersMap[id];
+    let handler = this.handlersMap[layer.id];
     handler(layer, layer.context);
+
   }
 }

@@ -83,7 +83,6 @@ export default class CursorTracking extends EventEmitter {
   }
 
   _click(e) {
-    console.log(e);
     // Quarantine check, and return if so
     if (isDefaultQuarantined(e.target)) {
       return true;
