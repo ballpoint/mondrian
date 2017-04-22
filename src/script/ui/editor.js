@@ -1,6 +1,7 @@
 import { scaleLinear } from 'd3-scale';
 import Canvas from 'ui/canvas';
 import shapes from 'lab/shapes';
+import hotkeys from 'ui/hotkeys';
 
 export default class Editor {
   constructor(rootSelector) {
@@ -36,6 +37,10 @@ export default class Editor {
 
     this.canvas.cursor.on('mousemove', (e, posn) => {
       this.canvas.refresh('objects');
+    });
+
+    hotkeys.on('down', 'downArrow', () => {
+      console.log('down');
     });
 
     this.canvas.updateDimensions();

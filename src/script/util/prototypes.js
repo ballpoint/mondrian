@@ -10,4 +10,22 @@ String.prototype.mentions = function(phrase) {
   }
 };
 
+Array.prototype.has = function(el) {
+  if (el instanceof Function) {
+    return this.filter(el).length > 0;
+  } else {
+    return this.indexOf(el) > -1;
+  }
+}
 
+Array.prototype.remove = function(el) {
+  if (el instanceof RegExp) {
+    return this.filter(a => !el.test(a));
+  } else {
+    if (el instanceof Array) {
+      return this.filter(a => !el.has(a));
+    } else {
+      return this.filter(a => el !== a);
+    }
+  }
+}
