@@ -170,16 +170,33 @@ export default class Point extends Posn {
             }
             */
 
+            let cl = classes[key];
+
             // Never represent points as relative internally
             if (relative) {
+              switch (cl) {
+                case VertiTo:
+                  console.log("VERTI");
+                  break;
+              }
               for (let si = 0; si < set.length; si++) {
-                if (si % 2 === 0) {
-                  // x value
-                  set[si] += prec.x;
-                } else {
-                  // y value
-                  set[si] += prec.y;
+                let compareVal;
+
+                switch (cl) {
+                  case VertiTo:
+                    compareVal = prec.y;
+                    break;
+                  default:
+                    if (si % 2 === 0) {
+                      // x value
+                      compareVal = prec.x;
+                    } else {
+                      // y value
+                      compareVal = prec.y;
+                    }
                 }
+
+                set[si] += compareVal;
               }
             }
 
@@ -196,7 +213,7 @@ export default class Point extends Posn {
 
             // Build the point from the appropriate constructor
 
-            let constructed = new (Function.prototype.bind.apply(classes[key], values));
+            let constructed = new (Function.prototype.bind.apply(cl, values));
 
             points.push(constructed);
 
@@ -808,7 +825,7 @@ export class HorizTo extends Point {
 
 
 export class VertiTo extends Point {
-  constructor(y, owner, prec, rel) {
+  constructor(y, owner, prec) {
     super(prec.absolute().x, y);
   }
 

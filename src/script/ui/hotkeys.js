@@ -115,10 +115,13 @@ let hotkeys = {
       }
     }
 
-    window.onfocus = () => {
-      this.modifiersDown = [];
-      return this.keysDown = [];
-    };
+
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) {
+        this.modifiersDown = [];
+        this.keysDown = [];
+      }
+    });
 
     document.onkeydown = (e) => {
       let newStroke;
