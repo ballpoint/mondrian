@@ -327,7 +327,7 @@ export default class Path extends Monsvg {
 
 
   drawToCanvas(context, scales) {
-    context = this.setupToCanvas(context);
+    context.beginPath();
     for (let point of Array.from(this.points.all())) {
       switch (point.constructor) {
         case MoveTo:

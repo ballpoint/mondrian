@@ -141,8 +141,6 @@ let hotkeys = {
       // Stop if we haven't recognized this keystroke via parseKeystroke
       if (keystroke === null) { return false; }
 
-      console.log(keystroke);
-
       // Save this event for
       this.lastEvent = e;
 

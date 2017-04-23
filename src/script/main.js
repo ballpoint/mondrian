@@ -4,7 +4,7 @@ import abq from 'abq.svg';
 import sbux from 'sbux.svg';
 import Editor from 'ui/editor';
 
-let doc = new SVG(sbux);
+let doc = new SVG(abq);
 
 let editor = new Editor('#main');
 

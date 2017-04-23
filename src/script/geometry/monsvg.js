@@ -595,25 +595,26 @@ export default class Monsvg {
 
 
   setupToCanvas(context) {
-    context.beginPath();
-    console.log(this.data.id, this.data.fill.toRGBString());
-    context.fillStyle = this.data.fill.toRGBString();
-    if (((this.data['stroke-width'] != null) > 0) && ((this.data.stroke != null ? this.data.stroke.hex : undefined) !== "none")) {
-      context.strokeStyle = `${this.data.stroke}`;
-      context.lineWidth = parseFloat(this.data['stroke-width']);
-    } else {
-      context.strokeStyle = "none";
-      context.lineWidth = "0";
-    }
-    return context;
   }
 
 
   finishToCanvas(context) {
     if (this.points != null ? this.points.closed : undefined) { context.closePath(); }
-    context.fill();// if @data.fill?
-    if ((this.data['stroke-width'] > 0) && ((this.data.stroke != null ? this.data.stroke.hex : undefined) !== "none")) { context.stroke(); }
-    return context;
+
+    if (this.data.fill) {
+      context.fillStyle = this.data.fill.toRGBString();
+      context.fill();
+    }
+
+    if (this.data.stroke) {
+      context.strokeStyle = this.data.stroke.toRGBString();
+      if (this.data['stroke-width']) {
+        context.lineWidth = parseFloat(this.data['stroke-width']);
+      } else {
+        context.lineWidth = 1;
+      }
+      context.stroke();
+    }
   }
 
   clearCachedObjects() {}

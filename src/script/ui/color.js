@@ -198,7 +198,7 @@ export default class Color {
     if (this.r === null) {
       return "none";
     } else {
-      return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a || 1})`;
+      return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a === undefined ? 1 : this.a})`;
     }
   }
 

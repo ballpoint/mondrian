@@ -174,11 +174,6 @@ export default class Point extends Posn {
 
             // Never represent points as relative internally
             if (relative) {
-              switch (cl) {
-                case VertiTo:
-                  console.log("VERTI");
-                  break;
-              }
               for (let si = 0; si < set.length; si++) {
                 let compareVal;
 
@@ -304,8 +299,6 @@ export default class Point extends Posn {
     return this;
   }
 
-
-
   nudge(x, y, checkForFirstOrLast) {
     super.nudge(x, y);
     if (checkForFirstOrLast == null) { checkForFirstOrLast = true; }
@@ -378,70 +371,13 @@ export default class Point extends Posn {
     return prec.setSucc(this);
   }
 
-
   /*
 
    Visibility functions for the UI
 
   */
 
-  show() {
-    if ((this.baseHandle == null)) { return; }
-    if (!this.baseHandle) {
-      this.draw();
-    }
-    this.baseHandle.style.display = 'block';
-    return this.baseHandle.style.opacity = 1;
-  }
-
-
-  hide(force) {
-    if (force == null) { force = false; }
-    if ((this.baseHandle == null)) { return; }
-    if (!this.baseHandle.hasAttribute('selected') || force) {
-      this.baseHandle.style.opacity = 0;
-      this.baseHandle.removeAttribute('action');
-      this.hideHandles();
-      return this.unhover();
-    }
-  }
-
-
-  hover() {
-    if (this.baseHandle != null) {
-      this.baseHandle.setAttribute('hover', '');
-    }
-    if ((this.baseHandle == null)) { console.log("base handle missing"); }
-
-    if (this.at === 0) {
-      return this.owner.points.last.baseHandle.setAttribute('hover', '');
-    } else if (this === this.owner.points.last) {
-      return this.owner.points.first.baseHandle.setAttribute('hover', '');
-    }
-  }
-
-
-  unhover() {
-    return (this.baseHandle != null ? this.baseHandle.removeAttribute('hover') : undefined);
-  }
-
-
-  clear() {
-    this.baseHandle.style.display = 'none';
-    return this;
-  }
-
-
-  unclear() {
-    this.baseHandle.style.display = 'block';
-    return this;
-  }
-
-
   remove() {
-    if (this.antlers != null) {
-      this.antlers.hide();
-    }
     return (this.baseHandle != null ? this.baseHandle.remove() : undefined);
   }
 
@@ -450,10 +386,6 @@ export default class Point extends Posn {
   unflag(flag) { return this._flags.remove(flag); }
 
   flagged(flag) { return this._flags.has(flag); }
-
-  annotate(color, radius) {
-    return ui.annotations.drawDot(this, color, radius);
-  }
 }
 
 
@@ -778,7 +710,7 @@ export class MoveTo extends Point {
 
 
 export class LineTo extends Point {
-  constructor(x, y, owner, prec, rel) {
+  constructor(x, y, owner, prec) {
     super(...arguments);
   }
 
@@ -795,8 +727,8 @@ export class LineTo extends Point {
 
 
 export class HorizTo extends Point {
-  constructor(x, owner, prec, rel) {
-    super(x, prec.absolute().y);
+  constructor(x, owner, prec) {
+    super(x, prec.absolute().y, owner, prec);
   }
 
   toString() {
@@ -826,7 +758,7 @@ export class HorizTo extends Point {
 
 export class VertiTo extends Point {
   constructor(y, owner, prec) {
-    super(prec.absolute().x, y);
+    super(prec.absolute().x, y, owner, prec);
   }
 
   toString() { return `V${this.y}`; }
@@ -865,8 +797,8 @@ export class VertiTo extends Point {
 */
 
 export class CurvePoint extends Point {
-  constructor(x2, y2, x3, y3, x, y, owner, prec, rel) {
-    super(x, y, owner, prec, rel);
+  constructor(x2, y2, x3, y3, x, y, owner, prec) {
+    super(x, y, owner, prec);
     this.x2 = x2;
     this.y2 = y2;
     this.x3 = x3;
@@ -966,8 +898,8 @@ export class CurvePoint extends Point {
 
 
 export class CurveTo extends CurvePoint {
-  constructor(x2, y2, x3, y3, x, y, owner, prec, rel) {
-    super(x2, y2, x3, y3, x, y, owner, prec, rel);
+  constructor(x2, y2, x3, y3, x, y, owner, prec) {
+    super(x2, y2, x3, y3, x, y, owner, prec);
     this.x2 = x2;
     this.y2 = y2;
     this.x3 = x3;
@@ -989,9 +921,9 @@ export class CurveTo extends CurvePoint {
 
 
 export class SmoothTo extends CurvePoint {
-  constructor(x3, y3, x, y, owner, prec, rel) {
+  constructor(x3, y3, x, y, owner, prec) {
     let { x2, y2 } = SmoothTo.inheritFromPrec(prec);
-    super(x2, y2, x3, y3, x, y, owner, prec, rel);
+    super(x2, y2, x3, y3, x, y, owner, prec);
     this.x2 = x2;
     this.y2 = y2;
     this.x3 = x3;
