@@ -203,6 +203,10 @@ export default class Polygon extends Monsvg {
     path.points.close();
     return path;
   }
+
+  getPoints() {
+    return this.points.all();
+  }
 }
 Polygon.initClass();
 

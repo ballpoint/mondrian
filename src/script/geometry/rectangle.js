@@ -27,14 +27,14 @@ export default class Rect extends Monsvg {
     return super.commit(...arguments);
   }
 
-
-  points() {
-    return [new Point(this.data.x, this.data.y),
-     new Point(this.data.x + this.data.width, this.data.y),
-     new Point(this.data.x + this.data.width, this.data.y + this.data.height),
-     new Point(this.data.x, this.data.y + this.data.height)];
+  getPoints() {
+    return [
+      new Point(this.data.x, this.data.y),
+      new Point(this.data.x + this.data.width, this.data.y),
+      new Point(this.data.x + this.data.width, this.data.y + this.data.height),
+      new Point(this.data.x, this.data.y + this.data.height)
+    ];
   }
-
 
   /*
 
@@ -50,10 +50,12 @@ export default class Rect extends Monsvg {
 
   lineSegments() {
     let p = this.points();
-    return [new LineSegment(p[0], p[1], p[1]),
-     new LineSegment(p[1], p[2], p[2]),
-     new LineSegment(p[2], p[3], p[3]),
-     new LineSegment(p[3], p[0], p[0])];
+    return [
+      new LineSegment(p[0], p[1], p[1]),
+      new LineSegment(p[1], p[2], p[2]),
+      new LineSegment(p[2], p[3], p[3]),
+      new LineSegment(p[3], p[0], p[0])
+    ];
   }
 
   center() {
@@ -179,7 +181,7 @@ export default class Rect extends Monsvg {
 
   convertToPath() {
     // Get this rect's points
-    let pts = this.points();
+    let pts = this.getPoints();
 
     // Build a new rectangular path from it
     let path = new Path({

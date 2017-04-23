@@ -71,37 +71,6 @@ export default class Path extends Monsvg {
     return super.commit(...arguments);
   }
 
-
-  hover() {
-    return;
-    if (!ui.selection.elements.all.has(this)) {
-      this.showPoints();
-    }
-
-    return ui.unhighlightHoverTargets();
-  }
-
-  unhover() {
-    return this.hidePoints();
-  }
-
-
-  virginMode() {
-    this.virgin.eyedropper(this);
-    return this.$rep.replaceWith(this.virgin.$rep);
-  }
-
-
-  editMode() {
-    return this.virgin.$rep.replaceWith(this.$rep);
-  }
-
-
-  woohoo() {
-    return this.virgin = undefined;
-  }
-
-
   importNewPoints(points) {
     if (points instanceof PointsList) {
       this.points = points;
@@ -284,6 +253,10 @@ export default class Path extends Monsvg {
     return this.woohoo();
   }
 
+  getPoints() {
+    return this.points.all();
+  }
+
 
   fitToBounds(bounds) {
     this.clearCachedObjects();
@@ -305,26 +278,6 @@ export default class Path extends Monsvg {
     this.scale(sx, sy, new Posn(mb.x, mb.y));
     return this.nudge(bounds.x - mb.x, mb.y - bounds.y);
   }
-
-    //debugger if @points.toString().indexOf("NaN") > -1
-
-
-  overlapsRect(rect) {
-    if (this.bounds().overlapsBounds(rect.bounds())) {
-      // First, check if any of our points are inside of this rectangle.
-      // This is a much cheaper operation than line segment intersections.
-      // We resort to that if no points are found inside of the rect.
-      for (let point of Array.from(this.points.all())) {
-        if (point.insideOf(rect)) {
-          return true;
-        }
-      }
-      return this.lineSegmentsIntersect(rect);
-    } else {
-      return false;
-    }
-  }
-
 
   drawToCanvas(context, scales) {
     context.beginPath();

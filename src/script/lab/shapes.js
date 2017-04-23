@@ -1,5 +1,6 @@
 import Posn from 'geometry/posn';
 import Polynomial from 'geometry/polynomial';
+import Bounds from 'geometry/bounds';
 import CubicBezier from 'geometry/cubic-bezier-line-segment';
 import Circle from 'geometry/circle';
 import Ellipse from 'geometry/ellipse';
@@ -7,9 +8,30 @@ import Ellipse from 'geometry/ellipse';
 export default {
 
   contains(shape, posn) {
+    // Draw a horizontal ray starting at this posn.
+    // If it intersects the shape's perimeter an odd
+    // number of times, the posn's inside of it.
+    //
+    //    _____
+    //  /      \
+    // |   o----X------------
+    //  \______/
+    //
+    //  1 intersection - it's inside.
+    //
+    //    __         __
+    //  /   \      /    \
+    // |  o--X----X-----X---------
+    // |      \__/      |
+    //  \______________/
+    //
+    //  3 intersections - it's inside.
+    //
+    //  etc.
+
     let all = [];
     let ray = new LineSegment(posn, {
-      x: posn.x + 1000000, y: posn.y
+      x: posn.x + 1000000000, y: posn.y
     });
     
     for (let ls of shape.lineSegments()) {
@@ -27,6 +49,21 @@ export default {
   },
 
   overlap(a, b) {
+
+    let pointsA, pointsB;
+    if (a.getPoints) {
+      let ap = a.getPoints();
+      for (let p of ap) {
+        if (this.contains(b, p)) return true;
+      }
+    }
+    if (b.getPoints) {
+      let bp = b.getPoints();
+      for (let p of bp) {
+        if (this.contains(a, p)) return true;
+      }
+    }
+
     if (a.lineSegments && b.lineSegments) {
       return this.lineSegmentsIntersect(a, b);
     } else {

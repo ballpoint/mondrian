@@ -1,21 +1,22 @@
 import shapes from 'lab/shapes';
 import Tool from 'ui/tools/tool';
+import Bounds from 'geometry/bounds'
 
 export default class Cursor extends Tool {
   constructor(editor) {
     super(editor);
+
+    this.dragSelectStart = null;
+    this.dragSelectEnd = null;
   }
 
   handleMousemove(posn) {
     delete this.editor.state.hovering;
 
     if (!this.editor.doc) return;
+    if (!this.editor.canvas.cursor.currentPosn) return;
 
-    let docPosn = this.editor.canvas.cursor.currentPosn.clone();
-    if (!docPosn) return;
-
-    docPosn.x = this.editor.x.invert(docPosn.x);
-    docPosn.y = this.editor.y.invert(docPosn.y);
+    let docPosn = this.editor.docPosn(this.editor.canvas.cursor.currentPosn);
 
     let elems = this.editor.doc.elements.slice(0).reverse();
 
@@ -37,24 +38,62 @@ export default class Cursor extends Tool {
   }
 
   handleDragStart(posn) {
-    this.handleClick(this.editor, posn);
+    if (this.editor.state.hovering) {
+      this.editor.state.selection = [this.editor.state.hovering];
+    } else {
+      this.dragSelectStart = posn;
+    }
   }
 
   handleDrag(posn, lastPosn) {
-    let xd = posn.x - lastPosn.x;
-    let yd = posn.y - lastPosn.y;
+    if (this.dragSelectStart) {
+      this.dragSelectEnd = posn;
+    } else {
+      let xd = posn.x - lastPosn.x;
+      let yd = posn.y - lastPosn.y;
 
-    xd /= this.editor.state.zoomLevel;
-    yd /= this.editor.state.zoomLevel;
+      xd /= this.editor.state.zoomLevel;
+      yd /= this.editor.state.zoomLevel;
 
-    this.editor.nudgeSelected(xd, yd);
+      this.editor.nudgeSelected(xd, yd);
+    }
   }
 
-  handleDragEnd(posn) {
+  handleDragStop(posn) {
+    if (this.dragSelectStart) {
+      let bounds = Bounds.fromPosns(
+        this.editor.docPosn(this.dragSelectStart),
+        this.editor.docPosn(this.dragSelectEnd)
+      );
+
+      let newSelection = [];
+
+      let elems = this.editor.doc.elements.slice(0).reverse();
+      for (let elem of elems) {
+        if (shapes.overlap(bounds, elem)) {
+          newSelection.push(elem);
+        }
+      }
+
+      this.editor.state.selection = newSelection;
+
+      this.dragSelectStart = null;
+      this.dragSelectEnd = null;
+    }
   }
 
   refresh(layer, context) {
     let hovering = this.editor.state.hovering;
+
+    if (this.dragSelectStart && this.dragSelectEnd) {
+      let xMin = Math.min(this.dragSelectStart.x, this.dragSelectEnd.x);
+      let yMin = Math.min(this.dragSelectStart.y, this.dragSelectEnd.y);
+      let w = Math.abs(this.dragSelectStart.x - this.dragSelectEnd.x);
+      let h = Math.abs(this.dragSelectStart.y - this.dragSelectEnd.y);
+
+      context.strokeStyle = 'blue';
+      context.strokeRect(xMin, yMin, w, h);
+    }
 
     for (let elem of this.editor.state.selection) {
 

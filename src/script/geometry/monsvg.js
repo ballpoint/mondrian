@@ -182,66 +182,6 @@ export default class Monsvg {
     return new Posn(xr.min + ((xr.max - xr.min) / 2), yr.min + ((yr.max - yr.min) / 2));
   }
 
-  queryPoint(rep) {
-    return this.points.filter(a => a.baseHandle === rep)[0];
-  }
-
-  queryAntlerPoint(rep) {
-    return this.antlerPoints.filter(a => a.baseHandle === rep)[0];
-  }
-
-  show() { return this.rep.style.display = "block"; }
-
-  hide() { return this.rep.style.display = "none"; }
-
-  showPoints() {
-    this.points.map(point => point.show());
-    return this;
-  }
-
-  hidePoints() {
-    this.points.map(point => point.hide());
-    return this;
-  }
-
-  unhoverPoints() {
-    this.points.map(point => point.unhover());
-    return this;
-  }
-
-  removePoints() {
-    this.points.map(point => point.clear());
-    return this;
-  }
-
-  unremovePoints() {
-    this.points.map(point => point.unclear());
-    return this;
-  }
-
-
-  destroyPoints() {
-    return this.points.map(p => p.remove());
-  }
-
-
-  removeHoverTargets() {
-    return; // TODO
-    let existent = qa(`svg#hover-targets [owner='${this.metadata.uuid}']`);
-    return Array.from(existent).map((ht) =>
-      ht.remove());
-  }
-
-
-  redrawHoverTargets() {
-    return; // TODO
-    this.removeHoverTargets();
-    this.points.map(p => new HoverTarget(p.prec, p));
-    return this;
-  }
-
-
-
   topLeftBound() {
     return new Posn(this.xRange().min, this.yRange().min);
   }
@@ -283,46 +223,9 @@ export default class Monsvg {
     return clone;
   }
 
-  delete() {
-    return;
-  }
-
   zIndex() {
     return 0;
   }
-
-
-  moveForward(n) {
-    if (n == null) { n = 1; }
-    for (let x = 1, end = n, asc = 1 <= end; asc ? x <= end : x >= end; asc ? x++ : x--) {
-      let next = this.$rep.next();
-      if (next.length === 0) { break; }
-      next.after(this.$rep);
-    }
-    return this;
-  }
-
-
-  moveBack(n) {
-    if (n == null) { n = 1; }
-    for (let x = 1, end = n, asc = 1 <= end; asc ? x <= end : x >= end; asc ? x++ : x--) {
-      let prev = this.$rep.prev();
-      if (prev.length === 0) { break; }
-      prev.before(this.$rep);
-    }
-    return this;
-  }
-
-
-  bringToFront() {
-    return;
-  }
-
-
-  sendToBack() {
-    return;
-  }
-
 
   swapFillAndStroke() {
     let swap = this.data.stroke;

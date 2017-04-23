@@ -1,5 +1,6 @@
 import { scaleLinear } from 'd3-scale';
 import Canvas from 'ui/canvas';
+import Posn from 'geometry/posn';
 import hotkeys from 'ui/hotkeys';
 import math from 'lib/math';
 
@@ -60,6 +61,12 @@ export default class Editor {
       this.state.tool.handleDrag(posn, lastPosn);
       this.canvas.refresh('tool');
     });
+
+    this.canvas.cursor.on('drag:stop', (e, posn, lastPosn) => {
+      this.state.tool.handleDragStop(posn, lastPosn);
+      this.canvas.refresh('tool');
+    });
+
 
     hotkeys.on('down', 'downArrow', () => { this.nudgeSelected(0, 1); });
     hotkeys.on('down', 'upArrow', () => { this.nudgeSelected(0, -1); });
@@ -155,6 +162,8 @@ export default class Editor {
         .range([offsetTop, offsetTop + (this.doc.height*this.state.zoomLevel)]);
 
       this.ySharp = (n) => { return math.sharpen(this.y(n)) };
+
+      this.docPosn = (p) => { return new Posn(this.x.invert(p.x), this.y.invert(p.y)) }
 
       this.zScale = (n) => { return n * this.state.zoomLevel };
     }

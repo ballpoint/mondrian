@@ -15,7 +15,7 @@ export default class Tool {
   handleDrag(posn) {
   }
 
-  handleDragEnd(posn) {
+  handleDragStop(posn) {
   }
 
   refresh(layer, context) {

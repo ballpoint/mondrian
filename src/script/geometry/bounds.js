@@ -64,7 +64,7 @@ export default class Bounds {
 
   points() { return [new Posn(this.x, this.y), new Posn(this.x2, this.y), new Posn(this.x2, this.y2), new Posn(this.x, this.y2)]; }
 
-  contains(posn, tolerance) {
+  contains(posn, tolerance=null) {
     return this.xr.containsInclusive(posn.x, tolerance) && this.yr.containsInclusive(posn.y, tolerance);
   }
 
@@ -122,6 +122,13 @@ export default class Bounds {
     return new Bounds(0, 0, this.width / sm, this.height / sm);
   }
 
+  static fromPosns(p1, p2) {
+    let x = Math.min(p1.x, p2.x);
+    let y = Math.min(p1.y, p2.y);
+    let w = Math.abs(p1.x - p2.x);
+    let h = Math.abs(p1.y - p2.y);
+    return new Bounds(x, y, w, h);
+  }
 
   adjustElemsTo(bounds) {
     // Returns a method that can run on Monsvg objects
@@ -137,11 +144,15 @@ export default class Bounds {
     };
   }
 
-  annotateCorners() {
-    ui.annotations.drawDot(this.tl());
-    ui.annotations.drawDot(this.tr());
-    ui.annotations.drawDot(this.bl());
-    return ui.annotations.drawDot(this.br());
+  lineSegments() {
+    return [
+      new LineSegment(this.tl(), this.tr()),
+      new LineSegment(this.tr(), this.br()),
+      new LineSegment(this.br(), this.bl()),
+      new LineSegment(this.bl(), this.tl()),
+    ];
   }
+
+
 }
 
