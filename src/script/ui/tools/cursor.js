@@ -86,13 +86,9 @@ export default class Cursor extends Tool {
     let hovering = this.editor.state.hovering;
 
     if (this.dragSelectStart && this.dragSelectEnd) {
-      let xMin = Math.min(this.dragSelectStart.x, this.dragSelectEnd.x);
-      let yMin = Math.min(this.dragSelectStart.y, this.dragSelectEnd.y);
-      let w = Math.abs(this.dragSelectStart.x - this.dragSelectEnd.x);
-      let h = Math.abs(this.dragSelectStart.y - this.dragSelectEnd.y);
-
-      context.strokeStyle = 'blue';
-      context.strokeRect(xMin, yMin, w, h);
+      let bounds = Bounds.fromPosns(this.dragSelectStart, this.dragSelectEnd);
+      context.strokeStyle = 'black';
+      context.strokeRect(bounds.x, bounds.y, bounds.width, bounds.height);
     }
 
     for (let elem of this.editor.state.selection) {
@@ -154,6 +150,33 @@ export default class Cursor extends Tool {
           }
         }
       }
+
+      /*
+      // DEBUG CODE
+      let lss = hovering.lineSegments();
+      let inited = false;
+      context.beginPath();
+      context.moveTo(this.editor.x(lss[0].x), this.editor.y(lss[0].y));
+      //console.log(lss);
+      for (let ls of lss) {
+        //console.log(ls.source.prec, ls.source, ls.source.succ);
+        if (ls.a && ls.b) {
+          //console.log(ls.length);
+          context.lineTo(this.editor.xSharp(ls.b.x), this.editor.ySharp(ls.b.y));
+        } else {
+          context.bezierCurveTo(
+            this.editor.xSharp(ls.p2.x),
+            this.editor.ySharp(ls.p2.y),
+            this.editor.xSharp(ls.p3.x),
+            this.editor.ySharp(ls.p3.y),
+            this.editor.xSharp(ls.p4.x),
+            this.editor.ySharp(ls.p4.y)
+          );
+        }
+        context.strokeStyle = 'purple';
+        context.stroke();
+      }
+      */
     }
 
   }

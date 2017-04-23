@@ -177,9 +177,12 @@ export default class Path extends Monsvg {
       return cached;
     } else {
       let segments = [];
-      this.points.all().map((curr, ind) => {
-        return segments.push(conversions.pathSegment(curr, curr.succ));
-      });
+      for (let p of this.points.all()) {
+        let ps = conversions.pathSegment(p, p.succ);
+        if (ps) {
+          segments.push(ps);
+        }
+      }
       return this.lineSegmentsCached = segments;
     }
   }

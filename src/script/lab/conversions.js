@@ -27,7 +27,7 @@ export default {
 
 
     if (b == null) { b = a.succ; }
-    if (b instanceof LineTo || b instanceof MoveTo || b instanceof HorizTo || b instanceof VertiTo) {
+    if (b instanceof LineTo || b instanceof HorizTo || b instanceof VertiTo) {
       return new LineSegment(new Posn(a.x, a.y), new Posn(b.x, b.y), b);
 
     } else if (b instanceof CurveTo) {

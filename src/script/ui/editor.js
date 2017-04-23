@@ -41,6 +41,7 @@ export default class Editor {
     this.canvas.createLayer('viewport', this.refreshViewport.bind(this));
     this.canvas.createLayer('drawing', this.refreshDrawing.bind(this));
     this.canvas.createLayer('tool', this.refreshTool.bind(this));
+    this.canvas.createLayer('debug', () => {});
 
     this.canvas.cursor.on('mousemove', (e, posn) => {
       this.state.tool.handleMousemove(posn);

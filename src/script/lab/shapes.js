@@ -34,14 +34,17 @@ export default {
       x: posn.x + 1000000000, y: posn.y
     });
     
-    for (let ls of shape.lineSegments()) {
-      let intersections = this.intersections(ray, ls);
-      if (intersections instanceof Posn) {
-        all.push(intersections);
-      } else if (intersections instanceof Array) {
-        all = all.concat(intersections.filter((x) => {
-          return x instanceof Posn
-        }));
+    let lss = shape.lineSegments();
+    if (lss) {
+      for (let ls of lss) {
+        let intersections = this.intersections(ray, ls);
+        if (intersections instanceof Posn) {
+          all.push(intersections);
+        } else if (intersections instanceof Array) {
+          all = all.concat(intersections.filter((x) => {
+            return x instanceof Posn
+          }));
+        }
       }
     }
 
