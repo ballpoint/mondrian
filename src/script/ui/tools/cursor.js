@@ -30,6 +30,7 @@ export default class Cursor extends Tool {
   handleClick(posn) {
     if (this.editor.state.hovering) {
       this.editor.state.selection = [this.editor.state.hovering];
+      console.log(this.editor.state.hovering);
     } else {
       this.editor.state.selection = [];
     }
@@ -80,7 +81,7 @@ export default class Cursor extends Tool {
             //context.fillRect(this.editor.x(point.x)-2, this.editor.y(point.y)-1, 4, 4);
             context.strokeRect(x-2, y-2, 4, 4);
 
-            context.fillText(Math.round(point.y), x-2, y-2);
+            context.fillText(point.y, x-2, y-2);
 
             if (point.x2) {
               context.strokeRect(this.editor.xSharp(point.x2)-2, this.editor.ySharp(point.y2)-2, 4, 4);

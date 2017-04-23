@@ -19,6 +19,7 @@ export default class Color {
     }
 
     if (r === null || r === 'none') {
+      // Default to black
       this.hex = 'none';
       this.r = 0;
       this.g = 0;
@@ -34,7 +35,7 @@ export default class Color {
         // Convert hex to rgba
         this.hex = r.toUpperCase().replace("#", "");
         let rgb = this.hexToRGB(this.hex);
-        r = rgb.r;
+        this.r = rgb.r;
         this.g = rgb.g;
         this.b = rgb.b;
       } else if (r.match(/rgba?\(.*\)/gi) != null) {
@@ -197,7 +198,7 @@ export default class Color {
     if (this.r === null) {
       return "none";
     } else {
-      return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a})`;
+      return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a || 1})`;
     }
   }
 

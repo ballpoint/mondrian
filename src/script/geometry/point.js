@@ -162,9 +162,24 @@ export default class Point extends Posn {
           for (let i = 0, end = (clen / elen) - 1, asc = 0 <= end; asc ? i <= end : i >= end; asc ? i++ : i--) {
             let set = coords.slice(sliceAt, sliceAt + elen);
 
+            /*
             if (i > 0) {
               if (key === "moveTo") {
                 key = "lineTo";
+              }
+            }
+            */
+
+            // Never represent points as relative internally
+            if (relative) {
+              for (let si = 0; si < set.length; si++) {
+                if (si % 2 === 0) {
+                  // x value
+                  set[si] += prec.x;
+                } else {
+                  // y value
+                  set[si] += prec.y;
+                }
               }
             }
 
@@ -172,7 +187,6 @@ export default class Point extends Posn {
 
             values.push(owner); // Point owner
             values.push(prec);
-            values.push(relative);
 
             if (values.join(' ').mentions("NaN")) { debugger; }
 
@@ -187,6 +201,7 @@ export default class Point extends Posn {
             points.push(constructed);
 
             sliceAt += elen;
+
           }
 
         } else {
@@ -717,45 +732,12 @@ function __guard__(value, transform) {
 
 
 export class MoveTo extends Point {
-  constructor(x, y, owner, prec, rel) {
+  constructor(x, y, owner, prec) {
     super(...arguments);
   }
 
-
-  relative() {
-    if (this.at === 0) {
-      this.rel = false;
-      return this;
-    } else {
-      if (this.rel) { return this; }
-
-      let precAbs = this.prec.absolute();
-      let { x } = precAbs;
-      let { y } = precAbs;
-
-      let m = new MoveTo(this.x - x, this.y - y, this.owner);
-      m.rel = true;
-      return m;
-    }
-  }
-
   absolute() {
-    if (this.at === 0) {
-      this.rel = false;
-      return this;
-    } else {
-      if (!this.rel) { return this; }
-
-      let precAbs = this.prec.absolute();
-      let { x } = precAbs;
-      let { y } = precAbs;
-
-      let m = new MoveTo(this.x + x, this.y + y, this.owner);
-      m.rel = false;
-      return m;
-    }
-
-    return Array.from(points.match(/[MLCSHV][\-\de\.\,\-\s]+/gi)).map((point) => new Point(point, this.owner));
+    return this;
   }
 
   p2() {
@@ -766,7 +748,7 @@ export class MoveTo extends Point {
     }
   }
 
-  toString() { return `${this.rel ? "m" : "M"}${this.x},${this.y}`; }
+  toString() { return `M${this.x},${this.y}`; }
 
   toLineSegment() {
     return this.prec.toLineSegment();
@@ -774,7 +756,7 @@ export class MoveTo extends Point {
 
   // I know this can be abstracted somehow with bind and apply but I
   // don't have time to figure that out before launch - already wasted time trying
-  clone() { return new MoveTo(this.x, this.y, this.owner, this.prec, this.rel); }
+  clone() { return new MoveTo(this.x, this.y, this.owner, this.prec); }
 }
 
 
@@ -783,40 +765,13 @@ export class LineTo extends Point {
     super(...arguments);
   }
 
-  relative() {
-    if (this.rel) { return this; }
-
-    let precAbs = this.prec.absolute();
-    let { x } = precAbs;
-    let { y } = precAbs;
-
-    let l = new LineTo(this.x - x, this.y - y, this.owner);
-    l.rel = true;
-    return l;
-  }
-
   absolute() {
-    if (!this.rel) { return this; }
-    if (this.absoluteCached) {
-      return this.absoluteCached;
-    }
-
-
-    let precAbs = this.prec.absolute();
-    let { x } = precAbs;
-    let { y } = precAbs;
-
-    let l = new LineTo(this.x + x, this.y + y, this.owner);
-    l.rel = false;
-
-    this.absoluteCached = l;
-
-    return l;
+    return this;
   }
 
-  toString() { return `${this.rel ? 'l' : 'L'}${this.x},${this.y}`; }
+  toString() { return `L${this.x},${this.y}`; }
 
-  clone() { return new LineTo(this.x, this.y, this.owner, this.prec, this.rel); }
+  clone() { return new LineTo(this.x, this.y, this.owner, this.prec); }
 }
 
 
@@ -824,17 +779,11 @@ export class LineTo extends Point {
 
 export class HorizTo extends Point {
   constructor(x, owner, prec, rel) {
-    super(...arguments);
-    this.inheritFromPrec(this.prec);
-  }
-
-  inheritFromPrec(prec) {
-    this.prec = prec;
-    return this.y = this.prec.absolute().y;
+    super(x, prec.absolute().y);
   }
 
   toString() {
-    return `${this.rel ? 'h' : 'H'}${this.x}`;
+    return `H${this.x}`;
   }
 
   convertToLineTo() {
@@ -850,33 +799,20 @@ export class HorizTo extends Point {
   }
 
   absolute() {
-    if (!this.rel) { return this; }
-    if (this.absoluteCached) { return this.absoluteCached; }
-    return this.absoluteCached = new HorizTo(this.x + this.prec.absolute().x, this.owner, this.prec, false);
+    return this;
   }
 
-  relative() {
-    if (this.rel) { return this; }
-    return new HorizTo(this.x - this.prec.absolute().x, this.owner, this.prec, true);
-  }
-
-  clone() { return new HorizTo(this.x, this.owner, this.prec, this.rel); }
+  clone() { return new HorizTo(this.x, this.owner, this.prec); }
 }
 
 
 
 export class VertiTo extends Point {
   constructor(y, owner, prec, rel) {
-    super(...arguments);
-    this.inheritFromPrec(this.prec);
+    super(prec.absolute().x, y);
   }
 
-  inheritFromPrec(prec) {
-    this.prec = prec;
-    return this.x = this.prec.absolute().x;
-  }
-
-  toString() { return `${this.rel ? 'v' : 'V'}${this.y}`; }
+  toString() { return `V${this.y}`; }
 
   convertToLineTo() {
     // Converts and replaces this with an equivalent LineTo
@@ -891,17 +827,10 @@ export class VertiTo extends Point {
   }
 
   absolute() {
-    if (!this.rel) { return this; }
-    if (this.absoluteCached) { return this.absoluteCached; }
-    return this.absoluteCached = new VertiTo(this.y + this.prec.absolute().y, this.owner, this.prec, false);
+    return this;
   }
 
-  relative() {
-    if (this.rel) { return this; }
-    return new VertiTo(this.y - this.prec.absolute().y, this.owner, this.prec, true);
-  }
-
-  clone() { return new VertiTo(this.y, this.owner, this.prec, this.rel); }
+  clone() { return new VertiTo(this.y, this.owner, this.prec); }
 }
 
 
@@ -929,7 +858,6 @@ export class CurvePoint extends Point {
     this.y = y;
     this.owner = owner;
     this.prec = prec;
-    this.rel = rel;
 
     this.makeAntlers();
     /*
@@ -1014,49 +942,8 @@ export class CurvePoint extends Point {
   }
 
 
-  relative() {
-    if (this.rel) { return this; }
-
-    // Assuming it's absolute now we want to subtract the precessor...
-    // The base case here is a MoveTo, which will always be absolute.
-    let precAbs = this.prec.absolute();
-    let { x } = precAbs;
-    let { y } = precAbs;
-
-    // Now we make a new one of whatever this is.
-    // @constructor will point to either CurveTo or SmoothTo, in this case.
-    // Since those both take the same arguments, simply subtract the precessor's absolute coords
-    // from this one's absolute coords and we're in business!
-    let args = [this.x2 - x, this.y2 - y, this.x3 - x, this.y3 - y, this.x - x, this.y - y, this.owner, this.prec];
-    if (this.constructor === SmoothTo) {
-      args = args.slice(2);
-    }
-    args.unshift(null);
-
-    let c = new (Function.prototype.bind.apply(this.constructor, args));
-    c.rel = true;
-    return c;
-  }
-
   absolute() {
-    // This works the same way as relative but opposite.
-    if (!this.rel) { return this; }
-
-    let precAbs = this.prec.absolute();
-    let { x } = precAbs;
-    let { y } = precAbs;
-
-    let args = [this.x2 + x, this.y2 + y, this.x3 + x, this.y3 + y, this.x + x, this.y + y, this.owner, this.prec];
-    if (this.constructor === SmoothTo) {
-      args = args.slice(2);
-    }
-    args.unshift(null);
-
-    let c = new (Function.prototype.bind.apply(this.constructor, args));
-
-    c.rel = false;
-
-    return c;
+    return this;
   }
 }
 
@@ -1072,22 +959,21 @@ export class CurveTo extends CurvePoint {
     this.y = y;
     this.owner = owner;
     this.prec = prec;
-    this.rel = rel;
   }
 
-  toString() { return `${this.rel ? 'c' : 'C'}${this.x2},${this.y2} ${this.x3},${this.y3} ${this.x},${this.y}`; }
+  toString() { return `C${this.x2},${this.y2} ${this.x3},${this.y3} ${this.x},${this.y}`; }
 
   reverse() {
-    return new CurveTo(this.x3, this.y3, this.x2, this.y2, this.x, this.y, this.owner, this.prec, this.rel).inheritPosition(this);
+    return new CurveTo(this.x3, this.y3, this.x2, this.y2, this.x, this.y, this.owner, this.prec).inheritPosition(this);
   }
 
-  clone() { return new CurveTo(this.x2, this.y2, this.x3, this.y3, this.x, this.y, this.owner, this.prec, this.rel); }
+  clone() { return new CurveTo(this.x2, this.y2, this.x3, this.y3, this.x, this.y, this.owner, this.prec); }
 }
 
 
 export class SmoothTo extends CurvePoint {
   constructor(x3, y3, x, y, owner, prec, rel) {
-    let { x2, y2 } = SmoothTo.inheritFromPrec(this.prec);
+    let { x2, y2 } = SmoothTo.inheritFromPrec(prec);
     super(x2, y2, x3, y3, x, y, owner, prec, rel);
     this.x2 = x2;
     this.y2 = y2;
@@ -1097,8 +983,7 @@ export class SmoothTo extends CurvePoint {
     this.y = y;
     this.owner = owner;
     this.prec = prec;
-    this.rel = rel;
-    this.inheritFromPrec(this.prec);
+    //CurvePoint.inheritFromPrec(this.prec);
   }
 
   static inheritFromPrec(prec) {
@@ -1127,7 +1012,7 @@ export class SmoothTo extends CurvePoint {
       }
     }
 
-    let ct = new CurveTo(p2.x, p2.y, this.x3, this.y3, this.x, this.y, this.owner, this.prec, this.rel);
+    let ct = new CurveTo(p2.x, p2.y, this.x3, this.y3, this.x, this.y, this.owner, this.prec);
     ct.at = this.at;
     return ct;
   }
@@ -1137,10 +1022,10 @@ export class SmoothTo extends CurvePoint {
     return this.replaceWith(this.toCurveTo(p2));
   }
 
-  toString() { return `${this.rel ? 's' : 'S'}${this.x3},${this.y3} ${this.x},${this.y}`; }
+  toString() { return `S${this.x3},${this.y3} ${this.x},${this.y}`; }
 
-  reverse() { return new CurveTo(this.x3, this.y3, this.x2, this.y2, this.x, this.y, this.owner, this.prec, this.rel); }
+  reverse() { return new CurveTo(this.x3, this.y3, this.x2, this.y2, this.x, this.y, this.owner, this.prec); }
 
-  clone() { return new SmoothTo(this.x3, this.y3, this.x, this.y, this.owner, this.prec, this.rel); }
+  clone() { return new SmoothTo(this.x3, this.y3, this.x, this.y, this.owner, this.prec); }
 }
 

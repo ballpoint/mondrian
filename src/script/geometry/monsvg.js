@@ -596,7 +596,8 @@ export default class Monsvg {
 
   setupToCanvas(context) {
     context.beginPath();
-    context.fillStyle = `${this.data.fill}`;
+    console.log(this.data.id, this.data.fill.toRGBString());
+    context.fillStyle = this.data.fill.toRGBString();
     if (((this.data['stroke-width'] != null) > 0) && ((this.data.stroke != null ? this.data.stroke.hex : undefined) !== "none")) {
       context.strokeStyle = `${this.data.stroke}`;
       context.lineWidth = parseFloat(this.data['stroke-width']);

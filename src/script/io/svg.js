@@ -70,6 +70,10 @@ export default class SVG {
     // return this._svgRoot.setAttribute('xmlns:mondrian', 'http://mondrian.io/xml');
   }
 
+  remove(r) {
+    this.elements = this.elements.filter((elem) => { return elem !== r });
+  }
+
   center() {
     return new Posn(this.width/2, this.height/2);
   }

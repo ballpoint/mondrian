@@ -26,6 +26,7 @@ export default class Editor {
 
   load(doc) {
     this.doc = doc;
+    window.doc = doc;
 
     this.setPosition(this.doc.center());
     //this.setPosition({x:0,y:0});
@@ -68,6 +69,11 @@ export default class Editor {
     hotkeys.on('down', 'space', () => { this.selectTool(new Paw(this)); });
     hotkeys.on('up', 'space', () => { this.selectTool(this.state.lastTool); });
 
+    hotkeys.on('down', '+', () => { this.zoomIn(); });
+    hotkeys.on('down', '-', () => { this.zoomOut(); });
+
+    hotkeys.on('down', 'backspace', () => { this.deleteSelection(); });
+
     this.canvas.updateDimensions();
 
     this.canvas.refreshAll();
@@ -75,6 +81,7 @@ export default class Editor {
 
   initState() {
     this.state = {
+      zoomLevel: 1,
       selection: [],
       tool: new Cursor(this)
     };
@@ -89,9 +96,33 @@ export default class Editor {
     this.setPosition(this.position.nudge(x, y));
   }
 
+  zoomIn() {
+    this.setZoom(this.state.zoomLevel*1.2);
+  }
+
+  zoomOut() {
+    this.setZoom(this.state.zoomLevel*0.8);
+  }
+
+  setZoom(zl) {
+    this.state.zoomLevel = zl;
+    this.canvas.refreshAll();
+  }
+
   selectTool(tool) {
-    this.state.lastTool = this.state.tool;
+    if (tool.constructor !== this.state.tool.constructor) {
+      this.state.lastTool = this.state.tool;
+    }
     this.state.tool = tool;
+    this.canvas.refreshAll();
+  }
+
+  deleteSelection() {
+    for (let elem of this.state.selection) {
+      this.doc.remove(elem);
+    }
+    this.state.selection = [];
+    delete this.state.hovering;
     this.canvas.refreshAll();
   }
 
@@ -106,7 +137,6 @@ export default class Editor {
   }
 
   refreshViewport(layer, context) {
-    this.state.zoomLevel = 1.2;
     if (this.doc) {
 
       let offsetLeft = (this.canvas.width - (this.doc.width*this.state.zoomLevel)) / 2;
@@ -132,11 +162,16 @@ export default class Editor {
     context.fillStyle = 'lightgrey';
     context.fillRect(0, 0, layer.width, layer.height);
 
+    let dx = this.xSharp(0);
+    let dy = this.ySharp(0);
+    let dw = Math.round(this.zScale(this.doc.width));
+    let dh = Math.round(this.zScale(this.doc.height));
+
     if (this.doc) {
       context.fillStyle = 'white';
       context.strokeStyle = 'black';
-      context.fillRect(this.x(0), this.y(0), this.doc.width*this.state.zoomLevel, this.doc.height*this.state.zoomLevel);
-      context.strokeRect(this.x(0), this.y(0), this.doc.width*this.state.zoomLevel, this.doc.height*this.state.zoomLevel);
+      context.fillRect(dx, dy, dw, dh);
+      context.strokeRect(dx, dy, dw, dh);
     }
   }
 
