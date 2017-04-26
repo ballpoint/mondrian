@@ -1,3 +1,4 @@
+import math from 'lib/math';
 import Posn from 'geometry/posn';
 import Range from 'geometry/range';
 import Rect from 'geometry/rectangle';
@@ -38,6 +39,15 @@ export default class Bounds {
 
     this.xr = new Range(this.x, this.x + this.width);
     this.yr = new Range(this.y, this.y + this.height);
+  }
+
+  sharp() {
+    return new Bounds(
+      math.sharpen(this.x),
+      math.sharpen(this.y),
+      Math.round(this.width),
+      Math.round(this.height)
+    );
   }
 
   // Corners

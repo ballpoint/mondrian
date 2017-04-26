@@ -1,3 +1,5 @@
+import math from 'lib/math';
+
 /*
 
   Posn
@@ -286,6 +288,13 @@ export default class Posn {
     this.x += (this.x - origin.x) * (x - 1);
     this.y += (this.y - origin.y) * (y - 1);
     return this;
+  }
+
+  sharp() {
+    return new Posn(
+      math.sharpen(this.x),
+      math.sharpen(this.y)
+    );
   }
 
   copy(p) {

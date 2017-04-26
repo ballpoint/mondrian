@@ -37,13 +37,14 @@ export default class Cursor extends Tool {
       if (!this.editor.state.selection.has(this.editor.state.hovering)) {
         this.editor.state.selection = [this.editor.state.hovering];
       }
+    } else {
+        this.editor.state.selection = [];
     }
   }
 
   handleClick(posn) {
     if (this.editor.state.hovering) {
       this.editor.state.selection = [this.editor.state.hovering];
-      console.log(this.editor.state.hovering);
     } else {
       this.editor.state.selection = [];
     }
@@ -91,6 +92,54 @@ export default class Cursor extends Tool {
     }
   }
 
+  drawTransformer(layer, bounds) {
+    // Draw transformer box
+
+    // Corners
+    let tl = bounds.tl().sharp();
+    let tr = bounds.tr().sharp();
+    let br = bounds.br().sharp();
+    let bl = bounds.bl().sharp();
+
+    // Edges
+    let tm = bounds.tm().sharp();
+    let bm = bounds.bm().sharp();
+    let rm = bounds.rm().sharp();
+    let lm = bounds.lm().sharp();
+
+    // Control point dimens
+    const d = 6;
+    const opts = { stroke: 'blue' };
+    const ctrlOpts = { stroke: 'blue', centerPosn: true };
+
+    // Top edge
+    layer.drawLineSegment(tl.clone().nudge(d/2,0), tm.clone().nudge(-(d/2),0), opts);
+    layer.drawLineSegment(tm.clone().nudge(d/2,0), tr.clone().nudge(-(d/2),0),  opts);
+    // Bottom edge
+    layer.drawLineSegment(bl.clone().nudge(d/2,0), bm.clone().nudge(-(d/2),0), opts);
+    layer.drawLineSegment(bm.clone().nudge(d/2,0), br.clone().nudge(-(d/2),0),  opts);
+    // Left edge
+    layer.drawLineSegment(tl.clone().nudge(0,d/2), lm.clone().nudge(0,-d/2), opts);
+    layer.drawLineSegment(lm.clone().nudge(0,d/2), bl.clone().nudge(0,-d/2), opts);
+    // Right edge
+    layer.drawLineSegment(tr.clone().nudge(0,d/2), rm.clone().nudge(0,-d/2), opts);
+    layer.drawLineSegment(rm.clone().nudge(0,d/2), br.clone().nudge(0,-d/2), opts);
+
+    // Side ctrl points
+    layer.drawRect(new Bounds(tm.x, tm.y, d, d), ctrlOpts);
+    layer.drawRect(new Bounds(bm.x, bm.y, d, d), ctrlOpts);
+    layer.drawRect(new Bounds(rm.x, rm.y, d, d), ctrlOpts);
+    layer.drawRect(new Bounds(lm.x, lm.y, d, d), ctrlOpts);
+
+    // Corner ctrl points
+    layer.drawRect(new Bounds(tl.x, tl.y, d, d), ctrlOpts);
+    layer.drawRect(new Bounds(tr.x, tr.y, d, d), ctrlOpts);
+    layer.drawRect(new Bounds(bl.x, bl.y, d, d), ctrlOpts);
+    layer.drawRect(new Bounds(br.x, br.y, d, d), ctrlOpts);
+
+    // Corner ctrl points
+  }
+
   refresh(layer, context) {
     let hovering = this.editor.state.hovering;
 
@@ -106,19 +155,7 @@ export default class Cursor extends Tool {
         boundsList.push(elem.bounds());
       }
 
-      let groupBounds = this.editor.projectionSharp.bounds(new Bounds(boundsList));
-
-      // Draw transformer box
-      layer.drawRect(groupBounds, { stroke: 'blue' });
-
-      let tm = groupBounds.tm();
-      let bm = groupBounds.bm();
-      let rm = groupBounds.rm();
-      let lm = groupBounds.lm();
-      layer.drawRect(new Bounds(tm.x, tm.y, 4, 4), { stroke: 'blue', centerPosn: true });
-      layer.drawRect(new Bounds(bm.x, bm.y, 4, 4), { stroke: 'blue', centerPosn: true });
-      layer.drawRect(new Bounds(rm.x, rm.y, 4, 4), { stroke: 'blue', centerPosn: true });
-      layer.drawRect(new Bounds(lm.x, lm.y, 4, 4), { stroke: 'blue', centerPosn: true });
+      this.drawTransformer(layer, this.editor.projection.bounds(new Bounds(boundsList)).sharp());
     }
 
     /*
@@ -154,7 +191,7 @@ export default class Cursor extends Tool {
       if (points.segments) {
         for (let segment of points.segments) {
           for (let point of segment.points) {
-            point = this.editor.projectionSharp.posn(point);
+            point = this.editor.projection.posn(point);
 
             //context.fillStyle = 'white';
             context.strokeStyle = 'blue';
@@ -162,10 +199,10 @@ export default class Cursor extends Tool {
             context.strokeRect(point.x-2, point.y-2, 4, 4);
 
             if (point.x2) {
-              context.strokeRect(this.editor.projectionSharp.x(point.x2)-2, this.editor.projectionSharp.y(point.y2)-2, 4, 4);
+              context.strokeRect(this.editor.projection.x(point.x2)-2, this.editor.projection.y(point.y2)-2, 4, 4);
             }
             if (point.x3) {
-              context.strokeRect(this.editor.projectionSharp.x(point.x3)-2, this.editor.projectionSharp.y(point.y3)-2, 4, 4);
+              context.strokeRect(this.editor.projection.x(point.x3)-2, this.editor.projection.y(point.y3)-2, 4, 4);
             }
 
           }

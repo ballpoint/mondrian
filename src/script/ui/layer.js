@@ -26,21 +26,41 @@ export default class Layer {
     this.context.clearRect(0, 0, this.width, this.height);
   }
 
-  drawRect(bounds, opts={}) {
-    let { x, y, width, height } = bounds;
-
-    if (opts.centerPosn) {
-      x -= (width/2);
-      y -= (height/2);
-    }
-
+  do(fn, opts) {
     if (opts.fill) {
       this.context.fillStyle = opts.fill;
-      this.context.fillRect(x, y, width, height);
     }
     if (opts.stroke) {
       this.context.strokeStyle = opts.stroke;
-      this.context.strokeRect(x, y, width, height);
     }
+
+    fn.call(this);
+  }
+
+  drawRect(bounds, opts={}) {
+    this.do(() => {
+      let { x, y, width, height } = bounds;
+
+      if (opts.centerPosn) {
+        x -= (width/2);
+        y -= (height/2);
+      }
+
+      if (opts.fill) {
+        this.context.fillRect(x, y, width, height);
+      }
+      if (opts.stroke) {
+        this.context.strokeRect(x, y, width, height);
+      }
+    }, opts);
+  }
+
+  drawLineSegment(p1, p2, opts={}) {
+    this.do(() => {
+      this.context.beginPath();
+      this.context.moveTo(p1.x, p1.y);
+      this.context.lineTo(p2.x, p2.y);
+      this.context.stroke();
+    }, opts);
   }
 }
