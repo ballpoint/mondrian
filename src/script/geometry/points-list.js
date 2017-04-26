@@ -118,6 +118,8 @@ export default class PointsList {
         lastPoint.setSucc(point);
       }
 
+      // TODO track if point list is closed here by matching on z
+
       if (point instanceof MoveTo) {
         // Close up the last segment, start a new one.
         commitSegment();

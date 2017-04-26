@@ -26,45 +26,20 @@ export default class Path extends Monsvg {
   static initClass() {
     this.prototype.type = 'path';
   
-  
-    // Are we caching expensive metadata like bounds?
+    // Caching expensive metadata
     this.prototype.caching = true;
-  
-    // A Path can have a "virgin" attribute that it will be exported as if no points
-    // have been changed individually since it was assigned.
-    // You would assign another SVG element as its virgin attr and that will get scaled,
-    // nudged alongside the Path itself.
-    // Any time a point is moved by itself and the "shape" is changed, the virgin attribute
-    // is reset to false.
-    this.prototype.virgin = undefined;
-  
-  
     this.prototype.xRangeCached = null;
-  
-  
     this.prototype.yRangeCached = null;
-  
     this.prototype.lineSegmentsCached = null;
   }
 
-
   constructor(data) {
     super(data);
-    this.data = data;
 
-    if ((this.data != null ? this.data.d : undefined) != null) {
+    if (this.data && this.data.d) {
       this.importNewPoints(this.data.d);
     }
-
-
-    this.antlerPoints = new PointsList([], this);
-
-    // Kind of a hack
-    if (__guard__(this.data != null ? this.data.d : undefined, x => x.match(/z$/gi)) !== null) {
-      this.points.closed = true;
-    }
   }
-
 
   commit() {
     this.data.d = this.points.toString();
@@ -85,15 +60,6 @@ export default class Path extends Monsvg {
     return this;
   }
 
-
-  cleanUpPoints() {
-    for (let p of Array.from(this.points.all())) {
-      p.cleanUp();
-    }
-    return this.commit();
-  }
-
-
   appendTo(selector, track) {
     if (track == null) { track = true; }
     super.appendTo(selector, track);
@@ -101,7 +67,6 @@ export default class Path extends Monsvg {
     if (track) { this.redrawHoverTargets(); }
     return this;
   }
-
 
   xRange() {
     let cached = this.xRangeCached;
@@ -116,7 +81,6 @@ export default class Path extends Monsvg {
     }
   }
 
-
   yRange() {
     let cached = this.yRangeCached;
     if (cached !== null) {
@@ -125,7 +89,6 @@ export default class Path extends Monsvg {
       return this.yRangeCached = Range.fromList(this.lineSegments().map(x => x.yRange()));
     }
   }
-
 
   nudgeCachedObjects(x, y) {
     if (this.boundsCached != null) {
@@ -139,7 +102,6 @@ export default class Path extends Monsvg {
     }
     return (this.lineSegmentsCached != null ? this.lineSegmentsCached.map(ls => ls.nudge(x, y)) : undefined);
   }
-
 
   scaleCachedObjects(x, y, origin) {
     if (this.boundsCached != null) {
@@ -282,18 +244,18 @@ export default class Path extends Monsvg {
     return this.nudge(bounds.x - mb.x, mb.y - bounds.y);
   }
 
-  drawToCanvas(context, scales) {
+  drawToCanvas(context, projection) {
     context.beginPath();
     for (let point of Array.from(this.points.all())) {
       switch (point.constructor) {
         case MoveTo:
-          context.moveTo(scales.x(point.x), scales.y(point.y));
+          context.moveTo(projection.x(point.x), projection.y(point.y));
           break;
         case LineTo: case HorizTo: case VertiTo:
-          context.lineTo(scales.x(point.x), scales.y(point.y));
+          context.lineTo(projection.x(point.x), projection.y(point.y));
           break;
         case CurveTo: case SmoothTo:
-          context.bezierCurveTo(scales.x(point.x2), scales.y(point.y2), scales.x(point.x3), scales.y(point.y3), scales.x(point.x), scales.y(point.y));
+          context.bezierCurveTo(projection.x(point.x2), projection.y(point.y2), projection.x(point.x3), projection.y(point.y3), projection.x(point.x), projection.y(point.y));
           break;
       }
     }

@@ -25,4 +25,22 @@ export default class Layer {
   clear() {
     this.context.clearRect(0, 0, this.width, this.height);
   }
+
+  drawRect(bounds, opts={}) {
+    let { x, y, width, height } = bounds;
+
+    if (opts.centerPosn) {
+      x -= (width/2);
+      y -= (height/2);
+    }
+
+    if (opts.fill) {
+      this.context.fillStyle = opts.fill;
+      this.context.fillRect(x, y, width, height);
+    }
+    if (opts.stroke) {
+      this.context.strokeStyle = opts.stroke;
+      this.context.strokeRect(x, y, width, height);
+    }
+  }
 }

@@ -113,7 +113,6 @@ export default {
         var continueChecking;
         if (aline instanceof CubicBezier && bline instanceof CubicBezier) {
           let bbounds = bline.bounds(true);
-          console.log(abounds, bbounds);
           continueChecking = abounds.overlapsBounds(bbounds);
         } else {
           continueChecking = true;
@@ -191,7 +190,7 @@ export default {
       let anam = ana_m / crossDiff;
 
       if ((0 <= anas) && (anas <= 1) && (0 <= anam) && (anam <= 1)) {
-        return new Posn(aline.a.x + (anas * (aline.b.x - aline.a.x)), aline.a.y + (anas * (aline.b.y - aline.a.y)));
+        return [new Posn(aline.a.x + (anas * (aline.b.x - aline.a.x)), aline.a.y + (anas * (aline.b.y - aline.a.y)))];
       } else {
         return null;
       }

@@ -44,41 +44,25 @@ export default class Monsvg {
 
     if (data == null) { data = {}; }
     this.data = data;
-    this.rep = this.toSVG();
 
     this.metadata = {
       angle: 0,
       locked: false
     };
 
-    this.rep.setAttribute('uuid', this.metadata.uuid);
-
     this.validateColors();
 
     if (this.type !== "text") {
-      this.data = _.defaults({
+      this.data = _.defaults(this.data, {
         fill:   new Color("none"),
         stroke: new Color("none")
-      }
-      , this.data);
+      });
     }
-
-    // This is used to track landmark changes to @data
-    // for the archive. Consider a user selecting a few elements
-    // and dragging around on the color picker until they like what
-    // they see. There's no way in hell we're gonna store every
-    // single color they hovered over while happily dragging around.
-    //
-    // So we keep two copies of @data. The second is called @dataArchived.
-    // Here we set it for the first time.
-
-    this.updateDataArchived();
 
     // Apply
     if (this.data["mondrian:angle"] != null) {
       this.metadata.angle = parseFloat(this.data["mondrian:angle"], 10);
     }
-
 
     /*
     if @data.transform?

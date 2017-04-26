@@ -1,8 +1,9 @@
 import { scaleLinear } from 'd3-scale';
 import Canvas from 'ui/canvas';
 import Posn from 'geometry/posn';
+import Projection from 'ui/projection';
 import hotkeys from 'ui/hotkeys';
-import math from 'lib/math';
+import Bounds from 'geometry/bounds'
 
 import Cursor from 'ui/tools/cursor';
 import Paw from 'ui/tools/paw';
@@ -38,13 +39,19 @@ export default class Editor {
   initCanvas() {
     this.canvas = new Canvas(this.root);
 
-    this.canvas.createLayer('viewport', this.refreshViewport.bind(this));
+    this.canvas.createLayer('background', this.refreshBackground.bind(this));
     this.canvas.createLayer('drawing', this.refreshDrawing.bind(this));
     this.canvas.createLayer('tool', this.refreshTool.bind(this));
+    this.canvas.createLayer('border', this.refreshBorder.bind(this));
     this.canvas.createLayer('debug', () => {});
 
     this.canvas.cursor.on('mousemove', (e, posn) => {
       this.state.tool.handleMousemove(posn);
+      this.canvas.refresh('tool');
+    });
+
+    this.canvas.cursor.on('mousedown', (e, posn) => {
+      this.state.tool.handleMousedown(posn);
       this.canvas.refresh('tool');
     });
 
@@ -89,7 +96,7 @@ export default class Editor {
 
   initState() {
     this.state = {
-      zoomLevel: 1,
+      zoomLevel: 1.22,
       selection: [],
       tool: new Cursor(this)
     };
@@ -137,51 +144,53 @@ export default class Editor {
   refreshDrawing(layer, context) {
     if (this.doc) {
       for (let elem of this.doc.elements) {
-        elem.drawToCanvas(context, {
-          x: this.x, y: this.y
-        });
+        elem.drawToCanvas(context, this.projection);
       }
     }
   }
 
-  refreshViewport(layer, context) {
+  calculateScales() {
+    // Calculate scales
+    let offsetLeft = (this.canvas.width - (this.doc.width*this.state.zoomLevel)) / 2;
+    offsetLeft += ((this.doc.width/2)-this.position.x)*this.state.zoomLevel;
+    let offsetTop  = (this.canvas.height - (this.doc.height*this.state.zoomLevel)) / 2;
+    offsetTop += ((this.doc.height/2)-this.position.y)*this.state.zoomLevel;
+
+    let x = scaleLinear()
+      .domain([0, this.doc.width])
+      .range([offsetLeft, offsetLeft + (this.doc.width*this.state.zoomLevel)]);
+
+    let y = scaleLinear()
+      .domain([0, this.doc.height])
+      .range([offsetTop, offsetTop + (this.doc.height*this.state.zoomLevel)]);
+
+    this.projection = new Projection(x, y, this.state.zoomLevel);
+    this.projectionSharp = new Projection(x, y, this.state.zoomLevel, true);
+  }
+
+  docBounds() {
+    return this.projection.bounds(new Bounds(0,0,this.doc.width,this.doc.height));
+  }
+
+  refreshBackground(layer, context) {
     if (this.doc) {
-
-      let offsetLeft = (this.canvas.width - (this.doc.width*this.state.zoomLevel)) / 2;
-      offsetLeft += ((this.doc.width/2)-this.position.x)*this.state.zoomLevel;
-      let offsetTop  = (this.canvas.height - (this.doc.height*this.state.zoomLevel)) / 2;
-      offsetTop += ((this.doc.height/2)-this.position.y)*this.state.zoomLevel;
-
-      this.x = scaleLinear()
-        .domain([0, this.doc.width])
-        .range([offsetLeft, offsetLeft + (this.doc.width*this.state.zoomLevel)]);
-
-      this.xSharp = (n) => { return math.sharpen(this.x(n)) };
-
-      this.y = scaleLinear()
-        .domain([0, this.doc.height])
-        .range([offsetTop, offsetTop + (this.doc.height*this.state.zoomLevel)]);
-
-      this.ySharp = (n) => { return math.sharpen(this.y(n)) };
-
-      this.docPosn = (p) => { return new Posn(this.x.invert(p.x), this.y.invert(p.y)) }
-
-      this.zScale = (n) => { return n * this.state.zoomLevel };
+      this.calculateScales();
     }
 
     context.fillStyle = 'lightgrey';
     context.fillRect(0, 0, layer.width, layer.height);
 
-    let dx = this.xSharp(0);
-    let dy = this.ySharp(0);
-    let dw = Math.round(this.zScale(this.doc.width));
-    let dh = Math.round(this.zScale(this.doc.height));
-
+    // Draw white background
     if (this.doc) {
-      context.fillStyle = 'white';
-      context.strokeStyle = 'black';
-      context.fillRect(dx, dy, dw, dh);
-      context.strokeRect(dx, dy, dw, dh);
+      let bounds = this.docBounds();
+      layer.drawRect(bounds, { fill: 'white' });
+    }
+  }
+
+  refreshBorder(layer, context) {
+    if (this.doc) {
+      let bounds = this.docBounds();
+      layer.drawRect(bounds, { stroke: 'black' });
     }
   }
 

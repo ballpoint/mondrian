@@ -19,8 +19,6 @@ export default class Bounds {
       this.x   = minX;
       this.width  = this.x2 - this.x;
       this.height = this.y2 - this.y;
-
-
     } else if (this.x instanceof Posn && this.y instanceof Posn) {
       // A pair of posns
 
@@ -42,10 +40,21 @@ export default class Bounds {
     this.yr = new Range(this.y, this.y + this.height);
   }
 
+  // Corners
   tl() { return new Posn(this.x, this.y); }
   tr() { return new Posn(this.x2, this.y); }
   br() { return new Posn(this.x2, this.y2); }
   bl() { return new Posn(this.x, this.y2); }
+
+  // Middles
+  tm() { return new Posn(this.x+((this.x2-this.x)/2), this.y); }
+  bm() { return new Posn(this.x+((this.x2-this.x)/2), this.y2); }
+  rm() { return new Posn(this.x2, this.y+((this.y2-this.y)/2)); }
+  lm() { return new Posn(this.x, this.y+((this.y2-this.y)/2)); }
+
+  transform(x, y, z) {
+    return new Bounds(x(this.x), y(this.y), z(this.width), z(this.height));
+  }
 
   clone() { return new Bounds(this.x, this.y, this.width, this.height); }
 

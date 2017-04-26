@@ -1,4 +1,7 @@
-export default class Tool {
+import Tool from 'ui/tools/tool';
+import Bounds from 'geometry/bounds'
+
+export default class Zoom extends Tool {
   constructor(editor) {
     this.editor = editor;
   }
@@ -25,3 +28,4 @@ export default class Tool {
     // Draw any needed UI elements
   }
 }
+

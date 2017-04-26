@@ -58,6 +58,7 @@ let hotkeys = {
 
 
   registerModifier(modifier) {
+    console.log(modifier);
     if (!this.modifiersDown.has(modifier)) {
       this.modifiersDown.push(modifier);
     }
@@ -120,6 +121,7 @@ let hotkeys = {
       if (!document.hidden) {
         this.modifiersDown = [];
         this.keysDown = [];
+        console.log('cleared');
       }
     });
 
