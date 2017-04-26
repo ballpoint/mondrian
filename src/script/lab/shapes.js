@@ -8,6 +8,15 @@ import Ellipse from 'geometry/ellipse';
 export default {
 
   contains(shape, posn) {
+    // Cheap check up front
+    if (!(shape instanceof Bounds)) {
+      let bounds = shape.bounds();
+      if (!this.contains(bounds, posn)) {
+        return false;
+      }
+    }
+
+
     // Draw a horizontal ray starting at this posn.
     // If it intersects the shape's perimeter an odd
     // number of times, the posn's inside of it.
