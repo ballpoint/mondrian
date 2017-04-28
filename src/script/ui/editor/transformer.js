@@ -145,8 +145,6 @@ let transformer = {
           xScale = 1 + ((resultBounds.width - bounds.width)/bounds.width);
         }
 
-        console.log(xScale, yScale);
-
         this.scaleSelected(xScale, yScale, opposite);
       }
     })
