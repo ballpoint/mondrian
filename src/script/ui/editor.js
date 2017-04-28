@@ -234,6 +234,13 @@ export default class Editor {
     this.canvas.refreshAll();
   }
 
+  scaleSelected(x,y,origin) {
+    for (let elem of this.state.selection) {
+      elem.scale(x, y, origin);
+    }
+    this.canvas.refreshAll();
+  }
+
   refreshTool(layer, context) {
     this.state.tool.refresh(layer, context);
   }

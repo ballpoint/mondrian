@@ -58,17 +58,19 @@ let transformer = {
     layer.drawRect(new Bounds(lm.x, lm.y, d, d), ctrlOpts);
 
     // Corner ctrl points
-    layer.drawRect(new Bounds(tl.x, tl.y, d, d), ctrlOpts);
-    layer.drawRect(new Bounds(tr.x, tr.y, d, d), ctrlOpts);
-    layer.drawRect(new Bounds(bl.x, bl.y, d, d), ctrlOpts);
-    layer.drawRect(new Bounds(br.x, br.y, d, d), ctrlOpts);
+    transformer.registerCtrlPoint.call(this, 'tl', layer, tl);
+    transformer.registerCtrlPoint.call(this, 'tr', layer, tr);
+    transformer.registerCtrlPoint.call(this, 'bl', layer, bl);
+    transformer.registerCtrlPoint.call(this, 'br', layer, br);
 
-    transformer.drawCtrlPoint.call(this, 't', layer, tm);
-    transformer.registerCtrlPoint.call(this, 't', layer, tm, bm);
+    transformer.registerCtrlPoint.call(this, 't', layer, tm);
+    transformer.registerCtrlPoint.call(this, 'b', layer, bm);
+    transformer.registerCtrlPoint.call(this, 'l', layer, lm);
+    transformer.registerCtrlPoint.call(this, 'r', layer, rm);
   },
 
-  drawCtrlPoint(edge, layer, origin) {
-    let id = 'transformer:'+edge;
+  registerCtrlPoint(which, layer, origin) {
+    let id = 'transformer:'+which;
     let ctrlBounds = Bounds.centeredOnPosn(origin.sharp(), CTRL_PT_DIMEN, CTRL_PT_DIMEN);
 
     let ctrlOpts = {
@@ -80,13 +82,6 @@ let transformer = {
     }
 
     layer.drawRect(ctrlBounds, ctrlOpts);
-  },
-
-  registerCtrlPoint(edge, layer, origin) {
-    let id = 'transformer:'+edge;
-    let ctrlBounds = Bounds.centeredOnPosn(origin.sharp(), CTRL_PT_DIMEN, CTRL_PT_DIMEN);
-
-    let editor = this;
 
     let elem = new Element(id, ctrlBounds, {
       'mousedown': function (e, posn) {
@@ -95,33 +90,64 @@ let transformer = {
       'click': function (e, posn) {
         e.stopPropagation();
       },
-      'drag': function (e, posn, lastPosn) {
+      'drag': (e, posn, lastPosn) => {
         e.stopPropagation();
 
-        let diff = posn.y - lastPosn.y;
-        if (diff === 0) return;
+        let diffY = posn.y - lastPosn.y;
+        let diffX = posn.x - lastPosn.x;
 
-        let docBounds = editor.selectionBounds();
-        let bounds = editor.projection.bounds(docBounds);
+        let docBounds = this.selectionBounds();
+        let bounds = this.projection.bounds(docBounds);
+        let resultBounds = bounds.clone();
 
         let opposite;
-        switch (edge) {
+        switch (which) {
+          case 'tl':
+            opposite = docBounds.br();
+            resultBounds.moveEdge('t', diffY).moveEdge('l', diffX);
+            break;
+          case 'tr':
+            opposite = docBounds.bl();
+            resultBounds.moveEdge('t', diffY).moveEdge('r', diffX);
+            break;
+          case 'br':
+            opposite = docBounds.tl();
+            resultBounds.moveEdge('b', diffY).moveEdge('r', diffX);
+            break;
+          case 'bl':
+            opposite = docBounds.tr();
+            resultBounds.moveEdge('b', diffY).moveEdge('l', diffX);
+            break;
           case 't':
             opposite = docBounds.bm();
+            resultBounds.moveEdge('t', diffY);
+            break;
+          case 'b':
+            opposite = docBounds.tm();
+            resultBounds.moveEdge('b', diffY);
+            break;
+          case 'l':
+            opposite = docBounds.rm();
+            resultBounds.moveEdge('l', diffX);
+            break;
+          case 'r':
+            opposite = docBounds.lm();
+            resultBounds.moveEdge('r', diffX);
             break;
         }
 
-        let resultBounds = bounds.clone().moveEdge(edge, diff);
+        let xScale = 1, yScale = 1;
 
-        console.log(bounds, resultBounds);
-
-        let yScale = 1 + ((resultBounds.height - bounds.height)/bounds.height);
-
-        for (let elem of editor.state.selection) {
-          elem.scale(1, yScale, opposite);
-          editor.canvas.refreshAll();
+        if (resultBounds.height !== bounds.height) {
+          yScale = 1 + ((resultBounds.height - bounds.height)/bounds.height);
+        }
+        if (resultBounds.width !== bounds.width) {
+          xScale = 1 + ((resultBounds.width - bounds.width)/bounds.width);
         }
 
+        console.log(xScale, yScale);
+
+        this.scaleSelected(xScale, yScale, opposite);
       }
     })
 

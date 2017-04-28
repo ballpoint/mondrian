@@ -186,6 +186,14 @@ export default class Bounds {
         this.y2 += amount;
         this.height += amount;
         return this;
+      case 'l':
+        this.x += amount;
+        this.width -= amount;
+        return this;
+      case 'r':
+        this.x2 += amount;
+        this.width += amount;
+        return this;
     }
     return this;
   }

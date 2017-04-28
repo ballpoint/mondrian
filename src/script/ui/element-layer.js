@@ -44,7 +44,7 @@ export default class ElementLayer extends EventEmitter {
     if (this.active) {
       let handler = this.active.handlers[name];
       if (handler) {
-        handler.call(this.active, event, ...args);
+        handler(event, ...args);
       }
     }
 
