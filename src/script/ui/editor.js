@@ -82,8 +82,8 @@ export default class Editor {
       this.canvas.refresh('transformer');
     });
 
-    this.elements.on('drag:stop', (e, posn, lastPosn) => {
-      if (e.propagateToTool) this.state.tool.handleDragStop(e, posn, lastPosn);
+    this.elements.on('drag:stop', (e, posn) => {
+      if (e.propagateToTool) this.state.tool.handleDragStop(e, posn);
       this.canvas.refresh('tool');
       this.canvas.refresh('transformer');
     });
