@@ -58,7 +58,6 @@ let hotkeys = {
 
 
   registerModifier(modifier) {
-    console.log(modifier);
     if (!this.modifiersDown.has(modifier)) {
       this.modifiersDown.push(modifier);
     }
@@ -121,7 +120,6 @@ let hotkeys = {
       if (!document.hidden) {
         this.modifiersDown = [];
         this.keysDown = [];
-        console.log('cleared');
       }
     });
 
@@ -162,6 +160,7 @@ let hotkeys = {
         return;
 
       } else {
+
         if (!this.keysDown.has(keystroke)) {
           newStroke = true;
           this.keysDown.push(keystroke);
@@ -171,6 +170,9 @@ let hotkeys = {
       }
 
       // By now, the keystroke should only be a letter or number.
+
+      if (e.altKey === false) this.registerModifierUp('alt');
+      if (e.shiftKey === false) this.registerModifierUp('shift');
 
       fullKeystroke = this.fullKeystroke(keystroke);
       //console.log "FULL: #{fullKeystroke}"

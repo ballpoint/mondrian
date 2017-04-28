@@ -1,11 +1,12 @@
 import shapes from 'lab/shapes';
 import Tool from 'ui/tools/tool';
-import Bounds from 'geometry/bounds'
+import Bounds from 'geometry/bounds';
 
 export default class Cursor extends Tool {
   constructor(editor) {
     super(editor);
 
+    this.hovering = null;
     this.dragSelectStart = null;
     this.dragSelectEnd = null;
   }
@@ -15,7 +16,7 @@ export default class Cursor extends Tool {
       return;
     }
 
-    delete this.editor.state.hovering;
+    delete this.hovering;
 
     if (!this.editor.doc) return;
     if (!this.editor.canvas.cursor.currentPosn) return;
@@ -26,37 +27,37 @@ export default class Cursor extends Tool {
 
     for (let element of elems) {
       if (shapes.contains(element, p)) {
-        this.editor.state.hovering = element;
+        this.hovering = element;
         break;
       }
     }
   }
 
-  handleMousedown(posn) {
-    if (this.editor.state.hovering) {
-      if (!this.editor.state.selection.has(this.editor.state.hovering)) {
-        this.editor.state.selection = [this.editor.state.hovering];
+  handleMousedown(e, posn) {
+    if (this.hovering) {
+      if (!this.editor.state.selection.has(this.hovering)) {
+        this.editor.state.selection = [this.hovering];
       }
     } else {
         this.editor.state.selection = [];
     }
   }
 
-  handleClick(posn) {
-    if (this.editor.state.hovering) {
-      this.editor.state.selection = [this.editor.state.hovering];
+  handleClick(e, posn) {
+    if (this.hovering) {
+      this.editor.state.selection = [this.hovering];
     } else {
       this.editor.state.selection = [];
     }
   }
 
-  handleDragStart(posn) {
+  handleDragStart(e, posn) {
     if (this.editor.state.selection.length === 0) {
       this.dragSelectStart = posn;
     }
   }
 
-  handleDrag(posn, lastPosn) {
+  handleDrag(e, posn, lastPosn) {
     if (this.dragSelectStart) {
       this.dragSelectEnd = posn;
     } else {
@@ -70,7 +71,7 @@ export default class Cursor extends Tool {
     }
   }
 
-  handleDragStop(posn) {
+  handleDragStop(e, posn) {
     if (this.dragSelectStart) {
       let bounds = this.editor.projection.boundsInvert(
         Bounds.fromPosns(this.dragSelectStart, this.dragSelectEnd)
@@ -92,70 +93,14 @@ export default class Cursor extends Tool {
     }
   }
 
-  drawTransformer(layer, bounds) {
-    // Draw transformer box
-
-    // Corners
-    let tl = bounds.tl().sharp();
-    let tr = bounds.tr().sharp();
-    let br = bounds.br().sharp();
-    let bl = bounds.bl().sharp();
-
-    // Edges
-    let tm = bounds.tm().sharp();
-    let bm = bounds.bm().sharp();
-    let rm = bounds.rm().sharp();
-    let lm = bounds.lm().sharp();
-
-    // Control point dimens
-    const d = 6;
-    const opts = { stroke: 'blue' };
-    const ctrlOpts = { stroke: 'blue', centerPosn: true };
-
-    // Top edge
-    layer.drawLineSegment(tl.clone().nudge(d/2,0), tm.clone().nudge(-(d/2),0), opts);
-    layer.drawLineSegment(tm.clone().nudge(d/2,0), tr.clone().nudge(-(d/2),0),  opts);
-    // Bottom edge
-    layer.drawLineSegment(bl.clone().nudge(d/2,0), bm.clone().nudge(-(d/2),0), opts);
-    layer.drawLineSegment(bm.clone().nudge(d/2,0), br.clone().nudge(-(d/2),0),  opts);
-    // Left edge
-    layer.drawLineSegment(tl.clone().nudge(0,d/2), lm.clone().nudge(0,-d/2), opts);
-    layer.drawLineSegment(lm.clone().nudge(0,d/2), bl.clone().nudge(0,-d/2), opts);
-    // Right edge
-    layer.drawLineSegment(tr.clone().nudge(0,d/2), rm.clone().nudge(0,-d/2), opts);
-    layer.drawLineSegment(rm.clone().nudge(0,d/2), br.clone().nudge(0,-d/2), opts);
-
-    // Side ctrl points
-    layer.drawRect(new Bounds(tm.x, tm.y, d, d), ctrlOpts);
-    layer.drawRect(new Bounds(bm.x, bm.y, d, d), ctrlOpts);
-    layer.drawRect(new Bounds(rm.x, rm.y, d, d), ctrlOpts);
-    layer.drawRect(new Bounds(lm.x, lm.y, d, d), ctrlOpts);
-
-    // Corner ctrl points
-    layer.drawRect(new Bounds(tl.x, tl.y, d, d), ctrlOpts);
-    layer.drawRect(new Bounds(tr.x, tr.y, d, d), ctrlOpts);
-    layer.drawRect(new Bounds(bl.x, bl.y, d, d), ctrlOpts);
-    layer.drawRect(new Bounds(br.x, br.y, d, d), ctrlOpts);
-
-    // Corner ctrl points
-  }
 
   refresh(layer, context) {
-    let hovering = this.editor.state.hovering;
+    let hovering = this.hovering;
 
     if (this.dragSelectStart && this.dragSelectEnd) {
       let bounds = Bounds.fromPosns(this.dragSelectStart, this.dragSelectEnd);
       context.strokeStyle = 'black';
       context.strokeRect(bounds.x, bounds.y, bounds.width, bounds.height);
-    } else {
-
-      let boundsList = [];
-
-      for (let elem of this.editor.state.selection) {
-        boundsList.push(elem.bounds());
-      }
-
-      this.drawTransformer(layer, this.editor.projection.bounds(new Bounds(boundsList)).sharp());
     }
 
     /*

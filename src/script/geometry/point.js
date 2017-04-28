@@ -335,7 +335,6 @@ export default class Point extends Posn {
     if (this.antlers != null) {
       this.antlers.scale(x, y, origin, angle);
     }
-    this.updateHandle();
     return this;
   }
 

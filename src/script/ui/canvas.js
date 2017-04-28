@@ -1,10 +1,13 @@
 import Posn from 'geometry/posn';
+import EventEmitter from 'lib/events';
 import CursorTracking from 'ui/cursor-tracking';
 import Layer from 'ui/layer';
 import 'canvas.scss';
 
-export default class Canvas {
+export default class Canvas extends EventEmitter {
   constructor(parent) {
+    super();
+
     this.layers = [];
     this.layersMap = {};
     this.handlersMap = {};
@@ -72,6 +75,6 @@ export default class Canvas {
     layer.clear();
     let handler = this.handlersMap[layer.id];
     handler(layer, layer.context);
-
   }
+
 }

@@ -26,7 +26,6 @@ export default class CursorTracking extends EventEmitter {
     this.setup(root);
   }
 
-
   reset() {
     this.down = false;
     this.wasDownLast = false;
@@ -121,7 +120,7 @@ export default class CursorTracking extends EventEmitter {
   _mouseup(e) {
     this.trigger('mouseup', e, this.currentPosn);
     // End dragging sequence if it was occurring
-    if (this.dragging && !this.draggingJustBegan) {
+    if (this.aragging && !this.draggingJustBegan) {
       this.trigger('drag:stop', e, this.currentPosn);
     } else {
       if (this.doubleclickArmed) {

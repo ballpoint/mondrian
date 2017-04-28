@@ -149,6 +149,10 @@ export default class Bounds {
     return new Bounds(x, y, w, h);
   }
 
+  static centeredOnPosn(posn, w, h) {
+    return new Bounds(posn.x-(w/2), posn.y-(h/2), w, h);
+  }
+
   adjustElemsTo(bounds) {
     // Returns a method that can run on Monsvg objects
     // that will nudge and scale them so they go from these bounds
@@ -159,7 +163,7 @@ export default class Bounds {
     // Return a function that will adjust a given element to the canvas
     return function(elem) {
       elem.scale(1/sw, 1/sh, bounds.tl());
-      return elem.nudge(-offset.x, offset.y);
+      return elem.nudge(-offset.x, -offset.y);
     };
   }
 
@@ -170,6 +174,20 @@ export default class Bounds {
       new LineSegment(this.br(), this.bl()),
       new LineSegment(this.bl(), this.tl()),
     ];
+  }
+
+  moveEdge(edge, amount) {
+    switch (edge) {
+      case 't':
+        this.y += amount;
+        this.height -= amount;
+        return this;
+      case 'b':
+        this.y2 += amount;
+        this.height += amount;
+        return this;
+    }
+    return this;
   }
 
 

@@ -18,6 +18,10 @@ Array.prototype.has = function(el) {
   }
 }
 
+Array.prototype.removeIndex = function(index) {
+  return this.slice(0, index).concat(this.slice(index+1));
+}
+
 Array.prototype.remove = function(el) {
   if (el instanceof RegExp) {
     return this.filter(a => !el.test(a));

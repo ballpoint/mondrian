@@ -4,9 +4,13 @@ import Posn from 'geometry/posn';
 import Projection from 'ui/projection';
 import hotkeys from 'ui/hotkeys';
 import Bounds from 'geometry/bounds'
+import Element from 'ui/element';
+import ElementLayer from 'ui/element-layer';
 
 import Cursor from 'ui/tools/cursor';
 import Paw from 'ui/tools/paw';
+
+import transformer from 'ui/editor/transformer';
 
 
 export default class Editor {
@@ -39,42 +43,50 @@ export default class Editor {
   initCanvas() {
     this.canvas = new Canvas(this.root);
 
+    this.elements = new ElementLayer(this.canvas.cursor);
+
     this.canvas.createLayer('background', this.refreshBackground.bind(this));
     this.canvas.createLayer('drawing', this.refreshDrawing.bind(this));
     this.canvas.createLayer('tool', this.refreshTool.bind(this));
+    this.canvas.createLayer('transformer', transformer.refresh.bind(this));
     this.canvas.createLayer('border', this.refreshBorder.bind(this));
     this.canvas.createLayer('debug', () => {});
 
-    this.canvas.cursor.on('mousemove', (e, posn) => {
-      this.state.tool.handleMousemove(posn);
+    this.elements.on('mousemove', (e, posn) => {
+      if (e.propagateToTool) this.state.tool.handleMousemove(e, posn);
       this.canvas.refresh('tool');
+      this.canvas.refresh('transformer');
     });
 
-    this.canvas.cursor.on('mousedown', (e, posn) => {
-      this.state.tool.handleMousedown(posn);
+    this.elements.on('mousedown', (e, posn) => {
+      if (e.propagateToTool) this.state.tool.handleMousedown(e, posn);
       this.canvas.refresh('tool');
+      this.canvas.refresh('transformer');
     });
 
-    this.canvas.cursor.on('click', (e, posn) => {
-      this.state.tool.handleClick(posn);
+    this.elements.on('click', (e, posn) => {
+      if (e.propagateToTool) this.state.tool.handleClick(e, posn);
       this.canvas.refresh('tool');
+      this.canvas.refresh('transformer');
     });
 
-    this.canvas.cursor.on('drag:start', (e, posn) => {
-      this.state.tool.handleDragStart(posn);
+    this.elements.on('drag:start', (e, posn, lastPosn) => {
+      if (e.propagateToTool) this.state.tool.handleDragStart(e, posn, lastPosn);
       this.canvas.refresh('tool');
+      this.canvas.refresh('transformer');
     });
 
-    this.canvas.cursor.on('drag', (e, posn, lastPosn) => {
-      this.state.tool.handleDrag(posn, lastPosn);
+    this.elements.on('drag', (e, posn, lastPosn) => {
+      if (e.propagateToTool) this.state.tool.handleDrag(e, posn, lastPosn);
       this.canvas.refresh('tool');
+      this.canvas.refresh('transformer');
     });
 
-    this.canvas.cursor.on('drag:stop', (e, posn, lastPosn) => {
-      this.state.tool.handleDragStop(posn, lastPosn);
+    this.elements.on('drag:stop', (e, posn, lastPosn) => {
+      if (e.propagateToTool) this.state.tool.handleDragStop(e, posn, lastPosn);
       this.canvas.refresh('tool');
+      this.canvas.refresh('transformer');
     });
-
 
     hotkeys.on('down', 'downArrow', () => { this.nudgeSelected(0, 1); });
     hotkeys.on('down', 'upArrow', () => { this.nudgeSelected(0, -1); });
@@ -84,6 +96,7 @@ export default class Editor {
     hotkeys.on('down', 'space', () => { this.selectTool(new Paw(this)); });
     hotkeys.on('up', 'space', () => { this.selectTool(this.state.lastTool); });
 
+    hotkeys.on('down', '0', () => { this.setZoom(1); });
     hotkeys.on('down', '+', () => { this.zoomIn(); });
     hotkeys.on('down', '-', () => { this.zoomOut(); });
 
@@ -119,6 +132,16 @@ export default class Editor {
     this.setZoom(this.state.zoomLevel*0.8);
   }
 
+  clearSelection() {
+    this.state.selection = [];
+  }
+
+  selectElement(elem) {
+    if (this.state.selection.has(elem)) {
+      this.state.selection.push(elem);
+    }
+  }
+
   setZoom(zl) {
     this.state.zoomLevel = zl;
     this.canvas.refreshAll();
@@ -139,6 +162,16 @@ export default class Editor {
     this.state.selection = [];
     delete this.state.hovering;
     this.canvas.refreshAll();
+  }
+
+  selectionBounds() {
+    let boundsList = [];
+
+    for (let elem of this.state.selection) {
+      boundsList.push(elem.bounds());
+    }
+
+    return new Bounds(boundsList);
   }
 
   refreshDrawing(layer, context) {

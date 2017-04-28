@@ -5,6 +5,13 @@ export default class Layer {
     this.node = document.createElement('canvas');
 
     this.context = this.node.getContext('2d');
+
+    this.elements = [];
+    this.elementsMap = {};
+
+    this.elementState = {
+      hovering: null,
+    }
   }
 
   setDimensions(w, h) {
@@ -20,6 +27,34 @@ export default class Layer {
     this.node.style.height = h;
 
     this.context.scale(ratio, ratio);
+  }
+
+  resetElements() {
+    this.elements = [];
+    this.elementsMap = {};
+  }
+
+  registerElement(elem) {
+    let existing = this.elementsMap[elem.id];
+    if (existing) {
+      // Replace it
+      let index = existing.index;
+      elem.index = index;
+      this.elements[index] = elem;
+      this.elementsMap[elem.id] = elem;
+    } else {
+      elem.index = this.elements.length;
+      this.elements.push(elem);
+      this.elementsMap[elem.id] = elem;
+    }
+  }
+
+  unregisterElement(id) {
+    let existing = this.elementsMap[id];
+    if (existing) {
+      this.elements = this.elements.removeIndex(existing.index);
+      delete this.elementsMap[id];
+    }
   }
 
   clear() {
