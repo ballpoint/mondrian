@@ -93,7 +93,6 @@ export default class Cursor extends Tool {
     }
   }
 
-
   refresh(layer, context) {
     let hovering = this.hovering;
 

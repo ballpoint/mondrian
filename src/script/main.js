@@ -1,4 +1,5 @@
 import 'util/prototypes';
+import 'main.scss';
 import SVG from 'io/svg';
 import abq from 'abq.svg';
 import sbux from 'sbux.svg';

@@ -52,11 +52,6 @@ let transformer = {
     layer.drawLineSegment(tr.clone().nudge(0,d/2), rm.clone().nudge(0,-d/2), opts);
     layer.drawLineSegment(rm.clone().nudge(0,d/2), br.clone().nudge(0,-d/2), opts);
 
-    // Side ctrl points
-    layer.drawRect(new Bounds(bm.x, bm.y, d, d), ctrlOpts);
-    layer.drawRect(new Bounds(rm.x, rm.y, d, d), ctrlOpts);
-    layer.drawRect(new Bounds(lm.x, lm.y, d, d), ctrlOpts);
-
     // Corner ctrl points
     transformer.registerCtrlPoint.call(this, 'tl', layer, tl);
     transformer.registerCtrlPoint.call(this, 'tr', layer, tr);
@@ -82,6 +77,7 @@ let transformer = {
     }
 
     layer.drawRect(ctrlBounds, ctrlOpts);
+    //layer.context.fillText(which, origin.x+5, origin.y-5);
 
     let elem = new Element(id, ctrlBounds, {
       'mousedown': function (e, posn) {
@@ -96,6 +92,8 @@ let transformer = {
         let diffY = posn.y - lastPosn.y;
         let diffX = posn.x - lastPosn.x;
 
+        // NOTE: When it comes time to do snapping, we may want to switch this code
+        // to be operating on bounds on the doc level (rather than the UI level)
         let docBounds = this.selectionBounds();
         let bounds = this.projection.bounds(docBounds);
         let resultBounds = bounds.clone();

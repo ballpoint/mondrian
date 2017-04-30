@@ -5,7 +5,7 @@ export default class Paw extends Tool {
     super(editor);
   }
 
-  handleDrag(posn, lastPosn) {
+  handleDrag(e, posn, lastPosn) {
     let xd = posn.x - lastPosn.x;
     let yd = posn.y - lastPosn.y;
 
