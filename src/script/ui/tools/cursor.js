@@ -61,9 +61,6 @@ export default class Cursor extends Tool {
       let xd = posn.x - lastPosn.x;
       let yd = posn.y - lastPosn.y;
 
-      xd /= this.editor.state.zoomLevel;
-      yd /= this.editor.state.zoomLevel;
-
       this.editor.nudgeSelected(xd, yd);
     }
   }
