@@ -1,7 +1,8 @@
 import shapes from 'lab/shapes';
 import EventEmitter from 'lib/events';
+import Posn from 'geometry/posn';
 
-export default class ElementLayer extends EventEmitter {
+export default class CursorHandler extends EventEmitter {
   constructor(cursor) {
     super();
     this.resetElements();
@@ -35,6 +36,14 @@ export default class ElementLayer extends EventEmitter {
   }
 
   handleEvent(name, event, ...args) {
+    args = args.map((arg) => {
+      if (arg instanceof Posn) {
+        return this.projection.posnInvert(arg);
+      } else {
+        return arg;
+      }
+    });
+
     event.propagateToTool = true;
 
     event.stopPropagation = function () {

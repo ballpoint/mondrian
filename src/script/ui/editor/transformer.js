@@ -72,7 +72,7 @@ let transformer = {
       stroke: 'blue'
     };
 
-    if (this.elements.active && this.elements.active.id === id) {
+    if (this.cursor.active && this.cursor.active.id === id) {
       ctrlOpts.fill = 'blue';
     }
 
@@ -94,42 +94,41 @@ let transformer = {
 
         // NOTE: When it comes time to do snapping, we may want to switch this code
         // to be operating on bounds on the doc level (rather than the UI level)
-        let docBounds = this.selectionBounds();
-        let bounds = this.projection.bounds(docBounds);
+        let bounds = this.selectionBounds();
         let resultBounds = bounds.clone();
 
         let opposite;
         switch (which) {
           case 'tl':
-            opposite = docBounds.br();
+            opposite = bounds.br();
             resultBounds.moveEdge('t', diffY).moveEdge('l', diffX);
             break;
           case 'tr':
-            opposite = docBounds.bl();
+            opposite = bounds.bl();
             resultBounds.moveEdge('t', diffY).moveEdge('r', diffX);
             break;
           case 'br':
-            opposite = docBounds.tl();
+            opposite = bounds.tl();
             resultBounds.moveEdge('b', diffY).moveEdge('r', diffX);
             break;
           case 'bl':
-            opposite = docBounds.tr();
+            opposite = bounds.tr();
             resultBounds.moveEdge('b', diffY).moveEdge('l', diffX);
             break;
           case 't':
-            opposite = docBounds.bm();
+            opposite = bounds.bm();
             resultBounds.moveEdge('t', diffY);
             break;
           case 'b':
-            opposite = docBounds.tm();
+            opposite = bounds.tm();
             resultBounds.moveEdge('b', diffY);
             break;
           case 'l':
-            opposite = docBounds.rm();
+            opposite = bounds.rm();
             resultBounds.moveEdge('l', diffX);
             break;
           case 'r':
-            opposite = docBounds.lm();
+            opposite = bounds.lm();
             resultBounds.moveEdge('r', diffX);
             break;
         }
@@ -147,12 +146,12 @@ let transformer = {
       }
     })
 
-    this.elements.registerElement(elem)
+    this.cursor.registerElement(elem)
   },
 
   unregisterCtrlPoint(layer, id) {
     id = 'transformer:'+id;
-    this.elements.unregisterElement(id);
+    this.cursor.unregisterElement(id);
   }
 }
 

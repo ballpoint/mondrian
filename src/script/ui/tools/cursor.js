@@ -11,7 +11,7 @@ export default class Cursor extends Tool {
     this.dragSelectEnd = null;
   }
 
-  handleMousemove(posn) {
+  handleMousemove(e, posn) {
     if (this.editor.canvas.cursor.dragging) {
       return;
     }
@@ -19,14 +19,11 @@ export default class Cursor extends Tool {
     delete this.hovering;
 
     if (!this.editor.doc) return;
-    if (!this.editor.canvas.cursor.currentPosn) return;
-
-    let p = this.editor.projection.posnInvert(this.editor.canvas.cursor.currentPosn);
 
     let elems = this.editor.doc.elements.slice(0).reverse();
 
     for (let element of elems) {
-      if (shapes.contains(element, p)) {
+      if (shapes.contains(element, posn)) {
         this.hovering = element;
         break;
       }
@@ -73,9 +70,7 @@ export default class Cursor extends Tool {
 
   handleDragStop(e, posn) {
     if (this.dragSelectStart) {
-      let bounds = this.editor.projection.boundsInvert(
-        Bounds.fromPosns(this.dragSelectStart, this.dragSelectEnd)
-      );
+      let bounds = Bounds.fromPosns(this.dragSelectStart, this.dragSelectEnd)
 
       let newSelection = [];
 
@@ -98,6 +93,7 @@ export default class Cursor extends Tool {
 
     if (this.dragSelectStart && this.dragSelectEnd) {
       let bounds = Bounds.fromPosns(this.dragSelectStart, this.dragSelectEnd);
+      bounds = this.editor.projection.bounds(bounds);
       context.strokeStyle = 'black';
       context.strokeRect(bounds.x, bounds.y, bounds.width, bounds.height);
     }

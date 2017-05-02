@@ -5,7 +5,7 @@ import Projection from 'ui/projection';
 import hotkeys from 'ui/hotkeys';
 import Bounds from 'geometry/bounds'
 import Element from 'ui/element';
-import ElementLayer from 'ui/element-layer';
+import CursorHandler from 'ui/cursor-handler';
 
 import Cursor from 'ui/tools/cursor';
 import Paw from 'ui/tools/paw';
@@ -19,12 +19,8 @@ export default class Editor {
     let root = document.querySelector(rootSelector);
     if (root) {
       this.root = root;
-
       this.initState();
-
       this.initCanvas();
-
-
     } else {
       throw new Error('root not found: ' + rootSelector);
     }
@@ -32,10 +28,8 @@ export default class Editor {
 
   load(doc) {
     this.doc = doc;
-    window.doc = doc;
 
     this.setPosition(this.doc.center());
-    //this.setPosition({x:0,y:0});
 
     this.canvas.refreshAll();
   }
@@ -43,7 +37,7 @@ export default class Editor {
   initCanvas() {
     this.canvas = new Canvas(this.root);
 
-    this.elements = new ElementLayer(this.canvas.cursor);
+    this.cursor = new CursorHandler(this.canvas.cursor);
 
     this.canvas.createLayer('background', this.refreshBackground.bind(this));
     this.canvas.createLayer('drawing', this.refreshDrawing.bind(this));
@@ -52,37 +46,37 @@ export default class Editor {
     this.canvas.createLayer('border', this.refreshBorder.bind(this));
     this.canvas.createLayer('debug', () => {});
 
-    this.elements.on('mousemove', (e, posn) => {
+    this.cursor.on('mousemove', (e, posn) => {
       if (e.propagateToTool) this.state.tool.handleMousemove(e, posn);
       this.canvas.refresh('tool');
       this.canvas.refresh('transformer');
     });
 
-    this.elements.on('mousedown', (e, posn) => {
+    this.cursor.on('mousedown', (e, posn) => {
       if (e.propagateToTool) this.state.tool.handleMousedown(e, posn);
       this.canvas.refresh('tool');
       this.canvas.refresh('transformer');
     });
 
-    this.elements.on('click', (e, posn) => {
+    this.cursor.on('click', (e, posn) => {
       if (e.propagateToTool) this.state.tool.handleClick(e, posn);
       this.canvas.refresh('tool');
       this.canvas.refresh('transformer');
     });
 
-    this.elements.on('drag:start', (e, posn, lastPosn) => {
+    this.cursor.on('drag:start', (e, posn, lastPosn) => {
       if (e.propagateToTool) this.state.tool.handleDragStart(e, posn, lastPosn);
       this.canvas.refresh('tool');
       this.canvas.refresh('transformer');
     });
 
-    this.elements.on('drag', (e, posn, lastPosn) => {
+    this.cursor.on('drag', (e, posn, lastPosn) => {
       if (e.propagateToTool) this.state.tool.handleDrag(e, posn, lastPosn);
       this.canvas.refresh('tool');
       this.canvas.refresh('transformer');
     });
 
-    this.elements.on('drag:stop', (e, posn) => {
+    this.cursor.on('drag:stop', (e, posn) => {
       if (e.propagateToTool) this.state.tool.handleDragStop(e, posn);
       this.canvas.refresh('tool');
       this.canvas.refresh('transformer');
@@ -117,6 +111,9 @@ export default class Editor {
 
   setPosition(posn) {
     this.position = posn;
+    if (this.doc) {
+      this.calculateScales();
+    }
     this.canvas.refreshAll();
   }
 
@@ -132,6 +129,14 @@ export default class Editor {
     this.setZoom(this.state.zoomLevel*0.8);
   }
 
+  setZoom(zl) {
+    this.state.zoomLevel = zl;
+    if (this.doc) {
+      this.calculateScales();
+    }
+    this.canvas.refreshAll();
+  }
+
   clearSelection() {
     this.state.selection = [];
   }
@@ -140,11 +145,6 @@ export default class Editor {
     if (this.state.selection.has(elem)) {
       this.state.selection.push(elem);
     }
-  }
-
-  setZoom(zl) {
-    this.state.zoomLevel = zl;
-    this.canvas.refreshAll();
   }
 
   selectTool(tool) {
@@ -198,7 +198,8 @@ export default class Editor {
       .range([offsetTop, offsetTop + (this.doc.height*this.state.zoomLevel)]);
 
     this.projection = new Projection(x, y, this.state.zoomLevel);
-    this.projectionSharp = new Projection(x, y, this.state.zoomLevel, true);
+
+    this.cursor.projection = this.projection;
   }
 
   docBounds() {
@@ -206,10 +207,6 @@ export default class Editor {
   }
 
   refreshBackground(layer, context) {
-    if (this.doc) {
-      this.calculateScales();
-    }
-
     context.fillStyle = 'lightgrey';
     context.fillRect(0, 0, layer.width, layer.height);
 

@@ -3,7 +3,7 @@ import math from 'lib/math';
 
 export default class Projection {
 
-  constructor(xScale, yScale, zoomLevel, sharpen=false) {
+  constructor(xScale, yScale, zoomLevel) {
     this.x       = xScale;
     this.xInvert = xScale.invert;
     this.y       = yScale;
