@@ -121,7 +121,7 @@ export default class CursorTracking extends EventEmitter {
     this.trigger('mouseup', e, this.currentPosn);
     // End dragging sequence if it was occurring
     if (this.dragging && !this.draggingJustBegan) {
-      this.trigger('drag:stop', e, this.currentPosn);
+      this.trigger('drag:stop', e, this.currentPosn, this.dragStartPosn);
     } else {
       if (this.doubleclickArmed) {
         this.doubleclickArmed = false;
@@ -165,6 +165,7 @@ export default class CursorTracking extends EventEmitter {
           return this.draggingJustBegan = false;
           // Allow for slight movement without triggering drag
         } else if (this.currentPosn.distanceFrom(this.lastDown) > DRAG_THRESHOLD) {
+          this.dragStartPosn = this.lastDown;
           this.trigger('drag:start', e, this.currentPosn, this.lastPosn);
           return this.dragging = (this.draggingJustBegan = true);
         }

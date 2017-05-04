@@ -6,6 +6,8 @@ import hotkeys from 'ui/hotkeys';
 import Bounds from 'geometry/bounds'
 import Element from 'ui/element';
 import CursorHandler from 'ui/cursor-handler';
+import DocHistory from 'history/history';
+import { NudgeEvent, ScaleEvent } from 'history/events';
 
 import Cursor from 'ui/tools/cursor';
 import Paw from 'ui/tools/paw';
@@ -28,6 +30,9 @@ export default class Editor {
 
   load(doc) {
     this.doc = doc;
+
+    this.history = new DocHistory();
+    window.h = this.history;
 
     this.setPosition(this.doc.center());
 
@@ -76,8 +81,8 @@ export default class Editor {
       this.canvas.refresh('transformer');
     });
 
-    this.cursor.on('drag:stop', (e, posn) => {
-      if (e.propagateToTool) this.state.tool.handleDragStop(e, posn);
+    this.cursor.on('drag:stop', (e, posn, startPosn) => {
+      if (e.propagateToTool) this.state.tool.handleDragStop(e, posn, startPosn);
       this.canvas.refresh('tool');
       this.canvas.refresh('transformer');
     });
@@ -86,6 +91,10 @@ export default class Editor {
     hotkeys.on('down', 'upArrow', () => { this.nudgeSelected(0, -1); });
     hotkeys.on('down', 'leftArrow', () => { this.nudgeSelected(-1, 0); });
     hotkeys.on('down', 'rightArrow', () => { this.nudgeSelected(1, 0); });
+    hotkeys.on('down', 'shift-downArrow', () => { this.nudgeSelected(0, 10); });
+    hotkeys.on('down', 'shift-rightArrow', () => { this.nudgeSelected(10, 0); });
+    hotkeys.on('down', 'shift-upArrow', () => { this.nudgeSelected(0, -10); });
+    hotkeys.on('down', 'shift-leftArrow', () => { this.nudgeSelected(-10, 0); });
 
     hotkeys.on('down', 'space', () => { this.selectTool(new Paw(this)); });
     hotkeys.on('up', 'space', () => { this.selectTool(this.state.lastTool); });
@@ -95,6 +104,15 @@ export default class Editor {
     hotkeys.on('down', '-', () => { this.zoomOut(); });
 
     hotkeys.on('down', 'backspace', () => { this.deleteSelection(); });
+
+    hotkeys.on('down', 'ctrl-Z', () => { 
+      this.history.undo(this);
+      this.canvas.refreshAll();
+    });
+    hotkeys.on('down', 'ctrl-shift-Z', () => {
+      this.history.redo(this);
+      this.canvas.refreshAll();
+    });
 
     this.canvas.updateDimensions();
 
@@ -174,6 +192,14 @@ export default class Editor {
     return new Bounds(boundsList);
   }
 
+  selectionIds() {
+    return this.state.selection.map((elem) => {
+      return elem.id;
+    }).filter((id) => {
+      return !!id;
+    });
+  }
+
   refreshDrawing(layer, context) {
     if (this.doc) {
       for (let elem of this.doc.elements) {
@@ -224,18 +250,36 @@ export default class Editor {
     }
   }
 
-  nudgeSelected(x,y) {
+  nudgeSelected(x, y) {
     for (let elem of this.state.selection) {
       elem.nudge(x,y);
     }
     this.canvas.refreshAll();
+
+    // Record history event
+    let event = new NudgeEvent({
+      ids: this.selectionIds(),
+      xd: x,
+      yd: y,
+    });
+    this.history.push(event);
   }
 
-  scaleSelected(x,y,origin) {
+  scaleSelected(x, y, origin, historyOpts={}) {
     for (let elem of this.state.selection) {
       elem.scale(x, y, origin);
     }
     this.canvas.refreshAll();
+
+    let event = new ScaleEvent({
+      ids: this.selectionIds(),
+      origin,
+      x,
+      y,
+    });
+
+    this.history.push(event);
+
   }
 
   refreshTool(layer, context) {

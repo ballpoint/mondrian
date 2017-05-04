@@ -30,8 +30,8 @@ export default class CursorHandler extends EventEmitter {
       this.handleEvent('drag', e, posn, lastPosn);
     });
 
-    cursor.on('drag:stop', (e, posn, lastPosn) => {
-      this.handleEvent('drag:stop', e, posn, lastPosn);
+    cursor.on('drag:stop', (e, posn, startPosn) => {
+      this.handleEvent('drag:stop', e, posn, startPosn);
     });
   }
 

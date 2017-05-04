@@ -43,6 +43,7 @@ export default class Cursor extends Tool {
   handleClick(e, posn) {
     if (this.hovering) {
       this.editor.state.selection = [this.hovering];
+      console.log(this.editor.selectionIds());
     } else {
       this.editor.state.selection = [];
     }
@@ -65,7 +66,7 @@ export default class Cursor extends Tool {
     }
   }
 
-  handleDragStop(e, posn) {
+  handleDragStop(e, posn, startPosn) {
     if (this.dragSelectStart) {
       let bounds = Bounds.fromPosns(this.dragSelectStart, this.dragSelectEnd)
 

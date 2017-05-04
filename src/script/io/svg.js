@@ -22,6 +22,8 @@ export default class SVG {
     this._buildMetadata();
 
     this.elements = io.parse(this.root);
+
+    this._indexElements(this.elements);
   }
 
   // Constructor helpers
@@ -84,5 +86,25 @@ export default class SVG {
 
   toBase64() {
     return `data:${MIMETYPE};charset=${CHARSET};base64,${this.toString()}`;
+  }
+
+  _indexElements(elements) {
+    this._elementsIndex = {};
+    for (let elem of elements) {
+      if (elem.id) {
+        this._elementsIndex[elem.id] = elem;
+      }
+    }
+  }
+
+  getElements(ids) {
+    let elems = [];
+    for (let id of ids) {
+      let elem = this._elementsIndex[id];
+      if (elem) {
+        elems.push(elem);
+      }
+    }
+    return elems;
   }
 }

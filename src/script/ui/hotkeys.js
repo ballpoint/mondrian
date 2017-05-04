@@ -1,4 +1,6 @@
+import _ from 'lodash';
 import Range from 'geometry/range';
+import EventEmitter from 'lib/events';
 /*
 
   Mondrian.io hotkeys management
@@ -17,15 +19,19 @@ let isDefaultQuarantined = () => { return false };
 
 let hotkeys = {
 
-  // Hotkeys is disabled when the user is focused on a quarantined
-  // default-behavior area.
   listeners: {
     down: {},
     up: {},
   },
 
   on(dir, combination, handler) {
-    this.listeners[dir][combination] = handler;
+    if (_.isString(combination)) {
+      this.listeners[dir][combination] = handler;
+    } else if (_.isArray(combination)) {
+      for (let combo of combination) {
+        this.listeners[dir][combo] = handler;
+      }
+    }
   },
 
   reset() {

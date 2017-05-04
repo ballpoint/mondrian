@@ -6,6 +6,7 @@ import Ellipse from 'geometry/ellipse';
 import Polygon from 'geometry/polygon';
 import Polyline from 'geometry/polyline';
 import Monsvg from 'geometry/monsvg';
+import UUIDV4 from 'uuid/v4';
 /*
 
   io
@@ -28,6 +29,7 @@ let io = {
 
     let parsed = this.recParse(doc);
 
+    /*
     let viewbox = doc.getAttribute("viewBox");
 
     if (viewbox) {
@@ -36,6 +38,7 @@ let io = {
       viewbox = viewbox.split(" ");
       viewbox = new Bounds(viewbox[0], viewbox[1], viewbox[2], viewbox[3]);
     }
+    */
 
     return parsed;
   },
@@ -149,7 +152,8 @@ let io = {
   parseElement(elem) {
     let classes = {
       'path': Path,
-      'text': Text
+      'text': Text,
+      'rect': Rect
     };
     let virgins = {
       'rect': Rect,
@@ -183,7 +187,7 @@ let io = {
           result.setContent(elem.textContent);
         }
 
-      } else if (virgins[type] != null) {
+      } else if (virgins[type] != null && false) {
         let virgin = new virgins[elem.nodeName.toLowerCase()](data);
         result = virgin.convertToPath();
         result.virgin = virgin;
@@ -195,6 +199,8 @@ let io = {
         result.rep.removeAttribute("transform");
         result.commit();
       }
+
+      console.log(result);
 
       return result;
 
@@ -239,6 +245,11 @@ let io = {
         }
         data[key] = val;
       }
+    }
+
+
+    if (data.id === undefined) {
+      data.id = UUIDV4(); 
     }
 
     // By now any transform attrs should be permanent

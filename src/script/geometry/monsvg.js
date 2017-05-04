@@ -45,6 +45,10 @@ export default class Monsvg {
     if (data == null) { data = {}; }
     this.data = data;
 
+    if (data.id) {
+      this.id = data.id;
+    }
+
     this.metadata = {
       angle: 0,
       locked: false

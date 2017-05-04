@@ -66,6 +66,9 @@ let transformer = {
 
   registerCtrlPoint(which, layer, origin) {
     let id = 'transformer:'+which;
+
+    let opposite;
+
     let ctrlBounds = Bounds.centeredOnPosn(origin.sharp(), CTRL_PT_DIMEN, CTRL_PT_DIMEN);
 
     let ctrlOpts = {
@@ -77,7 +80,6 @@ let transformer = {
     }
 
     layer.drawRect(ctrlBounds, ctrlOpts);
-    //layer.context.fillText(which, origin.x+5, origin.y-5);
 
     let elem = new Element(id, ctrlBounds, {
       'mousedown': function (e, posn) {
@@ -97,7 +99,6 @@ let transformer = {
         let bounds = this.selectionBounds();
         let resultBounds = bounds.clone();
 
-        let opposite;
         switch (which) {
           case 'tl':
             opposite = bounds.br();
@@ -143,6 +144,10 @@ let transformer = {
         }
 
         this.scaleSelected(xScale, yScale, opposite);
+      },
+      'drag:stop': (e, posn, startPosn) => {
+        e.stopPropagation();
+
       }
     })
 

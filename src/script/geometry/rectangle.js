@@ -10,6 +10,7 @@ export default class Rect extends Monsvg {
   }
 
   constructor(data) {
+    console.log('RECT', data);
     super(data);
     this.data = data;
     if ((this.data.x == null)) { this.data.x = 0; }
@@ -49,7 +50,7 @@ export default class Rect extends Monsvg {
   */
 
   lineSegments() {
-    let p = this.points();
+    let p = this.getPoints();
     return [
       new LineSegment(p[0], p[1], p[1]),
       new LineSegment(p[1], p[2], p[2]),
@@ -169,7 +170,7 @@ export default class Rect extends Monsvg {
 
   nudge(x, y) {
     this.data.x += x;
-    this.data.y -= y;
+    this.data.y += y;
     return this.commit();
   }
 
@@ -185,7 +186,9 @@ export default class Rect extends Monsvg {
 
     // Build a new rectangular path from it
     let path = new Path({
-      d: `M${pts[0]} L${pts[1]} L${pts[2]} L${pts[3]} L${pts[0]}`});
+      d: `M${pts[0]} L${pts[1]} L${pts[2]} L${pts[3]} L${pts[0]}`,
+      id: this.id,
+    });
 
     // Copy the colors over
     path.eyedropper(this);
@@ -196,10 +199,26 @@ export default class Rect extends Monsvg {
   }
 
 
-  drawToCanvas(context) {
-    context = this.setupToCanvas(context);
-    context.rect(this.data.x, this.data.y, this.data.width, this.data.height);
-    return context = this.finishToCanvas(context);
+  drawToCanvas(context, projection) {
+    let origin = new Posn(
+      projection.x(this.data.x),
+      projection.y(this.data.y)
+    );
+
+    let opposite = new Posn(
+      projection.x(this.data.x) + projection.z(this.data.width),
+      projection.y(this.data.y) + projection.z(this.data.height)
+    );
+    this.setupToCanvas(context);
+
+    context.beginPath(origin.x, origin.y);
+    context.moveTo(origin.x, origin.y);
+    context.lineTo(opposite.x, origin.y);
+    context.lineTo(opposite.x, opposite.y);
+    context.lineTo(origin.x, opposite.y);
+    context.lineTo(origin.x, origin.y);
+
+    this.finishToCanvas(context);
   }
 
 
