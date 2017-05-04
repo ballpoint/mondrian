@@ -36,17 +36,11 @@ export default class Cursor extends Tool {
         this.editor.state.selection = [this.hovering];
       }
     } else {
-        this.editor.state.selection = [];
+      this.editor.state.selection = [];
     }
   }
 
   handleClick(e, posn) {
-    if (this.hovering) {
-      this.editor.state.selection = [this.hovering];
-      console.log(this.editor.selectionIds());
-    } else {
-      this.editor.state.selection = [];
-    }
   }
 
   handleDragStart(e, posn) {

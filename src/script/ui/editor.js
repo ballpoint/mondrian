@@ -7,7 +7,7 @@ import Bounds from 'geometry/bounds'
 import Element from 'ui/element';
 import CursorHandler from 'ui/cursor-handler';
 import DocHistory from 'history/history';
-import { NudgeEvent, ScaleEvent } from 'history/events';
+import { NudgeEvent, ScaleEvent, DeleteEvent } from 'history/events';
 
 import Cursor from 'ui/tools/cursor';
 import Paw from 'ui/tools/paw';
@@ -99,6 +99,8 @@ export default class Editor {
     hotkeys.on('down', 'space', () => { this.selectTool(new Paw(this)); });
     hotkeys.on('up', 'space', () => { this.selectTool(this.state.lastTool); });
 
+    hotkeys.on('down', 'ctrl-A', () => { this.selectAll(); });
+
     hotkeys.on('down', '0', () => { this.setZoom(1); });
     hotkeys.on('down', '+', () => { this.zoomIn(); });
     hotkeys.on('down', '-', () => { this.zoomOut(); });
@@ -159,10 +161,8 @@ export default class Editor {
     this.state.selection = [];
   }
 
-  selectElement(elem) {
-    if (this.state.selection.has(elem)) {
-      this.state.selection.push(elem);
-    }
+  selectAll() {
+    this.state.selection = this.doc.elements.slice(0);
   }
 
   selectTool(tool) {
@@ -174,12 +174,23 @@ export default class Editor {
   }
 
   deleteSelection() {
+    let indexes = {};
+    let elements = [];
     for (let elem of this.state.selection) {
-      this.doc.remove(elem);
+      let index = this.doc.remove(elem);
+      indexes[elem.id] = index;
+      elements.push(elem);
     }
+    console.log(indexes);
     this.state.selection = [];
     delete this.state.hovering;
     this.canvas.refreshAll();
+
+    let event = new DeleteEvent({
+      elements,
+      indexes
+    });
+    this.history.push(event);
   }
 
   selectionBounds() {

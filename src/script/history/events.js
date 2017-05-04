@@ -81,3 +81,27 @@ export class ScaleEvent extends HistoryEvent {
     this.data.y *= event.data.y;
   }
 }
+
+export class DeleteEvent extends HistoryEvent {
+  constructor(data) {
+    super(data);
+  }
+
+  perform(editor) {
+    for (let elem of this.data.elements) {
+      editor.doc.removeId(elem.id);
+    }
+  }
+
+  undo(editor) {
+    for (let elem of this.data.elements) {
+      let index = this.data.indexes[elem.id];
+      editor.doc.insertElement(elem, index);
+    }
+  }
+
+  merge(event) {
+    this.data.indexes = _.merge(this.data.indexes, event.data.indexes);
+    this.data.elements = this.data.elements.concat(event.data.elements);
+  }
+}

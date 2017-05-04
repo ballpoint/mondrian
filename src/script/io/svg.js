@@ -73,7 +73,24 @@ export default class SVG {
   }
 
   remove(r) {
-    this.elements = this.elements.filter((elem) => { return elem !== r });
+    return this.removeId(r.id);
+  }
+
+  removeId(id) {
+    let index = -1;
+    let newElems = [];
+    for (let i = 0; i < this.elements.length; i ++) {
+      let elem = this.elements[i];
+      if (elem.id === id) {
+        index = i;
+      } else {
+        newElems.push(elem);
+      }
+    }
+
+    this.elements = newElems;
+
+    return index;
   }
 
   center() {
@@ -106,5 +123,9 @@ export default class SVG {
       }
     }
     return elems;
+  }
+
+  insertElement(elem, index) {
+    this.elements = this.elements.slice(0, index).concat([elem]).concat(this.elements.slice(index));
   }
 }
