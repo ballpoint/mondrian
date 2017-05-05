@@ -7,7 +7,7 @@ import Editor from 'ui/editor';
 
 let doc = new SVG(abq);
 
-let editor = new Editor('#main');
+let editor = new Editor('#app-render');
 
 editor.load(doc);
 

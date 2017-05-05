@@ -41,6 +41,7 @@ export default class Editor {
   }
 
   initCanvas() {
+    console.log(this.root, this.root.offsetHeight);
     this.canvas = new Canvas(this.root);
 
     this.cursor = new CursorHandler(this.canvas.cursor);
@@ -255,7 +256,7 @@ export default class Editor {
   }
 
   refreshBackground(layer, context) {
-    context.fillStyle = 'lightgrey';
+    context.fillStyle = 'white';
     context.fillRect(0, 0, layer.width, layer.height);
 
     // Draw white background
@@ -267,9 +268,19 @@ export default class Editor {
 
   refreshBorder(layer, context) {
     if (this.doc) {
-      let bounds = this.screenBounds();
+      let bounds = this.screenBounds().sharp();
       layer.drawRect(bounds, { stroke: 'black' });
     }
+
+    let w = this.canvas.width;
+    let h = this.canvas.height;
+    layer.drawLineSegment(new Posn(0, 0), new Posn(w, 0), {
+      stroke: 'rgba(0,0,0,0.5)'
+    });
+
+    layer.drawLineSegment(new Posn(0, 0), new Posn(0, h), {
+      stroke: 'rgba(0,0,0,0.5)'
+    });
   }
 
   nudgeSelected(x, y) {

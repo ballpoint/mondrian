@@ -2,8 +2,31 @@
   <head>
     <link rel="stylesheet" href="/build/styles.css" />
   </head>
-  <body>
-    <div id="main" style="height: 100%"></div>
+  <body id="app">
+
+    <div id="app-main">
+
+      <header id="app-header">
+        <a id="logo">
+          <svg width="40" height="40">
+            <rect x="0" y="0" width="40" height="40" fill="#212121"/>
+            <rect x="6" y="8" width="6" height="22" fill="white"/>
+            <rect x="17" y="8" width="6" height="10" fill="white"/>
+            <rect x="28" y="8" width="6" height="22" fill="white"/>
+          </svg>
+        </a>
+      </header>
+
+      <div id="app-view">
+        <div id="app-tools"></div>
+        <div id="app-render"></div>
+      </div>
+
+      <footer id="app-footer"></footer>
+    </div>
+
+    <div id="app-windows"></div>
+
 
     <script type="text/javascript" src="/build/bundles/app.bundle.js"></script>
   </body>
