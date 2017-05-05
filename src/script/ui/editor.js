@@ -10,6 +10,7 @@ import DocHistory from 'history/history';
 import { NudgeEvent, ScaleEvent, DeleteEvent } from 'history/events';
 
 import Cursor from 'ui/tools/cursor';
+import Zoom from 'ui/tools/zoom';
 import Paw from 'ui/tools/paw';
 
 import transformer from 'ui/editor/transformer';
@@ -96,12 +97,18 @@ export default class Editor {
     hotkeys.on('down', 'shift-upArrow', () => { this.nudgeSelected(0, -10); });
     hotkeys.on('down', 'shift-leftArrow', () => { this.nudgeSelected(-10, 0); });
 
+    hotkeys.on('down', 'V', () => { this.selectTool(new Cursor(this)); });
+    hotkeys.on('down', 'Z', () => { this.selectTool(new Zoom(this)); });
     hotkeys.on('down', 'space', () => { this.selectTool(new Paw(this)); });
     hotkeys.on('up', 'space', () => { this.selectTool(this.state.lastTool); });
 
     hotkeys.on('down', 'ctrl-A', () => { this.selectAll(); });
 
-    hotkeys.on('down', '0', () => { this.setZoom(1); });
+    hotkeys.on('down', '1', () => {
+      let center = this.doc.bounds.center();
+      this.setPosition(center);
+      this.setZoom(1);
+    });
     hotkeys.on('down', '+', () => { this.zoomIn(); });
     hotkeys.on('down', '-', () => { this.zoomOut(); });
 
@@ -123,7 +130,7 @@ export default class Editor {
 
   initState() {
     this.state = {
-      zoomLevel: 1.22,
+      zoomLevel: 1,
       selection: [],
       tool: new Cursor(this)
     };
@@ -240,6 +247,10 @@ export default class Editor {
   }
 
   docBounds() {
+    return new Bounds(0,0,this.doc.width,this.doc.height);
+  }
+
+  screenBounds() {
     return this.projection.bounds(new Bounds(0,0,this.doc.width,this.doc.height));
   }
 
@@ -249,14 +260,14 @@ export default class Editor {
 
     // Draw white background
     if (this.doc) {
-      let bounds = this.docBounds();
+      let bounds = this.screenBounds();
       layer.drawRect(bounds, { fill: 'white' });
     }
   }
 
   refreshBorder(layer, context) {
     if (this.doc) {
-      let bounds = this.docBounds();
+      let bounds = this.screenBounds();
       layer.drawRect(bounds, { stroke: 'black' });
     }
   }

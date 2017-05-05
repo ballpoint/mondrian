@@ -62,8 +62,8 @@ export default class SVG {
     this.width = parseInt(this.root.getAttribute('width', 10));
     this.height = parseInt(this.root.getAttribute('height', 10));
 
-    if (this._bounds == null) {
-      return this._bounds = new Bounds(0, 0, this.width, this.height);
+    if (this.bounds == null) {
+      return this.bounds = new Bounds(0, 0, this.width, this.height);
     }
   }
 

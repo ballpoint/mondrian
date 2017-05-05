@@ -43,9 +43,9 @@ export default class Cursor extends Tool {
   handleClick(e, posn) {
   }
 
-  handleDragStart(e, posn) {
+  handleDragStart(e, posn, lastPosn) {
     if (this.editor.state.selection.length === 0) {
-      this.dragSelectStart = posn;
+      this.dragSelectStart = lastPosn;
     }
   }
 
