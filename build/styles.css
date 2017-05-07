@@ -22,7 +22,7 @@ body#app {
       padding: 10px;
       width: 60px;
       height: 60px;
-      background-color: #eaeaea;
+      background-color: #f2f2f2;
       border-right: 1px solid #b2b2b2;
       border-bottom: 1px solid #b2b2b2; }
   #app-main #app-view {
@@ -44,14 +44,6 @@ body#app {
     flex-grow: 0;
     flex-shrink: 0;
     border-top: 1px solid #b2b2b2; }
-
-#app-windows {
-  position: absolute;
-  top: 80px;
-  right: 0;
-  width: 400px;
-  bottom: 20px;
-  border-left: 1px solid #b2b2b2; }
 .canvas-container {
   position: relative;
   height: 100%; }
@@ -59,5 +51,17 @@ body#app {
     position: absolute;
     top: 0;
     left: 0; }
+#app-windows {
+  position: absolute;
+  top: 90px;
+  right: 0;
+  width: 400px;
+  bottom: 20px; }
+
+.util-window {
+  padding: 10px;
+  margin: 5px;
+  background: white;
+  border: 1px solid #b2b2b2; }
 
 /*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzdHlsZXMuY3NzIiwic291cmNlUm9vdCI6IiJ9*/

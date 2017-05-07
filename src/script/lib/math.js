@@ -1,4 +1,4 @@
-export const PIXEL_RATIO = Math.ceil(2 ||  window.devicePixelRatio || 1);
+export const PIXEL_RATIO = window.devicePixelRatio || 1;
 
 export default {
   roundTo(n, r) {

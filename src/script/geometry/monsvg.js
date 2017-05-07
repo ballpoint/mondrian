@@ -489,7 +489,7 @@ export default class Monsvg {
   }
 
 
-  finishToCanvas(context) {
+  finishToCanvas(context, projection) {
     if (this.points != null ? this.points.closed : undefined) { context.closePath(); }
 
     if (this.data.fill) {
@@ -499,11 +499,11 @@ export default class Monsvg {
 
     if (this.data.stroke) {
       context.strokeStyle = this.data.stroke.toRGBString();
-      if (this.data['stroke-width']) {
-        context.lineWidth = parseFloat(this.data['stroke-width']);
-      } else {
-        context.lineWidth = 1;
-      }
+      let lw = parseFloat(this.data['stroke-width']);
+      if (lw === undefined) lw = 1;
+
+      context.lineWidth = projection.z(lw);
+
       context.stroke();
     }
   }

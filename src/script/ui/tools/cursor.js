@@ -85,7 +85,8 @@ export default class Cursor extends Tool {
 
     if (this.dragSelectStart && this.dragSelectEnd) {
       let bounds = Bounds.fromPosns(this.dragSelectStart, this.dragSelectEnd);
-      bounds = this.editor.projection.bounds(bounds);
+      bounds = this.editor.projection.bounds(bounds).sharp();
+      layer.setLineWidth(1);
       layer.drawRect(bounds, { stroke: 'black' });
     }
 

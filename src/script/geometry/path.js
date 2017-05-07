@@ -259,7 +259,7 @@ export default class Path extends Monsvg {
           break;
       }
     }
-    return this.finishToCanvas(context);
+    return this.finishToCanvas(context, projection);
   }
 }
 Path.initClass();

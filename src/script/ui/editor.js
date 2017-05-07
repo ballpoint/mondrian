@@ -1,5 +1,7 @@
 import { PIXEL_RATIO } from 'lib/math';
 import { scaleLinear } from 'd3-scale';
+import consts from 'consts';
+import Color from 'ui/color';
 import EventEmitter from 'lib/events';
 import math from 'lib/math';
 import Canvas from 'ui/canvas';
@@ -15,6 +17,10 @@ import { NudgeEvent, ScaleEvent, DeleteEvent } from 'history/events';
 import Cursor from 'ui/tools/cursor';
 import Zoom from 'ui/tools/zoom';
 import Paw from 'ui/tools/paw';
+
+const RULER_DIMEN = math.sharpen(20);
+
+console.log(consts);
 
 import transformer from 'ui/editor/transformer';
 
@@ -182,8 +188,11 @@ export default class Editor extends EventEmitter {
 
   selectElements(elems) {
     this.state.selection = elems;
+
+    this.calculateSelectionBounds();
+
     this.canvas.refreshAll();
-    this.trigger('selection:change', elems);
+    this.trigger('change');
   }
 
   selectTool(tool) {
@@ -214,14 +223,14 @@ export default class Editor extends EventEmitter {
     this.history.push(event);
   }
 
-  selectionBounds() {
+  calculateSelectionBounds() {
     let boundsList = [];
 
     for (let elem of this.state.selection) {
       boundsList.push(elem.bounds());
     }
 
-    return new Bounds(boundsList);
+    this.state.selectionBounds = new Bounds(boundsList);
   }
 
   selectionIds() {
@@ -272,38 +281,74 @@ export default class Editor extends EventEmitter {
   }
 
   refreshBackground(layer, context) {
-    context.fillStyle = 'white';
+    console.log(consts);
+    layer.setFill(consts.bgGrey);
     context.fillRect(0, 0, layer.width, layer.height);
 
     // Draw white background
     if (this.doc) {
       let bounds = this.screenBounds();
-      layer.drawRect(bounds, { fill: 'white' });
+      layer.drawRect(bounds, { fill: new Color('#ffffff') });
     }
   }
 
   refreshGuides(layer, context) {
     layer.setLineWidth(1);
 
+    let docBounds;
+
     if (this.doc) {
-      let bounds = this.screenBounds().sharp();
-      layer.drawRect(bounds, { stroke: 'black' });
+      docBounds = this.screenBounds().sharp();
+      layer.drawRect(docBounds, { stroke: 'black' });
     }
 
     // Draw ruler
-    let ruleDimenSharp = math.sharpen(20);
-
     layer.drawRect(new Bounds(-1, -1, 21, 21).sharp(), { fill: '#ffffff' });
-    layer.drawRect(new Bounds(20, -1, this.canvas.width, 21).sharp(), { fill: '#f2f2f2' });
-    layer.drawRect(new Bounds(-1, 20, 21, this.canvas.height).sharp(), { fill: '#f2f2f2' });
-    layer.drawLineSegment({ x: -1, y: ruleDimenSharp  }, { x: this.canvas.width, y: ruleDimenSharp  }, { stroke: '#c9c9c9' });
-    layer.drawLineSegment({ x: ruleDimenSharp  , y: -1 }, { x: ruleDimenSharp  , y: this.canvas.height }, { stroke: '#c9c9c9' });
+    layer.drawRect(new Bounds(20, -1, this.canvas.width, 21).sharp(), { fill: '#ffffff' });
+    layer.drawRect(new Bounds(-1, 20, 21, this.canvas.height).sharp(), { fill: '#ffffff' });
+    layer.drawLineSegment(
+      { x: -1, y: RULER_DIMEN  },
+      { x: this.canvas.width, y: RULER_DIMEN  },
+      { stroke: '#c9c9c9' }
+    );
+    layer.drawLineSegment(
+      { x: RULER_DIMEN  , y: -1 },
+      { x: RULER_DIMEN  , y: this.canvas.height },
+      { stroke: '#c9c9c9' }
+    );
+
+    for (let x = math.roundTo(this.projection.xInvert(RULER_DIMEN), 100); x < this.projection.xInvert(this.canvas.width); x += 100) {
+      this.drawRulerXTick(layer, x);
+    }
+
+    for (let y = math.roundTo(this.projection.yInvert(RULER_DIMEN), 100); y < this.projection.yInvert(this.canvas.height); y += 100) {
+      this.drawRulerYTick(layer, y);
+    }
+  }
+
+  drawRulerXTick(layer, xval) {
+    let x = this.projection.x(xval);
+    layer.drawLineSegment(
+      { x, y: RULER_DIMEN - 10 },
+      { x, y: RULER_DIMEN },
+      { stroke: '#000000' }
+    );
+  }
+
+  drawRulerYTick(layer, yval) {
+    let y = this.projection.y(yval);
+    layer.drawLineSegment(
+      { x: RULER_DIMEN - 10, y },
+      { x: RULER_DIMEN, y },
+      { stroke: '#000000' }
+    );
   }
 
   nudgeSelected(x, y) {
     for (let elem of this.state.selection) {
       elem.nudge(x,y);
     }
+    this.calculateSelectionBounds();
     this.canvas.refreshAll();
 
     // Record history event
@@ -313,6 +358,7 @@ export default class Editor extends EventEmitter {
       yd: y,
     });
     this.history.push(event);
+    this.trigger('change');
   }
 
   scaleSelected(x, y, origin, historyOpts={}) {
@@ -329,7 +375,7 @@ export default class Editor extends EventEmitter {
     });
 
     this.history.push(event);
-
+    this.trigger('change');
   }
 
   refreshTool(layer, context) {

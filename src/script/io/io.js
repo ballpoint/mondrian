@@ -200,8 +200,6 @@ let io = {
         result.commit();
       }
 
-      console.log(result);
-
       return result;
 
     } else if (type === "use") {

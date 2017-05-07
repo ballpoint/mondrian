@@ -16,7 +16,7 @@ module.exports = {
       path.join(__dirname, 'src/svg'),
       path.join(__dirname, 'src/styles')
     ],
-    extensions: ['.js', '.svg']
+    extensions: ['.js', '.svg', '.scss']
   },
 
   entry: {

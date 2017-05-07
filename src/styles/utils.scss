@@ -1,0 +1,17 @@
+@import 'vars.scss';
+
+
+#app-windows {
+  position: absolute;
+  top: $app-header-height + 30px;
+  right: 0;
+  width: 400px;
+  bottom: 20px;
+}
+
+.util-window {
+  padding: 10px;
+  margin: 5px;
+  background: white;
+  border: 1px solid $fg-grey;
+}

@@ -11,13 +11,7 @@ let transformer = {
       return;
     }
 
-    let boundsList = [];
-
-    for (let elem of this.state.selection) {
-      boundsList.push(elem.bounds());
-    }
-
-    let bounds = this.projection.bounds(new Bounds(boundsList));
+    let bounds = this.projection.bounds(this.state.selectionBounds);
 
     // Draw transformer box
 
@@ -96,7 +90,7 @@ let transformer = {
 
         // NOTE: When it comes time to do snapping, we may want to switch this code
         // to be operating on bounds on the doc level (rather than the UI level)
-        let bounds = this.selectionBounds();
+        let bounds = this.state.selectionBounds;
         let resultBounds = bounds.clone();
 
         switch (which) {

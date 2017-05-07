@@ -67,13 +67,3 @@ body#app {
   }
 }
 
-#app-windows {
-  position: absolute;
-  top: $app-header-height + 20px;
-  right: 0;
-  width: 400px;
-  bottom: 20px;
-  border-left: 1px solid $fg-grey;
-}
-
-

@@ -22,6 +22,14 @@ export default class Layer {
     this.context.lineWidth = n / PIXEL_RATIO;
   }
 
+  setFill(color) {
+    this.context.fillStyle = color.toString();
+  }
+
+  setStroke(color) {
+    this.context.strokeStyle = color.toString();
+  }
+
   setDimensions(w, h) {
     let ratio = PIXEL_RATIO;
 
@@ -73,10 +81,10 @@ export default class Layer {
 
   do(fn, opts) {
     if (opts.fill) {
-      this.context.fillStyle = opts.fill;
+      this.setFill(opts.fill);
     }
     if (opts.stroke) {
-      this.context.strokeStyle = opts.stroke;
+      this.setStroke(opts.stroke);
     }
 
     fn.call(this);
@@ -95,7 +103,10 @@ export default class Layer {
         this.context.fillRect(x, y, width, height);
       }
       if (opts.stroke) {
-        this.context.strokeRect(x, y, width, height);
+        this.drawLineSegment({ x, y }, { x, y: bounds.y2 }, { stroke: opts.stroke});
+        this.drawLineSegment({ x, y }, { x: bounds.x2, y }, { stroke: opts.stroke});
+        this.drawLineSegment({ x: bounds.x2, y: bounds.y2 }, { x, y: bounds.y2 }, { stroke: opts.stroke});
+        this.drawLineSegment({ x: bounds.x2, y: bounds.y2 }, { x: bounds.x2, y }, { stroke: opts.stroke});
       }
     }, opts);
   }
