@@ -1,3 +1,5 @@
+import { PIXEL_RATIO } from 'lib/math';
+
 export default class Layer {
   constructor(id) {
     this.id = id;
@@ -5,6 +7,8 @@ export default class Layer {
     this.node = document.createElement('canvas');
 
     this.context = this.node.getContext('2d');
+
+    this.setLineWidth(1); // DEFAULT
 
     this.elements = [];
     this.elementsMap = {};
@@ -14,8 +18,14 @@ export default class Layer {
     }
   }
 
+  setLineWidth(n) {
+    this.context.lineWidth = n / PIXEL_RATIO;
+  }
+
   setDimensions(w, h) {
-    let ratio = window.devicePixelRatio || 1;
+    let ratio = PIXEL_RATIO;
+
+    console.log(ratio);
 
     this.width = w;
     this.height = h;

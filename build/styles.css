@@ -13,20 +13,28 @@ body#app {
   flex-direction: column;
   height: 100%; }
   #app-main header#app-header {
-    height: 40px;
+    height: 60px;
     flex-grow: 0;
     flex-shrink: 0;
-    background-color: #eaeaea; }
+    border-bottom: 1px solid #b2b2b2; }
     #app-main header#app-header #logo {
       display: block;
-      width: 40px;
-      height: 40px; }
+      padding: 10px;
+      width: 60px;
+      height: 60px;
+      background-color: #eaeaea;
+      border-right: 1px solid #b2b2b2;
+      border-bottom: 1px solid #b2b2b2; }
   #app-main #app-view {
     display: flex;
     height: 100%; }
     #app-main #app-view #app-tools {
-      width: 40px;
-      background-color: #eaeaea; }
+      width: 60px;
+      border-right: 1px solid #b2b2b2; }
+      #app-main #app-view #app-tools .app-tool {
+        width: 100%;
+        padding: 10px;
+        border-bottom: 1px solid #b2b2b2; }
     #app-main #app-view #app-render {
       position: relative;
       flex-grow: 1;
@@ -35,11 +43,14 @@ body#app {
     height: 20px;
     flex-grow: 0;
     flex-shrink: 0;
-    background-color: #eaeaea; }
+    border-top: 1px solid #b2b2b2; }
 
 #app-windows {
-  width: 380px;
-  background-color: #eaeaea;
+  position: absolute;
+  top: 80px;
+  right: 0;
+  width: 400px;
+  bottom: 20px;
   border-left: 1px solid #b2b2b2; }
 .canvas-container {
   position: relative;

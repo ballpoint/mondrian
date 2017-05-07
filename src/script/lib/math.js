@@ -1,3 +1,5 @@
+export const PIXEL_RATIO = Math.ceil(2 ||  window.devicePixelRatio || 1);
+
 export default {
   roundTo(n, r) {
     let off = n % r
@@ -19,6 +21,6 @@ export default {
   },
 
   sharpen(n) {
-    return this.roundTo(n, 0.5);
+    return Math.floor(n) + (0.5/PIXEL_RATIO);
   }
 }

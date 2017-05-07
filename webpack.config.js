@@ -36,6 +36,13 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.js$/,
+        loader: 'babel-loader',
+        options: {
+          presets: [['react']]
+        }
+      },
+      {
         test: /\.svg$/,
         loader: 'raw-loader'
       },

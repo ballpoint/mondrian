@@ -1,4 +1,7 @@
+import { PIXEL_RATIO } from 'lib/math';
 import { scaleLinear } from 'd3-scale';
+import EventEmitter from 'lib/events';
+import math from 'lib/math';
 import Canvas from 'ui/canvas';
 import Posn from 'geometry/posn';
 import Projection from 'ui/projection';
@@ -16,8 +19,9 @@ import Paw from 'ui/tools/paw';
 import transformer from 'ui/editor/transformer';
 
 
-export default class Editor {
+export default class Editor extends EventEmitter {
   constructor(rootSelector) {
+    super();
 
     let root = document.querySelector(rootSelector);
     if (root) {
@@ -50,7 +54,7 @@ export default class Editor {
     this.canvas.createLayer('drawing', this.refreshDrawing.bind(this));
     this.canvas.createLayer('tool', this.refreshTool.bind(this));
     this.canvas.createLayer('transformer', transformer.refresh.bind(this));
-    this.canvas.createLayer('border', this.refreshBorder.bind(this));
+    this.canvas.createLayer('guides', this.refreshGuides.bind(this));
     this.canvas.createLayer('debug', () => {});
 
     this.cursor.on('mousemove', (e, posn) => {
@@ -103,7 +107,10 @@ export default class Editor {
     hotkeys.on('down', 'space', () => { this.selectTool(new Paw(this)); });
     hotkeys.on('up', 'space', () => { this.selectTool(this.state.lastTool); });
 
-    hotkeys.on('down', 'ctrl-A', () => { this.selectAll(); });
+    hotkeys.on('down', 'ctrl-A', (e) => {
+      e.preventDefault();
+      this.selectAll();
+    });
 
     hotkeys.on('down', '1', () => {
       let center = this.doc.bounds.center();
@@ -166,11 +173,17 @@ export default class Editor {
   }
 
   clearSelection() {
-    this.state.selection = [];
+    this.selectElements([]);
   }
 
   selectAll() {
-    this.state.selection = this.doc.elements.slice(0);
+    this.selectElements(this.doc.elements.slice(0));
+  }
+
+  selectElements(elems) {
+    this.state.selection = elems;
+    this.canvas.refreshAll();
+    this.trigger('selection:change', elems);
   }
 
   selectTool(tool) {
@@ -234,6 +247,9 @@ export default class Editor {
     let offsetTop  = (this.canvas.height - (this.doc.height*this.state.zoomLevel)) / 2;
     offsetTop += ((this.doc.height/2)-this.position.y)*this.state.zoomLevel;
 
+    // Account for windows on right side
+    offsetLeft -= 200;
+
     let x = scaleLinear()
       .domain([0, this.doc.width])
       .range([offsetLeft, offsetLeft + (this.doc.width*this.state.zoomLevel)]);
@@ -266,21 +282,22 @@ export default class Editor {
     }
   }
 
-  refreshBorder(layer, context) {
+  refreshGuides(layer, context) {
+    layer.setLineWidth(1);
+
     if (this.doc) {
       let bounds = this.screenBounds().sharp();
       layer.drawRect(bounds, { stroke: 'black' });
     }
 
-    let w = this.canvas.width;
-    let h = this.canvas.height;
-    layer.drawLineSegment(new Posn(0, 0), new Posn(w, 0), {
-      stroke: 'rgba(0,0,0,0.5)'
-    });
+    // Draw ruler
+    let ruleDimenSharp = math.sharpen(20);
 
-    layer.drawLineSegment(new Posn(0, 0), new Posn(0, h), {
-      stroke: 'rgba(0,0,0,0.5)'
-    });
+    layer.drawRect(new Bounds(-1, -1, 21, 21).sharp(), { fill: '#ffffff' });
+    layer.drawRect(new Bounds(20, -1, this.canvas.width, 21).sharp(), { fill: '#f2f2f2' });
+    layer.drawRect(new Bounds(-1, 20, 21, this.canvas.height).sharp(), { fill: '#f2f2f2' });
+    layer.drawLineSegment({ x: -1, y: ruleDimenSharp  }, { x: this.canvas.width, y: ruleDimenSharp  }, { stroke: '#c9c9c9' });
+    layer.drawLineSegment({ x: ruleDimenSharp  , y: -1 }, { x: ruleDimenSharp  , y: this.canvas.height }, { stroke: '#c9c9c9' });
   }
 
   nudgeSelected(x, y) {

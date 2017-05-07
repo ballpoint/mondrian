@@ -33,10 +33,10 @@ export default class Cursor extends Tool {
   handleMousedown(e, posn) {
     if (this.hovering) {
       if (!this.editor.state.selection.has(this.hovering)) {
-        this.editor.state.selection = [this.hovering];
+        this.editor.selectElements([this.hovering]);
       }
     } else {
-      this.editor.state.selection = [];
+      this.editor.selectElements([]);
     }
   }
 
@@ -73,7 +73,7 @@ export default class Cursor extends Tool {
         }
       }
 
-      this.editor.state.selection = newSelection;
+      this.editor.selectElements(newSelection);
 
       this.dragSelectStart = null;
       this.dragSelectEnd = null;
@@ -86,8 +86,7 @@ export default class Cursor extends Tool {
     if (this.dragSelectStart && this.dragSelectEnd) {
       let bounds = Bounds.fromPosns(this.dragSelectStart, this.dragSelectEnd);
       bounds = this.editor.projection.bounds(bounds);
-      context.strokeStyle = 'black';
-      context.strokeRect(bounds.x, bounds.y, bounds.width, bounds.height);
+      layer.drawRect(bounds, { stroke: 'black' });
     }
 
     /*
