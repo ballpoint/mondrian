@@ -25,6 +25,7 @@ body#app {
     flex-grow: 0;
     flex-shrink: 0;
     border-bottom: 1px solid $fg-grey;
+    display: flex;
 
     #logo {
       display: block;
@@ -34,6 +35,28 @@ body#app {
       background-color: $bg-grey;
       border-right: 1px solid $fg-grey;
       border-bottom: 1px solid $fg-grey;
+    }
+
+    #app-controls {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: $app-header-height;
+
+      #app-tbd {
+        flex-grow: 1;
+      }
+      #app-menus {
+        flex-grow: 0;
+        display: flex;
+        .app-menu-button {
+          padding: 5px 10px;
+        }
+      }
+    }
+    #app-account {
+      flex-grow: 0;
+      width: 200px;
     }
   }
 

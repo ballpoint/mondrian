@@ -365,6 +365,7 @@ export default class Editor extends EventEmitter {
     for (let elem of this.state.selection) {
       elem.scale(x, y, origin);
     }
+    this.calculateSelectionBounds();
     this.canvas.refreshAll();
 
     let event = new ScaleEvent({

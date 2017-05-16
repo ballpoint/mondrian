@@ -18,13 +18,23 @@ let Utils = React.createClass({
 
   render() {
     return (
-      <div className="util-window">
-        <div>{this.state.selection.length}</div>
-        {
-          this.state.selection.length > 0 ? (
-          <div>{this.state.selectionBounds.x}</div>
-          ) : null
-        }
+      <div>
+        <div className="util-window">
+          <div>{this.state.selection.length}</div>
+          {
+            this.state.selection.length > 0 ? (
+            <div>{this.state.selectionBounds.x}</div>
+            ) : null
+          }
+        </div>
+        <div className="util-window">
+          <div>{this.state.selection.length}</div>
+          {
+            this.state.selection.length > 0 ? (
+            <div>{this.state.selectionBounds.x}</div>
+            ) : null
+          }
+        </div>
       </div>
     );
   }
