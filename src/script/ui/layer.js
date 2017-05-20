@@ -33,8 +33,6 @@ export default class Layer {
   setDimensions(w, h) {
     let ratio = PIXEL_RATIO;
 
-    console.log(ratio);
-
     this.width = w;
     this.height = h;
 

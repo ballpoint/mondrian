@@ -49,8 +49,8 @@ export default class Path extends Monsvg {
   importNewPoints(points) {
     if (points instanceof PointsList) {
       this.points = points;
-    } else {
-      this.points = new PointsList(points, this);
+    } else if (typeof(points) === 'string') {
+      this.points = PointsList.fromString(points, this);
     }
 
     this.points = this.points.absolute();

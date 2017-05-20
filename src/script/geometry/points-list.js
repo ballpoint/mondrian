@@ -32,7 +32,7 @@ export default class PointsList {
   
     this.prototype.closed = false;
   }
-  constructor(alop, owner, segments) {
+  constructor(segments, owner) {
     // Build this thing out of PointsSegment objects.
     //
     // I/P:
@@ -51,11 +51,10 @@ export default class PointsList {
     this.owner = owner;
     if (segments == null) { segments = []; }
     this.segments = segments;
-    if (typeof alop === "string") {
-      alop = conversions.stringToAlop(alop, this.owner);
-    }
 
     // Now set up some helper variables to keep track of things
+
+    /*
 
     // The point segment we are working on right now
     // This gets shoved into @segments when commitSegment is called
@@ -134,6 +133,74 @@ export default class PointsList {
     // Get the last one we never got to.
     commitSegment();
     lastPoint.setSucc(this.first);
+    */
+  }
+
+  static fromString(string, owner) {
+    // Given a d="M204,123 C9023........." string,
+    // return an array of Points.
+
+    let list = new PointsList([], owner);
+
+    let previous = undefined;
+
+    let matches = [];
+    let currentMatch;
+
+    for (let i = 0; i < string.length; i ++) {
+      let char = string[i];
+      if (/[A-Z]/i.test(char)) {
+        if (currentMatch) {
+          matches.push(currentMatch)
+        }
+        currentMatch = '';
+      }
+      currentMatch += char;
+    }
+
+    let currentSegment = new PointsSegment([], list);
+
+    for (let point of matches) {
+      if (point === 'z') {
+        currentSegment.closed = true;
+        continue;
+      }
+
+      // Point's constructor decides what kind of subclass to make
+      // (MoveTo, CurveTo, etc)
+      let ps = Point.fromString(point, owner, previous);
+
+      for (let p of ps) {
+        if (p instanceof MoveTo) {
+          if (!currentSegment.empty()) {
+            list.pushSegment(currentSegment);
+            currentSegment = new PointsSegment([], list);
+          }
+        }
+
+        if (p instanceof Point) {
+          if (previous != null) {
+            previous.setSucc(p);
+          }
+          previous = p; // Set it for the next point
+
+          // Don't remember why I did this.
+          if ((p instanceof SmoothTo) && (owner instanceof Point)) {
+            p.setPrec(owner);
+          }
+
+          currentSegment.push(p);
+        }
+      }
+    }
+
+    list.pushSegment(currentSegment);
+
+    return list;
+  }
+
+  pushSegment(segment) {
+    this.segments.push(segment);
   }
 
   moveSegmentToFront(segment) {

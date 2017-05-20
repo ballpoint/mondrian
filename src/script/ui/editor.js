@@ -55,8 +55,6 @@ export default class Editor extends EventEmitter {
     console.log(this.root, this.root.offsetHeight);
     this.canvas = new Canvas(this.root);
 
-    console.log(this.root);
-
     this.cursor = new CursorTracking(this.root);
 
     this.cursorHandler = new CursorHandler(this.cursor);
@@ -135,10 +133,12 @@ export default class Editor extends EventEmitter {
 
     hotkeys.on('down', 'ctrl-Z', () => { 
       this.history.undo(this);
+      this.calculateSelectionBounds();
       this.canvas.refreshAll();
     });
     hotkeys.on('down', 'ctrl-shift-Z', () => {
       this.history.redo(this);
+      this.calculateSelectionBounds();
       this.canvas.refreshAll();
     });
 
@@ -216,7 +216,6 @@ export default class Editor extends EventEmitter {
       indexes[elem.id] = index;
       elements.push(elem);
     }
-    console.log(indexes);
     this.state.selection = [];
     delete this.state.hovering;
     this.canvas.refreshAll();
@@ -231,7 +230,10 @@ export default class Editor extends EventEmitter {
   calculateSelectionBounds() {
     let boundsList = [];
 
+
+
     for (let elem of this.state.selection) {
+      console.log(elem.getPoints());
       boundsList.push(elem.bounds());
     }
 
@@ -286,7 +288,6 @@ export default class Editor extends EventEmitter {
   }
 
   refreshBackground(layer, context) {
-    console.log(consts);
     layer.setFill(consts.bgGrey);
     context.fillRect(0, 0, layer.width, layer.height);
 

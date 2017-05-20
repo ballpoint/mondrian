@@ -177,12 +177,13 @@ let io = {
 
     let data = this.makeData(elem);
     let type = elem.nodeName.toLowerCase();
+    let clss = classes[type];
 
-    if ((classes[type] != null) || (virgins[type] != null)) {
+    if ((clss != null) || (virgins[type] != null)) {
       let result = null;
 
-      if (classes[type] != null) {
-        result = new classes[elem.nodeName.toLowerCase()](data);
+      if (clss != null) {
+        result = new clss(data);
         if (type === "text") {
           result.setContent(elem.textContent);
         }

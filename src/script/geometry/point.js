@@ -74,6 +74,11 @@ export default class Point extends Posn {
       console.log('UNSUPPORTED');
     }
 
+    if (this.x == Infinity || this.x == -Infinity) {
+      debugger;
+      console.warn('Infinity x');
+    }
+
     if (isNaN(this.x)) {
       debugger;
       console.warn('NaN x');
@@ -86,7 +91,7 @@ export default class Point extends Posn {
     this._flags = [];
   }
 
-  static fromString(point, owner, prec) {
+  static fromString(string, owner, prec) {
     // Given a string like "M 10.2 502.19"
     // return the corresponding Point.
     // Returns one of:
@@ -139,7 +144,7 @@ export default class Point extends Posn {
       // This check uses regex to also validate the point's syntax at the same time.
 
       let val = patterns[key];
-      let matched = point.match(val);
+      let matched = string.match(val);
 
       if (matched !== null) {
 
@@ -147,9 +152,18 @@ export default class Point extends Posn {
         // Match for the cooridinate pairs inside this point (1-3 should show up)
         // These then get mapped with parseFloat to get the true values, as coords
 
-        let coords = (point.match(pairs)).filter(p => p.length > 0).map(parseFloat);
+        let coords = (string.match(pairs)).filter(p => p.length > 0).map(parseFloat);
 
-        let relative = point.substring(0,1).match(/[mlcshv]/) !== null; // Is it lower-case? So it's relative? Shit!
+        let relative = string.substring(0,1).match(/[mlcshv]/) !== null; // Is it lower-case? So it's relative? Shit!
+
+        //
+        //TODO debug with chipotle logo
+        //what happens when first point is relative?
+        /*
+        if (relative && !prec) {
+          relative = false;
+        }
+        */
 
         let clen = coords.length;
         let elen = lengths[key]; // The expected amount of values for this kind of point
@@ -220,7 +234,7 @@ export default class Point extends Posn {
           // We got a weird amount of points. Dunno what to do with that.
           // TODO maybe I should actually rethink this later to be more robust: like, parse what I can and
           // ignore the rest. Idk if that would be irresponsible.
-          throw new Error(`Wrong amount of coordinates: ${point}. Expected ${elen} and got ${clen}.`);
+          throw new Error(`Wrong amount of coordinates: ${string}. Expected ${elen} and got ${clen}.`);
         }
 
         // Don't keep looking
@@ -230,14 +244,12 @@ export default class Point extends Posn {
 
     if (points.length === 0) {
       // We have no clue what this is, cuz
-      throw new Error(`Unreadable path value: ${point}`);
+      throw new Error(`Unreadable path value: ${string}`);
     }
 
-    if (points.length === 1) {
-      return points[0];
-    } else {
-      return points;
-    }
+    console.log(string, points);
+
+    return points;
   }
 
 

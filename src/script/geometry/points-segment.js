@@ -55,15 +55,21 @@ export default class PointsSegment {
       tail[0].setPrec(point);
 
       return head.push(point);
-
-
-
     } else {
       throw new Error(`PointsList: don't know how to insert ${point}.`);
     }
   }
 
+  push(point) {
+    this.points.push(point);
+    if (this.points.length > 1) {
+      point.setSucc(this.points[0]);
+    }
+  }
 
+  empty() {
+    return this.points.length === 0;
+  }
 
   toString() {
     return this.points.join(' ');
@@ -90,7 +96,6 @@ export default class PointsSegment {
     // Remove it from the canvas if it's there
     return x.remove();
   }
-
 
   movePointToFront(point) {
     if (!(this.points.has(point))) { return; }
