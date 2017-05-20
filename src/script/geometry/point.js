@@ -103,12 +103,12 @@ export default class Point extends Posn {
     //   VertiTo
 
     let patterns = {
-      moveTo:   /M[^A-Za-z]+/gi,
-      lineTo:   /L[^A-Za-z]+/gi,
-      curveTo:  /C[^A-Za-z]+/gi,
-      smoothTo: /S[^A-Za-z]+/gi,
-      horizTo:  /H[^A-Za-z]+/gi,
-      vertiTo:  /V[^A-Za-z]+/gi
+      moveTo:   /M[^A-Za-z]+/i,
+      lineTo:   /L[^A-Za-z]+/i,
+      curveTo:  /C[^A-Za-z]+/i,
+      smoothTo: /S[^A-Za-z]+/i,
+      horizTo:  /H[^A-Za-z]+/i,
+      vertiTo:  /V[^A-Za-z]+/i
     };
 
     let classes = {
@@ -228,6 +228,8 @@ export default class Point extends Posn {
 
             sliceAt += elen;
 
+            prec = constructed;
+
           }
 
         } else {
@@ -236,6 +238,12 @@ export default class Point extends Posn {
           // ignore the rest. Idk if that would be irresponsible.
           throw new Error(`Wrong amount of coordinates: ${string}. Expected ${elen} and got ${clen}.`);
         }
+
+        /*
+        console.log('Matched', string, points.map((p) => {
+          return p.toString();
+        }));
+        */
 
         // Don't keep looking
         break;
@@ -247,7 +255,7 @@ export default class Point extends Posn {
       throw new Error(`Unreadable path value: ${string}`);
     }
 
-    console.log(string, points);
+    //console.log(string, points);
 
     return points;
   }

@@ -19,7 +19,7 @@ import math from 'lib/math';
 
 export default class Posn {
 
-  constructor(x1, y1, zoomLevel) {
+  constructor(x1, y1) {
     // I/P:
     //   x: number
     //   y: number
@@ -30,8 +30,6 @@ export default class Posn {
 
     this.x = x1;
     this.y = y1;
-    if (zoomLevel == null) { zoomLevel = 1.0; }
-    this.zoomLevel = zoomLevel;
     if (this.x instanceof Object) {
       // Support for providing an Event object as the only arg.
       // Reads the clientX and clientY values
@@ -69,72 +67,6 @@ export default class Posn {
     this.x = cleanUpNumber(this.x);
     return this.y = cleanUpNumber(this.y);
   }
-
-
-  // Zoom compensation
-
-  // By default, all Posns are interpreted as they are explicitly invoked. x is x, y is y.
-  // You can call Posn.zoom() to ensure you're using a zoom-adjusted version of this Posn.
-  //
-  // In this case, x is x times the zoom level, and the same goes for y.
-  //
-  // Posn.unzoom() takes it back to zoom-agnostic mode - 1.0
-
-
-  zoomed(level) {
-    // Return this Posn after ensuring it is at the given zoom level.
-    // If no level is given, current zoom level of document is used.
-    //
-    // I/P: level: float (optional)
-    //
-    // O/P: adjusted Posn
-
-    if (level == null) { level = ui.canvas.zoom; }
-    if (this.zoomLevel === level) { return this; }
-
-    this.unzoomed();
-
-    this.alterValues(val => val *= level);
-    this.zoomLevel = level;
-    return this;
-  }
-
-
-  unzoomed() {
-    // Return this Posn after ensuring it is in 100% "true" mode.
-    //
-    // No I/P
-    //
-    // O/P: adjusted Posn
-
-    if (this.zoomLevel === 1.0) { return this; }
-
-    this.alterValues(val => val /= this.zoomLevel);
-    this.zoomLevel = 1.0;
-    return this;
-  }
-
-
-  setZoom(zoomLevel) {
-    this.zoomLevel = zoomLevel;
-    this.x /= this.zoomLevel;
-    this.y /= this.zoomLevel;
-    return this;
-  }
-
-
-  // Aliases:
-
-
-  zoomedc() {
-    return this.clone().zoomed();
-  }
-
-
-  unzoomedc() {
-    return this.clone.unzoomed();
-  }
-
 
   // Helper:
 
@@ -304,8 +236,7 @@ export default class Posn {
 
 
   clone() {
-    // Just make a new Posn, and maintain the zoomLevel
-    return new Posn(this.x, this.y, this.zoomLevel);
+    return new Posn(this.x, this.y);
   }
 
 

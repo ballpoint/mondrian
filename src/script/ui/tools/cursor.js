@@ -116,14 +116,13 @@ export default class Cursor extends Tool {
     }
     */
 
-    return;
 
     if (hovering) {
       let points = hovering.points;
       if (points.segments) {
         for (let segment of points.segments) {
-          for (let point of segment.points) {
-            point = this.editor.projection.posn(point);
+          for (let pt of segment.points) {
+            let point = this.editor.projection.posn(pt);
 
             //context.fillStyle = 'white';
             context.strokeStyle = 'blue';
@@ -137,11 +136,12 @@ export default class Cursor extends Tool {
               context.strokeRect(this.editor.projection.x(point.x3)-2, this.editor.projection.y(point.y3)-2, 4, 4);
             }
 
+            context.fillText(pt.toString(), point.x+4, point.y+4);
+
           }
         }
       }
 
-      /*
       // DEBUG CODE
       let lss = hovering.lineSegments();
       let inited = false;
@@ -152,21 +152,20 @@ export default class Cursor extends Tool {
         //console.log(ls.source.prec, ls.source, ls.source.succ);
         if (ls.a && ls.b) {
           //console.log(ls.length);
-          context.lineTo(this.editor.projection.xSharp(ls.b.x), this.editor.projection.ySharp(ls.b.y));
+          context.lineTo(this.editor.projection.x(ls.b.x), this.editor.projection.y(ls.b.y));
         } else {
           context.bezierCurveTo(
-            this.editor.projection.xSharp(ls.p2.x),
-            this.editor.projection.ySharp(ls.p2.y),
-            this.editor.projection.xSharp(ls.p3.x),
-            this.editor.projection.ySharp(ls.p3.y),
-            this.editor.projection.xSharp(ls.p4.x),
-            this.editor.projection.ySharp(ls.p4.y)
+            this.editor.projection.x(ls.p2.x),
+            this.editor.projection.y(ls.p2.y),
+            this.editor.projection.x(ls.p3.x),
+            this.editor.projection.y(ls.p3.y),
+            this.editor.projection.x(ls.p4.x),
+            this.editor.projection.y(ls.p4.y)
           );
         }
         context.strokeStyle = 'purple';
         context.stroke();
       }
-      */
     }
 
   }
