@@ -2,6 +2,7 @@ class HistoryEvent {
   constructor(data) {
     this.data = data;
     this.succ = [];
+    this.created = new Date();
   }
 
   setPrev(prev) {
@@ -16,13 +17,15 @@ class HistoryEvent {
     this.succ.push(succ);
     this.newestSucc = succ;
   }
+
+  merge(event) {
+    this.created = event.created;
+  }
 }
 
 export class InitEvent extends HistoryEvent {
   constructor(data) {
     super(data);
-
-    this.sealed = false;
   }
 
   perform(editor) {
@@ -52,6 +55,7 @@ export class NudgeEvent extends HistoryEvent {
   }
 
   merge(event) {
+    super.merge(event);
     this.data.xd += event.data.xd;
     this.data.yd += event.data.yd;
   }
@@ -77,6 +81,7 @@ export class ScaleEvent extends HistoryEvent {
   }
 
   merge(event) {
+    super.merge(event);
     this.data.x *= event.data.x;
     this.data.y *= event.data.y;
   }
@@ -101,6 +106,7 @@ export class DeleteEvent extends HistoryEvent {
   }
 
   merge(event) {
+    super.merge(event);
     this.data.indexes = _.merge(this.data.indexes, event.data.indexes);
     this.data.elements = this.data.elements.concat(event.data.elements);
   }

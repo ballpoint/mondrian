@@ -1,32 +1,27 @@
 import _ from 'lodash';
 import { InitEvent } from 'history/events';
 
+const EVENT_MERGE_THRESHOLD = 500; // ms
+
 export default class DocHistory {
   // Linked list history data struct ,'>)
   constructor() {
     this.head = new InitEvent();
     this.tail = null;
-
-    this.deferSeal = _.debounce(this.seal.bind(this), 500);
   }
 
   push(event, opts={}) {
     if (
-      !this.head.sealed &&
-      this.head.constructor === event.constructor
+      this.head.constructor === event.constructor &&
+      (event.created.valueOf() - this.head.created.valueOf()) < EVENT_MERGE_THRESHOLD
     ) {
       // Merge events
       this.head.merge(event);
-      this.deferSeal();
       return;
     }
 
     event.setPrev(this.head);
     this.setHead(event);
-  }
-
-  seal() {
-    this.head.sealed = true;
   }
 
   setHead(event) {

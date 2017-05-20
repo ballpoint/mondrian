@@ -10,6 +10,7 @@ import Projection from 'ui/projection';
 import hotkeys from 'ui/hotkeys';
 import Bounds from 'geometry/bounds'
 import Element from 'ui/element';
+import CursorTracking from 'ui/cursor-tracking';
 import CursorHandler from 'ui/cursor-handler';
 import DocHistory from 'history/history';
 import { NudgeEvent, ScaleEvent, DeleteEvent } from 'history/events';
@@ -54,7 +55,11 @@ export default class Editor extends EventEmitter {
     console.log(this.root, this.root.offsetHeight);
     this.canvas = new Canvas(this.root);
 
-    this.cursor = new CursorHandler(this.canvas.cursor);
+    console.log(this.root);
+
+    this.cursor = new CursorTracking(this.root);
+
+    this.cursorHandler = new CursorHandler(this.cursor);
 
     this.canvas.createLayer('background', this.refreshBackground.bind(this));
     this.canvas.createLayer('drawing', this.refreshDrawing.bind(this));
@@ -63,37 +68,37 @@ export default class Editor extends EventEmitter {
     this.canvas.createLayer('guides', this.refreshGuides.bind(this));
     this.canvas.createLayer('debug', () => {});
 
-    this.cursor.on('mousemove', (e, posn) => {
+    this.cursorHandler.on('mousemove', (e, posn) => {
       if (e.propagateToTool) this.state.tool.handleMousemove(e, posn);
       this.canvas.refresh('tool');
       this.canvas.refresh('transformer');
     });
 
-    this.cursor.on('mousedown', (e, posn) => {
+    this.cursorHandler.on('mousedown', (e, posn) => {
       if (e.propagateToTool) this.state.tool.handleMousedown(e, posn);
       this.canvas.refresh('tool');
       this.canvas.refresh('transformer');
     });
 
-    this.cursor.on('click', (e, posn) => {
+    this.cursorHandler.on('click', (e, posn) => {
       if (e.propagateToTool) this.state.tool.handleClick(e, posn);
       this.canvas.refresh('tool');
       this.canvas.refresh('transformer');
     });
 
-    this.cursor.on('drag:start', (e, posn, lastPosn) => {
+    this.cursorHandler.on('drag:start', (e, posn, lastPosn) => {
       if (e.propagateToTool) this.state.tool.handleDragStart(e, posn, lastPosn);
       this.canvas.refresh('tool');
       this.canvas.refresh('transformer');
     });
 
-    this.cursor.on('drag', (e, posn, lastPosn) => {
+    this.cursorHandler.on('drag', (e, posn, lastPosn) => {
       if (e.propagateToTool) this.state.tool.handleDrag(e, posn, lastPosn);
       this.canvas.refresh('tool');
       this.canvas.refresh('transformer');
     });
 
-    this.cursor.on('drag:stop', (e, posn, startPosn) => {
+    this.cursorHandler.on('drag:stop', (e, posn, startPosn) => {
       if (e.propagateToTool) this.state.tool.handleDragStop(e, posn, startPosn);
       this.canvas.refresh('tool');
       this.canvas.refresh('transformer');
@@ -269,7 +274,7 @@ export default class Editor extends EventEmitter {
 
     this.projection = new Projection(x, y, this.state.zoomLevel);
 
-    this.cursor.projection = this.projection;
+    this.cursorHandler.projection = this.projection;
   }
 
   docBounds() {

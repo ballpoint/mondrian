@@ -1,6 +1,5 @@
 import Posn from 'geometry/posn';
 import EventEmitter from 'lib/events';
-import CursorTracking from 'ui/cursor-tracking';
 import Layer from 'ui/layer';
 import 'canvas.scss';
 
@@ -16,8 +15,6 @@ export default class Canvas extends EventEmitter {
 
     this.container = document.createElement('div');
     this.container.className = 'canvas-container';
-
-    this.cursor = new CursorTracking(this.container);
 
     parent.appendChild(this.container);
 

@@ -1,6 +1,7 @@
 import EventEmitter from 'lib/events';
 import Posn from 'geometry/posn';
 import LineSegment from 'geometry/line-segment';
+import { insideOf } from 'lib/dom';
 
 const DRAG_THRESHOLD = 5;
 const DOUBLE_CLICK_THRESHOLD = 500;
@@ -24,6 +25,23 @@ export default class CursorTracking extends EventEmitter {
     super();
     this.root = root;
     this.setup(root);
+  }
+
+  setup(root) {
+    this.reset();
+
+    this._clientBounds = this.root.getBoundingClientRect();
+
+    document.onclick = this._click.bind(this);
+    document.onmousedown = this._mousedown.bind(this);
+    document.onmouseup = this._mouseup.bind(this);
+    document.onmousemove = this._mousemove.bind(this);
+    document.onmouseover = this._mouseover.bind(this);
+
+    // Reset the cursor to somewhere off the screen if they switch tabs and come back
+    return window.onfocus = () => {
+      return this.currentPosn = new Posn(-100, -100);
+    };
   }
 
   reset() {
@@ -81,6 +99,16 @@ export default class CursorTracking extends EventEmitter {
     , DOUBLE_CLICK_THRESHOLD);
   }
 
+  _posnForEvent(e) {
+    let px = e.pageX;
+    let py = e.pageY;
+
+    let rx = px - this._clientBounds.left;
+    let ry = py - this._clientBounds.top;
+
+    return new Posn(rx, ry);
+  }
+
   _click(e) {
     // Quarantine check, and return if so
     if (isDefaultQuarantined(e.target)) {
@@ -92,10 +120,7 @@ export default class CursorTracking extends EventEmitter {
 
   _mousedown(e) {
     // Quarantine check, and return if so
-    if (isDefaultQuarantined(e.target)) {
-      this.reset();
-      return true;
-    } else {
+    if (insideOf(e.target, this.root)) {
       e.stopPropagation();
 
       // If the user was in an input field and we're not going back to
@@ -111,7 +136,7 @@ export default class CursorTracking extends EventEmitter {
 
       // Set tracking variables
       this.down = true;
-      this.lastDown = new Posn(e);
+      this.lastDown = this._posnForEvent(e);
       this.downOn = e.target;
       return this.lastDownTarget = e.target;
     }
@@ -138,7 +163,7 @@ export default class CursorTracking extends EventEmitter {
 
     this.dragging = false;
     this.down = false;
-    this.lastUp = new Posn(e);
+    this.lastUp = this._posnForEvent(e);
     this.lastUpTarget = e.target;
     this.draggingJustBegan = false;
   }
@@ -147,7 +172,7 @@ export default class CursorTracking extends EventEmitter {
     this.doubleclickArmed = false;
 
     this.lastPosn = this.currentPosn;
-    this.currentPosn = new Posn(e);
+    this.currentPosn = this._posnForEvent(e);
 
     if (true) {
       this.trigger('mousemove', e, this.currentPosn);
@@ -156,7 +181,7 @@ export default class CursorTracking extends EventEmitter {
       // Set some tracking variables
       this.wasDownLast = this.down;
       this.lastEvent = e;
-      this.currentPosn = new Posn(e);
+      this.currentPosn = this._posnForEvent(e);
 
       // Initiate dragging, or continue it if it's been initiated.
       if (this.down) {
@@ -176,18 +201,5 @@ export default class CursorTracking extends EventEmitter {
   _mouseover(e) {
   }
 
-  setup(root) {
-    this.reset();
 
-    root.onclick = this._click.bind(this);
-    root.onmousedown = this._mousedown.bind(this);
-    root.onmouseup = this._mouseup.bind(this);
-    root.onmousemove = this._mousemove.bind(this);
-    root.onmouseover = this._mouseover.bind(this);
-
-    // Reset the cursor to somewhere off the screen if they switch tabs and come back
-    return window.onfocus = () => {
-      return this.currentPosn = new Posn(-100, -100);
-    };
-  }
 };

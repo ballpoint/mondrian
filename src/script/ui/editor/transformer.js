@@ -69,7 +69,7 @@ let transformer = {
       stroke: 'blue'
     };
 
-    if (this.cursor.active && this.cursor.active.id === id) {
+    if (this.cursorHandler.active && this.cursorHandler.active.id === id) {
       ctrlOpts.fill = 'blue';
     }
 
@@ -145,12 +145,12 @@ let transformer = {
       }
     })
 
-    this.cursor.registerElement(elem)
+    this.cursorHandler.registerElement(elem)
   },
 
   unregisterCtrlPoint(layer, id) {
     id = 'transformer:'+id;
-    this.cursor.unregisterElement(id);
+    this.cursorHandler.unregisterElement(id);
   }
 }
 

@@ -12,7 +12,7 @@ export default class Cursor extends Tool {
   }
 
   handleMousemove(e, posn) {
-    if (this.editor.canvas.cursor.dragging) {
+    if (this.editor.cursor.dragging) {
       return;
     }
 

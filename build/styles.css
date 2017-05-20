@@ -72,7 +72,8 @@ body#app {
   top: 90px;
   right: 0;
   width: 400px;
-  bottom: 20px; }
+  bottom: 20px;
+  pointer-events: none; }
 
 .util-window {
   padding: 10px;
