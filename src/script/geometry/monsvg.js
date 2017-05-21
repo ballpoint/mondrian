@@ -82,57 +82,11 @@ export default class Monsvg {
 
   commit() {
     return;
-    // Commit any changes to its representation in the DOM
-    //
-    // No I/P
-    // O/P: self
-
-    /*
-    newTransform = []
-
-    for own key, val of @transform
-      if key is "translate"
-        newTransform.push "#{key}(#{val.x},#{val.y})"
-      else
-        newTransform.push "#{key}(#{val})"
-
-    @data.transform = newTransform.join(" ")
-    */
-
-    for (let key in this.data) {
-      let val = this.data[key];
-      if (key === "") {
-        delete this.data[""];
-      } else {
-        if (`${val}`.mentions("NaN")) {
-          throw new Error(`NaN! Ack. Attribute = ${key}, Value = ${val}`);
-        }
-        this.rep.setAttribute(key, val);
-      }
-    }
-
-    if (this.metadata.angle === 0) {
-      this.rep.removeAttribute('mondrian:angle');
-    } else {
-      if (this.metadata.angle < 0) {
-        this.metadata.angle += 360;
-      }
-      this.rep.setAttribute('mondrian:angle', this.metadata.angle);
-    }
-
-    return this;
   }
 
   updateDataArchived(attr) {
-    // If no attr is provided simply copy the new values in @data to @dataArchived
-    // If there is, only copy over that one attribute.
-    if (attr != null) {
-      return this.dataArchived[attr] = this.data[attr];
-    } else {
-      return this.dataArchived = _.clone(this.data);
-    }
+    return;
   }
-
 
   toSVG() {
     // Return the SVG DOM element that this Monsvg object represents
