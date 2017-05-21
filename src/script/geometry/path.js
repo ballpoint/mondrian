@@ -13,7 +13,6 @@ import {
   SmoothTo,
 } from 'geometry/point';
 
-
 /*
 
   Path
@@ -35,7 +34,6 @@ export default class Path extends Monsvg {
 
   constructor(data) {
     super(data);
-
     if (this.data && this.data.d) {
       this.importNewPoints(this.data.d);
     }

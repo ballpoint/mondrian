@@ -125,7 +125,7 @@ export default class SVG {
     return elems;
   }
 
-  insertElement(elem, index) {
+  insertElement(elem, index=0) {
     this.elements = this.elements.slice(0, index).concat([elem]).concat(this.elements.slice(index));
   }
 }

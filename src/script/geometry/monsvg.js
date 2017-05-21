@@ -379,9 +379,6 @@ export default class Monsvg {
 
 
   applyTransform(transform) {
-
-    console.log("apply transform");
-
     for (let attr of Array.from(transform.split(" "))) {
       let key = __guard__(attr.match(/[a-z]+/gi), x1 => x1[0]);
       let val = __guard__(attr.match(/\([\-\d\,\.]*\)/gi), x2 => x2[0].replace(/[\(\)]/gi, ""));

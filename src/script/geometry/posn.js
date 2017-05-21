@@ -359,50 +359,8 @@ export default class Posn {
   }
 
   insideOf(shape) {
-    // Draw a horizontal ray starting at this posn.
-    // If it intersects the shape's perimeter an odd
-    // number of times, the posn's inside of it.
-    //
-    //    _____
-    //  /      \
-    // |   o----X------------
-    //  \______/
-    //
-    //  1 intersection - it's inside.
-    //
-    //    __         __
-    //  /   \      /    \
-    // |  o--X----X-----X---------
-    // |      \__/      |
-    //  \______________/
-    //
-    //  3 intersections - it's inside.
-    //
-    //  etc.
-
-    if (shape instanceof Polygon || shape instanceof Path) {
-      let ray = new LineSegment(this, new Posn(this.x + 1e+20, this.y));
-      let counter = 0;
-      shape.lineSegments().map(function(a) {
-        let inter = a.intersection(ray);
-        if (inter instanceof Posn) {
-          return ++ counter;
-        } else if (inter instanceof Array) {
-          return counter += inter.length;
-        }
-      });
-
-      // If there's an odd number of intersections, we are inside.
-      return (counter % 2) === 1;
-    }
-
-    // Rect
-    // This one is trivial. Method lives in the Rect class.
-    if (shape instanceof Rect) {
-      return shape.contains(this);
-    }
+    return false;
   }
-
 
   dot(v) {
     return (this.x * v.x) + (this.y * v.y);
@@ -414,7 +372,7 @@ export default class Posn {
 
   parseInt() {
     this.x = parseInt(this.x, 10);
-    return this.y = parseInt(this.y, 10);
+    this.y = parseInt(this.y, 10);
   }
 }
 
