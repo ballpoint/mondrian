@@ -117,7 +117,7 @@ export default class Cursor extends Tool {
     */
 
 
-    if (hovering) {
+    if (window.DEBUG === true && hovering) {
       let points = hovering.points;
       if (points.segments) {
         for (let segment of points.segments) {

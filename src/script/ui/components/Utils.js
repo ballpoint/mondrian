@@ -1,5 +1,8 @@
 import React from 'react';
 import 'utils.scss';
+import TransformUtil from 'ui/components/Transform';
+import LayersUtil from 'ui/components/Layers';
+import HistoryUtil from 'ui/components/History';
 
 let Utils = React.createClass({
   getInitialState() {
@@ -16,25 +19,26 @@ let Utils = React.createClass({
     });
   },
 
+  getWindows() {
+    let w = [];
+
+    if (this.state.selection.length > 0) {
+      w.push(<TransformUtil key="transform" editor={this.props.editor} />);
+    }
+
+    w.push(<LayersUtil key="layers" editor={this.props.editor} />);
+
+    if (this.props.editor.history) {
+      w.push(<HistoryUtil key="history" history={this.props.editor.history} />);
+    }
+
+    return w;
+  },
+
   render() {
     return (
       <div>
-        <div className="util-window">
-          <div>{this.state.selection.length}</div>
-          {
-            this.state.selection.length > 0 ? (
-            <div>{this.state.selectionBounds.x}</div>
-            ) : null
-          }
-        </div>
-        <div className="util-window">
-          <div>{this.state.selection.length}</div>
-          {
-            this.state.selection.length > 0 ? (
-            <div>{this.state.selectionBounds.x}</div>
-            ) : null
-          }
-        </div>
+        {this.getWindows()}
       </div>
     );
   }

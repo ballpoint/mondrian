@@ -132,14 +132,10 @@ export default class Editor extends EventEmitter {
     hotkeys.on('down', 'backspace', () => { this.deleteSelection(); });
 
     hotkeys.on('down', 'ctrl-Z', () => { 
-      this.history.undo(this);
-      this.calculateSelectionBounds();
-      this.canvas.refreshAll();
+      this.undo();
     });
     hotkeys.on('down', 'ctrl-shift-Z', () => {
-      this.history.redo(this);
-      this.calculateSelectionBounds();
-      this.canvas.refreshAll();
+      this.redo();
     });
 
     this.canvas.updateDimensions();
@@ -225,19 +221,23 @@ export default class Editor extends EventEmitter {
       indexes
     });
     this.history.push(event);
+
+    this.calculateSelectionBounds();
+    this.trigger('change');
   }
 
   calculateSelectionBounds() {
-    let boundsList = [];
+    if (this.state.selection.length > 0) {
+      let boundsList = [];
 
+      for (let elem of this.state.selection) {
+        boundsList.push(elem.bounds());
+      }
 
-
-    for (let elem of this.state.selection) {
-      console.log(elem.getPoints());
-      boundsList.push(elem.bounds());
+      this.state.selectionBounds = new Bounds(boundsList);
+    } else {
+      this.state.selectionBounds = null;
     }
-
-    this.state.selectionBounds = new Bounds(boundsList);
   }
 
   selectionIds() {
@@ -382,6 +382,20 @@ export default class Editor extends EventEmitter {
     });
 
     this.history.push(event);
+    this.trigger('change');
+  }
+
+  undo() {
+    this.history.undo(this);
+    this.calculateSelectionBounds();
+    this.canvas.refreshAll();
+    this.trigger('change');
+  }
+
+  redo() {
+    this.history.redo(this);
+    this.calculateSelectionBounds();
+    this.canvas.refreshAll();
     this.trigger('change');
   }
 
