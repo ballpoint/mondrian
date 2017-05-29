@@ -158,6 +158,10 @@ export default class PointsList {
       currentMatch += char;
     }
 
+    if (currentMatch.length > 0) {
+      matches.push(currentMatch)
+    }
+
     let currentSegment = new PointsSegment([], list);
 
     for (let point of matches) {
@@ -178,10 +182,16 @@ export default class PointsList {
           }
         }
 
+
         if (p instanceof Point) {
           if (previous != null && currentSegment.points.has(previous)) {
             previous.setSucc(p);
           }
+
+          if (p instanceof SmoothTo) {
+            p = p.toCurveTo();
+          }
+
           previous = p; // Set it for the next point
 
           // Don't remember why I did this.

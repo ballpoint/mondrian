@@ -138,6 +138,13 @@ export default class Editor extends EventEmitter {
       this.redo();
     });
 
+    hotkeys.on('down', 'ctrl-V', () => { 
+      this.paste();
+    });
+
+    document.addEventListener('copy', (e) => { this.copy(e) });
+    document.addEventListener('paste', (e) => { this.paste(e) });
+
     this.canvas.updateDimensions();
 
     this.canvas.refreshAll();
@@ -216,6 +223,10 @@ export default class Editor extends EventEmitter {
 
     this.canvas.refreshAll();
     this.trigger('change');
+
+    for (let elem of elems) {
+      console.log(elem.points);
+    }
   }
 
   selectTool(tool) {
@@ -419,6 +430,19 @@ export default class Editor extends EventEmitter {
     this.calculateSelectionBounds();
     this.canvas.refreshAll();
     this.trigger('change');
+  }
+
+  copy(e) {
+    this.state.clipboard = this.state.selection.map((e) => { return e.clone() });
+  }
+
+  paste(e) {
+    console.log(this.state.clipboard);
+    for (let elem of this.state.clipboard) {
+      this.doc.insertElement(elem);
+    }
+    this.selectElements(this.state.clipboard);
+    this.state.cl
   }
 
   refreshTool(layer, context) {
