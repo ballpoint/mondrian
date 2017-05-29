@@ -26,7 +26,7 @@ let Utils = React.createClass({
     if (this.state.selection.length > 0) {
       w.push(<TransformUtil key="transform" editor={this.props.editor} />);
 
-      w.push(<BooleanUtil key="boolean" editor={this.props.editor} />);
+      //w.push(<BooleanUtil key="boolean" editor={this.props.editor} />);
     }
 
     w.push(<LayersUtil key="layers" editor={this.props.editor} />);

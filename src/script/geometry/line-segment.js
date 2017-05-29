@@ -33,11 +33,9 @@ export default class LineSegment {
   //
   // I/P : a, b Posns
 
-  constructor(a, b, source) {
+  constructor(a, b) {
     this.a = a;
     this.b = b;
-    if (source == null) { source = this.toLineTo(); }
-    this.source = source;
     this.calculate();
   }
 
@@ -58,6 +56,13 @@ export default class LineSegment {
     return this;
   }
 
+  get p1() {
+    return this.a;
+  }
+
+  get p2() {
+    return this.b;
+  }
   beginning() { return this.a; }
 
   end() { return this.a; }

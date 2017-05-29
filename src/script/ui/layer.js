@@ -117,4 +117,28 @@ export default class Layer {
       this.context.stroke();
     }, opts);
   }
+
+  moveTo(posn) {
+    this.context.moveTo(posn.x, posn.y);
+  }
+
+  lineTo(posn) {
+    this.context.lineTo(posn.x, posn.y);
+  }
+
+  bezierCurveTo(p2, p3, p4) {
+    this.context.bezierCurveTo(p2.x, p2.y, p3.x, p3.y, p4.x, p4.y);
+  }
+
+  drawLine(line) {
+    if (line.a && line.b) {
+      this.lineTo(line.b);
+    } else if (line.p2 && line.p3 && line.p4) {
+      this.bezierCurveTo(
+        line.p2,
+        line.p3,
+        line.p4,
+      );
+    }
+  }
 }

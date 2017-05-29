@@ -39,9 +39,8 @@ export default class Path extends Monsvg {
     }
   }
 
-  commit() {
+  commitPoints() {
     this.data.d = this.points.toString();
-    return super.commit(...arguments);
   }
 
   importNewPoints(points) {
@@ -143,7 +142,8 @@ export default class Path extends Monsvg {
           segments.push(ps);
         }
       }
-      return this.lineSegmentsCached = segments;
+      this.lineSegmentsCached = segments;
+      return segments.slice(0);
     }
   }
 
@@ -172,7 +172,7 @@ export default class Path extends Monsvg {
     }
 
     // Boom
-    this.commit();
+    this.commitPoints();
 
     // Carry out on virgin rep
     return (this.virgin != null ? this.virgin.scale(x, y, origin) : undefined);
@@ -188,7 +188,7 @@ export default class Path extends Monsvg {
     this.nudgeCachedObjects(x, y);
 
     // Commit the changes to the canvas
-    this.commit();
+    this.commitPoints();
 
     // Also nudge the virgin shape if there is one
     return (this.virgin != null ? this.virgin.nudge(x, y) : undefined);
@@ -210,7 +210,7 @@ export default class Path extends Monsvg {
     this.points.map(p => p.rotate(a, origin));
 
     // Commit it
-    this.commit();
+    this.commitPoints();
 
     // Rotated rect becomes path
     return this.woohoo();

@@ -46,7 +46,7 @@ export default class Editor extends EventEmitter {
     this.history = new DocHistory();
     window.h = this.history;
 
-    this.setPosition(this.doc.center());
+    this.setPosition(this.state.position);
 
     this.canvas.refreshAll();
   }
@@ -144,23 +144,44 @@ export default class Editor extends EventEmitter {
   }
 
   initState() {
-    this.state = {
-      zoomLevel: 1,
-      selection: [],
-      tool: new Cursor(this)
-    };
+    let cached = sessionStorage.getItem('editor:state');
+    if (cached) {
+      cached = JSON.parse(cached);
+      this.state = {
+        zoomLevel: cached.zoomLevel,
+        position: new Posn(cached.position),
+        selection: [],
+        tool: new Cursor(this)
+      }
+    } else {
+      this.state = {
+        zoomLevel: 1,
+        position: this.doc.center(),
+        selection: [],
+        tool: new Cursor(this)
+      };
+
+    }
+  }
+
+  cacheState() {
+    sessionStorage.setItem('editor:state', JSON.stringify({
+      zoomLevel: this.state.zoomLevel,
+      position: this.state.position
+    }));
   }
 
   setPosition(posn) {
-    this.position = posn;
+    this.state.position = posn;
     if (this.doc) {
       this.calculateScales();
     }
     this.canvas.refreshAll();
+    this.cacheState();
   }
 
   nudge(x, y) {
-    this.setPosition(this.position.nudge(x, y));
+    this.setPosition(this.state.position.nudge(x, y));
   }
 
   zoomIn() {
@@ -177,6 +198,7 @@ export default class Editor extends EventEmitter {
       this.calculateScales();
     }
     this.canvas.refreshAll();
+    this.cacheState();
   }
 
   clearSelection() {
@@ -259,9 +281,9 @@ export default class Editor extends EventEmitter {
   calculateScales() {
     // Calculate scales
     let offsetLeft = (this.canvas.width - (this.doc.width*this.state.zoomLevel)) / 2;
-    offsetLeft += ((this.doc.width/2)-this.position.x)*this.state.zoomLevel;
+    offsetLeft += ((this.doc.width/2)-this.state.position.x)*this.state.zoomLevel;
     let offsetTop  = (this.canvas.height - (this.doc.height*this.state.zoomLevel)) / 2;
-    offsetTop += ((this.doc.height/2)-this.position.y)*this.state.zoomLevel;
+    offsetTop += ((this.doc.height/2)-this.state.position.y)*this.state.zoomLevel;
 
     // Account for windows on right side
     offsetLeft -= 200;

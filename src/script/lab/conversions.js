@@ -25,7 +25,6 @@ export default {
     //   b: second point
     // O/P: LineSegment or CubiBezier
 
-
     if (b == null) { b = a.succ; }
     if (b instanceof LineTo || b instanceof HorizTo || b instanceof VertiTo) {
       return new LineSegment(new Posn(a.x, a.y), new Posn(b.x, b.y), b);

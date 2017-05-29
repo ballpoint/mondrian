@@ -117,8 +117,9 @@ export default class Cursor extends Tool {
     */
 
 
-    if (window.DEBUG === true && hovering) {
+    if (hovering && !this.editor.state.selection.has(hovering)) {
       let points = hovering.points;
+      let i = 0;
       if (points.segments) {
         for (let segment of points.segments) {
           for (let pt of segment.points) {
@@ -135,38 +136,22 @@ export default class Cursor extends Tool {
             if (point.x3) {
               context.strokeRect(this.editor.projection.x(point.x3)-2, this.editor.projection.y(point.y3)-2, 4, 4);
             }
-
-            context.fillText(pt.toString(), point.x+4, point.y+4);
-
           }
         }
       }
 
       // DEBUG CODE
       let lss = hovering.lineSegments();
-      let inited = false;
-      context.beginPath();
-      context.moveTo(this.editor.projection.x(lss[0].x), this.editor.projection.y(lss[0].y));
-      //console.log(lss);
+
       for (let ls of lss) {
-        //console.log(ls.source.prec, ls.source, ls.source.succ);
-        if (ls.a && ls.b) {
-          //console.log(ls.length);
-          context.lineTo(this.editor.projection.x(ls.b.x), this.editor.projection.y(ls.b.y));
-        } else {
-          context.bezierCurveTo(
-            this.editor.projection.x(ls.p2.x),
-            this.editor.projection.y(ls.p2.y),
-            this.editor.projection.x(ls.p3.x),
-            this.editor.projection.y(ls.p3.y),
-            this.editor.projection.x(ls.p4.x),
-            this.editor.projection.y(ls.p4.y)
-          );
-        }
+        context.beginPath();
+        layer.moveTo(this.editor.projection.posn(ls.p1));
+        layer.drawLine(this.editor.projection.line(ls));
+
         context.strokeStyle = 'purple';
+        context.strokeWidth = 2;
         context.stroke();
       }
     }
-
   }
 }

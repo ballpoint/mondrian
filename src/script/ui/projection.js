@@ -1,4 +1,6 @@
 import Posn from 'geometry/posn';
+import LineSegment from 'geometry/line-segment';
+import CubicBezier from 'geometry/cubic-bezier-line-segment';
 import math from 'lib/math';
 
 export default class Projection {
@@ -26,5 +28,21 @@ export default class Projection {
 
   boundsInvert(bounds) {
     return bounds.transform(this.xInvert, this.yInvert, this.zInvert);
+  }
+
+  line(line) {
+    if (line instanceof LineSegment) {
+      return new LineSegment(
+        this.posn(line.p1),
+        this.posn(line.p2)
+      );
+    } else if (line instanceof CubicBezier) {
+      return new CubicBezier(
+        this.posn(line.p1),
+        this.posn(line.p2),
+        this.posn(line.p3),
+        this.posn(line.p4)
+      );
+    }
   }
 }

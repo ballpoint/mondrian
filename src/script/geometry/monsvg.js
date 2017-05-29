@@ -33,16 +33,9 @@ export default class Monsvg {
   //   Path
 
 
-  constructor(data) {
-
+  constructor(data={}) {
     // Create SVG element representation
-    // Set up metadata
-    //
-    // No I/P
-    //
-    // O/P : self
 
-    if (data == null) { data = {}; }
     this.data = data;
 
     if (data.id) {
@@ -56,32 +49,10 @@ export default class Monsvg {
 
     this.validateColors();
 
-    if (this.type !== "text") {
-      this.data = _.defaults(this.data, {
-        fill:   new Color("none"),
-        stroke: new Color("none")
-      });
-    }
-
     // Apply
     if (this.data["mondrian:angle"] != null) {
       this.metadata.angle = parseFloat(this.data["mondrian:angle"], 10);
     }
-
-    /*
-    if @data.transform?
-      attrs = @data.transform.split(" ")
-      for attr in attrs
-        key = attr.match(/[a-z]+/gi)?[0]
-        val = attr.match(/\([\-\d\,\.]*\)/gi)?[0].replace(/[\(\)]/gi, "")
-      @transform[key] = val.replace(/[\(\)]/gi, "")
-      *console.log "saved #{attr} as #{key} #{val}"
-  */
-  }
-
-
-  commit() {
-    return;
   }
 
   updateDataArchived(attr) {
@@ -91,12 +62,16 @@ export default class Monsvg {
   toSVG() {
     // Return the SVG DOM element that this Monsvg object represents
     // We need to use the svg namespace for the element to behave properly
-    let self = document.createElementNS('http://www.w3.org/2000/svg', this.type);
+    let elem = document.createElementNS('http://www.w3.org/2000/svg', this.type);
     for (let key in this.data) {
       let val = this.data[key];
-      if (key !== "") { self.setAttribute(key, val); }
+      if (key !== "") { elem.setAttribute(key, val); }
     }
-    return self;
+    return elem;
+  }
+
+  toSVGString() {
+    return new XMLSerializer().serializeToString(this.toSVG());
   }
 
 
@@ -156,7 +131,6 @@ export default class Monsvg {
   }
 
   clone() {
-    //@commit()
     let cloneData = _.clone(this.data);
     let cloneTransform = _.clone(this.transform);
     delete cloneData.id;
@@ -175,7 +149,6 @@ export default class Monsvg {
       'stroke': this.data.fill,
       'fill': swap
     });
-    return this.commit();
   }
 
 
@@ -183,7 +156,6 @@ export default class Monsvg {
     this.data.fill = sample.data.fill;
     this.data.stroke = sample.data.stroke;
     this.data['stroke-width'] = sample.data['stroke-width'];
-    return this.commit();
   }
 
 
@@ -202,140 +174,7 @@ export default class Monsvg {
     }
   }
 
-  overlaps(other) {
-
-    // Checks for overlap with another shape.
-    // Redirects to appropriate method.
-
-    // I/P: Polygon/Circle/Rect
-    // O/P: true or false
-
-    return this[`overlaps${other.type.capitalize()}`](other);
-  }
-
-
-  lineSegmentsIntersect(other) {
-    // Returns bool, whether or not this shape and that shape intersect or overlap
-    // Short-circuits as soon as it finds true.
-    //
-    // I/P: Another shape that has lineSegments()
-    // O/P: Boolean
-
-    let ms = this.lineSegments(); // My lineSegments
-    let os = other.lineSegments(); // Other's lineSegments
-
-    for (let mline of Array.from(ms)) {
-
-      // The true parameter on bounds() tells mline to use its cached bounds.
-      // It saves a lot of time and is okay to do in a situation like this where we're just going
-      // through a for-loop and not changing the lines at all.
-      //
-      // Admittedly, it really only saves time below when it calls it for oline since
-      // each mline is only being looked at once, but why not cache as much as possible? :)
-
-      var mbounds;
-      if (mline instanceof CubicBezier) {
-        mbounds = mline.bounds(true);
-      }
-
-      let a = mline instanceof LineSegment ? mline.a : mline.p1;
-      let b = mline instanceof LineSegment ? mline.b : mline.p2;
-
-      if ((other.contains(a)) || (other.contains(b))) {
-        return true;
-      }
-
-      for (let oline of Array.from(os)) {
-
-        var continueChecking;
-        if (mline instanceof CubicBezier || oline instanceof CubicBezier) {
-          let obounds = oline.bounds(true);
-          continueChecking = mbounds.overlapsBounds(obounds);
-        } else {
-          continueChecking = true;
-        }
-
-        if (continueChecking) {
-          if (mline.intersects(oline)) {
-            return true;
-          }
-        }
-      }
-    }
-    return false;
-  }
-
-
-  lineSegmentIntersections(other) {
-    // Returns an Array of tuple-Arrays of [intersection, point]
-    let intersections = [];
-
-    let ms = this.lineSegments(); // My lineSegments
-    let os = other.lineSegments(); // Other's lineSegments
-
-    for (let mline of Array.from(ms)) {
-      let mbounds = mline.bounds(true); // Accept cached bounds since these aren't changing.
-
-      for (let oline of Array.from(os)) {
-        let obounds = oline.bounds(true);
-
-        // Only run the intersection algorithms for lines whose BOUNDS overlap.
-        // This check makes lineSegmentIntersections an order of magnitude faster - most pairs never pass this point.
-
-        //if mbounds.overlapsBounds(obounds)
-
-        let inter = mline.intersection(oline);
-
-        if (inter instanceof Posn) {
-          // mline.source is the original point that makes up that line segment.
-          intersections.push({
-            intersection: [inter],
-            aline: mline,
-            bline: oline,
-            a: mline.source,
-            b: oline.source
-          });
-        } else if (inter instanceof Array && (inter.length > 0)) {
-          intersections.push({
-            intersection: inter,
-            aline: mline,
-            bline: oline,
-            a: mline.source,
-            b: oline.source
-          });
-        }
-      }
-    }
-
-    return intersections;
-  }
-
-
-  remove() {
-    this.rep.remove();
-    if (this.points !== []) {
-      return this.points.map(p => p.baseHandle != null ? p.baseHandle.remove() : undefined);
-    }
-  }
-
-
-  convertTo(type) {
-    let result = this[`convertTo${type}`]();
-    result.eyedropper(this);
-    return result;
-  }
-
-  toString() {
-    return `(${this.type} Monsvg object)`;
-  }
-
-  repToString() {
-    return new XMLSerializer().serializeToString(this.rep);
-  }
-
-
   carryOutTransformations(transform, center) {
-
     let key, val;
     if (transform == null) { ({ transform } = this.data); }
     if (center == null) { center = new Posn(0, 0); }
@@ -375,54 +214,6 @@ export default class Monsvg {
       } })()));
   }
 
-
-
-
-  applyTransform(transform) {
-    for (let attr of Array.from(transform.split(" "))) {
-      let key = __guard__(attr.match(/[a-z]+/gi), x1 => x1[0]);
-      let val = __guard__(attr.match(/\([\-\d\,\.]*\)/gi), x2 => x2[0].replace(/[\(\)]/gi, ""));
-
-      switch (key) {
-        case "scale":
-          val = parseFloat(val);
-          if (this.transform.scale != null) {
-            this.transform.scale *= val;
-          } else {
-            this.transform.scale = val;
-          }
-          break;
-
-        case "translate":
-          val = val.split(",");
-          let x = parseFloat(val[0]);
-          let y = parseFloat(val[1]);
-          x = parseFloat(x);
-          y = parseFloat(y);
-          if (this.transform.translate != null) {
-            this.transform.translate.x += x;
-            this.transform.translate.y += y;
-          } else {
-            this.transform.translate = { x, y };
-          }
-          break;
-
-        case "rotate":
-          val = parseFloat(val);
-          if (this.transform.rotate != null) {
-            this.transform.rotate += val;
-            this.transform.rotate %= 360;
-          } else {
-            this.transform.rotate = val;
-          }
-          break;
-      }
-    }
-
-    return this.commit();
-  }
-
-
   setFill(val) {
     return this.data.fill = new Color(val);
   }
@@ -434,11 +225,6 @@ export default class Monsvg {
   setStrokeWidth(val) {
     return this.data['stroke-width'] = val;
   }
-
-
-  setupToCanvas(context) {
-  }
-
 
   finishToCanvas(context, projection) {
     if (this.points != null ? this.points.closed : undefined) { context.closePath(); }
@@ -463,6 +249,8 @@ export default class Monsvg {
 
   lineSegments() {}
 }
+
+
 Monsvg.initClass();
 
 

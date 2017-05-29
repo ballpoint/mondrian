@@ -179,7 +179,7 @@ export default class PointsList {
         }
 
         if (p instanceof Point) {
-          if (previous != null) {
+          if (previous != null && currentSegment.points.has(previous)) {
             previous.setSucc(p);
           }
           previous = p; // Set it for the next point
@@ -263,8 +263,9 @@ export default class PointsList {
 
     if ((after == null)) {
       point.at = this.lastSegment.points.length;
-      this.lastSegment.points.push(point);
+      this.lastSegment.push(point);
 
+      /*
       if (this.last != null) {
         this.last.setSucc(point);
         point.setPrec(this.last);
@@ -278,7 +279,7 @@ export default class PointsList {
       } else {
         point.setSucc(point);
       }
-
+      */
       this.last = point;
 
       return this;
