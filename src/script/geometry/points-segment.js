@@ -1,5 +1,4 @@
 import {
-  Point,
   MoveTo,
   LineTo,
   HorizTo,
@@ -7,6 +6,8 @@ import {
   CurveTo,
   SmoothTo,
 } from 'geometry/point';
+
+import Point from 'geometry/point';
 /*
 
   PointsSegment

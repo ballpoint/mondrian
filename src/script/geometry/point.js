@@ -173,23 +173,13 @@ export default class Point extends Posn {
           for (let i = 0, end = (clen / elen) - 1, asc = 0 <= end; asc ? i <= end : i >= end; asc ? i++ : i--) {
             let set = coords.slice(sliceAt, sliceAt + elen);
 
-            /*
-            if (i > 0) {
-              if (key === "moveTo") {
-                key = "lineTo";
-              }
-            }
-            */
-
-            let cl = classes[key];
-
             // Never represent points as relative internally
             if (relative) {
               for (let si = 0; si < set.length; si++) {
                 let compareVal;
 
-                switch (cl) {
-                  case VertiTo:
+                switch (key) {
+                  case 'vertiTo':
                     compareVal = prec.y;
                     break;
                   default:
@@ -206,9 +196,7 @@ export default class Point extends Posn {
               }
             }
 
-            let values = [null].concat(set);
-
-            values.push(prec);
+            let values = set;
 
             if (values.join(' ').mentions("NaN")) { debugger; }
 
@@ -218,14 +206,43 @@ export default class Point extends Posn {
 
             // Build the point from the appropriate constructor
 
+
+            let cl;
+
+            switch (key) {
+              case 'moveTo':
+              case 'lineTo':
+              case 'curveTo':
+                cl = classes[key];
+                break;
+              case 'vertiTo':
+                cl = LineTo;
+                values = [prec.x].concat(values);
+                break;
+              case 'horizTo':
+                cl = LineTo;
+                values.push(prec.y);
+                break;
+              case 'smoothTo':
+                cl = CurveTo;
+
+                let p2;
+                if (prec instanceof CurvePoint) {
+                  p2 = prec.p3().reflect(prec.p());
+                } else {
+                  debugger;
+                  p2 = new Posn(this.x, this.y);
+                }
+                values = [p2.x, p2.y].concat(values);
+                break;
+            }
+
+            values = [null].concat(values).concat([prec]);
+
             let constructed = new (Function.prototype.bind.apply(cl, values));
-
             points.push(constructed);
-
             sliceAt += elen;
-
             prec = constructed;
-
           }
 
         } else {
