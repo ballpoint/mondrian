@@ -23,9 +23,11 @@ export default class Cursor extends Tool {
     let elems = this.editor.doc.elements.slice(0).reverse();
 
     for (let element of elems) {
-      if (shapes.contains(element, posn)) {
-        this.hovering = element;
-        break;
+      if (!this.editor.state.selection.has(element)) {
+        if (shapes.contains(element, posn)) {
+          this.hovering = element;
+          break;
+        }
       }
     }
   }
@@ -35,15 +37,17 @@ export default class Cursor extends Tool {
       if (!this.editor.state.selection.has(this.hovering)) {
         this.editor.selectElements([this.hovering]);
       }
-    } else {
-      this.editor.selectElements([]);
     }
   }
 
   handleClick(e, posn) {
+    if (!this.hovering) {
+      this.editor.selectElements([]);
+    }
   }
 
   handleDragStart(e, posn, lastPosn) {
+    console.log(this.editor.state.selection.length);
     if (this.editor.state.selection.length === 0) {
       this.dragSelectStart = lastPosn;
     }
@@ -125,10 +129,7 @@ export default class Cursor extends Tool {
           for (let pt of segment.points) {
             let point = this.editor.projection.posn(pt);
 
-            //context.fillStyle = 'white';
-            context.strokeStyle = 'blue';
-            //context.fillRect(this.editor.projection.x(point.x)-2, this.editor.projection.y(point.y)-1, 4, 4);
-            context.strokeRect(point.x-2, point.y-2, 4, 4);
+            layer.drawCircle(point, 3, { stroke: 'black', fill: 'white' });
 
             if (point.x2) {
               context.strokeRect(this.editor.projection.x(point.x2)-2, this.editor.projection.y(point.y2)-2, 4, 4);
@@ -139,6 +140,7 @@ export default class Cursor extends Tool {
           }
         }
       }
+      /*
 
       // DEBUG CODE
       let lss = hovering.lineSegments();
@@ -148,10 +150,11 @@ export default class Cursor extends Tool {
         layer.moveTo(this.editor.projection.posn(ls.p1));
         layer.drawLine(this.editor.projection.line(ls));
 
-        context.strokeStyle = 'purple';
-        context.strokeWidth = 2;
+        context.strokeStyle = 'black';
+        context.lineWidth = 1;
         context.stroke();
       }
+      */
     }
   }
 }

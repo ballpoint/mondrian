@@ -102,6 +102,11 @@ export default class Editor extends EventEmitter {
       this.canvas.refresh('transformer');
     });
 
+    this.cursorHandler.on('scroll:y', (e, delta) => {
+      let zd = 1-(delta / 1000);
+      this.setZoom(this.state.zoomLevel*zd);
+    });
+
     hotkeys.on('down', 'downArrow', () => { this.nudgeSelected(0, 1); });
     hotkeys.on('down', 'upArrow', () => { this.nudgeSelected(0, -1); });
     hotkeys.on('down', 'leftArrow', () => { this.nudgeSelected(-1, 0); });
@@ -223,10 +228,6 @@ export default class Editor extends EventEmitter {
 
     this.canvas.refreshAll();
     this.trigger('change');
-
-    for (let elem of elems) {
-      console.log(elem.points);
-    }
   }
 
   selectTool(tool) {
@@ -246,7 +247,6 @@ export default class Editor extends EventEmitter {
       elements.push(elem);
     }
     this.state.selection = [];
-    delete this.state.hovering;
     this.canvas.refreshAll();
 
     let event = new DeleteEvent({

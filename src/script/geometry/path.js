@@ -148,8 +148,6 @@ export default class Path extends Monsvg {
   }
 
   scale(x, y, origin) {
-    console.log(this.points.length());
-
     // Keep track of cached bounds and line segments
     if (origin == null) { origin = this.center(); }
     this.scaleCachedObjects(x, y, origin);
@@ -173,16 +171,8 @@ export default class Path extends Monsvg {
       this.rotate(angle, origin);
     }
 
-    let l1 = this.points.length();
-
     // Boom
     this.commitPoints();
-
-    let pl = PointsList.fromString(this.data.d);
-    let l2 = pl.length();
-    if (l1 !== l2) {
-      debugger;
-    }
 
     // Carry out on virgin rep
     return (this.virgin != null ? this.virgin.scale(x, y, origin) : undefined);

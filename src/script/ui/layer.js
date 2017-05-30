@@ -109,6 +109,17 @@ export default class Layer {
     }, opts);
   }
 
+  drawCircle(posn, radius, opts={}) {
+    this.do(() => {
+      this.context.beginPath();
+      this.context.arc(posn.x, posn.y, radius, 0, Math.PI*2,true);
+      this.context.closePath();
+
+      if (opts.fill) this.context.fill();
+      if (opts.stroke) this.context.stroke();
+    }, opts);
+  }
+
   drawLineSegment(p1, p2, opts={}) {
     this.do(() => {
       this.context.beginPath();

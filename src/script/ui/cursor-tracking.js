@@ -37,6 +37,8 @@ export default class CursorTracking extends EventEmitter {
     document.onmouseup = this._mouseup.bind(this);
     document.onmousemove = this._mousemove.bind(this);
     document.onmouseover = this._mouseover.bind(this);
+    document.addEventListener('mousewheel', this._scroll.bind(this));
+
 
     // Reset the cursor to somewhere off the screen if they switch tabs and come back
     return window.onfocus = () => {
@@ -199,6 +201,12 @@ export default class CursorTracking extends EventEmitter {
   }
 
   _mouseover(e) {
+  }
+
+  _scroll(e) {
+    if (e.deltaY !== 0) {
+      this.trigger('scroll:y', e, e.deltaY);
+    }
   }
 
 
