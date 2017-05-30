@@ -23,27 +23,26 @@ export default class Cursor extends Tool {
     let elems = this.editor.doc.elements.slice(0).reverse();
 
     for (let element of elems) {
-      if (!this.editor.state.selection.has(element)) {
-        if (shapes.contains(element, posn)) {
-          this.hovering = element;
-          break;
-        }
+      if (shapes.contains(element, posn)) {
+        this.hovering = element;
+        break;
       }
     }
+
   }
 
   handleMousedown(e, posn) {
+    console.log(this.hovering);
     if (this.hovering) {
       if (!this.editor.state.selection.has(this.hovering)) {
         this.editor.selectElements([this.hovering]);
       }
+    } else {
+      this.editor.selectElements([]);
     }
   }
 
   handleClick(e, posn) {
-    if (!this.hovering) {
-      this.editor.selectElements([]);
-    }
   }
 
   handleDragStart(e, posn, lastPosn) {

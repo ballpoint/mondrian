@@ -31,9 +31,8 @@ import Posn from 'geometry/posn';
 */
 
 export default class Point extends Posn {
-  constructor(x, y, owner) {
+  constructor(x, y) {
     super(x, y);
-    this.owner = owner;
     this.constructArgs = arguments;
     if (((this.x == null)) && ((this.y == null))) { return; }
 
@@ -55,11 +54,9 @@ export default class Point extends Posn {
     // on what the string is.
 
     if (this.x instanceof Posn) {
-      this.owner = this.y;
       this.y = this.x.y;
       this.x = this.x.x;
     } else if (this.x instanceof Object) {
-      this.owner = this.y;
       if (this.x.clientX != null) {
         // ...then it's an Event object
         this.y = this.x.clientY;
@@ -91,7 +88,7 @@ export default class Point extends Posn {
     this._flags = [];
   }
 
-  static fromString(string, owner, prec) {
+  static fromString(string, prec) {
     // Given a string like "M 10.2 502.19"
     // return the corresponding Point.
     // Returns one of:
@@ -211,7 +208,6 @@ export default class Point extends Posn {
 
             let values = [null].concat(set);
 
-            values.push(owner); // Point owner
             values.push(prec);
 
             if (values.join(' ').mentions("NaN")) { debugger; }
@@ -260,45 +256,6 @@ export default class Point extends Posn {
     return points;
   }
 
-
-
-  select() {
-    this.show();
-    this.showHandles();
-    this.antlers.refresh();
-    this.baseHandle.setAttribute('selected', '');
-    return this;
-  }
-
-  deselect() {
-    this.baseHandle.removeAttribute('selected');
-    if (typeof this.hideHandles === 'function') {
-      this.hideHandles();
-    }
-    this.hide();
-    return this;
-  }
-
-  makeAntlers() {
-    let p2;
-    if (this.succ != null) {
-      p2 = (this.succ.p2 != null) ? this.succ.p2() : undefined;
-    } else {
-      p2 = null;
-    }
-    let p3 = (this.p3 != null) ? this.p3() : null;
-    this.antlers = new Antlers(this, p3, p2);
-    return this;
-  }
-
-  showHandles() {
-    return this.antlers.show();
-  }
-
-  hideHandles() {
-    return this.antlers.hide();
-  }
-
   actionHint() {
     return this.baseHandle.setAttribute('action', '');
   }
@@ -314,20 +271,16 @@ export default class Point extends Posn {
     this.succ       = from.succ;
     this.prec.succ  = this;
     this.succ.prec  = this;
-    this.owner      = from.owner;
     if (from.baseHandle != null) { this.baseHandle = from.baseHandle; }
     return this;
   }
 
   nudge(x, y, checkForFirstOrLast) {
     super.nudge(x, y);
+
+    /*
     if (checkForFirstOrLast == null) { checkForFirstOrLast = true; }
-    let old = this.clone();
-
-    if (this.antlers != null) {
-      this.antlers.nudge(x, y);
-    }
-
+    // TODO address this when we are doing individual point manipulation
     if (this.owner.type === 'path') {
       if (checkForFirstOrLast && this.owner.points.closed) {
         // Check if this is the point overlapping the original MoveTo.
@@ -338,36 +291,12 @@ export default class Point extends Posn {
         }
       }
     }
+    */
   }
-
-
-  rotate(a, origin) {
-    super.rotate(a, origin);
-    if (this.antlers != null) {
-      this.antlers.rotate(a, origin);
-    }
-    return this.updateHandle();
-  }
-
-
-  scale(x, y, origin, angle) {
-    super.scale(x, y, origin, angle);
-    if (this.antlers != null) {
-      this.antlers.scale(x, y, origin, angle);
-    }
-    return this;
-  }
-
-
-  replaceWith(point) {
-    return this.owner.points.replace(this, point);
-  }
-
 
   toPosn() {
     return new Posn(this.x, this.y);
   }
-
 
   toLineSegment() {
     return new LineSegment(this.prec, this);
@@ -382,7 +311,6 @@ export default class Point extends Posn {
 
   setSucc(succ) {
     this.succ = succ;
-    this.makeAntlers();
     return succ.prec = this;
   }
 
@@ -700,7 +628,7 @@ function __guard__(value, transform) {
 
 
 export class MoveTo extends Point {
-  constructor(x, y, owner, prec) {
+  constructor(x, y, prec) {
     super(...arguments);
   }
 
@@ -724,12 +652,12 @@ export class MoveTo extends Point {
 
   // I know this can be abstracted somehow with bind and apply but I
   // don't have time to figure that out before launch - already wasted time trying
-  clone() { return new MoveTo(this.x, this.y, this.owner, this.prec); }
+  clone() { return new MoveTo(this.x, this.y, this.prec); }
 }
 
 
 export class LineTo extends Point {
-  constructor(x, y, owner, prec) {
+  constructor(x, y, prec) {
     super(...arguments);
   }
 
@@ -739,15 +667,15 @@ export class LineTo extends Point {
 
   toString() { return `L${this.x},${this.y}`; }
 
-  clone() { return new LineTo(this.x, this.y, this.owner, this.prec); }
+  clone() { return new LineTo(this.x, this.y, this.prec); }
 }
 
 
 
 
 export class HorizTo extends Point {
-  constructor(x, owner, prec) {
-    super(x, prec.absolute().y, owner, prec);
+  constructor(x, prec) {
+    super(x, prec.absolute().y, prec);
   }
 
   toString() {
@@ -770,14 +698,14 @@ export class HorizTo extends Point {
     return this;
   }
 
-  clone() { return new HorizTo(this.x, this.owner, this.prec); }
+  clone() { return new HorizTo(this.x, this.prec); }
 }
 
 
 
 export class VertiTo extends Point {
-  constructor(y, owner, prec) {
-    super(prec.absolute().x, y, owner, prec);
+  constructor(y, prec) {
+    super(prec.absolute().x, y, prec);
   }
 
   toString() { return `V${this.y}`; }
@@ -798,7 +726,7 @@ export class VertiTo extends Point {
     return this;
   }
 
-  clone() { return new VertiTo(this.y, this.owner, this.prec); }
+  clone() { return new VertiTo(this.y, this.prec); }
 }
 
 
@@ -816,18 +744,17 @@ export class VertiTo extends Point {
 */
 
 export class CurvePoint extends Point {
-  constructor(x2, y2, x3, y3, x, y, owner, prec) {
-    super(x, y, owner, prec);
+  constructor(x2, y2, x3, y3, x, y, prec) {
+    super(x, y, prec);
     this.x2 = x2;
     this.y2 = y2;
     this.x3 = x3;
     this.y3 = y3;
     this.x = x;
     this.y = y;
-    this.owner = owner;
     this.prec = prec;
 
-    this.makeAntlers();
+    //this.makeAntlers();
     /*
 
       This Class just extends into CurveTo and SmoothTo as a way of abstracting out the curve
@@ -880,12 +807,6 @@ export class CurvePoint extends Point {
   }
 
 
-  show() {
-    if (!this.owner) { return this; } // Orphan points should be ignored (usually used in testing)
-    return super.show(...arguments);
-  }
-
-
   cleanUp() {
     return;
     this.x2 = cleanUpNumber(this.x2);
@@ -893,6 +814,13 @@ export class CurvePoint extends Point {
     this.x3 = cleanUpNumber(this.x3);
     this.y3 = cleanUpNumber(this.y3);
     return super.cleanUp(...arguments);
+  }
+
+
+  nudge(xd, yd) {
+    this.absorb(this.p2().nudge(xd, yd), 2);
+    this.absorb(this.p3().nudge(xd, yd), 3);
+    return super.nudge(xd, yd);
   }
 
 
@@ -917,39 +845,37 @@ export class CurvePoint extends Point {
 
 
 export class CurveTo extends CurvePoint {
-  constructor(x2, y2, x3, y3, x, y, owner, prec) {
-    super(x2, y2, x3, y3, x, y, owner, prec);
+  constructor(x2, y2, x3, y3, x, y, prec) {
+    super(x2, y2, x3, y3, x, y, prec);
     this.x2 = x2;
     this.y2 = y2;
     this.x3 = x3;
     this.y3 = y3;
     this.x = x;
     this.y = y;
-    this.owner = owner;
     this.prec = prec;
   }
 
   toString() { return `C${this.x2},${this.y2} ${this.x3},${this.y3} ${this.x},${this.y}`; }
 
   reverse() {
-    return new CurveTo(this.x3, this.y3, this.x2, this.y2, this.x, this.y, this.owner, this.prec).inheritPosition(this);
+    return new CurveTo(this.x3, this.y3, this.x2, this.y2, this.x, this.y, this.prec).inheritPosition(this);
   }
 
-  clone() { return new CurveTo(this.x2, this.y2, this.x3, this.y3, this.x, this.y, this.owner, this.prec); }
+  clone() { return new CurveTo(this.x2, this.y2, this.x3, this.y3, this.x, this.y, this.prec); }
 }
 
 
 export class SmoothTo extends CurvePoint {
-  constructor(x3, y3, x, y, owner, prec) {
+  constructor(x3, y3, x, y, prec) {
     let { x2, y2 } = SmoothTo.inheritFromPrec(prec);
-    super(x2, y2, x3, y3, x, y, owner, prec);
+    super(x2, y2, x3, y3, x, y, prec);
     this.x2 = x2;
     this.y2 = y2;
     this.x3 = x3;
     this.y3 = y3;
     this.x = x;
     this.y = y;
-    this.owner = owner;
     this.prec = prec;
     //CurvePoint.inheritFromPrec(this.prec);
   }
@@ -980,7 +906,7 @@ export class SmoothTo extends CurvePoint {
       }
     }
 
-    let ct = new CurveTo(p2.x, p2.y, this.x3, this.y3, this.x, this.y, this.owner, this.prec);
+    let ct = new CurveTo(p2.x, p2.y, this.x3, this.y3, this.x, this.y, this.prec);
     ct.at = this.at;
     return ct;
   }
@@ -992,8 +918,8 @@ export class SmoothTo extends CurvePoint {
 
   toString() { return `S${this.x3},${this.y3} ${this.x},${this.y}`; }
 
-  reverse() { return new CurveTo(this.x3, this.y3, this.x2, this.y2, this.x, this.y, this.owner, this.prec); }
+  reverse() { return new CurveTo(this.x3, this.y3, this.x2, this.y2, this.x, this.y, this.prec); }
 
-  clone() { return new SmoothTo(this.x3, this.y3, this.x, this.y, this.owner, this.prec); }
+  clone() { return new SmoothTo(this.x3, this.y3, this.x, this.y, this.prec); }
 }
 

@@ -1,5 +1,5 @@
 import {
-  PathPoint,
+  Point,
   MoveTo,
   LineTo,
   HorizTo,

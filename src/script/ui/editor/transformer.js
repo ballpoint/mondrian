@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import LineSegment from 'geometry/line-segment'
 import Bounds from 'geometry/bounds'
 import Element from 'ui/element';
@@ -5,28 +6,40 @@ import Element from 'ui/element';
 const CTRL_PT_DIMEN = 7;
 
 let transformer = {
+  reset() {
+    for (let id of ['tl', 'tr', 'bl', 'br', 'tm', 'lm', 'rm', 'bm']) {
+      transformer.unregisterCtrlPoint.call(this, id);
+    }
+  },
+
   refresh(layer, context) {
     if (this.state.selection.length === 0) {
-      transformer.unregisterCtrlPoint.call(this, layer, 'tm');
+      transformer.reset.call(this);
       return;
     }
 
     let bounds = this.projection.bounds(this.state.selectionBounds);
 
+    let center = this.projection.posn(this.state.selectionBounds.center());
+    let angle = 0;
+    let selectedAngles = _.uniq(this.state.selection.map((e) => { return e.metadata.angle }));
+    if (selectedAngles.length === 1) {
+      angle = selectedAngles;
+    }
+
     // Draw transformer box
 
     // Corners
-    let tl = bounds.tl().sharp();
-    let tr = bounds.tr().sharp();
-    let br = bounds.br().sharp();
-    let bl = bounds.bl().sharp();
-
+    let tl = bounds.tl().rotate(angle, center).sharp();
+    let tr = bounds.tr().rotate(angle, center).sharp();
+    let br = bounds.br().rotate(angle, center).sharp();
+    let bl = bounds.bl().rotate(angle, center).sharp();
 
     // Edges
-    let tm = bounds.tm().sharp();
-    let bm = bounds.bm().sharp();
-    let rm = bounds.rm().sharp();
-    let lm = bounds.lm().sharp();
+    let tm = bounds.tm().rotate(angle, center).sharp();
+    let bm = bounds.bm().rotate(angle, center).sharp();
+    let rm = bounds.rm().rotate(angle, center).sharp();
+    let lm = bounds.lm().rotate(angle, center).sharp();
 
     // Control point dimens
     const d = CTRL_PT_DIMEN;
@@ -56,10 +69,12 @@ let transformer = {
     transformer.registerCtrlPoint.call(this, 'b', layer, bm);
     transformer.registerCtrlPoint.call(this, 'l', layer, lm);
     transformer.registerCtrlPoint.call(this, 'r', layer, rm);
+
+    transformer.registerRotationPoint.call(this, 'tl', layer, tl.clone().nudge(-CTRL_PT_DIMEN,-CTRL_PT_DIMEN));
   },
 
   registerCtrlPoint(which, layer, origin) {
-    let id = 'transformer:'+which;
+    let id = 'transformer:scale:'+which;
 
     let opposite;
 
@@ -141,17 +156,50 @@ let transformer = {
       },
       'drag:stop': (e, posn, startPosn) => {
         e.stopPropagation();
-
       }
     })
 
     this.cursorHandler.registerElement(elem)
   },
 
-  unregisterCtrlPoint(layer, id) {
-    id = 'transformer:'+id;
+  unregisterCtrlPoint(id) {
+    id = 'transformer:scale:'+id;
     this.cursorHandler.unregisterElement(id);
+  },
+
+  registerRotationPoint(id, layer, posn) {
+    id = 'transformer:rotate:'+id;
+    let ctrlBounds = Bounds.centeredOnPosn(posn.sharp(), CTRL_PT_DIMEN, CTRL_PT_DIMEN);
+
+    let ctrlOpts = { stroke: 'red' };
+
+    if (this.cursorHandler.active && this.cursorHandler.active.id === id) {
+      ctrlOpts.fill = 'red';
+    }
+
+    layer.drawRect(ctrlBounds, ctrlOpts);
+
+    let elem = new Element(id, ctrlBounds, {
+      'mousedown': function (e, posn) {
+        e.stopPropagation();
+      },
+
+      'drag': (e, posn, lastPosn) => {
+        e.stopPropagation();
+        let center = this.state.selectionBounds.center();
+
+        let lineBefore = new LineSegment(lastPosn, center);
+        let lineAfter  = new LineSegment(posn, center);
+
+        let angleDelta = lineBefore.angle - lineAfter.angle;
+
+        this.rotateSelected(angleDelta, center);
+      }
+    });
+
+    this.cursorHandler.registerElement(elem);
   }
+
 }
 
 export default transformer;

@@ -32,7 +32,7 @@ export default class PointsList {
   
     this.prototype.closed = false;
   }
-  constructor(segments, owner) {
+  constructor(segments) {
     // Build this thing out of PointsSegment objects.
     //
     // I/P:
@@ -48,7 +48,6 @@ export default class PointsList {
 
     // First, if we were given a string of SVG points let's
     // parse that into what we work with, an array of Points
-    this.owner = owner;
     if (segments == null) { segments = []; }
     this.segments = segments;
 
@@ -136,11 +135,11 @@ export default class PointsList {
     */
   }
 
-  static fromString(string, owner) {
+  static fromString(string) {
     // Given a d="M204,123 C9023........." string,
     // return an array of Points.
 
-    let list = new PointsList([], owner);
+    let list = new PointsList([]);
 
     let previous = undefined;
 
@@ -172,7 +171,7 @@ export default class PointsList {
 
       // Point's constructor decides what kind of subclass to make
       // (MoveTo, CurveTo, etc)
-      let ps = Point.fromString(point, owner, previous);
+      let ps = Point.fromString(point, previous);
 
       for (let p of ps) {
         if (p instanceof MoveTo) {
@@ -181,7 +180,6 @@ export default class PointsList {
             currentSegment = new PointsSegment([], list);
           }
         }
-
 
         if (p instanceof Point) {
           if (previous != null && currentSegment.points.has(previous)) {
@@ -192,12 +190,18 @@ export default class PointsList {
             p = p.toCurveTo();
           }
 
+          if (p instanceof VertiTo || p instanceof HorizTo) {
+            p = new LineTo(p.x, p.y)
+          }
+
           previous = p; // Set it for the next point
 
           // Don't remember why I did this.
+          /*
           if ((p instanceof SmoothTo) && (owner instanceof Point)) {
             p.setPrec(owner);
           }
+          */
 
           currentSegment.push(p);
         }
@@ -269,8 +273,6 @@ export default class PointsList {
       this.pushSegment(new PointsSegment([], this));
     }
 
-    point.owner = this.owner;
-
     if ((after == null)) {
       point.at = this.lastSegment.points.length;
       this.lastSegment.push(point);
@@ -304,7 +306,7 @@ export default class PointsList {
 
   reverse() {
     // Reverse the order of the points, while maintaining the exact same shape.
-    return new PointsList([], this.owner, this.segments.map(s => s.reverse()));
+    return new PointsList([], this.segments.map(s => s.reverse()));
   }
 
 
@@ -453,7 +455,7 @@ export default class PointsList {
   }
 
   withoutMoveTos() {
-    return new PointsList([], this.owner, this.filterSegments(p => !(p instanceof MoveTo)));
+    return new PointsList([], this.filterSegments(p => !(p instanceof MoveTo)));
   }
 }
 PointsList.initClass();

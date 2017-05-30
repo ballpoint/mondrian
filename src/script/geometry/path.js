@@ -50,8 +50,6 @@ export default class Path extends Monsvg {
       this.points = PointsList.fromString(points, this);
     }
 
-    this.points = this.points.absolute();
-
     this.clearCachedObjects();
 
     return this;
@@ -211,9 +209,6 @@ export default class Path extends Monsvg {
 
     // Commit it
     this.commitPoints();
-
-    // Rotated rect becomes path
-    return this.woohoo();
   }
 
   getPoints() {

@@ -224,6 +224,8 @@ export default class Editor extends EventEmitter {
   selectElements(elems) {
     this.state.selection = elems;
 
+    window.$s = elems[0];
+
     this.calculateSelectionBounds();
 
     this.canvas.refreshAll();
@@ -400,7 +402,7 @@ export default class Editor extends EventEmitter {
     this.trigger('change');
   }
 
-  scaleSelected(x, y, origin, historyOpts={}) {
+  scaleSelected(x, y, origin) {
     for (let elem of this.state.selection) {
       elem.scale(x, y, origin);
     }
@@ -416,6 +418,15 @@ export default class Editor extends EventEmitter {
 
     this.history.push(event);
     this.trigger('change');
+  }
+
+  rotateSelected(angle, origin) {
+    for (let elem of this.state.selection) {
+      elem.rotate(angle, origin);
+    }
+
+    //this.calculateSelectionBounds();
+    this.canvas.refreshAll();
   }
 
   undo() {
