@@ -41,6 +41,17 @@ export default class Bounds {
     this.yr = new Range(this.y, this.y + this.height);
   }
 
+  static fromPosns(posns) {
+    let xs = posns.map((p) => { return p.x });
+    let ys = posns.map((p) => { return p.y });
+    let minX = Math.min(...xs);
+    let minY = Math.min(...ys);
+    let maxX = Math.max(...xs);
+    let maxY = Math.max(...ys);
+
+    return new Bounds(minX, minY, maxX - minX, maxY - minY);
+  }
+
   sharp() {
     return new Bounds(
       math.sharpen(this.x),
@@ -139,14 +150,6 @@ export default class Bounds {
     let sh = this.height / bounds.height;
     let sm = Math.max(sw, sh);
     return new Bounds(0, 0, this.width / sm, this.height / sm);
-  }
-
-  static fromPosns(p1, p2) {
-    let x = Math.min(p1.x, p2.x);
-    let y = Math.min(p1.y, p2.y);
-    let w = Math.abs(p1.x - p2.x);
-    let h = Math.abs(p1.y - p2.y);
-    return new Bounds(x, y, w, h);
   }
 
   static centeredOnPosn(posn, w, h) {

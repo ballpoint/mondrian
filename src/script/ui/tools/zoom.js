@@ -27,7 +27,7 @@ export default class Zoom extends Tool {
   }
 
   handleDragStop(e, posn) {
-    let bounds = Bounds.fromPosns(this.dragStart, this.dragEnd);
+    let bounds = Bounds.fromPosns([this.dragStart, this.dragEnd]);
     let center = bounds.center();
 
     let screenBounds = this.editor.projection.bounds(bounds);
@@ -48,7 +48,7 @@ export default class Zoom extends Tool {
   refresh(layer, context) {
     // Draw any needed UI elements
     if (this.dragStart && this.dragEnd) {
-      let bounds = Bounds.fromPosns(this.dragStart, this.dragEnd);
+      let bounds = Bounds.fromPosns([this.dragStart, this.dragEnd]);
       bounds = this.editor.projection.bounds(bounds);
       context.strokeStyle = 'black';
       context.strokeRect(bounds.x, bounds.y, bounds.width, bounds.height);

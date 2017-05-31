@@ -52,9 +52,6 @@ export default class Posn {
       this.x = x;
       this.y = y;
     }
-
-    // That's fucking it.
-    this;
   }
 
   // Rounding an you know
@@ -239,7 +236,6 @@ export default class Posn {
     return new Posn(this.x, this.y);
   }
 
-
   snap(to, threshold) {
     // Algorithm: bisect the line on this posn's x and y
     // coordinates and return the midpoint of that line.
@@ -249,20 +245,8 @@ export default class Posn {
     return perpLine.intersection(to);
   }
 
-
   reflect(posn) {
-    /*
-
-      Reflect the point over an x and/or y axis
-
-      I/P:
-        posn: Posn
-
-    */
-
-    let { x } = posn;
-    let { y } = posn;
-
+    let { x, y } = posn;
     return new Posn(x + (x - this.x), y + (y - this.y));
   }
 

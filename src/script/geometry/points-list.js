@@ -4,10 +4,7 @@ import Point from 'geometry/point';
 import {
   MoveTo,
   LineTo,
-  HorizTo,
-  VertiTo,
   CurveTo,
-  SmoothTo,
 } from 'geometry/point';
 
 
@@ -184,14 +181,6 @@ export default class PointsList {
         if (p instanceof Point) {
           if (previous != null && currentSegment.points.has(previous)) {
             previous.setSucc(p);
-          }
-
-          if (p instanceof SmoothTo) {
-            p = p.toCurveTo();
-          }
-
-          if (p instanceof VertiTo || p instanceof HorizTo) {
-            p = new LineTo(p.x, p.y)
           }
 
           previous = p; // Set it for the next point

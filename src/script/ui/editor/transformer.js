@@ -2,6 +2,7 @@ import _ from 'lodash';
 import LineSegment from 'geometry/line-segment'
 import Bounds from 'geometry/bounds'
 import Element from 'ui/element';
+import Point from 'geometry/point';
 
 const CTRL_PT_DIMEN = 7;
 
@@ -13,8 +14,16 @@ let transformer = {
   },
 
   refresh(layer, context) {
-    if (this.state.selection.length === 0) {
+    let selection = this.state.selection;
+
+    if (selection.length === 0) {
       transformer.reset.call(this);
+      return;
+    }
+
+    let selectionType;
+
+    if (this.state.selectionType !== 'ELEMENTS') {
       return;
     }
 
@@ -22,9 +31,13 @@ let transformer = {
 
     let center = this.projection.posn(this.state.selectionBounds.center());
     let angle = 0;
-    let selectedAngles = _.uniq(this.state.selection.map((e) => { return e.metadata.angle }));
-    if (selectedAngles.length === 1) {
-      angle = selectedAngles;
+
+
+    if (selectionType === 'ELEMS') {
+      let selectedAngles = _.uniq(this.state.selection.map((e) => { return e.metadata.angle }));
+      if (selectedAngles.length === 1) {
+        angle = selectedAngles;
+      }
     }
 
     // Draw transformer box

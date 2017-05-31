@@ -98,15 +98,6 @@ export default class PointsSegment {
     return x.remove();
   }
 
-  movePointToFront(point) {
-    if (!(this.points.has(point))) { return; }
-
-    this.removeMoveTo();
-    this.points = this.points.cannibalizeUntil(point);
-    return this;
-  }
-
-
   moveMoveTo(otherPoint) {
     let segment;
     let tail = this.points.slice(1);
@@ -219,27 +210,4 @@ export default class PointsSegment {
     });
     return new PointsSegment(stack, this.list);
   }
-
-
-  removeMoveTo() {
-    return this.points = this.points.filter(p => !(p instanceof MoveTo));
-  }
-
-
-  ensureMoveTo() {
-    let lastPoint = this.points.last();
-    let firstPoint = this.points.first();
-
-    let moveTo = new MoveTo(lastPoint.x, lastPoint.y, lastPoint.owner, lastPoint);
-    moveTo.at = 0;
-
-    lastPoint.succ = (firstPoint.prec = moveTo);
-    moveTo.succ = firstPoint;
-    this.points.unshift(moveTo);
-
-    return this;
-  }
 }
-
-
-

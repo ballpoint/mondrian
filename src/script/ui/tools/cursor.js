@@ -32,13 +32,12 @@ export default class Cursor extends Tool {
   }
 
   handleMousedown(e, posn) {
-    console.log(this.hovering);
     if (this.hovering) {
       if (!this.editor.state.selection.has(this.hovering)) {
-        this.editor.selectElements([this.hovering]);
+        this.editor.setSelection([this.hovering]);
       }
     } else {
-      this.editor.selectElements([]);
+      this.editor.setSelection([]);
     }
   }
 
@@ -65,7 +64,7 @@ export default class Cursor extends Tool {
 
   handleDragStop(e, posn, startPosn) {
     if (this.dragSelectStart) {
-      let bounds = Bounds.fromPosns(this.dragSelectStart, this.dragSelectEnd)
+      let bounds = Bounds.fromPosns([this.dragSelectStart, this.dragSelectEnd])
 
       let newSelection = [];
 
@@ -76,7 +75,7 @@ export default class Cursor extends Tool {
         }
       }
 
-      this.editor.selectElements(newSelection);
+      this.editor.setSelection(newSelection);
 
       this.dragSelectStart = null;
       this.dragSelectEnd = null;
@@ -87,73 +86,10 @@ export default class Cursor extends Tool {
     let hovering = this.hovering;
 
     if (this.dragSelectStart && this.dragSelectEnd) {
-      let bounds = Bounds.fromPosns(this.dragSelectStart, this.dragSelectEnd);
+      let bounds = Bounds.fromPosns([this.dragSelectStart, this.dragSelectEnd]);
       bounds = this.editor.projection.bounds(bounds).sharp();
       layer.setLineWidth(1);
       layer.drawRect(bounds, { stroke: 'black' });
-    }
-
-    /*
-
-      let points = elem.points;
-      if (points.segments) {
-        for (let segment of points.segments) {
-          for (let point of segment.points) {
-            let x = this.editor.projection.xSharp(point.x);
-            let y = this.editor.projection.ySharp(point.y);
-
-            //context.fillStyle = 'white';
-            context.strokeStyle = 'blue';
-            //context.fillRect(this.editor.projection.x(point.x)-2, this.editor.projection.y(point.y)-1, 4, 4);
-            context.strokeRect(x-2, y-2, 4, 4);
-
-            if (point.x2) {
-              context.strokeRect(this.editor.projection.xSharp(point.x2)-2, this.editor.projection.ySharp(point.y2)-2, 4, 4);
-            }
-            if (point.x3) {
-              context.strokeRect(this.editor.projection.xSharp(point.x3)-2, this.editor.projection.ySharp(point.y3)-2, 4, 4);
-            }
-          }
-        }
-      }
-    }
-    */
-
-
-    if (hovering && !this.editor.state.selection.has(hovering)) {
-      let points = hovering.points;
-      let i = 0;
-      if (points.segments) {
-        for (let segment of points.segments) {
-          for (let pt of segment.points) {
-            let point = this.editor.projection.posn(pt);
-
-            layer.drawCircle(point, 3, { stroke: 'black', fill: 'white' });
-
-            if (point.x2) {
-              context.strokeRect(this.editor.projection.x(point.x2)-2, this.editor.projection.y(point.y2)-2, 4, 4);
-            }
-            if (point.x3) {
-              context.strokeRect(this.editor.projection.x(point.x3)-2, this.editor.projection.y(point.y3)-2, 4, 4);
-            }
-          }
-        }
-      }
-      /*
-
-      // DEBUG CODE
-      let lss = hovering.lineSegments();
-
-      for (let ls of lss) {
-        context.beginPath();
-        layer.moveTo(this.editor.projection.posn(ls.p1));
-        layer.drawLine(this.editor.projection.line(ls));
-
-        context.strokeStyle = 'black';
-        context.lineWidth = 1;
-        context.stroke();
-      }
-      */
     }
   }
 }

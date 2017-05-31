@@ -6,6 +6,7 @@ import EventEmitter from 'lib/events';
 import math from 'lib/math';
 import Canvas from 'ui/canvas';
 import Posn from 'geometry/posn';
+import Point from 'geometry/point';
 import Projection from 'ui/projection';
 import hotkeys from 'ui/hotkeys';
 import Bounds from 'geometry/bounds'
@@ -16,12 +17,11 @@ import DocHistory from 'history/history';
 import { NudgeEvent, ScaleEvent, DeleteEvent } from 'history/events';
 
 import Cursor from 'ui/tools/cursor';
+import SubCursor from 'ui/tools/subcursor';
 import Zoom from 'ui/tools/zoom';
 import Paw from 'ui/tools/paw';
 
 const RULER_DIMEN = math.sharpen(20);
-
-console.log(consts);
 
 import transformer from 'ui/editor/transformer';
 
@@ -46,7 +46,7 @@ export default class Editor extends EventEmitter {
     this.history = new DocHistory();
     window.h = this.history;
 
-    this.setPosition(this.state.position);
+    this.setPosition(doc.center());
 
     this.canvas.refreshAll();
   }
@@ -117,6 +117,7 @@ export default class Editor extends EventEmitter {
     hotkeys.on('down', 'shift-leftArrow', () => { this.nudgeSelected(-10, 0); });
 
     hotkeys.on('down', 'V', () => { this.selectTool(new Cursor(this)); });
+    hotkeys.on('down', 'A', () => { this.selectTool(new SubCursor(this)); });
     hotkeys.on('down', 'Z', () => { this.selectTool(new Zoom(this)); });
     hotkeys.on('down', 'space', () => { this.selectTool(new Paw(this)); });
     hotkeys.on('up', 'space', () => { this.selectTool(this.state.lastTool); });
@@ -168,7 +169,6 @@ export default class Editor extends EventEmitter {
     } else {
       this.state = {
         zoomLevel: 1,
-        position: this.doc.center(),
         selection: [],
         tool: new Cursor(this)
       };
@@ -214,17 +214,24 @@ export default class Editor extends EventEmitter {
   }
 
   clearSelection() {
-    this.selectElements([]);
+    this.setSelection([]);
   }
 
   selectAll() {
-    this.selectElements(this.doc.elements.slice(0));
+    this.setSelection(this.doc.elements.slice(0));
   }
 
-  selectElements(elems) {
-    this.state.selection = elems;
+  setSelection(items) {
+    this.state.selection = items;
 
-    window.$s = elems[0];
+    if (items[0] instanceof Point) {
+      this.state.selectionType = 'POINTS';
+    } else {
+      this.state.selectionType = 'ELEMENTS';
+    }
+
+    // DEBUG
+    window.$s = items;
 
     this.calculateSelectionBounds();
 
@@ -263,13 +270,18 @@ export default class Editor extends EventEmitter {
 
   calculateSelectionBounds() {
     if (this.state.selection.length > 0) {
-      let boundsList = [];
 
-      for (let elem of this.state.selection) {
-        boundsList.push(elem.bounds());
+      if (this.state.selection[0] instanceof Point) {
+        this.state.selectionBounds = Bounds.fromPosns(this.state.selection);
+      } else {
+        let boundsList = [];
+
+        for (let elem of this.state.selection) {
+          boundsList.push(elem.bounds());
+        }
+
+        this.state.selectionBounds = new Bounds(boundsList);
       }
-
-      this.state.selectionBounds = new Bounds(boundsList);
     } else {
       this.state.selectionBounds = null;
     }
@@ -452,7 +464,7 @@ export default class Editor extends EventEmitter {
     for (let elem of this.state.clipboard) {
       this.doc.insertElement(elem);
     }
-    this.selectElements(this.state.clipboard);
+    this.setSelection(this.state.clipboard);
     this.state.cl
   }
 

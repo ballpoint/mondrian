@@ -4,10 +4,7 @@ import Point from 'geometry/point';
 import {
   MoveTo,
   LineTo,
-  HorizTo,
-  VertiTo,
   CurveTo,
-  SmoothTo,
 
 } from 'geometry/point';
 
@@ -26,7 +23,7 @@ export default {
     // O/P: LineSegment or CubiBezier
 
     if (b == null) { b = a.succ; }
-    if (b instanceof LineTo || b instanceof HorizTo || b instanceof VertiTo) {
+    if (b instanceof LineTo) {
       return new LineSegment(new Posn(a.x, a.y), new Posn(b.x, b.y), b);
 
     } else if (b instanceof CurveTo) {
@@ -37,19 +34,8 @@ export default {
         new Posn(b.x2, b.y2),
         new Posn(b.x3, b.y3),
         new Posn(b.x, b.y), b);
-
-    } else if (b instanceof SmoothTo) {
-      // SmoothTo creates a CubicBezier also, but it derives its p2 as the
-      // reflection of the previous point's p3 reflected over its p4
-
-      return new CubicBezier(
-        new Posn(a.x, a.y),
-        new Posn(b.x2, b.y2),
-        new Posn(b.x3, b.y3),
-        new Posn(b.x, b.y), b);
     }
   },
-
 
   nextSubstantialPathSegment(point) {
     // Skip any points within 1e-6 of each other

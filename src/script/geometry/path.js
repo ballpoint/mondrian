@@ -7,10 +7,7 @@ import Posn from 'geometry/posn';
 import {
   MoveTo,
   LineTo,
-  HorizTo,
-  VertiTo,
   CurveTo,
-  SmoothTo,
 } from 'geometry/point';
 
 /*
@@ -244,10 +241,10 @@ export default class Path extends Monsvg {
         case MoveTo:
           context.moveTo(projection.x(point.x), projection.y(point.y));
           break;
-        case LineTo: case HorizTo: case VertiTo:
+        case LineTo:
           context.lineTo(projection.x(point.x), projection.y(point.y));
           break;
-        case CurveTo: case SmoothTo:
+        case CurveTo:
           context.bezierCurveTo(projection.x(point.x2), projection.y(point.y2), projection.x(point.x3), projection.y(point.y3), projection.x(point.x), projection.y(point.y));
           break;
       }

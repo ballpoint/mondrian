@@ -112,9 +112,6 @@ export default class Point extends Posn {
       moveTo:   MoveTo,
       lineTo:   LineTo,
       curveTo:  CurveTo,
-      smoothTo: SmoothTo,
-      horizTo:  HorizTo,
-      vertiTo:  VertiTo
     };
 
     let lengths = {
@@ -227,7 +224,7 @@ export default class Point extends Posn {
                 cl = CurveTo;
 
                 let p2;
-                if (prec instanceof CurvePoint) {
+                if (prec instanceof CurveTo) {
                   p2 = prec.p3().reflect(prec.p());
                 } else {
                   debugger;
@@ -273,14 +270,6 @@ export default class Point extends Posn {
     return points;
   }
 
-  actionHint() {
-    return this.baseHandle.setAttribute('action', '');
-  }
-
-  hideActionHint() {
-    return this.baseHandle.removeAttribute('action');
-  }
-
   inheritPosition(from) {
     // Maintain linked-list order in a PointsList
     this.at         = from.at;
@@ -288,12 +277,29 @@ export default class Point extends Posn {
     this.succ       = from.succ;
     this.prec.succ  = this;
     this.succ.prec  = this;
-    if (from.baseHandle != null) { this.baseHandle = from.baseHandle; }
     return this;
   }
 
-  nudge(x, y, checkForFirstOrLast) {
-    super.nudge(x, y);
+  nudge(xd, yd) {
+
+    /*
+    // Handle moving MoveTos that are closely associated with this point
+    if (this.succ instanceof MoveTo && this.distanceFrom(this.succ) < 1) {
+      this.succ.nudge(x, y);
+    } else if (this.prec instanceof MoveTo && this.distanceFrom(this.prec) < 1) {
+      this.prec.nudge(x, y);
+    }
+    */
+
+    super.nudge(xd, yd);
+
+    if (this instanceof CurveTo) {
+      this.absorb(this.p3().nudge(xd, yd), 3);
+    }
+
+    if (this.succ instanceof CurveTo) {
+      this.succ.absorb(this.succ.p2().nudge(xd, yd), 2);
+    }
 
     /*
     if (checkForFirstOrLast == null) { checkForFirstOrLast = true; }
@@ -342,7 +348,7 @@ export default class Point extends Posn {
   */
 
   remove() {
-    return (this.baseHandle != null ? this.baseHandle.remove() : undefined);
+    return;
   }
 
   flag(flag) { return this._flags.ensure(flag); }
@@ -545,7 +551,6 @@ export class AntlerPoint extends Point {
     this.family = family;
     this.role = role;
     this.draw();
-    this.baseHandle.className += ' bz-ctrl';
     this.line = ui.annotations.drawLine(this.zoomedc(), this.family.base.zoomedc());
     if (this.owner.antlerPoints != null) {
       this.owner.antlerPoints.push(this);
@@ -555,15 +560,6 @@ export class AntlerPoint extends Point {
   succ() { return this.family.base.succ; }
 
   base() { return this.family.base; }
-
-  hideTemp() {
-    this.line.rep.style.display = 'none';
-    this.baseHandle.style.display = 'none';
-    return () => {
-      this.line.rep.style.display = 'block';
-      return this.baseHandle.style.display = 'block';
-    };
-  }
 
   remove() {
     this.line.remove();
@@ -682,74 +678,14 @@ export class LineTo extends Point {
     return this;
   }
 
+  p2() {
+    return null;
+  }
+
   toString() { return `L${this.x},${this.y}`; }
 
   clone() { return new LineTo(this.x, this.y, this.prec); }
 }
-
-
-
-
-export class HorizTo extends Point {
-  constructor(x, prec) {
-    super(x, prec.absolute().y, prec);
-  }
-
-  toString() {
-    return `H${this.x}`;
-  }
-
-  convertToLineTo() {
-    // Converts and replaces this with an equivalent LineTo
-    // Returns the resulting LineTo so it can be operated on.
-    let lineTo = new LineTo(this.x, this.y);
-    this.replaceWith(lineTo);
-    return lineTo;
-  }
-
-  rotate(a, origin) {
-    return this.convertToLineTo().rotate(a, origin);
-  }
-
-  absolute() {
-    return this;
-  }
-
-  clone() { return new HorizTo(this.x, this.prec); }
-}
-
-
-
-export class VertiTo extends Point {
-  constructor(y, prec) {
-    super(prec.absolute().x, y, prec);
-  }
-
-  toString() { return `V${this.y}`; }
-
-  convertToLineTo() {
-    // Converts and replaces this with an equivalent LineTo
-    // Returns the resulting LineTo so it can be operated on.
-    let lineTo = new LineTo(this.x, this.y);
-    this.replaceWith(lineTo);
-    return lineTo;
-  }
-
-  rotate(a, origin) {
-    return this.convertToLineTo().rotate(a, origin);
-  }
-
-  absolute() {
-    return this;
-  }
-
-  clone() { return new VertiTo(this.y, this.prec); }
-}
-
-
-
-
-
 
 
 /*
@@ -760,7 +696,7 @@ export class VertiTo extends Point {
 
 */
 
-export class CurvePoint extends Point {
+export class CurveTo extends Point {
   constructor(x2, y2, x3, y3, x, y, prec) {
     super(x, y, prec);
     this.x2 = x2;
@@ -771,11 +707,7 @@ export class CurvePoint extends Point {
     this.y = y;
     this.prec = prec;
 
-    //this.makeAntlers();
     /*
-
-      This Class just extends into CurveTo and SmoothTo as a way of abstracting out the curve
-      handling the control points. It has two control points in addition to the base point (handled by super)
 
       Each point has a predecessor and a successor (in terms of line segments).
 
@@ -812,7 +744,6 @@ export class CurvePoint extends Point {
     return new Posn(this.x, this.y);
   }
 
-
   absorb(p, n) {
     // I/P: p, Posn
     //      n, 2 or 3 (p2 or p3)
@@ -834,11 +765,13 @@ export class CurvePoint extends Point {
   }
 
 
+  /*
   nudge(xd, yd) {
     this.absorb(this.p2().nudge(xd, yd), 2);
     this.absorb(this.p3().nudge(xd, yd), 3);
     return super.nudge(xd, yd);
   }
+  */
 
 
   scale(x, y, origin) {
@@ -858,20 +791,6 @@ export class CurvePoint extends Point {
   absolute() {
     return this;
   }
-}
-
-
-export class CurveTo extends CurvePoint {
-  constructor(x2, y2, x3, y3, x, y, prec) {
-    super(x2, y2, x3, y3, x, y, prec);
-    this.x2 = x2;
-    this.y2 = y2;
-    this.x3 = x3;
-    this.y3 = y3;
-    this.x = x;
-    this.y = y;
-    this.prec = prec;
-  }
 
   toString() { return `C${this.x2},${this.y2} ${this.x3},${this.y3} ${this.x},${this.y}`; }
 
@@ -881,62 +800,3 @@ export class CurveTo extends CurvePoint {
 
   clone() { return new CurveTo(this.x2, this.y2, this.x3, this.y3, this.x, this.y, this.prec); }
 }
-
-
-export class SmoothTo extends CurvePoint {
-  constructor(x3, y3, x, y, prec) {
-    let { x2, y2 } = SmoothTo.inheritFromPrec(prec);
-    super(x2, y2, x3, y3, x, y, prec);
-    this.x2 = x2;
-    this.y2 = y2;
-    this.x3 = x3;
-    this.y3 = y3;
-    this.x = x;
-    this.y = y;
-    this.prec = prec;
-    //CurvePoint.inheritFromPrec(this.prec);
-  }
-
-  static inheritFromPrec(prec) {
-    // Since a SmoothTo's p2 is a reflection of its precessor's p3 over
-    // its previous point, we need to query that info from its precessor.
-    let p2;
-    this.prec = prec;
-    if (this.prec instanceof CurvePoint) {
-      let precAbs = this.prec.absolute();
-      p2 = new Posn(precAbs.x3, precAbs.y3).reflect(precAbs);
-    } else {
-      p2 = new Posn(this.x, this.y); // No p2 to inherit, so just nullify it
-    }
-
-    return { x2: p2.x, y2: p2.y };
-  }
-
-
-  toCurveTo(p2) {
-    if (p2 == null) { p2 = null; }
-    if (p2 === null) {
-      if (this.prec instanceof CurvePoint) {
-        p2 = this.prec.p3().reflect(this.prec.p());
-      } else {
-        p2 = new Posn(this.x, this.y);
-      }
-    }
-
-    let ct = new CurveTo(p2.x, p2.y, this.x3, this.y3, this.x, this.y, this.prec);
-    ct.at = this.at;
-    return ct;
-  }
-
-  replaceWithCurveTo(p2) {
-    if (p2 == null) { p2 = null; }
-    return this.replaceWith(this.toCurveTo(p2));
-  }
-
-  toString() { return `S${this.x3},${this.y3} ${this.x},${this.y}`; }
-
-  reverse() { return new CurveTo(this.x3, this.y3, this.x2, this.y2, this.x, this.y, this.prec); }
-
-  clone() { return new SmoothTo(this.x3, this.y3, this.x, this.y, this.prec); }
-}
-
