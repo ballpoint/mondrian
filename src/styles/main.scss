@@ -35,6 +35,14 @@ body#app {
       background-color: $bg-grey;
       border-right: 1px solid $fg-grey;
       border-bottom: 1px solid $fg-grey;
+
+      rect.logo-bg {
+        fill: #212121;
+      }
+
+      rect.logo-fg {
+        fill: #fff;
+      }
     }
 
     #app-controls {

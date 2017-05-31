@@ -320,29 +320,6 @@ export default class PointsList {
     return this;
   }
 
-  absolute() {
-    this.segments = this.segments.map(function(s) {
-      s.points = s.points.map(function(p) {
-        let abs = p.absolute();
-        abs.inheritPosition(p);
-        return abs;
-      });
-      return s;
-    });
-    return this;
-  }
-
-  drawBasePoints() {
-    this.map(function(p) {
-      if (p.baseHandle != null) {
-        p.baseHandle.remove();
-      }
-      p.draw();
-      return p.makeAntlers();
-    });
-    return this;
-  }
-
   removeBasePoints() {
     this.map(p => p.baseHandle != null ? p.baseHandle.remove() : undefined);
     return this;

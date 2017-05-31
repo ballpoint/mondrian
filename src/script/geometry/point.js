@@ -359,302 +359,13 @@ export default class Point extends Posn {
 }
 
 
-/*
-
-  Antlers
-
-     \
-        \ O  -  (succx, succy)
-          \\
-            \
-             \
-              o
-               \
-                \
-                \\
-                \ O  -  (basex, basey)
-                |
-                |
-               /
-              /
-
-
-  Control handles for any vector Point. Edits base's x3 and base's succ's p2
-  Each CurvePoint gets one of these. It keeps track of coordinates locally so we can
-  draw these pre-emptively. For example, if you take the Pen tool and just drag a curve point right away,
-  those curves don't exist yet but they come into play as soon as you add another point
-  (...which will have to be a CurvePoint even if it's a static click)
-
-  This class handles the GUI and updating the base and its succ's x2 y2 x3 y3. :)
-
-*/
-
-
-
-
-
-export class Antlers {
-  static initClass() {
-    this.prototype.angleLockThreshold = 0.5;
-  }
-
-  constructor(base, basep3, succp2) {
-    // I/P: base, a CurvePoint
-    //      basex3 - either a Posn or null
-    //      succx2 - either a Posn or null
-
-    if (basep3 && isNaN(basep3.x)) debugger;
-
-    this.base = base;
-    this.basep3 = basep3;
-    this.succp2 = succp2;
-
-    // Decide whether or not to lock the angle
-    // (ensure points are always on a straight line)
-    if ((this.basep3 != null) && (this.succp2 != null)) {
-      let diff = Math.abs(this.basep3.angle360(this.base) - this.succp2.angle360(this.base));
-      this.lockAngle = diff.within(this.angleLockThreshold, 180);
-    } else {
-      this.lockAngle = false;
-    }
-  }
-
-
-  commit() {
-    // Export the data to the element
-    if (this.basep3 != null) {
-      this.base.x3 = this.basep3.x;
-      this.base.y3 = this.basep3.y;
-    }
-    if ((this.succp2 != null) && this.succ()) {
-      this.succ().x2 = this.succp2.x;
-      this.succ().y2 = this.succp2.y;
-    }
-    return this;
-  }
-
-  importNewSuccp2(succp2) {
-    this.succp2 = succp2;
-    if (this.succp2 != null) {
-      this.basep3 = this.succp2.reflect(this.base);
-    }
-    return this.commit().refresh();
-  }
-
-  killSuccp2() {
-    this.succp2 = new Posn(this.base.x, this.base.y);
-    return this.commit().refresh();
-  }
-
-  succ() {
-    return this.base.succ;
-  }
-
-  refresh() {
-    if (!this.visible) { return; }
-    return this.hide().show();
-  }
-
-  nudge(x, y) {
-    if (this.basep3) this.basep3.nudge(x,y);
-    if (this.succp2) this.succp2.nudge(x,y);
-
-    /*
-    let succ = this.base.succ;
-    if (succ instanceof CurvePoint) {
-      succ.x2 += x;
-      succ.y2 += y;
-    }
-    */
-    this.commit();
-  }
-
-
-
-  scale(x, y, origin) {
-    // When the shape is closed, this gets handled by the last point's antlers.
-
-    if (this.basep3 != null) {
-      this.basep3.scale(x, y, origin);
-    }
-    return (this.succp2 != null ? this.succp2.scale(x, y, origin) : undefined);
-  }
-
-  rotate(a, origin) {
-
-    if (this.basep3 != null) {
-      this.basep3.rotate(a, origin);
-    }
-    if (this.succp2 != null) {
-      this.succp2.rotate(a, origin);
-    }
-    return this;
-  }
-
-  angleDiff(a, b) {
-    let x = a - b;
-    if (x < 0) {
-      x += 360;
-    }
-    return x;
-  }
-
-  flatten() {
-    let ahead, compensate;
-    if ((this.succp2 == null) || (this.basep3 == null)) { return; }
-
-    // Whichever one's ahead keeps moving ahead
-
-
-    let angleSuccp2 = this.succp2.angle360(this.base);
-    let angleBasep3 = this.basep3.angle360(this.base);
-
-    let p2p3d = this.angleDiff(angleSuccp2, angleBasep3);
-    let p3p2d = this.angleDiff(angleBasep3, angleSuccp2);
-
-    if (p2p3d < p3p2d) {
-      ahead = "p2";
-    } else {
-      ahead = "p3";
-    }
-
-    if (ahead === "p2") {
-      // Move p2 forward, p3 back
-      if (p2p3d < 180) {
-       compensate = (180 - p2p3d) / 2;
-       this.succp2 = this.succp2.rotate(compensate, this.base);
-       return this.basep3 = this.basep3.rotate(-compensate, this.base);
-     }
-    } else {
-      // Move p2 forward, p3 back
-      if (p3p2d < 180) {
-       compensate = (180 - p3p2d) / 2;
-       this.succp2 = this.succp2.rotate(-compensate, this.base);
-       return this.basep3 = this.basep3.rotate(compensate, this.base);
-     }
-    }
-  }
-}
-Antlers.initClass();
-
-export class AntlerPoint extends Point {
-  constructor(x, y, owner, family, role) {
-    // I/P: x: int
-    //      y: int
-    //      owner: Monsvg
-    //      family: Antlers
-    //      role: int, -1 or 1 (-1 = base p3, 1 = succ p2)
-    super(x, y, owner);
-    this.x = x;
-    this.y = y;
-    this.owner = owner;
-    this.family = family;
-    this.role = role;
-    this.draw();
-    this.line = ui.annotations.drawLine(this.zoomedc(), this.family.base.zoomedc());
-    if (this.owner.antlerPoints != null) {
-      this.owner.antlerPoints.push(this);
-    }
-  }
-
-  succ() { return this.family.base.succ; }
-
-  base() { return this.family.base; }
-
-  remove() {
-    this.line.remove();
-    return super.remove(...arguments);
-  }
-
-
-  nudge(x, y) {
-    if (!this.family.lockAngle) {
-      super.nudge(x, y);
-      this.persist();
-    } else {
-      let oldangle = this.angle360(this.family.base);
-      super.nudge(x, y);
-
-      let newangle = this.angle360(this.family.base);
-      __guard__(this.family.other(this), x1 => x1.rotate(newangle - oldangle, this.family.base));
-      this.persist();
-    }
-
-    if ((this.role === -1) && this.family.base.succ instanceof SmoothTo) {
-      let s = this.family.base.succ;
-      return s.replaceWith(s.toCurveTo());
-    }
-  }
-
-
-  scale(x, y, origin) {
-    super.scale(x, y, origin);
-    return this.persist();
-  }
-
-  rotate(a, origin) {
-    super.rotate(a, origin);
-    return this.persist();
-  }
-
-  persist() {
-    if (this.role === -1) {// or @family.lockedTogether
-      this.family.basep3.copy(this);
-    }
-
-    if (this.role === 1) {// or @family.lockedTogether
-      this.family.succp2.copy(this);
-    }
-
-    if (this.family.base === this.owner.points.last) {
-      // Special case for when they are moving the last point's
-      // antlers. We need to make the same changes on the first point's
-      // antlers IF THE SHAPE IS CLOSED.
-
-      let { first } = this.owner.points;
-
-      if (this.family.base.equal(first)) {
-        // Make sure the first point's antlers
-        // have the same succp2 and basep3 as this does
-        //
-        // Copy this antler's succp2 and basep3 and give them to
-        // the first point's antlers as well.
-        first.antlers.succp2 = this.family.succp2.clone();
-        first.antlers.basep3 = this.family.basep3.clone();
-        first.antlers.commit();
-      }
-    }
-
-    this.line.absorbA(this.family.base.zoomedc());
-    this.line.absorbB(this.zoomedc());
-
-    this.line.commit();
-
-    return this.family.commit();
-  }
-}
-
-
-function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
-}
-
-
 export class MoveTo extends Point {
   constructor(x, y, prec) {
     super(...arguments);
   }
 
-  absolute() {
-    return this;
-  }
-
   p2() {
-    if ((this.antlers != null ? this.antlers.succp2 : undefined) != null) {
-      return new Posn(this.antlers.succp2.x, this.antlers.succp2.y);
-    } else {
-      return null;
-    }
+    return null;
   }
 
   toString() { return `M${this.x},${this.y}`; }
@@ -663,19 +374,15 @@ export class MoveTo extends Point {
     return this.prec.toLineSegment();
   }
 
-  // I know this can be abstracted somehow with bind and apply but I
-  // don't have time to figure that out before launch - already wasted time trying
-  clone() { return new MoveTo(this.x, this.y, this.prec); }
+  clone() {
+    return new MoveTo(this.x, this.y, this.prec);
+  }
 }
 
 
 export class LineTo extends Point {
   constructor(x, y, prec) {
     super(...arguments);
-  }
-
-  absolute() {
-    return this;
   }
 
   p2() {
@@ -687,14 +394,6 @@ export class LineTo extends Point {
   clone() { return new LineTo(this.x, this.y, this.prec); }
 }
 
-
-/*
-
-  CurvePoint
-
-  A Point that has handles. Builds the handles in its constructor.
-
-*/
 
 export class CurveTo extends Point {
   constructor(x2, y2, x3, y3, x, y, prec) {
@@ -722,9 +421,7 @@ export class CurveTo extends Point {
         x2, y2: control point (p2)
         x3, y3: control point (p3)
         x, y:   next base point (like any other point)
-        owner:  elem that owns this shape (supered into Point)
         prec:   point that comes before it
-        rel:    bool - true if it's relative or false if it's absolute
 
     */
   }
@@ -785,11 +482,6 @@ export class CurveTo extends Point {
     this.absorb(this.p2().rotate(a, origin), 2);
     this.absorb(this.p3().rotate(a, origin), 3);
     return super.rotate(a, origin);
-  }
-
-
-  absolute() {
-    return this;
   }
 
   toString() { return `C${this.x2},${this.y2} ${this.x3},${this.y3} ${this.x},${this.y}`; }

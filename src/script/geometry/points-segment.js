@@ -35,8 +35,6 @@ export default class PointsSegment {
     this.points.forEach(p => {
       return p.segment = this;
     });
-
-    this;
   }
 
 
