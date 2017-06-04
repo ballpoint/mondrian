@@ -115,7 +115,8 @@ export default class Editor extends EventEmitter {
 
     this.cursorHandler.on('scroll:y', (e, delta) => {
       let zd = 1-(delta / 1000);
-      this.setZoom(this.state.zoomLevel*zd);
+      let anchor = this.cursor.lastPosn;
+      this.setZoom(this.state.zoomLevel*zd, anchor);
     });
 
     hotkeys.on('down', 'downArrow', () => { this.nudgeSelected(0, 1); });
@@ -215,11 +216,26 @@ export default class Editor extends EventEmitter {
     this.setZoom(this.state.zoomLevel*0.8);
   }
 
-  setZoom(zl) {
+  setZoom(zl, anchor=null) {
     this.state.zoomLevel = zl;
+
+    let anchorBefore;
+    if (anchor) {
+      anchorBefore = this.projection.posnInvert(anchor);
+    }
+
     if (this.doc) {
       this.calculateScales();
     }
+
+    if (anchorBefore) {
+      // Correct position to maintain anchor point
+      let anchorAfter = this.projection.posnInvert(anchor);
+      let xd = anchorAfter.x - anchorBefore.x;
+      let yd = anchorAfter.y - anchorBefore.y;
+      this.nudge(-xd, -yd);
+    }
+
     this.canvas.refreshAll();
     this.cacheState();
   }
