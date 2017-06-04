@@ -37,6 +37,9 @@ export default class PointsSegment {
     });
   }
 
+  get length() {
+    return this.points.length;
+  }
 
   insert(point, at) {
     let head = this.points.slice(0, at);

@@ -5,7 +5,7 @@ let HistoryUtil = React.createClass({
     return (
       <div className="util-window">
         <div>
-          {this.props.history.head.created.toString()}
+          {JSON.stringify(this.props.history.head.created)}
         </div>
       </div>
     );

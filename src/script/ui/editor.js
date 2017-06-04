@@ -427,7 +427,13 @@ export default class Editor extends EventEmitter {
   nudgeSelected(x, y) {
     for (let item of this.state.selection) {
       item.nudge(x,y);
+
+      if (item instanceof Point && item.owner) {
+        item.owner.clearCachedObjects();
+      }
     }
+
+
     this.calculateSelectionBounds();
     this.canvas.refreshAll();
 

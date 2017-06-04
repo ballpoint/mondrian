@@ -52,14 +52,6 @@ export default class Path extends Monsvg {
     return this;
   }
 
-  appendTo(selector, track) {
-    if (track == null) { track = true; }
-    super.appendTo(selector, track);
-    this.points.drawBasePoints().hide();
-    if (track) { this.redrawHoverTargets(); }
-    return this;
-  }
-
   xRange() {
     let cached = this.xRangeCached;
     if (cached !== null) {
@@ -105,13 +97,8 @@ export default class Path extends Monsvg {
     if (this.yRangeCached != null) {
       this.yRangeCached.scale(y, origin.y);
     }
-    return this.lineSegmentsCached = null;
-    /*
-    @lineSegmentsCached.map (ls) ->
-      ls.scale(x, y, origin)
-    */
+    this.lineSegmentsCached = null;
   }
-
 
   clearCachedObjects() {
     this.lineSegmentsCached = null;
@@ -120,7 +107,6 @@ export default class Path extends Monsvg {
     this.yRangeCached = null;
     return this;
   }
-
 
   lineSegments() {
     // No I/P
@@ -211,7 +197,6 @@ export default class Path extends Monsvg {
   getPoints() {
     return this.points.all();
   }
-
 
   fitToBounds(bounds) {
     this.clearCachedObjects();

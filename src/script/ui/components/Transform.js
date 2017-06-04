@@ -4,7 +4,7 @@ let TransformUtil = React.createClass({
   label() {
     let sel = this.props.editor.state.selection
     if (sel.length === 1) {
-      return sel[0].constructor.name;
+      return sel[0].constructor.name +' '+sel[0]._i
     } else {
       return sel.length + ' items'
     }

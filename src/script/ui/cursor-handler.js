@@ -101,11 +101,19 @@ export default class CursorHandler extends EventEmitter {
     }
   }
 
-  unregisterElement(id) {
-    let existing = this.elementsMap[id];
-    if (existing) {
-      this.elements = this.elements.removeIndex(existing.index);
-      delete this.elementsMap[id];
+  unregisterElement(query) {
+    if (typeof(query) === 'string') {
+      let existing = this.elementsMap[query];
+      if (existing) {
+        this.elements = this.elements.removeIndex(existing.index);
+        delete this.elementsMap[query];
+      }
+    } else if (query instanceof RegExp) {
+      for (let id in this.elementsMap) {
+        if (query.test(id)) {
+          this.unregisterElement(id);
+        }
+      }
     }
   }
 

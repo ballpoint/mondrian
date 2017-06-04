@@ -270,6 +270,10 @@ export default class Point extends Posn {
     return points;
   }
 
+  setOwner(path) {
+    this.owner = path;
+  }
+
   inheritPosition(from) {
     // Maintain linked-list order in a PointsList
     this.at         = from.at;
@@ -281,6 +285,12 @@ export default class Point extends Posn {
   }
 
   nudge(xd, yd) {
+    super.nudge(xd, yd);
+
+    if (this.succ instanceof CurveTo) {
+      this.succ.absorb(this.succ.p2().nudge(xd, yd), 2);
+    }
+
 
     /*
     // Handle moving MoveTos that are closely associated with this point
@@ -291,7 +301,6 @@ export default class Point extends Posn {
     }
     */
 
-    super.nudge(xd, yd);
 
     /*
     if (checkForFirstOrLast == null) { checkForFirstOrLast = true; }
@@ -453,13 +462,20 @@ export class CurveTo extends Point {
     return super.cleanUp(...arguments);
   }
 
-  nudge(xd, yd) {
-    super.nudge(xd, yd);
-
-    this.absorb(this.p3().nudge(xd, yd), 3);
-
-    if (this.succ instanceof CurveTo) {
-      this.succ.absorb(this.succ.p2().nudge(xd, yd), 2);
+  nudge(xd, yd, which=1) {
+    switch (which) {
+      case 1:
+        super.nudge(xd, yd);
+        this.absorb(this.p3().nudge(xd, yd), 3);
+        break;
+      case 2:
+        if (this.succ) {
+          this.succ.absorb(this.succ.p2().nudge(xd, yd), 2);
+        }
+        break;
+      case 3:
+        this.absorb(this.p3().nudge(xd, yd), 3);
+        break;
     }
   }
 

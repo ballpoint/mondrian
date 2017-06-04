@@ -132,7 +132,7 @@ export default class PointsList {
     */
   }
 
-  static fromString(string) {
+  static fromString(string, path) {
     // Given a d="M204,123 C9023........." string,
     // return an array of Points.
 
@@ -171,12 +171,17 @@ export default class PointsList {
       let ps = Point.fromString(point, previous);
 
       for (let p of ps) {
+        // Maintain ownership
+        p.setOwner(path);
+
         if (p instanceof MoveTo) {
           if (!currentSegment.empty()) {
             list.pushSegment(currentSegment);
             currentSegment = new PointsSegment([], list);
           }
         }
+
+        p._i = currentSegment.length;
 
         if (p instanceof Point) {
           if (previous != null && currentSegment.points.has(previous)) {
