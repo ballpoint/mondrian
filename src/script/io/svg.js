@@ -2,6 +2,9 @@ import io from 'io/io';
 import Bounds from 'geometry/bounds'
 import Posn from 'geometry/posn'
 
+import Point from 'geometry/point';
+import Monsvg from 'geometry/monsvg';
+
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg'
 
 const MIMETYPE = 'image/svg+xml';
@@ -112,6 +115,57 @@ export default class SVG {
         this._elementsIndex[elem.id] = elem;
       }
     }
+  }
+
+  getQueryForItem(item) {
+    if (item instanceof Monsvg) {
+      let i = this.elements.indexOf(item);
+      if (i > -1) {
+        return ''+i;
+      } else {
+        return null;
+      }
+    } else if (item instanceof Point) {
+      // Return two indices in format 4:82
+      let owner = item.owner;
+      let ownerI = this.elements.indexOf(owner);
+      if (ownerI > -1) {
+        let pts = owner.points.all();
+        let ptI = pts.indexOf(item);
+        if (ptI > -1) {
+          return ''+ownerI+':'+ptI;
+        } else {
+          return null;
+        }
+      } else {
+        return null;
+      }
+
+    } else {
+      console.warn('Cannot get query for', item);
+    }
+  }
+
+  getItemFromQuery(query) {
+    if (!query) {
+      return null;
+    }
+    let parts = query.split(':');
+    let elem = this.elements[parts[0]];
+    switch (parts.length) {
+      case 1:
+        return elem;
+      case 2:
+        let pts = elem.points.all();
+        let pt = pts[parts[1]];
+        if (pt) {
+          return pt;
+        }
+      default:
+        console.warn('Invalid query', query);
+        return null;
+    }
+
   }
 
   getElements(ids) {

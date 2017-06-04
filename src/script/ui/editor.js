@@ -314,12 +314,25 @@ export default class Editor extends EventEmitter {
     }
   }
 
-  selectionIds() {
+  selectionQuery() {
     return this.state.selection.map((elem) => {
-      return elem.id;
-    }).filter((id) => {
-      return !!id;
+      return this.doc.getQueryForItem(elem);
+    }).filter((query) => {
+      if (query === null) {
+        console.warn('null query in history!');
+        return false;
+      } else {
+        return true;
+      }
     });
+  }
+
+  selectFromQueries(queries) {
+    let sel = queries.map((query) => {
+      return this.doc.getItemFromQuery(query);
+    });
+
+    this.setSelection(sel);
   }
 
   refreshDrawing(layer, context) {
@@ -433,13 +446,12 @@ export default class Editor extends EventEmitter {
       }
     }
 
-
     this.calculateSelectionBounds();
     this.canvas.refreshAll();
 
     // Record history event
     let event = new NudgeEvent({
-      ids: this.selectionIds(),
+      items: this.selectionQuery(),
       xd: x,
       yd: y,
     });
@@ -455,7 +467,7 @@ export default class Editor extends EventEmitter {
     this.canvas.refreshAll();
 
     let event = new ScaleEvent({
-      ids: this.selectionIds(),
+      items: this.selectionQuery(),
       origin,
       x,
       y,

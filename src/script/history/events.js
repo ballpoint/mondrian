@@ -41,15 +41,15 @@ export class NudgeEvent extends HistoryEvent {
   }
 
   perform(editor) {
-    let elems = editor.doc.getElements(this.data.ids);
-    for (let elem of elems) {
+    editor.selectFromQueries(this.data.items);
+    for (let elem of editor.state.selection) {
       elem.nudge(this.data.xd, this.data.yd);
     }
   }
 
   undo(editor) {
-    let elems = editor.doc.getElements(this.data.ids);
-    for (let elem of elems) {
+    editor.selectFromQueries(this.data.items);
+    for (let elem of editor.state.selection) {
       elem.nudge(-this.data.xd, -this.data.yd);
     }
   }
