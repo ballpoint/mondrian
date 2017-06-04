@@ -1,5 +1,4 @@
 import consts from 'consts';
-
 import UIElement from 'ui/editor/ui_element';
 
 export default class SelectedPtsUIElement extends UIElement {
@@ -7,7 +6,7 @@ export default class SelectedPtsUIElement extends UIElement {
     
   }
 
-  _refresh(editor, layer, context) {
+  _refresh(layer, context) {
     this.reset();
 
     /*
@@ -17,12 +16,13 @@ export default class SelectedPtsUIElement extends UIElement {
       }
     }
     */
-    let tool = editor.state.tool;
+    let tool = this.editor.state.tool;
 
     if (tool.id === 'subcursor') {
       for (let elem of this.editor.doc.elements) {
         let points = elem.points.all();
-        for (let pt of points) {
+        for (let i = 0; i < points.length; i ++) {
+          let pt = points[i];
           if (this.editor.state.selection.has(pt)) {
             // REGISTER CTRL PTS HERE
           } else if (pt === tool.hovering) {
