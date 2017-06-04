@@ -23,7 +23,8 @@ import Paw from 'ui/tools/paw';
 
 const RULER_DIMEN = math.sharpen(20);
 
-import transformer from 'ui/editor/transformer';
+import TransformerUIElement from 'ui/editor/transformer';
+import SelectedPtsUIElement from 'ui/editor/selected_pts';
 
 
 export default class Editor extends EventEmitter {
@@ -59,47 +60,57 @@ export default class Editor extends EventEmitter {
 
     this.cursorHandler = new CursorHandler(this.cursor);
 
+    // UIElements
+    let uiElems = [
+      new SelectedPtsUIElement(this, 'selected-pts'),
+      new TransformerUIElement(this, 'transformer')
+    ]
+
     this.canvas.createLayer('background', this.refreshBackground.bind(this));
     this.canvas.createLayer('drawing', this.refreshDrawing.bind(this));
     this.canvas.createLayer('tool', this.refreshTool.bind(this));
-    this.canvas.createLayer('transformer', transformer.refresh.bind(this));
+    this.canvas.createLayer('ui', (layer, context) => {
+      for (let elem of uiElems) {
+        elem.refresh(layer, context);
+      }
+    });
     this.canvas.createLayer('guides', this.refreshGuides.bind(this));
     this.canvas.createLayer('debug', () => {});
 
     this.cursorHandler.on('mousemove', (e, posn) => {
       if (e.propagateToTool) this.state.tool.handleMousemove(e, posn);
       this.canvas.refresh('tool');
-      this.canvas.refresh('transformer');
+      this.canvas.refresh('ui');
     });
 
     this.cursorHandler.on('mousedown', (e, posn) => {
       if (e.propagateToTool) this.state.tool.handleMousedown(e, posn);
       this.canvas.refresh('tool');
-      this.canvas.refresh('transformer');
+      this.canvas.refresh('ui');
     });
 
     this.cursorHandler.on('click', (e, posn) => {
       if (e.propagateToTool) this.state.tool.handleClick(e, posn);
       this.canvas.refresh('tool');
-      this.canvas.refresh('transformer');
+      this.canvas.refresh('ui');
     });
 
     this.cursorHandler.on('drag:start', (e, posn, lastPosn) => {
       if (e.propagateToTool) this.state.tool.handleDragStart(e, posn, lastPosn);
       this.canvas.refresh('tool');
-      this.canvas.refresh('transformer');
+      this.canvas.refresh('ui');
     });
 
     this.cursorHandler.on('drag', (e, posn, lastPosn) => {
       if (e.propagateToTool) this.state.tool.handleDrag(e, posn, lastPosn);
       this.canvas.refresh('tool');
-      this.canvas.refresh('transformer');
+      this.canvas.refresh('ui');
     });
 
     this.cursorHandler.on('drag:stop', (e, posn, startPosn) => {
       if (e.propagateToTool) this.state.tool.handleDragStop(e, posn, startPosn);
       this.canvas.refresh('tool');
-      this.canvas.refresh('transformer');
+      this.canvas.refresh('ui');
     });
 
     this.cursorHandler.on('scroll:y', (e, delta) => {

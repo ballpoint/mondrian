@@ -262,7 +262,7 @@ export default class Point extends Posn {
 
     if (points.length === 0) {
       // We have no clue what this is, cuz
-      throw new Error(`Unreadable path value: ${string}`);
+      console.error(`Unreadable path value: ${string}`);
     }
 
     //console.log(string, points);

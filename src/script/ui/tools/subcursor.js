@@ -16,26 +16,37 @@ export default class SubCursor extends Tool {
     super(editor);
   }
 
+  get id() {
+    return 'subcursor';
+  }
+
   handleMousemove(e, posn) {
-    this.nearPoints = [];
+    let pointsToCheck = [];
 
     let closestPoint;
     let closestD;
 
-    for (let elem of this.editor.doc.elements) {
-      // TODO optimization using elem bounds to totally ignore it
-      // if we're nowhere near it
-      for (let pt of elem.points.all()) {
-        let d = this.editor.projection.z(pt.distanceFrom(posn));
-        if (d < 200) {
-          this.nearPoints.push(pt);
+    let skipped = 0;
+    let checked = 0;
 
-          if (d < 8) {
-            if (!closestPoint || (d < closestD)) {
-              closestPoint = pt;
-              closestD     = d;
-            }
-          }
+
+    for (let elem of this.editor.doc.elements) {
+      let points = elem.points.all();
+
+      // Make sure we're anywhere near this element before we spend time iterating
+      // through all of its points
+      let bounds = elem.bounds().padded(10);
+      if (shapes.contains(bounds, posn)) {
+        pointsToCheck = pointsToCheck.concat(points);
+      }
+    }
+
+    for (let pt of pointsToCheck) {
+      let d = this.editor.projection.z(pt.distanceFrom(posn));
+      if (d < 8) {
+        if (!closestPoint || (d < closestD)) {
+          closestPoint = pt;
+          closestD     = d;
         }
       }
     }
@@ -103,25 +114,6 @@ export default class SubCursor extends Tool {
       bounds = this.editor.projection.bounds(bounds).sharp();
       layer.setLineWidth(1);
       layer.drawRect(bounds, { stroke: 'black' });
-    } else {
-
-      if (this.editor.state.selectionType === 'POINTS') {
-        for (let pt of this.editor.state.selection) {
-          this.drawSelectedPoint(layer, pt);
-        }
-      }
-
-      if (this.nearPoints) {
-        for (let pt of this.nearPoints) {
-          if (!this.editor.state.selection.has(pt)) {
-            if (pt === this.hovering) {
-              layer.drawCircle(this.editor.projection.posn(pt), 2.5, { stroke: 'blue', fill: 'blue' });
-            } else {
-              layer.drawCircle(this.editor.projection.posn(pt), 2.5, { stroke: 'black', fill: 'white' });
-            }
-          }
-        }
-      }
     }
   }
 

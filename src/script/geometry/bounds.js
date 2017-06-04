@@ -132,6 +132,10 @@ export default class Bounds {
     return this;
   }
 
+  padded(n) {
+    return new Bounds(this.x - n, this.y - n, this.width + (n*2), this.height + (n*2))
+  }
+
   squareSmaller(anchor) {
     if (this.width < this.height) {
       return this.height = this.width;

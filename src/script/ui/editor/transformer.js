@@ -3,38 +3,39 @@ import LineSegment from 'geometry/line-segment'
 import Bounds from 'geometry/bounds'
 import Element from 'ui/element';
 import Point from 'geometry/point';
+import UIElement from 'ui/editor/ui_element';
 
 const CTRL_PT_DIMEN = 7;
 
-let transformer = {
-  reset() {
+export default class TransformerUIElement extends UIElement {
+  reset(editor) {
     for (let id of ['tl', 'tr', 'bl', 'br', 'tm', 'lm', 'rm', 'bm']) {
-      transformer.unregisterCtrlPoint.call(this, id);
+      this.unregisterCtrlPoint(editor, id);
     }
-  },
+  }
 
-  refresh(layer, context) {
-    let selection = this.state.selection;
+  _refresh(editor, layer, context) {
+    let selection = editor.state.selection;
 
     if (selection.length === 0) {
-      transformer.reset.call(this);
+      this.reset(editor);
       return;
     }
 
     let selectionType;
 
-    if (this.state.selectionType !== 'ELEMENTS') {
+    if (editor.state.selectionType !== 'ELEMENTS') {
       return;
     }
 
-    let bounds = this.projection.bounds(this.state.selectionBounds);
+    let bounds = editor.projection.bounds(editor.state.selectionBounds);
 
-    let center = this.projection.posn(this.state.selectionBounds.center());
+    let center = editor.projection.posn(editor.state.selectionBounds.center());
     let angle = 0;
 
 
     if (selectionType === 'ELEMS') {
-      let selectedAngles = _.uniq(this.state.selection.map((e) => { return e.metadata.angle }));
+      let selectedAngles = _.uniq(editor.state.selection.map((e) => { return e.metadata.angle }));
       if (selectedAngles.length === 1) {
         angle = selectedAngles;
       }
@@ -73,20 +74,20 @@ let transformer = {
     layer.drawLineSegment(rm.clone().nudge(0,d/2), br.clone().nudge(0,-d/2), opts);
 
     // Corner ctrl points
-    transformer.registerCtrlPoint.call(this, 'tl', layer, tl);
-    transformer.registerCtrlPoint.call(this, 'tr', layer, tr);
-    transformer.registerCtrlPoint.call(this, 'bl', layer, bl);
-    transformer.registerCtrlPoint.call(this, 'br', layer, br);
+    this.registerCtrlPoint(editor, 'tl', layer, tl);
+    this.registerCtrlPoint(editor, 'tr', layer, tr);
+    this.registerCtrlPoint(editor, 'bl', layer, bl);
+    this.registerCtrlPoint(editor, 'br', layer, br);
 
-    transformer.registerCtrlPoint.call(this, 't', layer, tm);
-    transformer.registerCtrlPoint.call(this, 'b', layer, bm);
-    transformer.registerCtrlPoint.call(this, 'l', layer, lm);
-    transformer.registerCtrlPoint.call(this, 'r', layer, rm);
+    this.registerCtrlPoint(editor, 't', layer, tm);
+    this.registerCtrlPoint(editor, 'b', layer, bm);
+    this.registerCtrlPoint(editor, 'l', layer, lm);
+    this.registerCtrlPoint(editor, 'r', layer, rm);
 
-    transformer.registerRotationPoint.call(this, 'tl', layer, tl.clone().nudge(-CTRL_PT_DIMEN,-CTRL_PT_DIMEN));
-  },
+    this.registerRotationPoint(editor, 'tl', layer, tl.clone().nudge(-CTRL_PT_DIMEN,-CTRL_PT_DIMEN));
+  }
 
-  registerCtrlPoint(which, layer, origin) {
+  registerCtrlPoint(editor, which, layer, origin) {
     let id = 'transformer:scale:'+which;
 
     let opposite;
@@ -97,7 +98,7 @@ let transformer = {
       stroke: 'blue'
     };
 
-    if (this.cursorHandler.active && this.cursorHandler.active.id === id) {
+    if (editor.cursorHandler.active && editor.cursorHandler.active.id === id) {
       ctrlOpts.fill = 'blue';
     }
 
@@ -118,7 +119,7 @@ let transformer = {
 
         // NOTE: When it comes time to do snapping, we may want to switch this code
         // to be operating on bounds on the doc level (rather than the UI level)
-        let bounds = this.state.selectionBounds;
+        let bounds = editor.state.selectionBounds;
         let resultBounds = bounds.clone();
 
         switch (which) {
@@ -165,28 +166,28 @@ let transformer = {
           xScale = 1 + ((resultBounds.width - bounds.width)/bounds.width);
         }
 
-        this.scaleSelected(xScale, yScale, opposite);
+        editor.scaleSelected(xScale, yScale, opposite);
       },
       'drag:stop': (e, posn, startPosn) => {
         e.stopPropagation();
       }
     })
 
-    this.cursorHandler.registerElement(elem)
-  },
+    editor.cursorHandler.registerElement(elem)
+  }
 
-  unregisterCtrlPoint(id) {
+  unregisterCtrlPoint(editor, id) {
     id = 'transformer:scale:'+id;
-    this.cursorHandler.unregisterElement(id);
-  },
+    editor.cursorHandler.unregisterElement(id);
+  }
 
-  registerRotationPoint(id, layer, posn) {
+  registerRotationPoint(editor, id, layer, posn) {
     id = 'transformer:rotate:'+id;
     let ctrlBounds = Bounds.centeredOnPosn(posn.sharp(), CTRL_PT_DIMEN, CTRL_PT_DIMEN);
 
     let ctrlOpts = { stroke: 'red' };
 
-    if (this.cursorHandler.active && this.cursorHandler.active.id === id) {
+    if (editor.cursorHandler.active && editor.cursorHandler.active.id === id) {
       ctrlOpts.fill = 'red';
     }
 
@@ -199,20 +200,17 @@ let transformer = {
 
       'drag': (e, posn, lastPosn) => {
         e.stopPropagation();
-        let center = this.state.selectionBounds.center();
+        let center = editor.state.selectionBounds.center();
 
         let lineBefore = new LineSegment(lastPosn, center);
         let lineAfter  = new LineSegment(posn, center);
 
         let angleDelta = lineBefore.angle - lineAfter.angle;
 
-        this.rotateSelected(angleDelta, center);
+        editor.rotateSelected(angleDelta, center);
       }
     });
 
-    this.cursorHandler.registerElement(elem);
+    editor.cursorHandler.registerElement(elem);
   }
-
 }
-
-export default transformer;
