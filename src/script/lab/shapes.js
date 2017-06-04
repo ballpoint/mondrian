@@ -16,6 +16,10 @@ export default {
       }
     }
 
+    if (shape instanceof Circle) {
+      return posn.distanceFrom(shape.center) <= shape.radius;
+    }
+
 
     // Draw a horizontal ray starting at this posn.
     // If it intersects the shape's perimeter an odd
@@ -294,9 +298,9 @@ export default {
     */
 
     let a = Math.pow(aline.xDiff(), 2) + Math.pow(aline.yDiff(), 2);
-    let b = 2 * (((aline.b.x - aline.a.x) * (aline.a.x - circle.data.cx)) + ((aline.b.y - aline.a.y) * (aline.a.y - circle.data.cy)));
-    let cc = (Math.pow(circle.data.cx, 2) + Math.pow(circle.data.cy, 2) + Math.pow(aline.a.x, 2) + Math.pow(aline.a.y, 2)) -
-         (2 * ((circle.data.cx * aline.a.x) + (circle.data.cy * aline.a.y))) - Math.pow(circle.data.r, 2);
+    let b = 2 * (((aline.b.x - aline.a.x) * (aline.a.x - circle.center.x)) + ((aline.b.y - aline.a.y) * (aline.a.y - circle.center.y)));
+    let cc = (Math.pow(circle.center.x, 2) + Math.pow(circle.center.y, 2) + Math.pow(aline.a.x, 2) + Math.pow(aline.a.y, 2)) -
+         (2 * ((circle.center.x * aline.a.x) + (circle.center.y * aline.a.y))) - Math.pow(circle.radius, 2);
     let deter = (b * b) - (4 * a * cc);
 
     if (deter < 0) {

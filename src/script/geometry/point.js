@@ -293,14 +293,6 @@ export default class Point extends Posn {
 
     super.nudge(xd, yd);
 
-    if (this instanceof CurveTo) {
-      this.absorb(this.p3().nudge(xd, yd), 3);
-    }
-
-    if (this.succ instanceof CurveTo) {
-      this.succ.absorb(this.succ.p2().nudge(xd, yd), 2);
-    }
-
     /*
     if (checkForFirstOrLast == null) { checkForFirstOrLast = true; }
     // TODO address this when we are doing individual point manipulation
@@ -461,15 +453,15 @@ export class CurveTo extends Point {
     return super.cleanUp(...arguments);
   }
 
-
-  /*
   nudge(xd, yd) {
-    this.absorb(this.p2().nudge(xd, yd), 2);
-    this.absorb(this.p3().nudge(xd, yd), 3);
-    return super.nudge(xd, yd);
-  }
-  */
+    super.nudge(xd, yd);
 
+    this.absorb(this.p3().nudge(xd, yd), 3);
+
+    if (this.succ instanceof CurveTo) {
+      this.succ.absorb(this.succ.p2().nudge(xd, yd), 2);
+    }
+  }
 
   scale(x, y, origin) {
     this.absorb(this.p2().scale(x, y, origin), 2);

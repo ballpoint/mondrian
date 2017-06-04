@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import LineSegment from 'geometry/line-segment'
 import Bounds from 'geometry/bounds'
-import Element from 'ui/element';
 import Point from 'geometry/point';
+import Element from 'ui/element';
 import UIElement from 'ui/editor/ui_element';
 
 const CTRL_PT_DIMEN = 7;
@@ -98,7 +98,7 @@ export default class TransformerUIElement extends UIElement {
       stroke: 'blue'
     };
 
-    if (this.editor.cursorHandler.active && this.editor.cursorHandler.active.id === id) {
+    if (this.editor.cursorHandler.isActive(id)) {
       ctrlOpts.fill = 'blue';
     }
 

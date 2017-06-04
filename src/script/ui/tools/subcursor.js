@@ -2,13 +2,6 @@ import consts from 'consts';
 import shapes from 'lab/shapes';
 import Tool from 'ui/tools/tool';
 import Bounds from 'geometry/bounds';
-import {
-  MoveTo,
-  LineTo,
-  HorizTo,
-  VertiTo,
-  CurveTo,
-} from 'geometry/point';
 
 
 export default class SubCursor extends Tool {
@@ -55,11 +48,7 @@ export default class SubCursor extends Tool {
   }
 
   handleMousedown(e, posn) {
-    if (this.hovering) {
-      if (!this.editor.state.selection.has(this.hovering)) {
-        this.editor.setSelection([this.hovering]);
-      }
-    } else {
+    if (!this.hovering) {
       this.editor.setSelection([]);
     }
   }
@@ -68,19 +57,12 @@ export default class SubCursor extends Tool {
   }
 
   handleDragStart(e, posn, lastPosn) {
-    if (this.editor.state.selection.length === 0) {
-      this.dragSelectStart = lastPosn;
-    }
+    this.dragSelectStart = lastPosn;
   }
 
   handleDrag(e, posn, lastPosn) {
     if (this.dragSelectStart) {
       this.dragSelectEnd = posn;
-    } else {
-      let xd = posn.x - lastPosn.x;
-      let yd = posn.y - lastPosn.y;
-
-      this.editor.nudgeSelected(xd, yd);
     }
   }
 
@@ -116,27 +98,4 @@ export default class SubCursor extends Tool {
       layer.drawRect(bounds, { stroke: 'black' });
     }
   }
-
-  drawSelectedPoint(layer, pt) {
-    let pm = this.editor.projection.posn(pt);
-    layer.drawCircle(pm, 2.5, { stroke: consts.point, fill: consts.point });
-
-    if (pt instanceof CurveTo) {
-      let p3 = this.editor.projection.posn(pt.p3());
-
-      layer.drawCircle(p3, 2.5, { stroke: consts.point, fill: consts.point });
-      layer.drawLineSegment(pm, p3, { stroke: consts.point });
-    }
-
-    let p2;
-    if (pt.succ instanceof CurveTo) {
-      p2 = this.editor.projection.posn(pt.succ.p2());
-    }
-
-    if (p2) {
-      layer.drawCircle(p2, 2.5, { stroke: consts.point, fill: consts.point });
-      layer.drawLineSegment(pm, p2, { stroke: consts.point });
-    }
-  }
-
 }

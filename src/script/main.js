@@ -10,7 +10,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Utils from 'ui/components/Utils';
 
-let doc = new SVG(sbux);
+let doc = new SVG(google);
 
 let editor = new Editor('#app-render');
 

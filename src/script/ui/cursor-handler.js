@@ -11,6 +11,7 @@ export default class CursorHandler extends EventEmitter {
       if (!cursor.down) {
         this.checkForActive(posn);
       }
+      this._lastPosn = posn;
       this.handleEvent('mousemove', e, posn);
     });
 
@@ -73,6 +74,11 @@ export default class CursorHandler extends EventEmitter {
     }
     delete this.active;
     return false;
+  }
+
+  isActive(id) {
+    if (!this.active) return false;
+    return this.active.id === id;
   }
 
   resetElements() {
