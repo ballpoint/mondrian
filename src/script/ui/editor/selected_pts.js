@@ -15,13 +15,6 @@ export default class SelectedPtsUIElement extends UIElement {
   _refresh(layer, context) {
     this.reset();
 
-    /*
-    if (this.editor.state.selectionType === 'POINTS') {
-      for (let pt of this.editor.state.selection) {
-        this.drawSelectedPoint(layer, pt);
-      }
-    }
-    */
     let tool = this.editor.state.tool;
 
     if (tool.id === 'subcursor') {

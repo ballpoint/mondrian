@@ -150,21 +150,6 @@ let io = {
 
 
   parseElement(elem) {
-    let classes = {
-      'path': Path,
-      'text': Text,
-      'rect': Rect
-    };
-    let virgins = {
-      'rect': Rect,
-      'ellipse': Ellipse,
-      'polygon': Polygon, // TODO
-      'polyline': Polyline // TODO
-    };
-
-    // Ignore attributes that have these words in them.
-    // They're useless old crap that Inkscape jizzes all over its SVG files.
-
     let attrs = elem.attributes;
 
     let transform = null;
@@ -177,40 +162,35 @@ let io = {
 
     let data = this.makeData(elem);
     let type = elem.nodeName.toLowerCase();
-    let clss = classes[type];
+    let result;
 
-    if ((clss != null) || (virgins[type] != null)) {
-      let result = null;
+    switch (type) {
+      case 'text':
+        result = new Text(data);
+        result.setContent(elem.textContent);
+        break;
+      case 'path':
+        result = new Path(data);
+        break;
+      case 'rect':
+        result = Path.rectangle(data);
+        break;
+      default:
+        console.warn('TODO: handle ' + type, elem);
+        return null;
+        break;
+    }
 
-      if (clss != null) {
-        result = new clss(data);
-        if (type === "text") {
-          result.setContent(elem.textContent);
-        }
-
-      } else if (virgins[type] != null && false) {
-        let virgin = new virgins[elem.nodeName.toLowerCase()](data);
-        result = virgin.convertToPath();
-        result.virgin = virgin;
-      }
-
-      if (transform && (elem.nodeName.toLowerCase() !== "text")) {
+    if (result) {
+      if (transform && (type !== "text")) {
         result.carryOutTransformations(transform);
         delete result.data.transform;
-        result.rep.removeAttribute("transform");
         result.commit();
       }
 
       return result;
-
-    } else if (type === "use") {
-      return false; // No use tags for now fuck that ^_^
-
-    } else {
-      return null;
     }
-  }, // Unknown tag, ignore it
-
+  },
 
   makeData(elem) {
     let blacklist = ["inkscape", "sodipodi", "uuid"];

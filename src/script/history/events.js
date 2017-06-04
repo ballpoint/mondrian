@@ -42,15 +42,15 @@ export class NudgeEvent extends HistoryEvent {
 
   perform(editor) {
     editor.selectFromQueries(this.data.items);
-    for (let elem of editor.state.selection) {
-      elem.nudge(this.data.xd, this.data.yd);
+    for (let item of editor.state.selection) {
+      item.nudge(this.data.xd, this.data.yd);
     }
   }
 
   undo(editor) {
     editor.selectFromQueries(this.data.items);
-    for (let elem of editor.state.selection) {
-      elem.nudge(-this.data.xd, -this.data.yd);
+    for (let item of editor.state.selection) {
+      item.nudge(-this.data.xd, -this.data.yd);
     }
   }
 
@@ -67,16 +67,16 @@ export class ScaleEvent extends HistoryEvent {
   }
 
   perform(editor) {
-    let elems = editor.doc.getElements(this.data.ids);
-    for (let elem of elems) {
-      elem.scale(this.data.x, this.data.y, this.data.origin);
+    editor.selectFromQueries(this.data.items);
+    for (let item of editor.state.selection) {
+      item.scale(this.data.x, this.data.y, this.data.origin);
     }
   }
 
   undo(editor) {
-    let elems = editor.doc.getElements(this.data.ids);
-    for (let elem of elems) {
-      elem.scale(1/this.data.x, 1/this.data.y, this.data.origin);
+    editor.selectFromQueries(this.data.items);
+    for (let item of editor.state.selection) {
+      item.scale(1/this.data.x, 1/this.data.y, this.data.origin);
     }
   }
 

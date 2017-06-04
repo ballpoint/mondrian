@@ -506,11 +506,12 @@ export default class Editor extends EventEmitter {
 
   paste(e) {
     console.log(this.state.clipboard);
-    for (let elem of this.state.clipboard) {
-      this.doc.insertElement(elem);
+    if (this.state.clipboard) {
+      for (let elem of this.state.clipboard) {
+        this.doc.insertElement(elem);
+      }
+      this.setSelection(this.state.clipboard);
     }
-    this.setSelection(this.state.clipboard);
-    this.state.cl
   }
 
   refreshTool(layer, context) {

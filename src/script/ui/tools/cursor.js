@@ -54,7 +54,7 @@ export default class Cursor extends Tool {
   handleDrag(e, posn, lastPosn) {
     if (this.dragSelectStart) {
       this.dragSelectEnd = posn;
-    } else {
+    } else if (this.editor.state.selection.length > 0) {
       let xd = posn.x - lastPosn.x;
       let yd = posn.y - lastPosn.y;
 

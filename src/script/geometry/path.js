@@ -1,4 +1,5 @@
 import Monsvg from 'geometry/monsvg'
+import PointsSegment from 'geometry/points-segment'
 import PointsList from 'geometry/points-list'
 import Range from 'geometry/range'
 import lab from 'lab/lab'
@@ -9,14 +10,6 @@ import {
   LineTo,
   CurveTo,
 } from 'geometry/point';
-
-/*
-
-  Path
-
-  Highest order of vector data. Lowest level of expression.
-
-*/
 
 export default class Path extends Monsvg {
   static initClass() {
@@ -34,6 +27,28 @@ export default class Path extends Monsvg {
     if (this.data && this.data.d) {
       this.importNewPoints(this.data.d);
     }
+  }
+
+  // Constructors
+  static rectangle(data) {
+    let { x, y, w, h } = data;
+
+    let segment = new PointsSegment([
+      new MoveTo(x,y),
+      new LineTo(x+w,y),
+      new LineTo(x+w,y+h),
+      new LineTo(x,y+h),
+      new LineTo(x,y)
+    ]);
+
+    // Replace attrs with d attr
+    data.d = new PointsList([segment]);
+    delete data.x;
+    delete data.y;
+    delete data.w;
+    delete data.h;
+
+    return new Path(data);
   }
 
   commitPoints() {
