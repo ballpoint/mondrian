@@ -33,7 +33,6 @@ import Posn from 'geometry/posn';
 export default class Point extends Posn {
   constructor(x, y) {
     super(x, y);
-    this.constructArgs = arguments;
     if (((this.x == null)) && ((this.y == null))) { return; }
 
 

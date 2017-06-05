@@ -21,6 +21,30 @@ import Point from 'geometry/point';
 export default class PointsSegment {
   constructor(points, list) {
     this.points = points;
+
+    // Link points up correctly
+    for (let i = 0; i < points.length; i++) {
+      let prec;
+      let succ;
+
+      if (i === 0) {
+        prec = points[points.length-1];
+        succ = points[i+1];
+      } else if (i === points.length-1) {
+        prec = points[i-1];
+        succ = points[0];
+      } else {
+        prec = points[i-1];
+        succ = points[i+1];
+      }
+
+      let pt = points[i]
+      pt.prec = prec;
+      pt.succ = succ;
+
+      pt.segment = this;
+    }
+
     this.list = list;
     this.startsAt = this.points.length !== 0 ? this.points[0].at : 0;
 
@@ -31,10 +55,6 @@ export default class PointsSegment {
     if (this.points[0] instanceof MoveTo) {
       this.moveTo = this.points[0];
     }
-
-    this.points.forEach(p => {
-      return p.segment = this;
-    });
   }
 
   get length() {
@@ -63,10 +83,19 @@ export default class PointsSegment {
   }
 
   push(point) {
-    this.points.push(point);
-    if (this.points.length > 1) {
-      point.setSucc(this.points[0]);
+    if (this.points.length > 0) {
+      let fp = this.points[0];
+      let lp = this.points[this.points.length-1]
+      lp.succ = point;
+      point.prec = lp;
+      point.succ = fp;
+      fp.prec = point;
     }
+    this.points.push(point);
+  }
+
+  close() {
+    this.closed = true;
   }
 
   empty() {

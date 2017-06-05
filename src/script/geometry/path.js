@@ -51,6 +51,65 @@ export default class Path extends Monsvg {
     return new Path(data);
   }
 
+  static ellipse(data) {
+    let { cx, cy, rx, ry } = data;
+
+    let t = new Posn(cx, cy - ry);
+    let r = new Posn(cx + rx, cy);
+    let b = new Posn(cx, cy + ry);
+    let l = new Posn(cx - rx, cy);
+
+    let ky = Math.KAPPA * ry;
+    let kx = Math.KAPPA * rx;
+
+    let segment = new PointsSegment([
+      new MoveTo(t.x, t.y),
+      new CurveTo(t.x + kx, t.y, r.x, r.y - ky, r.x, r.y),
+      new CurveTo(r.x, r.y + ky, b.x + kx, b.y, b.x, b.y),
+      new CurveTo(b.x - kx, b.y, l.x, l.y + ky, l.x, l.y),
+      new CurveTo(l.x, l.y - ky, t.x - kx, t.y, t.x, t.y),
+    ]);
+
+    segment.close();
+
+    data.d = new PointsList([segment]);
+    delete data.cx;
+    delete data.cy;
+    delete data.rx;
+    delete data.ry;
+
+    return new Path(data);
+  }
+
+  static polyline(data) {
+    let segment = new PointsSegment(
+      data.points.split(' ').map((p,i) => {
+        let parts = p.split(',');
+        let x = parseFloat(parts[0]);
+        let y = parseFloat(parts[1]);
+        if (i === 0) {
+          return new MoveTo(x, y);
+        } else {
+          return new LineTo(x, y);
+        }
+      })
+    );
+
+    console.log(segment.points);
+
+    data.d = new PointsList([segment]);
+    delete data.points;
+
+    return new Path(data);
+  }
+
+  static polygon(data) {
+    console.log(data.fill);
+    let path = Path.polyline(data);
+    path.points.segments[0].close();
+    return path;
+  }
+
   commitPoints() {
     this.data.d = this.points.toString();
   }

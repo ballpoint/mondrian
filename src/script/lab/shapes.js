@@ -1,9 +1,8 @@
 import Posn from 'geometry/posn';
 import Polynomial from 'geometry/polynomial';
 import Bounds from 'geometry/bounds';
-import CubicBezier from 'geometry/cubic-bezier-line-segment';
 import Circle from 'geometry/circle';
-import Ellipse from 'geometry/ellipse';
+import CubicBezier from 'geometry/cubic-bezier-line-segment';
 
 export default {
 

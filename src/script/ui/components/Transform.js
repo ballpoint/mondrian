@@ -17,16 +17,19 @@ let TransformUtil = React.createClass({
     if (state.selection.length > 0) {
       return <div>
         <div>
-          x = {state.selectionBounds.x}
+          x = {state.selectionBounds.x.toFixed(2)}
         </div>
         <div>
-          y = {state.selectionBounds.y}
+          y = {state.selectionBounds.y.toFixed(2)}
         </div>
         <div>
-          w = {state.selectionBounds.width}
+          w = {state.selectionBounds.width.toFixed(2)}
         </div>
         <div>
-          h = {state.selectionBounds.height}
+          h = {state.selectionBounds.height.toFixed(2)}
+        </div>
+        <div>
+          fills = {state.selection.map((e) => { return e.data.fill }).join(', ')}
         </div>
       </div>
     } else if (doc) {

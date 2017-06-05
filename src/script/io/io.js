@@ -1,10 +1,6 @@
 import Bounds from 'geometry/bounds';
 import Path from 'geometry/path';
 import Text from 'geometry/text';
-import Rect from 'geometry/rectangle';
-import Ellipse from 'geometry/ellipse';
-import Polygon from 'geometry/polygon';
-import Polyline from 'geometry/polyline';
 import Monsvg from 'geometry/monsvg';
 import UUIDV4 from 'uuid/v4';
 /*
@@ -174,6 +170,21 @@ let io = {
         break;
       case 'rect':
         result = Path.rectangle(data);
+        break;
+      case 'ellipse':
+        result = Path.ellipse(data);
+        break;
+      case 'circle':
+        data.rx = data.r;
+        data.ry = data.r;
+        delete data.r;
+        result = Path.ellipse(data);
+        break;
+      case 'polyline':
+        result = Path.polyline(data);
+        break;
+      case 'polygon':
+        result = Path.polygon(data);
         break;
       default:
         console.warn('TODO: handle ' + type, elem);

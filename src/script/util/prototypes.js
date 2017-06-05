@@ -41,3 +41,4 @@ Number.prototype.within = function(tolerance, other) {
   return (d < tolerance) && (d > -tolerance);
 };
 
+Math.KAPPA = 0.5522847498307936;
