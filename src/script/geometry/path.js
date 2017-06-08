@@ -95,8 +95,6 @@ export default class Path extends Monsvg {
       })
     );
 
-    console.log(segment.points);
-
     data.d = new PointsList([segment]);
     delete data.points;
 
@@ -104,7 +102,6 @@ export default class Path extends Monsvg {
   }
 
   static polygon(data) {
-    console.log(data.fill);
     let path = Path.polyline(data);
     path.points.segments[0].close();
     return path;
@@ -119,6 +116,8 @@ export default class Path extends Monsvg {
       this.points = points;
     } else if (typeof(points) === 'string') {
       this.points = PointsList.fromString(points, this);
+
+      console.log(PointsList.fromStringX(points, this));
     }
 
     this.clearCachedObjects();

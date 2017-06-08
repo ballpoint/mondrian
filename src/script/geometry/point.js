@@ -226,7 +226,6 @@ export default class Point extends Posn {
                 if (prec instanceof CurveTo) {
                   p2 = prec.p3().reflect(prec.p());
                 } else {
-                  debugger;
                   p2 = new Posn(this.x, this.y);
                 }
                 values = [p2.x, p2.y].concat(values);

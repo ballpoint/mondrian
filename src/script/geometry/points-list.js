@@ -1,6 +1,7 @@
 import conversions from 'lab/conversions';
 import PointsSegment from 'geometry/points-segment';
 import Point from 'geometry/point';
+import PathPoint from 'geometry/path-point';
 import {
   MoveTo,
   LineTo,
@@ -8,15 +9,7 @@ import {
 } from 'geometry/point';
 
 
-/*
-
-  PointsList
-
-  Stores points, keeps them in order, lets you do shit
-  Basically a linked-list.
-
-*/
-
+//  PointsList
 
 export default class PointsList {
   static initClass() {
@@ -32,6 +25,66 @@ export default class PointsList {
 
   constructor(segments=[]) {
     this.segments = segments;
+  }
+
+  static commandsFromString(string) {
+    // Split a path data string like "M204,123 C9023........."
+    // into an array of separate string commands
+    let commands = [];
+    let currentMatch;
+
+    for (let i = 0; i < string.length; i ++) {
+      let char = string[i];
+      if (/[A-Z]/i.test(char)) {
+        if (currentMatch) {
+          commands.push(currentMatch)
+        }
+        currentMatch = '';
+      }
+      currentMatch += char;
+    }
+
+    if (currentMatch.length > 0) {
+      commands.push(currentMatch)
+    }
+
+    return commands;
+  }
+
+  static fromStringX(string, owner) {
+    let list = new PointsList([]);
+    let currentSegment = new PointsSegment([], list);
+
+    let commands = this.commandsFromString(string);
+
+    let previous;
+
+    for (let str of commands) {
+      let command = str[0];
+
+      switch (command.toLowerCase()) {
+        case 'z':
+          // TODO: TREAT AS LINETO;
+          break;
+        case 'm':
+          // Start new segment
+          list.push(currentSegment);
+          currentSegment = new PointsSegment([], list);
+      }
+
+      let points = PathPoint.fromString(str, previous);
+
+      console.log(str, points);
+
+      for (let point of points) {
+        currentSegment.push(point);
+        previous = point;
+      }
+    }
+
+    list.push(currentSegment);
+
+    return list;
   }
 
   static fromString(string, path) {
@@ -109,6 +162,7 @@ export default class PointsList {
     return list;
   }
 
+
   pushSegment(segment) {
     this.segments.push(segment);
   }
@@ -148,19 +202,10 @@ export default class PointsList {
     return pts;
   }
 
-
-  renumber() {
-    return this.all().map(function(p, i) {
-      p.at = i;
-      return p;
-    });
-  }
-
   pushSegment(sgmt) {
     this.lastSegment = sgmt;
     return this.segments.push(sgmt);
   }
-
 
   push(point, after) {
     // Add a new point!
