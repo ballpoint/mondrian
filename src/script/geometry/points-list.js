@@ -1,13 +1,6 @@
 import conversions from 'lab/conversions';
 import PointsSegment from 'geometry/points-segment';
-import Point from 'geometry/point';
 import PathPoint from 'geometry/path-point';
-import {
-  MoveTo,
-  LineTo,
-  CurveTo,
-} from 'geometry/point';
-
 
 //  PointsList
 
@@ -51,9 +44,8 @@ export default class PointsList {
     return commands;
   }
 
-  static fromStringX(string, owner) {
+  static fromString(string, owner) {
     let list = new PointsList([]);
-    let currentSegment = new PointsSegment([], list);
 
     let commands = this.commandsFromString(string);
 
@@ -68,8 +60,7 @@ export default class PointsList {
           break;
         case 'm':
           // Start new segment
-          list.push(currentSegment);
-          currentSegment = new PointsSegment([], list);
+          list.closeSegment();
       }
 
       let points = PathPoint.fromString(str, previous);
@@ -77,99 +68,17 @@ export default class PointsList {
       console.log(str, points);
 
       for (let point of points) {
-        currentSegment.push(point);
+        list.push(point);
         previous = point;
       }
     }
 
-    list.push(currentSegment);
-
     return list;
   }
-
-  static fromString(string, path) {
-    // Given a d="M204,123 C9023........." string,
-    // return an array of Points.
-
-    let list = new PointsList([]);
-
-    let previous = undefined;
-
-    let matches = [];
-    let currentMatch;
-
-    for (let i = 0; i < string.length; i ++) {
-      let char = string[i];
-      if (/[A-Z]/i.test(char)) {
-        if (currentMatch) {
-          matches.push(currentMatch)
-        }
-        currentMatch = '';
-      }
-      currentMatch += char;
-    }
-
-    if (currentMatch.length > 0) {
-      matches.push(currentMatch)
-    }
-
-    let currentSegment = new PointsSegment([], list);
-
-    for (let point of matches) {
-      if (point === 'z') {
-        currentSegment.closed = true;
-        continue;
-      }
-
-      // Point's constructor decides what kind of subclass to make
-      // (MoveTo, CurveTo, etc)
-      let ps = Point.fromString(point, previous);
-
-      for (let p of ps) {
-        // Maintain ownership
-        p.setOwner(path);
-
-        if (p instanceof MoveTo) {
-          if (!currentSegment.empty()) {
-            list.pushSegment(currentSegment);
-            currentSegment = new PointsSegment([], list);
-          }
-        }
-
-        p._i = currentSegment.length;
-
-        if (p instanceof Point) {
-          if (previous != null && currentSegment.points.has(previous)) {
-            previous.setSucc(p);
-          }
-
-          previous = p; // Set it for the next point
-
-          // Don't remember why I did this.
-          /*
-          if ((p instanceof SmoothTo) && (owner instanceof Point)) {
-            p.setPrec(owner);
-          }
-          */
-
-          currentSegment.push(p);
-        }
-      }
-    }
-
-    list.pushSegment(currentSegment);
-
-    return list;
-  }
-
 
   pushSegment(segment) {
+    this.lastSegment = segment;
     this.segments.push(segment);
-  }
-
-  moveSegmentToFront(segment) {
-    if (!(this.segments.has(segment))) { return; }
-    return this.segments = this.segments.cannibalizeUntil(segment);
   }
 
   movePointToFront(point) {
@@ -177,34 +86,12 @@ export default class PointsList {
     return point.segment.movePointToFront(point);
   }
 
-
-  firstPointThatEquals(point) {
-    return this.filter(p => p.equal(point))[0];
-  }
-
-
-  closedOnSameSpot() {
-    return this.closed && (this.last.equal(this.first));
-  }
-
-
   length() {
-    return this.segments.reduce((a, b) => a + b.points.length
-    , 0);
+    return this.all().length;
   }
-
 
   all() {
-    let pts = [];
-    for (let s of Array.from(this.segments)) {
-      pts = pts.concat(s.points);
-    }
-    return pts;
-  }
-
-  pushSegment(sgmt) {
-    this.lastSegment = sgmt;
-    return this.segments.push(sgmt);
+    return this.segments.reduce((a, b) => a.concat(b.points), []);
   }
 
   push(point, after) {
@@ -239,17 +126,18 @@ export default class PointsList {
     }
   }
 
+  closeSegment() {
+    this.pushSegment(new PointsSegment([], this));
+  }
 
   replace(old, replacement) {
     return this.segmentContaining(old).replace(old, replacement);
   }
 
-
   reverse() {
     // Reverse the order of the points, while maintaining the exact same shape.
     return new PointsList([], this.segments.map(s => s.reverse()));
   }
-
 
   at(n) {
     return this.segmentContaining(parseInt(n, 10)).at(n);

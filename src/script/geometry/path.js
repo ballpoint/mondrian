@@ -115,9 +115,9 @@ export default class Path extends Monsvg {
     if (points instanceof PointsList) {
       this.points = points;
     } else if (typeof(points) === 'string') {
+      console.log(PointsList.fromString(points, this));
       this.points = PointsList.fromString(points, this);
 
-      console.log(PointsList.fromStringX(points, this));
     }
 
     this.clearCachedObjects();
@@ -292,22 +292,12 @@ export default class Path extends Monsvg {
     return this.nudge(bounds.x - mb.x, mb.y - bounds.y);
   }
 
-  drawToCanvas(context, projection) {
+  drawToCanvas(layer, context, projection) {
     context.beginPath();
-    for (let point of Array.from(this.points.all())) {
-      switch (point.constructor) {
-        case MoveTo:
-          context.moveTo(projection.x(point.x), projection.y(point.y));
-          break;
-        case LineTo:
-          context.lineTo(projection.x(point.x), projection.y(point.y));
-          break;
-        case CurveTo:
-          context.bezierCurveTo(projection.x(point.x2), projection.y(point.y2), projection.x(point.x3), projection.y(point.y3), projection.x(point.x), projection.y(point.y));
-          break;
-      }
+    for (let segment of this.points.segments) {
+      segment.drawToCanvas(layer, context, projection);
     }
-    return this.finishToCanvas(context, projection);
+    this.finishToCanvas(context, projection);
   }
 }
 Path.initClass();

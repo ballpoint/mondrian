@@ -338,7 +338,7 @@ export default class Editor extends EventEmitter {
   refreshDrawing(layer, context) {
     if (this.doc) {
       for (let elem of this.doc.elements) {
-        elem.drawToCanvas(context, this.projection);
+        elem.drawToCanvas(layer, context, this.projection);
       }
     }
   }

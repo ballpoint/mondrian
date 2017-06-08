@@ -224,4 +224,22 @@ export default class PathPoint extends Posn {
   setOwner(path) {
     this.owner = path;
   }
+
+  nudge(xd, yd) {
+    super.nudge(xd, yd);
+    if (this.pHandle) this.pHandle.nudge(xd, yd);
+    if (this.sHandle) this.sHandle.nudge(xd, yd);
+  }
+
+  scale(xf, yf, origin) {
+    super.scale(xf, yf, origin);
+    if (this.pHandle) this.pHandle.scale(xf, yf, origin);
+    if (this.sHandle) this.sHandle.scale(xf, yf, origin);
+  }
+
+  rotate(a, origin) {
+    super.rotate(a, origin);
+    if (this.pHandle) this.pHandle.rotate(a, origin);
+    if (this.sHandle) this.sHandle.rotate(a, origin);
+  }
 }

@@ -6,6 +6,7 @@ import {
   CurveTo,
   SmoothTo,
 } from 'geometry/point';
+import PathPoint from 'geometry/path-point';
 
 import Point from 'geometry/point';
 /*
@@ -128,20 +129,6 @@ export default class PointsSegment {
     return x.remove();
   }
 
-  moveMoveTo(otherPoint) {
-    let segment;
-    let tail = this.points.slice(1);
-
-    for (let i = 0, end = otherPoint.at - 1, asc = 0 <= end; asc ? i <= end : i >= end; asc ? i++ : i--) {
-      segment = segment.cannibalize();
-    }
-
-    this.moveTo.copy(otherPoint);
-
-    return this.points = [this.moveTo].concat(segment);
-  }
-
-
   replace(old, replacement) {
     if (replacement instanceof Point) {
       replacement.inheritPosition(old);
@@ -175,69 +162,39 @@ export default class PointsSegment {
     return replacement;
   }
 
-  validateLinks() {
-    // Sortova debug tool <3
-    console.log(this.points.map(p => `${p.prec.at} ${p.at} ${p.succ.at}`));
-    let prev = this.points.length - 1;
-    for (let i of Object.keys(this.points || {})) {
-      let p = this.points[i];
-      i = parseInt(i, 10);
-      if (!(p.prec === this.points[prev])) {
-        console.log(p, "prec wrong. Expecting", prev);
-        debugger;
-        return false;
-        break;
-      }
-      let succ = i === (this.points.length - 1) ? 0 : i + 1;
-      if (!(p.succ === this.points[succ])) {
-        console.log(p, "succ wrong");
-        return false;
-        break;
-      }
-      prev = i;
+  drawToCanvas(layer, context, projection) {
+    if (!(this.points[0] instanceof PathPoint)) {
+      return;
     }
+    //console.log('---------------------', this);
+    let prec;
+    for (let i = 0; i < this.points.length; i++) {
+      let point = this.points[i];
+      let p = projection.posn(point);
+      //layer.drawCircle(p, 2, {fill: 'pink'});
+      if (i === 0) {
+        layer.moveTo(projection.posn(point))
+      } else {
+        let p1, p2;
 
-    return true;
+        if ((prec && prec.sHandle)) {
+          p1 = projection.posn(prec.sHandle);
+          //layer.drawCircle(p1, 2, {fill: 'green'});
+        }
+        if (point.pHandle) {
+          p2 = projection.posn(point.pHandle);
+          //layer.drawCircle(p2, 2, {fill: 'purple'});
+        }
+
+        if (p1 || p2) {
+          layer.bezierCurveTo(p1, p2, p);
+        } else {
+          layer.lineTo(p);
+        }
+      }
+
+      prec = point;
+    }
   }
 
-
-  // THIS IS FUCKED UP
-  reverse() {
-    this.removeMoveTo();
-
-    let positions = [];
-    let stack = [];
-
-    for (let index of Object.keys(this.points || {})) {
-      let point = this.points[index];
-      stack.push(point);
-      positions.push({
-        x: point.x,
-        y: point.y
-      });
-    }
-
-    let tailRev = stack.slice(1).reverse().map(p => p instanceof CurvePoint ? p.reverse() : p);
-
-    positions = positions.reverse();
-
-    stack = stack.slice(0, 1).concat(tailRev);
-
-    stack = stack.map(function(p, i) {
-      let c = positions[0];
-      p.x = c.x;
-      p.y = c.y;
-
-      // Relink: swap succ and prec
-      let { succ } = p;
-      p.succ = p.prec;
-      p.prec = succ;
-
-      p.at = i;
-      // Cut the head off as we go, this should be faster than just going positions[i] ^_^
-      positions = positions.slice(1);
-      return p;
-    });
-    return new PointsSegment(stack, this.list);
-  }
 }
