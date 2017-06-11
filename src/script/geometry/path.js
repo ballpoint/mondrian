@@ -4,12 +4,8 @@ import PointsList from 'geometry/points-list'
 import Range from 'geometry/range'
 import lab from 'lab/lab'
 import conversions from 'lab/conversions'
+import PathPoint from 'geometry/path-point';
 import Posn from 'geometry/posn';
-import {
-  MoveTo,
-  LineTo,
-  CurveTo,
-} from 'geometry/point';
 
 export default class Path extends Monsvg {
   static initClass() {
@@ -34,12 +30,12 @@ export default class Path extends Monsvg {
     let { x, y, w, h } = data;
 
     let segment = new PointsSegment([
-      new MoveTo(x,y),
-      new LineTo(x+w,y),
-      new LineTo(x+w,y+h),
-      new LineTo(x,y+h),
-      new LineTo(x,y)
+      new PathPoint(x,y),
+      new PathPoint(x+w,y),
+      new PathPoint(x+w,y+h),
+      new PathPoint(x,y+h),
     ]);
+    segment.close();
 
     // Replace attrs with d attr
     data.d = new PointsList([segment]);
@@ -63,11 +59,10 @@ export default class Path extends Monsvg {
     let kx = Math.KAPPA * rx;
 
     let segment = new PointsSegment([
-      new MoveTo(t.x, t.y),
-      new CurveTo(t.x + kx, t.y, r.x, r.y - ky, r.x, r.y),
-      new CurveTo(r.x, r.y + ky, b.x + kx, b.y, b.x, b.y),
-      new CurveTo(b.x - kx, b.y, l.x, l.y + ky, l.x, l.y),
-      new CurveTo(l.x, l.y - ky, t.x - kx, t.y, t.x, t.y),
+      new PathPoint(r.x, r.y, r.x, r.y - ky, r.x, r.y + ky),
+      new PathPoint(b.x, b.y, b.x + kx, b.y, b.x - kx, b.y),
+      new PathPoint(l.x, l.y, l.x, l.y + ky, l.x, l.y - ky),
+      new PathPoint(t.x, t.y, t.x - kx, t.y, t.x + kx, t.y),
     ]);
 
     segment.close();
@@ -87,11 +82,7 @@ export default class Path extends Monsvg {
         let parts = p.split(',');
         let x = parseFloat(parts[0]);
         let y = parseFloat(parts[1]);
-        if (i === 0) {
-          return new MoveTo(x, y);
-        } else {
-          return new LineTo(x, y);
-        }
+        return new PathPoint(x, y);
       })
     );
 

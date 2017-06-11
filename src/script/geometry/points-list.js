@@ -127,6 +127,9 @@ export default class PointsList {
   }
 
   closeSegment() {
+    if (this.lastSegment) {
+      this.lastSegment.close();
+    }
     this.pushSegment(new PointsSegment([], this));
   }
 

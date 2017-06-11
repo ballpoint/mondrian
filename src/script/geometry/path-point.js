@@ -10,7 +10,7 @@ export default class PathPoint extends Posn {
       this.setPHandle(pX, pY);
     }
     if (sX && sY) {
-      this.setSHandle(pX, pY);
+      this.setSHandle(sX, sY);
     }
   }
 

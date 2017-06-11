@@ -96,7 +96,18 @@ export default class PointsSegment {
   }
 
   close() {
-    this.closed = true;
+    // Check if first point and last point are close or identical and
+    // reduce them to one.
+    let firstPoint = this.points[0];
+    let lastPoint  = this.points[this.points.length-1];
+
+    if (firstPoint.distanceFrom(lastPoint) < 0.1) {
+      if (lastPoint.pHandle) {
+        firstPoint.setPHandle(lastPoint.pHandle.x, lastPoint.pHandle.y);
+      }
+      this.points = this.points.slice(0, this.points.length-1);
+      this.closed = true;
+    }
   }
 
   empty() {
@@ -162,38 +173,47 @@ export default class PointsSegment {
     return replacement;
   }
 
+  drawPointToCanvas(point, prec, layer, projection) {
+    let p = projection.posn(point);
+    let p1, p2;
+
+    if ((prec && prec.sHandle)) {
+      p1 = projection.posn(prec.sHandle);
+    }
+    if (point.pHandle) {
+      p2 = projection.posn(point.pHandle);
+    }
+
+    if (p1 || p2) {
+      layer.bezierCurveTo(p1, p2, p);
+    } else {
+      layer.lineTo(p);
+    }
+  }
+
   drawToCanvas(layer, context, projection) {
     if (!(this.points[0] instanceof PathPoint)) {
       return;
     }
-    //console.log('---------------------', this);
     let prec;
     for (let i = 0; i < this.points.length; i++) {
       let point = this.points[i];
       let p = projection.posn(point);
-      //layer.drawCircle(p, 2, {fill: 'pink'});
       if (i === 0) {
         layer.moveTo(projection.posn(point))
       } else {
-        let p1, p2;
-
-        if ((prec && prec.sHandle)) {
-          p1 = projection.posn(prec.sHandle);
-          //layer.drawCircle(p1, 2, {fill: 'green'});
-        }
-        if (point.pHandle) {
-          p2 = projection.posn(point.pHandle);
-          //layer.drawCircle(p2, 2, {fill: 'purple'});
-        }
-
-        if (p1 || p2) {
-          layer.bezierCurveTo(p1, p2, p);
-        } else {
-          layer.lineTo(p);
-        }
+        this.drawPointToCanvas(point, prec, layer, projection);
       }
 
       prec = point;
+    }
+
+    if (this.closed) {
+      // Re-draw first point
+      let point = this.points[0];
+      let prec = this.points[this.points.length-1];
+
+      this.drawPointToCanvas(point, prec, layer, projection);
     }
   }
 
