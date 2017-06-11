@@ -1,23 +1,6 @@
-import {
-  MoveTo,
-  LineTo,
-  HorizTo,
-  VertiTo,
-  CurveTo,
-  SmoothTo,
-} from 'geometry/point';
+import LineSegment from 'geometry/line-segment';
+import CubicBezier from 'geometry/cubic-bezier-line-segment';
 import PathPoint from 'geometry/path-point';
-
-import Point from 'geometry/point';
-/*
-
-  PointsSegment
-
-  A segment of points that starts with a MoveTo.
-  A PointsList is composed of a list of these.
-
-*/
-
 
 export default class PointsSegment {
   constructor(points, list) {
@@ -51,10 +34,6 @@ export default class PointsSegment {
 
     if (this.list != null) {
       this.owner = this.list.owner;
-    }
-
-    if (this.points[0] instanceof MoveTo) {
-      this.moveTo = this.points[0];
     }
   }
 
@@ -173,6 +152,18 @@ export default class PointsSegment {
     return replacement;
   }
 
+  lineSegments() {
+    let ls = [];
+    for (let p of this.points.slice(0)) {
+      if (p.hasHandles()) {
+        ls.push(CubicBezier.fromPathPoint(p));
+      } else {
+        ls.push(LineSegment.fromPathPoint(p));
+      }
+    }
+    return ls;
+  }
+
   drawPointToCanvas(point, prec, layer, projection) {
     let p = projection.posn(point);
     let p1, p2;
@@ -216,5 +207,4 @@ export default class PointsSegment {
       this.drawPointToCanvas(point, prec, layer, projection);
     }
   }
-
 }

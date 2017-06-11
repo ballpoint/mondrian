@@ -1,4 +1,3 @@
-import conversions from 'lab/conversions';
 import PointsSegment from 'geometry/points-segment';
 import PathPoint from 'geometry/path-point';
 

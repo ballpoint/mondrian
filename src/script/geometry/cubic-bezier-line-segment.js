@@ -29,15 +29,19 @@ import Bounds from 'geometry/bounds'
 
 export default class CubicBezier {
   static initClass() {
-  
-  
     this.prototype.boundsCached = undefined;
   }
+
   constructor(p1, p2, p3, p4) {
     this.p1 = p1;
     this.p2 = p2;
     this.p3 = p3;
     this.p4 = p4;
+  }
+
+  static fromPathPoint(point) {
+    let prec = point.prec;
+    return new CubicBezier(prec, prec.getSHandle(), point.getPHandle(), point);
   }
 
   /*

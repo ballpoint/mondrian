@@ -215,6 +215,18 @@ export default class PathPoint extends Posn {
     this.sHandle = new Posn(sX, sY);
   }
 
+  getPHandle() {
+    return this.pHandle || this;
+  }
+
+  getSHandle() {
+    return this.sHandle || this;
+  }
+
+  hasHandles() {
+    return this.pHandle || this.sHandle;
+  }
+
   reflecPHandleToSHandle() {
     if (this.pHandle) {
       this.setSHandle(this.pHandle.reflect(this));

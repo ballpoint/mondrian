@@ -3,7 +3,6 @@ import PointsSegment from 'geometry/points-segment'
 import PointsList from 'geometry/points-list'
 import Range from 'geometry/range'
 import lab from 'lab/lab'
-import conversions from 'lab/conversions'
 import PathPoint from 'geometry/path-point';
 import Posn from 'geometry/posn';
 
@@ -180,15 +179,10 @@ export default class Path extends Monsvg {
     if (cached !== null) {
       return cached;
     } else {
-      let segments = [];
-      for (let p of this.points.all()) {
-        let ps = conversions.pathSegment(p, p.succ);
-        if (ps) {
-          segments.push(ps);
-        }
-      }
-      this.lineSegmentsCached = segments;
-      return segments.slice(0);
+      this.lineSegmentsCached = this.points.segments.reduce((a, b) => {
+        return a.concat(b.lineSegments());
+      }, []);
+      return this.lineSegmentsCached;
     }
   }
 
