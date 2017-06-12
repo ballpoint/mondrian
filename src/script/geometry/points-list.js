@@ -64,13 +64,14 @@ export default class PointsList {
 
       let points = PathPoint.fromString(str, previous);
 
-      console.log(str, points);
-
       for (let point of points) {
+        point.setOwner(owner);
         list.push(point);
         previous = point;
       }
     }
+
+    list.closeSegment();
 
     return list;
   }
@@ -93,36 +94,34 @@ export default class PointsList {
     return this.segments.reduce((a, b) => a.concat(b.points), []);
   }
 
-  push(point, after) {
+  push(point) {
     // Add a new point!
 
     if (this.segments.length === 0) {
       this.pushSegment(new PointsSegment([], this));
     }
 
-    if ((after == null)) {
-      point.at = this.lastSegment.points.length;
-      this.lastSegment.push(point);
+    point.at = this.lastSegment.points.length;
+    this.lastSegment.push(point);
 
-      /*
-      if (this.last != null) {
-        this.last.setSucc(point);
-        point.setPrec(this.last);
-      } else {
-        point.setPrec(point);
-      }
-
-      if (this.first != null) {
-        this.first.setPrec(point);
-        point.setSucc(this.first);
-      } else {
-        point.setSucc(point);
-      }
-      */
-      this.last = point;
-
-      return this;
+    /*
+    if (this.last != null) {
+      this.last.setSucc(point);
+      point.setPrec(this.last);
+    } else {
+      point.setPrec(point);
     }
+
+    if (this.first != null) {
+      this.first.setPrec(point);
+      point.setSucc(this.first);
+    } else {
+      point.setSucc(point);
+    }
+    */
+    this.last = point;
+
+    return this;
   }
 
   closeSegment() {

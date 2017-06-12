@@ -28,6 +28,11 @@ let TransformUtil = React.createClass({
         <div>
           h = {state.selectionBounds.height.toFixed(2)}
         </div>
+        { state.selection.length === 1 ? (
+          <div>
+            points = {state.selection[0].points.all().length}
+          </div>
+        ) : null }
         <div>
           fills = {state.selection.map((e) => { return e.data.fill }).join(', ')}
         </div>

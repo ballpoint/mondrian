@@ -24,7 +24,8 @@ import Paw from 'ui/tools/paw';
 const RULER_DIMEN = math.sharpen(20);
 
 import TransformerUIElement from 'ui/editor/transformer';
-import SelectedPtsUIElement from 'ui/editor/selected_pts';
+import DocumentPointsUIElement from 'ui/editor/doc_pts';
+import DocumentElemsUIElement from 'ui/editor/doc_elems';
 
 
 export default class Editor extends EventEmitter {
@@ -61,7 +62,8 @@ export default class Editor extends EventEmitter {
 
     // UIElements
     let uiElems = [
-      new SelectedPtsUIElement(this, 'selected-pts'),
+      new DocumentPointsUIElement(this, 'doc-pts'),
+      new DocumentElemsUIElement(this, 'doc-elems'),
       new TransformerUIElement(this, 'transformer')
     ]
 
@@ -263,6 +265,10 @@ export default class Editor extends EventEmitter {
 
     this.canvas.refreshAll();
     this.trigger('change');
+  }
+
+  isSelected(item) {
+    return this.state.selection.indexOf(item) > -1;
   }
 
   selectTool(tool) {

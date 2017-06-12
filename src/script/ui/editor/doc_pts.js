@@ -2,12 +2,9 @@ import consts from 'consts';
 import Circle from 'geometry/circle';
 import Element from 'ui/element';
 import UIElement from 'ui/editor/ui_element';
-import {
-  CurveTo,
-} from 'geometry/point';
 
 
-export default class SelectedPtsUIElement extends UIElement {
+export default class DocumentPointsUIElement extends UIElement {
   reset() {
     this.editor.cursorHandler.unregisterElement(/selectedPoint.*/);    
   }
@@ -25,7 +22,6 @@ export default class SelectedPtsUIElement extends UIElement {
           if (!this.editor.state.selection.has(pt)) {
             if (pt !== tool.hovering) {
               layer.drawCircle(this.editor.projection.posn(pt), 2.5, { stroke: consts.point, fill: 'white' });
-
             }
           }
         }
@@ -56,7 +52,7 @@ export default class SelectedPtsUIElement extends UIElement {
       let id = 'selectedPoint:'+i+':'+name;
       layer.drawLineSegment(mainPosn, sp);
 
-      this.drawPoint(id, sp, layer);
+      this.drawPoint(id, handle, sp, layer);
 
       this.registerPoint(id, sp, (e) => {
         // noop on down
@@ -72,7 +68,7 @@ export default class SelectedPtsUIElement extends UIElement {
     let mp = this.editor.projection.posn(pt);
 
     // Main point
-    this.drawPoint(mainId, mp, layer);
+    this.drawPoint(mainId, pt, mp, layer);
     this.registerPoint(mainId, mp, (e) => {
       if (!this.editor.state.selection.has(pt)) {
         this.editor.setSelection([pt]);
@@ -84,13 +80,18 @@ export default class SelectedPtsUIElement extends UIElement {
     });
   }
 
-  drawPoint(id, posn, layer, onDrag) {
+  drawPoint(id, point, posn, layer, onDrag) {
     let style = { stroke: consts.point, fill: consts.point };
-    if (this.editor.cursorHandler.isActive(id)) {
+    let radius = 2.5;
+    if (this.editor.isSelected(point)) {
+      style.fill = 'white';
+      style.stroke = 'blue';
+      radius = 3.5;
+    } else if (this.editor.cursorHandler.isActive(id)) {
       style.fill = 'red';
       style.stroke = 'red';
     }
-    layer.drawCircle(posn, 2.5, style);
+    layer.drawCircle(posn, radius, style);
   }
 
   registerPoint(id, posn, onDown, onDrag) {

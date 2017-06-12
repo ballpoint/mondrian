@@ -1,7 +1,6 @@
 import math from 'lib/math';
 import Posn from 'geometry/posn';
 import Range from 'geometry/range';
-import Rect from 'geometry/rectangle';
 
 export default class Bounds {
 
@@ -78,15 +77,6 @@ export default class Bounds {
   }
 
   clone() { return new Bounds(this.x, this.y, this.width, this.height); }
-
-  toRect() {
-    return new Rect({
-      x: this.x,
-      y: this.y,
-      width: this.width,
-      height: this.height
-    });
-  }
 
   center() {
     return new Posn(this.x + (this.width / 2), this.y + (this.height / 2));

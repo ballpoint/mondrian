@@ -12,8 +12,6 @@ export default class Path extends Monsvg {
   
     // Caching expensive metadata
     this.prototype.caching = true;
-    this.prototype.xRangeCached = null;
-    this.prototype.yRangeCached = null;
   }
 
   constructor(data) {
@@ -62,7 +60,6 @@ export default class Path extends Monsvg {
       new PathPoint(l.x, l.y, l.x, l.y + ky, l.x, l.y - ky),
       new PathPoint(t.x, t.y, t.x - kx, t.y, t.x + kx, t.y),
     ]);
-
     segment.close();
 
     data.d = new PointsList([segment]);
@@ -114,37 +111,9 @@ export default class Path extends Monsvg {
     return this;
   }
 
-  xRange() {
-    let cached = this.xRangeCached;
-    if (cached !== null) {
-      return cached;
-    } else {
-      return this.xRangeCached = Range.fromList(this.lineSegments().map((x) => {
-        let xr = x.xRange();
-        if (isNaN(xr.min) || isNaN(xr.max)) debugger;
-        return xr;
-      }));
-    }
-  }
-
-  yRange() {
-    let cached = this.yRangeCached;
-    if (cached !== null) {
-      return cached;
-    } else {
-      return this.yRangeCached = Range.fromList(this.lineSegments().map(x => x.yRange()));
-    }
-  }
-
   nudgeCachedObjects(x, y) {
     if (this.boundsCached != null) {
       this.boundsCached.nudge(x, y);
-    }
-    if (this.xRangeCached != null) {
-      this.xRangeCached.nudge(x);
-    }
-    if (this.yRangeCached != null) {
-      this.yRangeCached.nudge(y);
     }
   }
 
@@ -152,18 +121,10 @@ export default class Path extends Monsvg {
     if (this.boundsCached != null) {
       this.boundsCached.scale(x, y, origin);
     }
-    if (this.xRangeCached != null) {
-      this.xRangeCached.scale(x, origin.x);
-    }
-    if (this.yRangeCached != null) {
-      this.yRangeCached.scale(y, origin.y);
-    }
   }
 
   clearCachedObjects() {
     this.boundsCached = null;
-    this.xRangeCached = null;
-    this.yRangeCached = null;
     return this;
   }
 
@@ -171,9 +132,22 @@ export default class Path extends Monsvg {
     // No I/P
     //
     // O/P: A list of LineSegments and/or CubicBeziers representing this path
-    return this.points.segments.reduce((a, b) => {
+    let ls = this.points.segments.reduce((a, b) => {
       return a.concat(b.lineSegments());
     }, []);
+    return ls;
+  }
+
+  getRanges() {
+    let lineSegments = this.lineSegments();
+
+    let xrs = Range.fromList(lineSegments.map((ls) => {
+      return ls.xRange();
+    }));
+    let yrs = Range.fromList(lineSegments.map((ls) => {
+      return ls.yRange();
+    }));
+    return { xrs, yrs }
   }
 
   scale(x, y, origin) {

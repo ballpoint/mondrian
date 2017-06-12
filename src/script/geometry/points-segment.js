@@ -84,9 +84,16 @@ export default class PointsSegment {
       if (lastPoint.pHandle) {
         firstPoint.setPHandle(lastPoint.pHandle.x, lastPoint.pHandle.y);
       }
+      // Remove last redundant point
       this.points = this.points.slice(0, this.points.length-1);
-      this.closed = true;
     }
+
+    firstPoint = this.points[0];
+    lastPoint  = this.points[this.points.length-1];
+    firstPoint.prec = lastPoint;
+    lastPoint.succ = firstPoint;
+
+    this.closed = true;
   }
 
   empty() {

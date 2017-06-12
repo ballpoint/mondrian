@@ -1,4 +1,6 @@
 import { PIXEL_RATIO } from 'lib/math';
+import LineSegment from 'geometry/line-segment';
+import CubicBezier from 'geometry/cubic-bezier-line-segment';
 
 export default class Layer {
   constructor(id) {
@@ -142,9 +144,11 @@ export default class Layer {
   }
 
   drawLine(line) {
-    if (line.a && line.b) {
+    if (line instanceof LineSegment) {
+      this.moveTo(line.a);
       this.lineTo(line.b);
-    } else if (line.p2 && line.p3 && line.p4) {
+    } else if (line instanceof CubicBezier) {
+      this.moveTo(line.p1);
       this.bezierCurveTo(
         line.p2,
         line.p3,

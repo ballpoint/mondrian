@@ -11,6 +11,10 @@ export default class Cursor extends Tool {
     this.dragSelectEnd = null;
   }
 
+  get id() {
+    return 'cursor';
+  }
+
   handleMousemove(e, posn) {
     if (this.editor.cursor.dragging) {
       return;

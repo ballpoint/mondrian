@@ -164,14 +164,21 @@ export default class Monsvg {
     if ((cached !== null) && this.caching) {
       return cached;
     } else {
-      let xr = this.xRange();
-      let yr = this.yRange();
+      let { xrs, yrs } = this.getRanges();
       return this.boundsCached = new Bounds(
-        xr.min,
-        yr.min,
-        xr.length(),
-        yr.length());
+        xrs.min,
+        yrs.min,
+        xrs.length(),
+        yrs.length());
     }
+  }
+
+  xRange() {
+    return this.bounds().xr;
+  }
+
+  yRange() {
+    return this.bounds().yr;
   }
 
   carryOutTransformations(transform, center) {
