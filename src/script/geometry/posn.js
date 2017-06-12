@@ -100,11 +100,9 @@ export default class Posn {
     return `new Posn(${this.x},${this.y})`;
   }
 
-
   nudge(x, y) {
     this.x += x;
     this.y += y;
-
     return this;
   }
 
@@ -350,8 +348,8 @@ export default class Posn {
     return (this.x * v.x) + (this.y * v.y);
   }
 
-  within(tolerance, posn) {
-    return (Math.abs(this.x - posn.x) < tolerance) && (Math.abs(this.y - posn.y) < tolerance);
+  within(posn, tolerance) {
+    return this.distanceFrom(posn) <= tolerance;
   }
 
   parseInt() {

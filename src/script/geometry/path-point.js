@@ -161,7 +161,7 @@ export default class PathPoint extends Posn {
                 pHandle.x = values[0];
                 pHandle.y = values[1];
 
-                prec.reflecPHandleToSHandle();
+                prec.reflectPHandleToSHandle();
                 /*
                 if (prec instanceof CurveTo) {
                   // Reflect other handle
@@ -209,10 +209,16 @@ export default class PathPoint extends Posn {
 
   setPHandle(pX, pY) {
     this.pHandle = new Posn(pX, pY);
+    this.checkIfHandlesLocked();
   }
 
   setSHandle(sX, sY) {
     this.sHandle = new Posn(sX, sY);
+    this.checkIfHandlesLocked();
+  }
+
+  checkIfHandlesLocked() {
+    this.handlesLocked = !!(this.pHandle && this.sHandle && this.pHandle.reflect(this).within(this.sHandle, 1));
   }
 
   getPHandle() {
@@ -227,10 +233,11 @@ export default class PathPoint extends Posn {
     return this.pHandle || this.sHandle;
   }
 
-  reflecPHandleToSHandle() {
+  reflectPHandleToSHandle() {
     if (this.pHandle) {
       this.setSHandle(this.pHandle.reflect(this));
     }
+    this.handlesLocked = true;
   }
 
   setOwner(path) {
@@ -253,5 +260,26 @@ export default class PathPoint extends Posn {
     super.rotate(a, origin);
     if (this.pHandle) this.pHandle.rotate(a, origin);
     if (this.sHandle) this.sHandle.rotate(a, origin);
+  }
+
+  nudgeHandle(which, xd, yd) {
+    let handle = this[which];
+
+    if (handle) {
+      let oppHandle = { sHandle: this.pHandle, pHandle: this.sHandle }[which];
+
+      handle.nudge(xd, yd);
+
+      if (oppHandle && this.handlesLocked) {
+        switch (which) {
+          case 'sHandle':
+            this.setPHandle(this.sHandle.reflect(this));
+            break;
+          case 'pHandle':
+            this.setSHandle(this.pHandle.reflect(this));
+            break;
+        }
+      }
+    }
   }
 }

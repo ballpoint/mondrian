@@ -14,7 +14,6 @@ export default class Path extends Monsvg {
     this.prototype.caching = true;
     this.prototype.xRangeCached = null;
     this.prototype.yRangeCached = null;
-    this.prototype.lineSegmentsCached = null;
   }
 
   constructor(data) {
@@ -147,7 +146,6 @@ export default class Path extends Monsvg {
     if (this.yRangeCached != null) {
       this.yRangeCached.nudge(y);
     }
-    return (this.lineSegmentsCached != null ? this.lineSegmentsCached.map(ls => ls.nudge(x, y)) : undefined);
   }
 
   scaleCachedObjects(x, y, origin) {
@@ -160,11 +158,9 @@ export default class Path extends Monsvg {
     if (this.yRangeCached != null) {
       this.yRangeCached.scale(y, origin.y);
     }
-    this.lineSegmentsCached = null;
   }
 
   clearCachedObjects() {
-    this.lineSegmentsCached = null;
     this.boundsCached = null;
     this.xRangeCached = null;
     this.yRangeCached = null;
@@ -175,15 +171,9 @@ export default class Path extends Monsvg {
     // No I/P
     //
     // O/P: A list of LineSegments and/or CubicBeziers representing this path
-    let cached = this.lineSegmentsCached;
-    if (cached !== null) {
-      return cached;
-    } else {
-      this.lineSegmentsCached = this.points.segments.reduce((a, b) => {
-        return a.concat(b.lineSegments());
-      }, []);
-      return this.lineSegmentsCached;
-    }
+    return this.points.segments.reduce((a, b) => {
+      return a.concat(b.lineSegments());
+    }, []);
   }
 
   scale(x, y, origin) {
@@ -212,9 +202,6 @@ export default class Path extends Monsvg {
 
     // Boom
     this.commitPoints();
-
-    // Carry out on virgin rep
-    return (this.virgin != null ? this.virgin.scale(x, y, origin) : undefined);
   }
 
 
@@ -228,9 +215,6 @@ export default class Path extends Monsvg {
 
     // Commit the changes to the canvas
     this.commitPoints();
-
-    // Also nudge the virgin shape if there is one
-    return (this.virgin != null ? this.virgin.nudge(x, y) : undefined);
   }
 
 

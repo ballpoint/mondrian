@@ -25,6 +25,7 @@ export default class SelectedPtsUIElement extends UIElement {
           if (!this.editor.state.selection.has(pt)) {
             if (pt !== tool.hovering) {
               layer.drawCircle(this.editor.projection.posn(pt), 2.5, { stroke: consts.point, fill: 'white' });
+
             }
           }
         }
@@ -47,59 +48,32 @@ export default class SelectedPtsUIElement extends UIElement {
   handlePoint(pt, i, layer) {
     let mainPosn = this.editor.projection.posn(pt);
 
-    if (pt instanceof CurveTo) {
-      let p3 = pt.p3();
-      let p3id = 'selectedPoint:'+i+':p3';
+    for (let name of ['sHandle', 'pHandle']) {
+      let handle = pt[name];
+      if (!handle) continue;
 
-      layer.drawLineSegment(mainPosn, this.editor.projection.posn(p3), { stroke: consts.point });
+      let sp = this.editor.projection.posn(handle);
+      let id = 'selectedPoint:'+i+':'+name;
+      layer.drawLineSegment(mainPosn, sp);
 
-      this.drawPoint(p3id, p3, layer, (e, posn, lastPosn) => {
-        let xd = posn.x - lastPosn.x;
-        let yd = posn.y - lastPosn.y;
-        pt.absorb(p3.nudge(xd, yd), 3);
-        this.editor.canvas.refreshAll();
-      });
+      this.drawPoint(id, sp, layer);
 
-      this.registerPoint(p3id, p3, (e) => {
+      this.registerPoint(id, sp, (e) => {
         // noop on down
       }, (e, posn, lastPosn) => {
         let xd = posn.x - lastPosn.x;
         let yd = posn.y - lastPosn.y;
-        pt.nudge(xd, yd, 3);
-      });
-    }
-
-    let p2;
-    if (pt.succ instanceof CurveTo) {
-      p2 = pt.succ.p2();
-    }
-
-    if (p2) {
-      layer.drawLineSegment(mainPosn, this.editor.projection.posn(p2), { stroke: consts.point });
-
-      let p2id = 'selectedPoint:'+i+':p2';
-
-      this.drawPoint(p2id, p2, layer, (e, posn, lastPosn) => {
-        let xd = posn.x - lastPosn.x;
-        let yd = posn.y - lastPosn.y;
-        pt.succ.absorb(p2.nudge(xd, yd), 2);
+        pt.nudgeHandle(name, xd, yd);
         this.editor.canvas.refreshAll();
-      });
-
-      this.registerPoint(p2id, p2, (e) => {
-        // noop on down
-      }, (e, posn, lastPosn) => {
-        let xd = posn.x - lastPosn.x;
-        let yd = posn.y - lastPosn.y;
-        pt.nudge(xd, yd, 2);
       });
     }
 
     let mainId = 'selectedPoint:'+i;
+    let mp = this.editor.projection.posn(pt);
 
     // Main point
-    this.drawPoint(mainId, pt, layer);
-    this.registerPoint(mainId, pt, (e) => {
+    this.drawPoint(mainId, mp, layer);
+    this.registerPoint(mainId, mp, (e) => {
       if (!this.editor.state.selection.has(pt)) {
         this.editor.setSelection([pt]);
       }
@@ -110,8 +84,7 @@ export default class SelectedPtsUIElement extends UIElement {
     });
   }
 
-  drawPoint(id, pt, layer, onDrag) {
-    let posn = this.editor.projection.posn(pt);
+  drawPoint(id, posn, layer, onDrag) {
     let style = { stroke: consts.point, fill: consts.point };
     if (this.editor.cursorHandler.isActive(id)) {
       style.fill = 'red';
@@ -120,9 +93,7 @@ export default class SelectedPtsUIElement extends UIElement {
     layer.drawCircle(posn, 2.5, style);
   }
 
-  registerPoint(id, pt, onDown, onDrag) {
-    let posn = this.editor.projection.posn(pt);
-
+  registerPoint(id, posn, onDown, onDrag) {
     let hitArea = new Circle(posn, 10);
     let elem = new Element(id, hitArea, {
       'mousedown': (e, posn) => {

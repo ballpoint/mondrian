@@ -83,8 +83,6 @@ export default class Cursor extends Tool {
   }
 
   refresh(layer, context) {
-    let hovering = this.hovering;
-
     if (this.dragSelectStart && this.dragSelectEnd) {
       let bounds = Bounds.fromPosns([this.dragSelectStart, this.dragSelectEnd]);
       bounds = this.editor.projection.bounds(bounds).sharp();

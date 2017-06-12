@@ -27,6 +27,7 @@ export default class TransformerUIElement extends UIElement {
     if (this.editor.state.selectionType !== 'ELEMENTS') {
       return;
     }
+    console.log(this.editor.state.selectionType);
 
     let bounds = this.editor.projection.bounds(this.editor.state.selectionBounds);
 

@@ -6,7 +6,7 @@ import EventEmitter from 'lib/events';
 import math from 'lib/math';
 import Canvas from 'ui/canvas';
 import Posn from 'geometry/posn';
-import Point from 'geometry/point';
+import PathPoint from 'geometry/path-point';
 import Projection from 'ui/projection';
 import hotkeys from 'ui/hotkeys';
 import Bounds from 'geometry/bounds'
@@ -53,7 +53,6 @@ export default class Editor extends EventEmitter {
   }
 
   initCanvas() {
-    console.log(this.root, this.root.offsetHeight);
     this.canvas = new Canvas(this.root);
 
     this.cursor = new CursorTracking(this.root);
@@ -251,7 +250,7 @@ export default class Editor extends EventEmitter {
   setSelection(items) {
     this.state.selection = items;
 
-    if (items[0] instanceof Point) {
+    if (items[0] instanceof PathPoint) {
       this.state.selectionType = 'POINTS';
     } else {
       this.state.selectionType = 'ELEMENTS';
@@ -298,7 +297,7 @@ export default class Editor extends EventEmitter {
   calculateSelectionBounds() {
     if (this.state.selection.length > 0) {
 
-      if (this.state.selection[0] instanceof Point) {
+      if (this.state.selection[0] instanceof PathPoint) {
         this.state.selectionBounds = Bounds.fromPosns(this.state.selection);
       } else {
         let boundsList = [];
@@ -441,7 +440,7 @@ export default class Editor extends EventEmitter {
     for (let item of this.state.selection) {
       item.nudge(x,y);
 
-      if (item instanceof Point && item.owner) {
+      if (item instanceof PathPoint && item.owner) {
         item.owner.clearCachedObjects();
       }
     }
