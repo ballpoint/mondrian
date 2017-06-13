@@ -1,6 +1,5 @@
 import Range from 'geometry/range'
 import Posn from 'geometry/posn'
-import Point from 'geometry/point'
 import Bounds from 'geometry/bounds'
 
 /*

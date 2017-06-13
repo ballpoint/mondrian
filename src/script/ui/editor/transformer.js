@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import LineSegment from 'geometry/line-segment'
 import Bounds from 'geometry/bounds'
-import Point from 'geometry/point';
 import Element from 'ui/element';
 import UIElement from 'ui/editor/ui_element';
 

@@ -2,7 +2,7 @@ import io from 'io/io';
 import Bounds from 'geometry/bounds'
 import Posn from 'geometry/posn'
 
-import Point from 'geometry/point';
+import PathPoint from 'geometry/path-point';
 import Monsvg from 'geometry/monsvg';
 
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg'
@@ -125,7 +125,7 @@ export default class SVG {
       } else {
         return null;
       }
-    } else if (item instanceof Point) {
+    } else if (item instanceof PathPoint) {
       // Return two indices in format 4:82
       let owner = item.owner;
       let ownerI = this.elements.indexOf(owner);

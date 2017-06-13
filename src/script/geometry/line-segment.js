@@ -1,6 +1,5 @@
 import Posn from 'geometry/posn';
 import Range from 'geometry/range';
-import { LineTo } from 'geometry/point';
 /*
   Internal representation of a straight line segment
 
@@ -83,12 +82,6 @@ export default class LineSegment {
   angle360() {
     return this.b.angle360(this.a);
   }
-
-  toLineTo() {
-    return new LineTo(this.b.x, this.b.y);
-  }
-
-  toSVGPoint() { return this.toLineTo(); }
 
   reverse() {
     // Note: this makes it lose its source
