@@ -1,3 +1,6 @@
+import Path from 'geometry/path';
+import PathPoint from 'geometry/path-point';
+
 class HistoryAction {
   constructor(data) {
     this.data = data;
@@ -14,13 +17,18 @@ export class NudgeAction extends HistoryAction {
     editor.selectFromQueries(this.data.items);
     for (let item of editor.state.selection) {
       item.nudge(this.data.xd, this.data.yd);
-      item.clearCachedObjects();
+      
+      if (item instanceof Path) {
+        item.clearCachedObjects();
+      } else if (item instanceof PathPoint && item.owner) {
+        item.owner.clearCachedObjects();
+      }
     }
   }
 
-  merge(event) {
-    this.data.xd += event.data.xd;
-    this.data.yd += event.data.yd;
+  merge(action) {
+    this.data.xd += action.data.xd;
+    this.data.yd += action.data.yd;
   }
 
   opposite() {
@@ -28,6 +36,30 @@ export class NudgeAction extends HistoryAction {
       items: this.data.items,
       xd:   -this.data.xd,
       yd:   -this.data.yd
+    });
+  }
+}
+
+export class NudgeHandleAction extends HistoryAction {
+  perform(editor) {
+    let points = this.data.query.map((q) => { return editor.doc.getItemFromQuery(q) });
+    editor.setSelection(points);
+    for (let point of points) {
+      point.nudgeHandle(this.data.handle, this.data.xd, this.data.yd);
+    }
+  }
+
+  merge(action) {
+    this.data.xd += action.data.xd;
+    this.data.yd += action.data.yd;
+  }
+
+  opposite() {
+    return new NudgeHandleAction({
+      query: this.data.query,
+      handle: this.data.handle,
+      xd: -this.data.xd,
+      yd: -this.data.yd,
     });
   }
 }
@@ -49,9 +81,9 @@ export class ScaleAction extends HistoryAction {
     });
   }
 
-  merge(event) {
-    this.data.x *= event.data.x;
-    this.data.y *= event.data.y;
+  merge(action) {
+    this.data.x *= action.data.x;
+    this.data.y *= action.data.y;
   }
 }
 
@@ -85,9 +117,9 @@ export class DeleteAction extends HistoryAction {
     return new InsertAction(params);
   }
 
-  merge(event) {
-    this.data.indexes = _.merge(this.data.indexes, event.data.indexes);
-    this.data.elements = this.data.elements.concat(event.data.elements);
+  merge(action) {
+    this.data.indexes = _.merge(this.data.indexes, action.data.indexes);
+    this.data.elements = this.data.elements.concat(action.data.elements);
   }
 }
 

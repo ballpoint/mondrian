@@ -103,7 +103,6 @@ export default class Path extends Monsvg {
     } else if (typeof(points) === 'string') {
       console.log(PointsList.fromString(points, this));
       this.points = PointsList.fromString(points, this);
-
     }
 
     this.clearCachedObjects();

@@ -14,12 +14,7 @@ import Element from 'ui/element';
 import CursorTracking from 'ui/cursor-tracking';
 import CursorHandler from 'ui/cursor-handler';
 import DocHistory from 'history/history';
-import {
-  NudgeAction,
-  ScaleAction,
-  InsertAction,
-  DeleteAction
-} from 'history/actions/actions';
+import * as actions from 'history/actions/actions';
 
 import Cursor from 'ui/tools/cursor';
 import SubCursor from 'ui/tools/subcursor';
@@ -293,7 +288,7 @@ export default class Editor extends EventEmitter {
       elements.push(elem);
     }
 
-    let action = new DeleteAction({
+    let action = new actions.DeleteAction({
       elements, indexes
     });
 
@@ -449,8 +444,7 @@ export default class Editor extends EventEmitter {
   }
 
   nudgeSelected(xd, yd) {
-
-    let action = new NudgeAction({
+    let action = new actions.NudgeAction({
       items: this.selectionQuery(),
       xd, yd,
     });
@@ -463,8 +457,22 @@ export default class Editor extends EventEmitter {
     this.trigger('change');
   }
 
+  nudgeHandle(handle, xd, yd) {
+    let action = new actions.NudgeHandleAction({
+      query: this.selectionQuery(),
+      xd, yd, handle,
+    });
+
+    this.perform(action);
+
+    this.calculateSelectionBounds();
+    this.canvas.refreshAll();
+
+    this.trigger('change');
+  }
+
   scaleSelected(x, y, origin) {
-    let action = new ScaleAction({
+    let action = new actions.ScaleAction({
       items: this.selectionQuery(),
       x, y, origin,
     });
@@ -517,7 +525,7 @@ export default class Editor extends EventEmitter {
         params.push({ element });
       }
 
-      let action = new InsertAction(params);
+      let action = new actions.InsertAction(params);
 
       this.perform(action);
 
