@@ -1,6 +1,6 @@
 import 'util/prototypes';
 import 'main.scss';
-import SVG from 'io/svg';
+import Doc from 'io/doc';
 import abq from 'abq.svg';
 import sbux from 'sbux.svg';
 import cmg from 'cmg.svg';
@@ -8,7 +8,7 @@ import google from 'google.svg';
 import Editor from 'ui/editor';
 import Utils from 'ui/components/Utils';
 
-let doc = new SVG(google);
+let doc = Doc.fromSVG(google);
 
 let editor = new Editor('#app-render');
 

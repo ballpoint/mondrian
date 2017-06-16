@@ -1,4 +1,6 @@
-let TransformUtil = React.createClass({
+import Util from 'ui/components/Util';
+
+let SelectionUtil = React.createClass({
   label() {
     let sel = this.props.editor.state.selection
     if (sel.length === 0) {
@@ -44,14 +46,12 @@ let TransformUtil = React.createClass({
 
   render() {
     return (
-      <div className="util-window">
-        <div>
-          {this.label()}
-          {this.metadata()}
-        </div>
-      </div>
+      <Util title="Selection">
+        {this.label()}
+        {this.metadata()}
+      </Util>
     );
   }
 });
 
-export default TransformUtil;
+export default SelectionUtil;

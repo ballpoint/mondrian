@@ -1,3 +1,4 @@
+import Util from 'ui/components/Util';
 
 let HistoryUtil = React.createClass({
   keyVal(e) {
@@ -29,14 +30,12 @@ let HistoryUtil = React.createClass({
 
   render() {
     return (
-      <div className="util-window">
-        <div>
-          <div>{this.props.history.head.actions.map((a) => { return a.constructor.name}) }</div>
-          <pre>
-            {this.keyVal(this.props.history.head)}
-          </pre>
-        </div>
-      </div>
+      <Util title="History">
+        <div>{this.props.history.head.actions.map((a) => { return a.constructor.name}) }</div>
+        <pre>
+          {this.keyVal(this.props.history.head)}
+        </pre>
+      </Util>
     );
   }
 });

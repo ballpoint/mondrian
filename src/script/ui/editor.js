@@ -445,7 +445,7 @@ export default class Editor extends EventEmitter {
 
   nudgeSelected(xd, yd) {
     let action = new actions.NudgeAction({
-      items: this.selectionQuery(),
+      query: this.selectionQuery(),
       xd, yd,
     });
 
@@ -473,7 +473,7 @@ export default class Editor extends EventEmitter {
 
   scaleSelected(x, y, origin) {
     let action = new actions.ScaleAction({
-      items: this.selectionQuery(),
+      query: this.selectionQuery(),
       x, y, origin,
     });
 

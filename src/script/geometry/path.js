@@ -100,6 +100,7 @@ export default class Path extends Monsvg {
   importNewPoints(points) {
     if (points instanceof PointsList) {
       this.points = points;
+      points.setOwner(this);
     } else if (typeof(points) === 'string') {
       console.log(PointsList.fromString(points, this));
       this.points = PointsList.fromString(points, this);

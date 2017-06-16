@@ -76,6 +76,12 @@ export default class PointsList {
     return list;
   }
 
+  setOwner(owner) {
+    for (let segment of this.segments) {
+      segment.setOwner(owner);
+    }
+  }
+
   pushSegment(segment) {
     this.lastSegment = segment;
     this.segments.push(segment);

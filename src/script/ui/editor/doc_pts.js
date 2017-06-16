@@ -69,6 +69,7 @@ export default class DocumentPointsUIElement extends UIElement {
     // Main point
     this.drawPoint(mainId, pt, mp, layer);
     this.registerPoint(mainId, mp, (e) => {
+      console.log(pt);
       if (!this.editor.state.selection.has(pt)) {
         this.editor.setSelection([pt]);
       }

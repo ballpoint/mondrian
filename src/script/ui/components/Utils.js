@@ -1,5 +1,5 @@
 import 'utils.scss';
-import TransformUtil from 'ui/components/Transform';
+import SelectionUtil from 'ui/components/Transform';
 import LayersUtil from 'ui/components/Layers';
 import HistoryUtil from 'ui/components/History';
 import BooleanUtil from 'ui/components/Boolean';
@@ -22,7 +22,7 @@ let Utils = React.createClass({
   getWindows() {
     let w = [];
 
-    w.push(<TransformUtil key="transform" editor={this.props.editor} />);
+    w.push(<SelectionUtil key="transform" editor={this.props.editor} />);
 
     //w.push(<BooleanUtil key="boolean" editor={this.props.editor} />);
 

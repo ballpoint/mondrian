@@ -14,7 +14,7 @@ export class InitAction extends HistoryAction {
 
 export class NudgeAction extends HistoryAction {
   perform(editor) {
-    editor.selectFromQueries(this.data.items);
+    editor.selectFromQueries(this.data.query);
     for (let item of editor.state.selection) {
       item.nudge(this.data.xd, this.data.yd);
       
@@ -33,7 +33,7 @@ export class NudgeAction extends HistoryAction {
 
   opposite() {
     return new NudgeAction({
-      items: this.data.items,
+      query: this.data.query,
       xd:   -this.data.xd,
       yd:   -this.data.yd
     });
@@ -66,7 +66,7 @@ export class NudgeHandleAction extends HistoryAction {
 
 export class ScaleAction extends HistoryAction {
   perform(editor) {
-    editor.selectFromQueries(this.data.items);
+    editor.selectFromQueries(this.data.query);
     for (let item of editor.state.selection) {
       item.scale(this.data.x, this.data.y, this.data.origin);
     }
@@ -75,7 +75,7 @@ export class ScaleAction extends HistoryAction {
   opposite() {
     return new ScaleAction({
       origin: this.data.origin,
-      items: this.data.items,
+      query: this.data.query,
       x: 1/this.data.x,
       y: 1/this.data.y,
     });

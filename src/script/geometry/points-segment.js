@@ -41,6 +41,12 @@ export default class PointsSegment {
     return this.points.length;
   }
 
+  setOwner(owner) {
+    for (let point of this.points) {
+      point.setOwner(owner);
+    }
+  }
+
   insert(point, at) {
     let head = this.points.slice(0, at);
     let tail = this.points.slice(at);

@@ -1,4 +1,5 @@
 import io from 'io/io';
+import Layer from 'io/layer';
 import Bounds from 'geometry/bounds'
 import Posn from 'geometry/posn'
 
@@ -10,65 +11,52 @@ const SVG_NAMESPACE = 'http://www.w3.org/2000/svg'
 const MIMETYPE = 'image/svg+xml';
 const CHARSET  = 'utf-8';
 
-/*
+export default class Doc {
+  constructor(attrs) {
+    this.layers = attrs.layers;
+    this.width = attrs.width;
+    this.height = attrs.height;
 
-  SVG representation class/API
-
-*/
-
-export default class SVG {
-  constructor(contents) {
-    this._ensureDoc(contents);
-    this._assignMondrianNamespace();
-
-    this.root = this.doc.querySelector('svg');
-    this._buildMetadata();
-
-    this.elements = io.parse(this.root);
+    this.bounds = new Bounds(0, 0, this.width, this.height);
 
     this._indexElements(this.elements);
   }
 
+  static fromSVG(str) {
+    let doc = new DOMParser().parseFromString(str, MIMETYPE);
+    let root = doc.querySelector('svg');
+    if (!root) {
+      throw new Error('No svg node in given doc');
+    }
+    let elements = io.parse(doc.querySelector('svg'));
+    let width = parseInt(root.getAttribute('width'), 10);
+    let height = parseInt(root.getAttribute('height'), 10);
+
+    // TODO parse layers from SVG mondrian: attr
+    let layer = new Layer({
+      id: 'main',
+      elements
+    });
+
+    return new Doc({
+      layers: [layer],
+      width,
+      height,
+    });
+  }
+
+  get elements() {
+    // Flatten this.layers
+    return this.layers.reduce((accum, layer) => {
+      return accum.concat(layer.elements)
+    }, []);
+  }
+
+  toSVG() {
+    // TODO
+  }
+
   // Constructor helpers
-
-  _ensureDoc(contents) {
-    if (typeof(contents) === 'string') {
-      // Parse the SVG string
-      return this.doc = new DOMParser().parseFromString(contents, MIMETYPE);
-
-    } else if (contents.documentURI != null) {
-      // This means it's already a parsed document
-      return this.doc = contents;
-
-    } else if (contents instanceof Array) {
-      // We've been given a list of Monsvg elements
-      this.elements = contents;
-
-      // Create the document from scratch
-      this.doc = document.implementation.createDocument(SVG_NAMESPACE, 'svg');
-
-      // Have to do this for some reason
-      // It gets created with an <undefined></undefined> element
-      this.doc.removeChild(this.doc.childNodes[0]);
-
-      // If we haven't been given an SVG element with
-      // a canvas size, just derive it from the elements.
-      // This will mean it's "trimmed" from the beginning.
-      return this._deriveBoundsFromElements();
-
-    } else {
-      throw new Error('Bad input');
-    }
-  }
-
-  _buildMetadata() {
-    this.width = parseInt(this.root.getAttribute('width', 10));
-    this.height = parseInt(this.root.getAttribute('height', 10));
-
-    if (this.bounds == null) {
-      return this.bounds = new Bounds(0, 0, this.width, this.height);
-    }
-  }
 
   _assignMondrianNamespace() {
     // Make the mondrian: namespace legal
@@ -128,6 +116,9 @@ export default class SVG {
     } else if (item instanceof PathPoint) {
       // Return two indices in format 4:82
       let owner = item.owner;
+      if (!owner) {
+        return null;
+      }
       let ownerI = this.elements.indexOf(owner);
       if (ownerI > -1) {
         let pts = owner.points.all();
