@@ -20,7 +20,8 @@ module.exports = {
   },
 
   entry: {
-    'bundles/app': 'main.js'
+    'bundles/app':    'main.js',
+    'bundles/vendor': 'vendor.js'
   },
 
   output: {

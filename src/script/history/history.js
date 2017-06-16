@@ -1,37 +1,45 @@
-import _ from 'lodash';
-import { InitEvent } from 'history/events';
+import HistoryFrame from 'history/Frame';
 
-const EVENT_MERGE_THRESHOLD = 500; // ms
+const FRAME_MERGE_THRESHOLD = 500; // ms
 
 export default class DocHistory {
   // Linked list history data struct ,'>)
   constructor() {
-    this.head = new InitEvent();
-    this.tail = null;
+    this.head = new HistoryFrame();
+    this.head.seal();
   }
 
-  push(event, opts={}) {
+  push(action, opts={}) {
+    let canMerge = this.head.canMerge(action);
+    if (canMerge) {
+      this.head.merge(action);
+    } else {
+      let nf = new HistoryFrame([action]);
+      nf.setPrev(this.head);
+      this.setHead(nf);
+    }
+
     if (
-      this.head.constructor === event.constructor &&
-      (event.created.valueOf() - this.head.created.valueOf()) < EVENT_MERGE_THRESHOLD
+      this.head.constructor === action.constructor &&
+      (action.created.valueOf() - this.head.created.valueOf()) < FRAME_MERGE_THRESHOLD
     ) {
       // Merge events
-      this.head.merge(event);
+      this.head.merge(action);
       return;
     }
 
-    event.setPrev(this.head);
-    this.setHead(event);
   }
 
-  setHead(event) {
-    this.head = event;
+  setHead(action) {
+    this.head = action;
   }
 
   undo(editor) {
-    this.head.undo(editor);
-    if (this.head.prev) {
-      this.setHead(this.head.prev);
+    if (this.head.hasPrev) {
+      this.head.undo(editor);
+      if (this.head.prev) {
+        this.setHead(this.head.prev);
+      }
     }
   }
 

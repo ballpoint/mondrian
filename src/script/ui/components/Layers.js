@@ -1,5 +1,3 @@
-import React from 'react';
-
 let LayersUtil = React.createClass({
   render() {
     return (

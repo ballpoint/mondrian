@@ -1,4 +1,3 @@
-import React from 'react';
 import bool from 'lib/bool';
 import Color from 'ui/color';
 

@@ -1,7 +1,7 @@
-import _ from 'lodash';
 import Color from 'ui/color';
 import Bounds from 'geometry/bounds';
 import Range from 'geometry/range';
+import Posn from 'geometry/posn';
 /*
 
     Mondrian SVG library
@@ -90,29 +90,7 @@ export default class Monsvg {
 
 
   center() {
-    // Returns the center of a cluster of posns
-    //
-    // O/P: Posn
-
-    let xr = this.xRange();
-    let yr = this.yRange();
-    return new Posn(xr.min + ((xr.max - xr.min) / 2), yr.min + ((yr.max - yr.min) / 2));
-  }
-
-  topLeftBound() {
-    return new Posn(this.xRange().min, this.yRange().min);
-  }
-
-  topRightBound() {
-    return new Posn(this.xRange().max, this.yRange().min);
-  }
-
-  bottomRightBound() {
-    return new Posn(this.xRange().max, this.yRange().max);
-  }
-
-  bottomLeftBound() {
-    return new Posn(this.xRange().min, this.yRange().max);
+    return this.bounds().center();
   }
 
   attr(data) {

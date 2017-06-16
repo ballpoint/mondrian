@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import Range from 'geometry/range';
 import EventEmitter from 'lib/events';
 /*

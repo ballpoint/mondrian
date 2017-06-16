@@ -1,4 +1,3 @@
-import React from 'react';
 import 'utils.scss';
 import TransformUtil from 'ui/components/Transform';
 import LayersUtil from 'ui/components/Layers';

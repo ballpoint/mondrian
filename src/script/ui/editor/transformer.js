@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import LineSegment from 'geometry/line-segment'
 import Bounds from 'geometry/bounds'
 import Element from 'ui/element';

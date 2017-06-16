@@ -14,7 +14,12 @@ import Element from 'ui/element';
 import CursorTracking from 'ui/cursor-tracking';
 import CursorHandler from 'ui/cursor-handler';
 import DocHistory from 'history/history';
-import { NudgeEvent, ScaleEvent, DeleteEvent } from 'history/events';
+import {
+  NudgeAction,
+  ScaleAction,
+  InsertAction,
+  DeleteAction
+} from 'history/actions/actions';
 
 import Cursor from 'ui/tools/cursor';
 import SubCursor from 'ui/tools/subcursor';
@@ -287,14 +292,15 @@ export default class Editor extends EventEmitter {
       indexes[elem.id] = index;
       elements.push(elem);
     }
+
+    let action = new DeleteAction({
+      elements, indexes
+    });
+
+    this.perform(action);
+
     this.state.selection = [];
     this.canvas.refreshAll();
-
-    let event = new DeleteEvent({
-      elements,
-      indexes
-    });
-    this.history.push(event);
 
     this.calculateSelectionBounds();
     this.trigger('change');
@@ -442,43 +448,32 @@ export default class Editor extends EventEmitter {
     );
   }
 
-  nudgeSelected(x, y) {
-    for (let item of this.state.selection) {
-      item.nudge(x,y);
+  nudgeSelected(xd, yd) {
 
-      if (item instanceof PathPoint && item.owner) {
-        item.owner.clearCachedObjects();
-      }
-    }
+    let action = new NudgeAction({
+      items: this.selectionQuery(),
+      xd, yd,
+    });
+
+    this.perform(action);
 
     this.calculateSelectionBounds();
     this.canvas.refreshAll();
 
-    // Record history event
-    let event = new NudgeEvent({
-      items: this.selectionQuery(),
-      xd: x,
-      yd: y,
-    });
-    this.history.push(event);
     this.trigger('change');
   }
 
   scaleSelected(x, y, origin) {
-    for (let elem of this.state.selection) {
-      elem.scale(x, y, origin);
-    }
+    let action = new ScaleAction({
+      items: this.selectionQuery(),
+      x, y, origin,
+    });
+
+    this.perform(action);
+
     this.calculateSelectionBounds();
     this.canvas.refreshAll();
 
-    let event = new ScaleEvent({
-      items: this.selectionQuery(),
-      origin,
-      x,
-      y,
-    });
-
-    this.history.push(event);
     this.trigger('change');
   }
 
@@ -489,6 +484,11 @@ export default class Editor extends EventEmitter {
 
     //this.calculateSelectionBounds();
     this.canvas.refreshAll();
+  }
+
+  perform(action) {
+    action.perform(this);
+    this.history.push(action);
   }
 
   undo() {
@@ -510,11 +510,17 @@ export default class Editor extends EventEmitter {
   }
 
   paste(e) {
-    console.log(this.state.clipboard);
     if (this.state.clipboard) {
-      for (let elem of this.state.clipboard) {
-        this.doc.insertElement(elem);
+      let params = [];
+
+      for (let element of this.state.clipboard) {
+        params.push({ element });
       }
+
+      let action = new InsertAction(params);
+
+      this.perform(action);
+
       this.setSelection(this.state.clipboard);
     }
   }

@@ -1,4 +1,3 @@
-import React from 'react';
 
 let HistoryUtil = React.createClass({
   keyVal(e) {
@@ -11,13 +10,17 @@ let HistoryUtil = React.createClass({
 
       let s;
 
-      if (key === 'data') {
-        s = JSON.stringify(val);
+      if (key === 'actions') {
+        try {
+          s = JSON.stringify(val.map((v) => { return v.data }));
+        } catch(e) {
+          s = '{...}';
+        }
       } else {
         s = val.toString();
       }
 
-      if (val) {
+      if (val !== undefined) {
         out += (key + '=' + s + '\n');
       }
     }
@@ -28,6 +31,7 @@ let HistoryUtil = React.createClass({
     return (
       <div className="util-window">
         <div>
+          <div>{this.props.history.head.actions.map((a) => { return a.constructor.name}) }</div>
           <pre>
             {this.keyVal(this.props.history.head)}
           </pre>

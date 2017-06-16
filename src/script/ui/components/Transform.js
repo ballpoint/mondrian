@@ -1,5 +1,3 @@
-import React from 'react';
-
 let TransformUtil = React.createClass({
   label() {
     let sel = this.props.editor.state.selection
