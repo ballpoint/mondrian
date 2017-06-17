@@ -108,15 +108,7 @@ export class DeleteAction extends HistoryAction {
       return item.query;
     });
 
-    let marked = queries.map(editor.doc.getItemFromQuery.bind(editor.doc));
-
-    for (let item of marked) {
-      if (item instanceof Monsvg) {
-        editor.doc.removeMonsvg(item);
-      } else if (item instanceof PathPoint) {
-        editor.doc.removePathPoint(item);
-      }
-    }
+    editor.doc.removeQueries(queries);
   }
 
   opposite() {

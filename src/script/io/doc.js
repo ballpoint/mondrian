@@ -64,8 +64,19 @@ export default class Doc {
     // return this._svgRoot.setAttribute('xmlns:mondrian', 'http://mondrian.io/xml');
   }
 
-  remove(r) {
-    return this.removeId(r.id);
+  removeQueries(queries) {
+    let marked = queries.map(this.getItemFromQuery.bind(this));
+
+    // Assuming that all marked elements are of the same type
+    // - Monsvg
+    // - PathPoint
+    for (let item of marked) {
+      if (item instanceof Monsvg) {
+        this.removeMonsvg(item);
+      } else if (item instanceof PathPoint) {
+        this.removePathPoint(item);
+      }
+    }
   }
 
   removeMonsvg(elem) {
@@ -80,6 +91,15 @@ export default class Doc {
     if (owner) {
       owner.removePoint(pt);
     }
+  }
+
+  insertAtQueries(items) {
+    items = items.sort((a, b) => {
+      return b.index - a.index;
+    });
+
+    console.log(items);
+
   }
 
   getLayerWithElement(elem) {

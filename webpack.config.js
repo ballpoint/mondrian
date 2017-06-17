@@ -21,7 +21,8 @@ module.exports = {
 
   entry: {
     'bundles/app':    'main.js',
-    'bundles/vendor': 'vendor.js'
+    'bundles/vendor': 'vendor.js',
+    'bundles/test':   'test.js'
   },
 
   output: {
@@ -42,6 +43,11 @@ module.exports = {
         options: {
           presets: [['react']]
         }
+      },
+      {
+        test: /test.js$/,
+        use: 'mocha-loader',
+        exclude: /node_modules/,
       },
       {
         test: /\.svg$/,
