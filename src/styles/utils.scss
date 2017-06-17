@@ -2,8 +2,6 @@
 
 $util-grey: darken($bg-grey, 13%);
 
-$util-header-bg: rgba(238, 238, 238, 0.95);
-
 
 #app-windows {
   position: absolute;
@@ -19,9 +17,9 @@ $util-header-bg: rgba(238, 238, 238, 0.95);
   pointer-events: auto;
 
   .util-header {
-    background: $util-header-bg;
     padding: 5px;
     font-size: 12px;
+    background-color: darken($bg-grey, 10%);
     border-top: 1px solid $fg-grey;
     border-bottom: 1px solid $fg-grey;
     border-left: 1px solid $fg-grey;

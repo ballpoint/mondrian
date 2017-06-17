@@ -3,6 +3,7 @@ import Layer from 'io/layer';
 import Bounds from 'geometry/bounds'
 import Posn from 'geometry/posn'
 
+import Path from 'geometry/path';
 import PathPoint from 'geometry/path-point';
 import Monsvg from 'geometry/monsvg';
 
@@ -65,6 +66,28 @@ export default class Doc {
 
   remove(r) {
     return this.removeId(r.id);
+  }
+
+  removeMonsvg(elem) {
+    let layer = this.getLayerWithElement(elem);
+    if (layer) {
+      layer.remove(elem);
+    }
+  }
+
+  removePathPoint(pt) {
+    let owner = pt.owner;
+    if (owner) {
+      owner.removePoint(pt);
+    }
+  }
+
+  getLayerWithElement(elem) {
+    for (let layer of this.layers) {
+      if (layer.elements.indexOf(elem) !== -1) {
+        return layer;
+      }
+    }
   }
 
   removeId(id) {

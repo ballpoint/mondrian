@@ -155,32 +155,6 @@ export default class PointsList {
     return this;
   }
 
-  relative() {
-    this.segments = this.segments.map(function(s) {
-      s.points = s.points.map(function(p) {
-        let abs = p.relative();
-        abs.inheritPosition(p);
-        return abs;
-      });
-      return s;
-    });
-    return this;
-  }
-
-  removeBasePoints() {
-    this.map(p => p.baseHandle != null ? p.baseHandle.remove() : undefined);
-    return this;
-  }
-
-
-  hide() {
-    return this.map(p => p.hide());
-  }
-
-  unhover() {
-    return this.map(p => p.unhover());
-  }
-
   join(x) {
     return this.all().join(x);
   }

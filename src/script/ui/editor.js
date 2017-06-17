@@ -280,17 +280,15 @@ export default class Editor extends EventEmitter {
   }
 
   deleteSelection() {
-    let indexes = {};
-    let elements = [];
-    for (let elem of this.state.selection) {
-      let index = this.doc.remove(elem);
-      indexes[elem.id] = index;
-      elements.push(elem);
+
+    let items = [];
+
+    for (let item of this.state.selection) {
+      let query = this.doc.getQueryForItem(item);
+      items.push({ item, query });
     }
 
-    let action = new actions.DeleteAction({
-      elements, indexes
-    });
+    let action = new actions.DeleteAction({ items });
 
     this.perform(action);
 

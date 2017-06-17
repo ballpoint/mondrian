@@ -3,4 +3,8 @@ export default class Layer {
     this.id = attrs.id;
     this.elements = attrs.elements;
   }
+
+  remove(elem) {
+    this.elements = this.elements.filter((existing) => { return existing !== elem });
+  }
 }

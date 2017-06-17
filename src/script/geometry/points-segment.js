@@ -127,9 +127,6 @@ export default class PointsSegment {
       this.list.first = x.succ;
     }
     this.points = this.points.remove(x);
-
-    // Remove it from the canvas if it's there
-    return x.remove();
   }
 
   replace(old, replacement) {

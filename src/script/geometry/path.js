@@ -111,6 +111,13 @@ export default class Path extends Monsvg {
     return this;
   }
 
+  removePoint(pt) {
+    let segment = this.points.segmentContaining(pt);
+    if (segment) {
+      segment.remove(pt);
+    }
+  }
+
   nudgeCachedObjects(x, y) {
     if (this.boundsCached != null) {
       this.boundsCached.nudge(x, y);

@@ -1,5 +1,6 @@
 import Path from 'geometry/path';
 import PathPoint from 'geometry/path-point';
+import Monsvg from 'geometry/monsvg';
 
 class HistoryAction {
   constructor(data) {
@@ -103,8 +104,18 @@ export class InsertAction extends HistoryAction {
 
 export class DeleteAction extends HistoryAction {
   perform(editor) {
-    for (let elem of this.data.elements) {
-      editor.doc.removeId(elem.id);
+    let queries = this.data.items.map((item) => {
+      return item.query;
+    });
+
+    let marked = queries.map(editor.doc.getItemFromQuery.bind(editor.doc));
+
+    for (let item of marked) {
+      if (item instanceof Monsvg) {
+        editor.doc.removeMonsvg(item);
+      } else if (item instanceof PathPoint) {
+        editor.doc.removePathPoint(item);
+      }
     }
   }
 
@@ -116,10 +127,4 @@ export class DeleteAction extends HistoryAction {
     }
     return new InsertAction(params);
   }
-
-  merge(action) {
-    this.data.indexes = _.merge(this.data.indexes, action.data.indexes);
-    this.data.elements = this.data.elements.concat(action.data.elements);
-  }
 }
-
