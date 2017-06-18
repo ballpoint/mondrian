@@ -13,9 +13,16 @@ export default class Query {
     return this.indices.length;
   }
 
+  toString() {
+    return this.indices.join(':');
+  }
+
+  static fromString(query) {
+    return new Query(query.split(':').map((i) => { return parseInt(i,10) }));
+  }
+
   less(other) {
     let minL = Math.min(this.length, other.length);
-    console.log(minL);
     for (let i = 0; i < minL; i ++) {
       let mp = this.indices[i];
       let op = other.indices[i];
@@ -28,5 +35,9 @@ export default class Query {
     }
 
     return false;
+  }
+
+  equal(other) {
+    return this.toString() === other.toString();
   }
 }

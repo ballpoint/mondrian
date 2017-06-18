@@ -1,4 +1,5 @@
 import io from 'io/io';
+import Query from 'io/query';
 import Layer from 'io/layer';
 import Bounds from 'geometry/bounds'
 import Posn from 'geometry/posn'
@@ -149,6 +150,7 @@ export default class Doc {
   }
 
   getQueryForItem(item) {
+    // TODO add Group support
     if (item instanceof Monsvg) {
       let i = this.elements.indexOf(item);
       if (i > -1) {
