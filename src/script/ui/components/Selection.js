@@ -28,13 +28,8 @@ let SelectionUtil = React.createClass({
         <div>
           h = {state.selectionBounds.height.toFixed(2)}
         </div>
-        { state.selection.length === 1 ? (
-          <div>
-            points = {state.selection[0].points.all().length}
-          </div>
-        ) : null }
         <div>
-          fills = {state.selection.map((e) => { return e.data.fill }).join(', ')}
+          indexes = {state.selection.map((elem) => { return elem.index.toString() }).join(' ')}
         </div>
       </div>
     } else if (doc) {

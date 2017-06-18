@@ -16,6 +16,7 @@ export default class DocumentPointsUIElement extends UIElement {
 
     if (tool.id === 'subcursor') {
       for (let elem of this.editor.doc.elements) {
+        if (!elem.points) continue;
         let points = elem.points.all();
         for (let i = 0; i < points.length; i ++) {
           let pt = points[i];

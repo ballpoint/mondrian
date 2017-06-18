@@ -8,7 +8,7 @@ let LayersUtil = React.createClass({
 
     return (
       <Util title="Layers">
-        {doc.layers.length}
+        {doc.children.length} layers
       </Util>
     );
   }

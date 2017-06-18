@@ -1,4 +1,5 @@
 import Posn from 'geometry/posn';
+import Index from 'geometry/index';
 
 // PathPoint
 
@@ -242,6 +243,12 @@ export default class PathPoint extends Posn {
 
   setOwner(path) {
     this.owner = path;
+  }
+
+  get index() {
+    let ownerIndex = this.owner.index;
+    let selfIndex = this.owner.points.indexOf(this);
+    return ownerIndex.concat([selfIndex]);
   }
 
   nudge(xd, yd) {

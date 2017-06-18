@@ -2,6 +2,7 @@ import Bounds from 'geometry/bounds';
 import Path from 'geometry/path';
 import Text from 'geometry/text';
 import Item from 'geometry/item';
+import Group from 'geometry/group';
 import UUIDV4 from 'uuid/v4';
 /*
 
@@ -90,13 +91,7 @@ let io = {
 
       // <g> group tags... drill down.
       } else if (elem.nodeName === "g") {
-          // The Group class just isnt ready, so we're not supporting it for now.
-          // Ungroup everything.
-          let parsedChildren = this.recParse(elem);
-          results = results.concat(parsedChildren);
-          console.warn(`Group element not implemented yet. Ungrouping ${parsedChildren.length} elements.`);
-          // TODO implement groups properly
-
+        results.push(new Group(this.recParse(elem)));
       } else {
 
         // Otherwise it must be a shape element we have a class for.

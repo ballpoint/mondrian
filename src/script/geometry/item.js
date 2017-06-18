@@ -2,6 +2,7 @@ import Color from 'ui/color';
 import Bounds from 'geometry/bounds';
 import Range from 'geometry/range';
 import Posn from 'geometry/posn';
+
 /*
 
     Mondrian SVG library
@@ -17,25 +18,7 @@ export default class Item {
     this.prototype.boundsCached = null;
   }
 
-  // MonSvg
-  //
-  // Over-arching class for all vector objects
-  //
-  // I/P : data Object of SVG element's attributes
-  //
-  // O/P : self
-  //
-  // Subclasses:
-  //   Line
-  //   Rect
-  //   Circle
-  //   Polygon
-  //   Path
-
-
   constructor(data={}) {
-    // Create SVG element representation
-
     this.data = data;
 
     if (data.id) {
@@ -55,10 +38,13 @@ export default class Item {
     }
   }
 
-  updateDataArchived(attr) {
-    return;
+  set parent(parent) {
+    this.parent = parent;
   }
 
+
+  /*
+   * TODO move this into an external SVG serialization lib
   toSVG() {
     // Return the SVG DOM element that this Item object represents
     // We need to use the svg namespace for the element to behave properly
@@ -73,6 +59,7 @@ export default class Item {
   toSVGString() {
     return new XMLSerializer().serializeToString(this.toSVG());
   }
+  */
 
 
   validateColors() {
@@ -87,7 +74,6 @@ export default class Item {
       return this.data["stroke-width"] = 1;
     }
   }
-
 
   center() {
     return this.bounds().center();
@@ -117,10 +103,6 @@ export default class Item {
     return clone;
   }
 
-  zIndex() {
-    return 0;
-  }
-
   swapFillAndStroke() {
     let swap = this.data.stroke;
     this.attr({
@@ -128,14 +110,6 @@ export default class Item {
       'fill': swap
     });
   }
-
-
-  eyedropper(sample) {
-    this.data.fill = sample.data.fill;
-    this.data.stroke = sample.data.stroke;
-    this.data['stroke-width'] = sample.data['stroke-width'];
-  }
-
 
   bounds() {
     let cached = this.boundsCached;
@@ -149,14 +123,6 @@ export default class Item {
         xrs.length(),
         yrs.length());
     }
-  }
-
-  xRange() {
-    return this.bounds().xr;
-  }
-
-  yRange() {
-    return this.bounds().yr;
   }
 
   carryOutTransformations(transform, center) {
@@ -212,8 +178,6 @@ export default class Item {
   }
 
   finishToCanvas(context, projection) {
-    if (this.points != null ? this.points.closed : undefined) { context.closePath(); }
-
     if (this.data.fill) {
       context.fillStyle = this.data.fill.toRGBString();
       context.fill();

@@ -93,10 +93,6 @@ export default class Path extends Item {
     return path;
   }
 
-  commitPoints() {
-    this.data.d = this.points.toString();
-  }
-
   importNewPoints(points) {
     if (points instanceof PointsList) {
       this.points = points;
@@ -180,9 +176,6 @@ export default class Path extends Item {
       // ...and rotate it back to where it should be.
       this.rotate(angle, origin);
     }
-
-    // Boom
-    this.commitPoints();
   }
 
 
@@ -193,9 +186,6 @@ export default class Path extends Item {
     // Nudge the cached bounds and line segments if they're there
     // to keep track of those.
     this.nudgeCachedObjects(x, y);
-
-    // Commit the changes to the canvas
-    this.commitPoints();
   }
 
 
@@ -212,9 +202,6 @@ export default class Path extends Item {
 
     // Rotate all the points!
     this.points.map(p => p.rotate(a, origin));
-
-    // Commit it
-    this.commitPoints();
   }
 
   getPoints() {

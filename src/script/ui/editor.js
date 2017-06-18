@@ -44,6 +44,7 @@ export default class Editor extends EventEmitter {
 
   load(doc) {
     this.doc = doc;
+    window.doc = doc;
 
     this.history = new DocHistory();
     window.h = this.history;
@@ -280,15 +281,9 @@ export default class Editor extends EventEmitter {
   }
 
   deleteSelection() {
-
-    let items = [];
-
-    for (let item of this.state.selection) {
-      let query = this.doc.getQueryForItem(item);
-      items.push({ item, query });
-    }
-
-    let action = new actions.DeleteAction({ items });
+    let action = new actions.DeleteAction({ 
+      items: this.state.selection.slice(0)
+    });
 
     this.perform(action);
 
@@ -318,12 +313,12 @@ export default class Editor extends EventEmitter {
     }
   }
 
-  selectionQuery() {
-    return this.state.selection.map((elem) => {
-      return this.doc.getQueryForItem(elem);
-    }).filter((query) => {
-      if (query === null) {
-        console.warn('null query in history!');
+  selectedIndexes() {
+    return this.state.selection.map((item) => {
+      return item.index;
+    }).filter((index) => {
+      if (index === null) {
+        console.warn('null index in history!');
         return false;
       } else {
         return true;
@@ -331,9 +326,9 @@ export default class Editor extends EventEmitter {
     });
   }
 
-  selectFromQueries(queries) {
-    let sel = queries.map((query) => {
-      return this.doc.getItemFromQuery(query);
+  selectFromIndexes(indexes) {
+    let sel = indexes.map((index) => {
+      return this.doc.getFromIndex(index);
     });
 
     this.setSelection(sel);
@@ -443,7 +438,7 @@ export default class Editor extends EventEmitter {
 
   nudgeSelected(xd, yd) {
     let action = new actions.NudgeAction({
-      query: this.selectionQuery(),
+      indexes: this.selectedIndexes(),
       xd, yd,
     });
 
@@ -457,7 +452,7 @@ export default class Editor extends EventEmitter {
 
   nudgeHandle(handle, xd, yd) {
     let action = new actions.NudgeHandleAction({
-      query: this.selectionQuery(),
+      indexes: this.selectedIndexes(),
       xd, yd, handle,
     });
 
@@ -471,7 +466,7 @@ export default class Editor extends EventEmitter {
 
   scaleSelected(x, y, origin) {
     let action = new actions.ScaleAction({
-      query: this.selectionQuery(),
+      indexes: this.selectedIndexes(),
       x, y, origin,
     });
 

@@ -1,10 +1,30 @@
+import Group from 'geometry/group';
+
 export default class Layer {
   constructor(attrs) {
     this.id = attrs.id;
-    this.elements = attrs.elements;
+    this.children = attrs.children;
+  }
+
+  get childrenFlat() {
+    
   }
 
   remove(elem) {
-    this.elements = this.elements.filter((existing) => { return existing !== elem });
+    this.children = this.children.filter((existing) => { return existing !== elem });
   }
+
+  get childrenFlat() {
+    let cf = [];
+    for (let child of this.children) {
+      if (child instanceof Group) {
+        cf = cf.concat(child.childrenFlat);
+      } else {
+        cf.push(child);
+      }
+    }
+
+    return cf;
+  }
+
 }

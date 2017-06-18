@@ -1,3 +1,3 @@
 import 'test/posn';
-import 'test/query';
+import 'test/index';
 

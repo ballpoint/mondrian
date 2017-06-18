@@ -1,9 +1,10 @@
 import io from 'io/io';
-import Query from 'io/query';
+import Index from 'geometry/index';
 import Layer from 'io/layer';
 import Bounds from 'geometry/bounds'
 import Posn from 'geometry/posn'
 
+import Group from 'geometry/group';
 import Path from 'geometry/path';
 import PathPoint from 'geometry/path-point';
 import Item from 'geometry/item';
@@ -15,13 +16,13 @@ const CHARSET  = 'utf-8';
 
 export default class Doc {
   constructor(attrs) {
-    this.layers = attrs.layers;
+    this.children = attrs.children;
     this.width = attrs.width;
     this.height = attrs.height;
 
     this.bounds = new Bounds(0, 0, this.width, this.height);
 
-    this._indexElements(this.elements);
+    this.cacheIndexes(this);
   }
 
   static fromSVG(str) {
@@ -30,27 +31,34 @@ export default class Doc {
     if (!root) {
       throw new Error('No svg node in given doc');
     }
-    let elements = io.parse(doc.querySelector('svg'));
+    let children = io.parse(doc.querySelector('svg'));
     let width = parseInt(root.getAttribute('width'), 10);
     let height = parseInt(root.getAttribute('height'), 10);
 
     // TODO parse layers from SVG mondrian: attr
     let layer = new Layer({
       id: 'main',
-      elements
+      children
     });
 
     return new Doc({
-      layers: [layer],
+      children: [layer],
       width,
       height,
     });
   }
 
   get elements() {
-    // Flatten this.layers
-    return this.layers.reduce((accum, layer) => {
-      return accum.concat(layer.elements)
+    // Flatten groups
+    return this.children.reduce((accum, layer) => {
+      return accum.concat(layer.children)
+    }, []);
+  }
+
+  get elementsFlat() {
+    // Flatten groups
+    return this.children.reduce((accum, layer) => {
+      return accum.concat(layer.childrenFlat)
     }, []);
   }
 
@@ -65,19 +73,21 @@ export default class Doc {
     // return this._svgRoot.setAttribute('xmlns:mondrian', 'http://mondrian.io/xml');
   }
 
-  removeQueries(queries) {
-    let marked = queries.map(this.getItemFromQuery.bind(this));
+  removeIndexes(indexes) {
+    let marked = indexes.map(this.getFromIndex.bind(this));
 
     // Assuming that all marked elements are of the same type
     // - Item
     // - PathPoint
     for (let item of marked) {
-      if (item instanceof Item) {
+      if (item instanceof Item || item instanceof Group) {
         this.removeItem(item);
       } else if (item instanceof PathPoint) {
         this.removePathPoint(item);
       }
     }
+
+    this.cacheIndexes(this);
   }
 
   removeItem(elem) {
@@ -98,14 +108,11 @@ export default class Doc {
     items = items.sort((a, b) => {
       return b.index - a.index;
     });
-
-    console.log(items);
-
   }
 
   getLayerWithElement(elem) {
-    for (let layer of this.layers) {
-      if (layer.elements.indexOf(elem) !== -1) {
+    for (let layer of this.children) {
+      if (layer.children.indexOf(elem) !== -1) {
         return layer;
       }
     }
@@ -114,8 +121,8 @@ export default class Doc {
   removeId(id) {
     let index = -1;
     let newElems = [];
-    for (let i = 0; i < this.elements.length; i ++) {
-      let elem = this.elements[i];
+    for (let i = 0; i < this.children.length; i ++) {
+      let elem = this.children[i];
       if (elem.id === id) {
         index = i;
       } else {
@@ -123,7 +130,7 @@ export default class Doc {
       }
     }
 
-    this.elements = newElems;
+    this.children = newElems;
 
     return index;
   }
@@ -140,68 +147,48 @@ export default class Doc {
     return `data:${MIMETYPE};charset=${CHARSET};base64,${this.toString()}`;
   }
 
-  _indexElements(elements) {
-    this._elementsIndex = {};
-    for (let elem of elements) {
-      if (elem.id) {
-        this._elementsIndex[elem.id] = elem;
+  cacheIndexes(root, accum=[]) {
+    for (let i = 0; i < root.children.length; i ++) {
+      let child = root.children[i];
+      child.index = new Index(accum.concat([i]));
+      if (child instanceof Group || child instanceof Layer) {
+        this.cacheIndexes(child, accum.concat([i]));
       }
     }
   }
 
-  getQueryForItem(item) {
+  /*
+  getIndex(item) {
     // TODO add Group support
-    if (item instanceof Item) {
-      let i = this.elements.indexOf(item);
-      if (i > -1) {
-        return ''+i;
-      } else {
-        return null;
-      }
+    if (item instanceof Item || item instanceof Group) {
+      return item.index;
     } else if (item instanceof PathPoint) {
       // Return two indices in format 4:82
       let owner = item.owner;
-      if (!owner) {
-        return null;
-      }
-      let ownerI = this.elements.indexOf(owner);
-      if (ownerI > -1) {
-        let pts = owner.points.all();
-        let ptI = pts.indexOf(item);
-        if (ptI > -1) {
-          return ''+ownerI+':'+ptI;
-        } else {
-          return null;
-        }
-      } else {
-        return null;
-      }
+      let pts = owner.points.all();
+      let ptI = pts.indexOf(item);
 
-    } else {
-      console.warn('Cannot get query for', item);
+      if (ptI > -1) {
+        return new Index(owner.index.parts.concat([ptI]));
+      }
     }
   }
+  */
 
-  getItemFromQuery(query) {
-    if (!query) {
-      return null;
-    }
-    let parts = query.split(':');
-    let elem = this.elements[parts[0]];
-    switch (parts.length) {
-      case 1:
-        return elem;
-      case 2:
-        let pts = elem.points.all();
-        let pt = pts[parts[1]];
-        if (pt) {
-          return pt;
-        }
-      default:
-        console.warn('Invalid query', query);
-        return null;
+  getFromIndex(index) {
+    let cursor = this;
+
+    for (let i of index.parts) {
+      if (cursor === this || cursor instanceof Group || cursor instanceof Layer) {
+        cursor = cursor.children[i];
+      } else if (cursor instanceof Path) {
+        cursor = cursor.points.all()[i];
+      } else {
+        console.error('Cant handle index drill-down for cursor', cursor);
+      }
     }
 
+    return cursor;
   }
 
   getElements(ids) {
@@ -215,7 +202,19 @@ export default class Doc {
     return elems;
   }
 
-  insertElement(elem, index=0) {
-    this.elements = this.elements.slice(0, index).concat([elem]).concat(this.elements.slice(index));
+  insertElement(elem, index) {
+    let parent = this;
+    for (let pi of index.parts.slice(0,-1)) {
+      parent = parent.children[pi];
+    }
+
+    let fi = index.parts[index.parts.length-1];
+
+    console.log(parent, fi);
+
+    // Slice elem into final array
+    parent.children = parent.children.slice(0, fi).concat([elem]).concat(parent.children.slice(fi));
+
+    this.cacheIndexes(this);
   }
 }

@@ -1,5 +1,5 @@
 import 'utils.scss';
-import SelectionUtil from 'ui/components/Transform';
+import SelectionUtil from 'ui/components/Selection';
 import LayersUtil from 'ui/components/Layers';
 import HistoryUtil from 'ui/components/History';
 import BooleanUtil from 'ui/components/Boolean';

@@ -15,7 +15,7 @@ export class InitAction extends HistoryAction {
 
 export class NudgeAction extends HistoryAction {
   perform(editor) {
-    editor.selectFromQueries(this.data.query);
+    editor.selectFromIndexes(this.data.indexes);
     for (let item of editor.state.selection) {
       item.nudge(this.data.xd, this.data.yd);
       
@@ -34,7 +34,7 @@ export class NudgeAction extends HistoryAction {
 
   opposite() {
     return new NudgeAction({
-      query: this.data.query,
+      indexes: this.data.indexes,
       xd:   -this.data.xd,
       yd:   -this.data.yd
     });
@@ -43,7 +43,7 @@ export class NudgeAction extends HistoryAction {
 
 export class NudgeHandleAction extends HistoryAction {
   perform(editor) {
-    let points = this.data.query.map((q) => { return editor.doc.getItemFromQuery(q) });
+    let points = this.data.indexes.map((q) => { return editor.doc.getFromIndex(q) });
     editor.setSelection(points);
     for (let point of points) {
       point.nudgeHandle(this.data.handle, this.data.xd, this.data.yd);
@@ -57,7 +57,7 @@ export class NudgeHandleAction extends HistoryAction {
 
   opposite() {
     return new NudgeHandleAction({
-      query: this.data.query,
+      indexes: this.data.indexes,
       handle: this.data.handle,
       xd: -this.data.xd,
       yd: -this.data.yd,
@@ -67,7 +67,7 @@ export class NudgeHandleAction extends HistoryAction {
 
 export class ScaleAction extends HistoryAction {
   perform(editor) {
-    editor.selectFromQueries(this.data.query);
+    editor.selectFromIndexes(this.data.indexes);
     for (let item of editor.state.selection) {
       item.scale(this.data.x, this.data.y, this.data.origin);
     }
@@ -76,7 +76,7 @@ export class ScaleAction extends HistoryAction {
   opposite() {
     return new ScaleAction({
       origin: this.data.origin,
-      query: this.data.query,
+      indexes: this.data.indexes,
       x: 1/this.data.x,
       y: 1/this.data.y,
     });
@@ -90,33 +90,28 @@ export class ScaleAction extends HistoryAction {
 
 export class InsertAction extends HistoryAction {
   perform(editor) {
-    for (let params of this.data) {
-      editor.doc.insertElement(params.element, params.index);
+    for (let item of this.data.items) {
+      editor.doc.insertElement(item, item.index);
     }
   }
 
   opposite() {
-    return new DeleteAction({
-      elements: this.data.map((d) => { return d.element })
-    });
+    return new DeleteAction({ items: this.data.items });
   }
 }
 
 export class DeleteAction extends HistoryAction {
   perform(editor) {
-    let queries = this.data.items.map((item) => {
-      return item.query;
+    let indexes = this.data.items.map((item) => {
+      return item.index;
+    }).sort((a, b) => {
+      return b.less(a);
     });
 
-    editor.doc.removeQueries(queries);
+    editor.doc.removeIndexes(indexes);
   }
 
   opposite() {
-    let params = [];
-    for (let element of this.data.elements) {
-      let index = this.data.indexes[element.id];
-      params.push({ element, index });
-    }
-    return new InsertAction(params);
+    return new InsertAction({ items: this.data.items });
   }
 }

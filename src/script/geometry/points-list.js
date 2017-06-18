@@ -100,6 +100,10 @@ export default class PointsList {
     return this.segments.reduce((a, b) => a.concat(b.points), []);
   }
 
+  indexOf(pt) {
+    return this.all().indexOf(pt);
+  }
+
   push(point) {
     // Add a new point!
 
