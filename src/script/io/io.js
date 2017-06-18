@@ -1,14 +1,14 @@
 import Bounds from 'geometry/bounds';
 import Path from 'geometry/path';
 import Text from 'geometry/text';
-import Monsvg from 'geometry/monsvg';
+import Item from 'geometry/item';
 import UUIDV4 from 'uuid/v4';
 /*
 
   io
 
   The goal of this is an IO that can take anything that could
-  conceivably be SVG and convert it to Monsvg.
+  conceivably be SVG and convert it to Item.
 
 */
 
@@ -107,7 +107,7 @@ let io = {
         }
 
         // Any geometric shapes
-        if (parsed instanceof Monsvg) {
+        if (parsed instanceof Item) {
           results.push(parsed);
 
         // <use> tag
@@ -118,7 +118,7 @@ let io = {
       }
     }
 
-    let monsvgs = results.filter(e => e instanceof Monsvg);
+    let monsvgs = results.filter(e => e instanceof Item);
 
     return results;
   },

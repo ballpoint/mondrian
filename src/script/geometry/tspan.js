@@ -1,4 +1,4 @@
-import Monsvg from 'geometry/monsvg'
+import Item from 'geometry/item'
 
 /*
 
@@ -6,7 +6,7 @@ import Monsvg from 'geometry/monsvg'
 
  */
 
-class Tspan extends Monsvg {
+class Tspan extends Item {
   static initClass() {
     this.prototype.type = 'tspan';
   }

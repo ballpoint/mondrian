@@ -6,7 +6,7 @@ import Posn from 'geometry/posn'
 
 import Path from 'geometry/path';
 import PathPoint from 'geometry/path-point';
-import Monsvg from 'geometry/monsvg';
+import Item from 'geometry/item';
 
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg'
 
@@ -69,18 +69,18 @@ export default class Doc {
     let marked = queries.map(this.getItemFromQuery.bind(this));
 
     // Assuming that all marked elements are of the same type
-    // - Monsvg
+    // - Item
     // - PathPoint
     for (let item of marked) {
-      if (item instanceof Monsvg) {
-        this.removeMonsvg(item);
+      if (item instanceof Item) {
+        this.removeItem(item);
       } else if (item instanceof PathPoint) {
         this.removePathPoint(item);
       }
     }
   }
 
-  removeMonsvg(elem) {
+  removeItem(elem) {
     let layer = this.getLayerWithElement(elem);
     if (layer) {
       layer.remove(elem);
@@ -151,7 +151,7 @@ export default class Doc {
 
   getQueryForItem(item) {
     // TODO add Group support
-    if (item instanceof Monsvg) {
+    if (item instanceof Item) {
       let i = this.elements.indexOf(item);
       if (i > -1) {
         return ''+i;

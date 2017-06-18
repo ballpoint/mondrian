@@ -1,6 +1,6 @@
 import Path from 'geometry/path';
 import PathPoint from 'geometry/path-point';
-import Monsvg from 'geometry/monsvg';
+import Item from 'geometry/item';
 
 class HistoryAction {
   constructor(data) {

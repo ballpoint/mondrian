@@ -10,7 +10,7 @@ import Posn from 'geometry/posn';
 
 */
 
-export default class Monsvg {
+export default class Item {
   static initClass() {
     this.prototype.points = [];
     this.prototype.transform = {};
@@ -60,7 +60,7 @@ export default class Monsvg {
   }
 
   toSVG() {
-    // Return the SVG DOM element that this Monsvg object represents
+    // Return the SVG DOM element that this Item object represents
     // We need to use the svg namespace for the element to behave properly
     let elem = document.createElementNS('http://www.w3.org/2000/svg', this.type);
     for (let key in this.data) {
@@ -236,7 +236,7 @@ export default class Monsvg {
 }
 
 
-Monsvg.initClass();
+Item.initClass();
 
 
 

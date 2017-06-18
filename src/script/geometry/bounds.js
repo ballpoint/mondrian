@@ -151,7 +151,7 @@ export default class Bounds {
   }
 
   adjustElemsTo(bounds) {
-    // Returns a method that can run on Monsvg objects
+    // Returns a method that can run on Item objects
     // that will nudge and scale them so they go from these bounds
     // to look proportionately the same in the given bounds.
     let offset = this.tl().subtract(bounds.tl());
