@@ -33,4 +33,16 @@ export default class Group {
 
     return cf;
   }
+
+  nudge()  { this.propagate('nudge', arguments); }
+
+  scale()  { this.propagate('scale', arguments); }
+
+  rotate() { this.propagate('rotate', arguments); }
+
+  propagate(method, args) {
+    for (let child of this.children) {
+      child[method](...args);
+    }
+  }
 }
