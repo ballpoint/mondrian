@@ -282,7 +282,9 @@ export default class Editor extends EventEmitter {
 
   deleteSelection() {
     let action = new actions.DeleteAction({ 
-      items: this.state.selection.slice(0)
+      items: this.state.selection.slice(0).map((item) => {
+        return { item, index: item.index }
+      })
     });
 
     this.perform(action);

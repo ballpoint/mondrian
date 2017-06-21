@@ -247,8 +247,11 @@ export default class PathPoint extends Posn {
 
   get index() {
     let ownerIndex = this.owner.index;
-    let selfIndex = this.owner.points.indexOf(this);
-    return ownerIndex.concat([selfIndex]);
+    let segment = this.segment;
+    let list = segment.list;
+    let segmentIndex = list.indexOf(segment);
+    let pointIndex = segment.indexOf(this);
+    return ownerIndex.concat([segmentIndex, pointIndex]);
   }
 
   nudge(xd, yd) {

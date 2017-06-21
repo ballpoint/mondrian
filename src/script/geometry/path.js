@@ -107,6 +107,10 @@ export default class Path extends Item {
     return this;
   }
 
+  child(i) {
+    return this.points.segments[i];
+  }
+
   removePoint(pt) {
     let segment = this.points.segmentContaining(pt);
     if (segment) {

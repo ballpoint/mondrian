@@ -42,4 +42,8 @@ export default class Index {
   concat(parts) {
     return new Index(this.parts.concat(parts));
   }
+
+  get last() {
+    return this.parts[this.parts.length-1];
+  }
 }

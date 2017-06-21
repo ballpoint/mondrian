@@ -89,9 +89,28 @@ export class ScaleAction extends HistoryAction {
 }
 
 export class InsertAction extends HistoryAction {
+  constructor(data) {
+    super(data);
+
+    // Ensure items are sorted by index
+    data.items = data.items.sort((a, b) => {
+      return b.index.less(a.index);
+    });
+  }
+
   perform(editor) {
-    for (let item of this.data.items) {
-      editor.doc.insertElement(item, item.index);
+    for (let pair of this.data.items) {
+      let { item, index } = pair;
+      let parent = editor.doc;
+      // Traverse the object tree to find the item's immediate parent
+      for (let pi of index.parts.slice(0,-1)) {
+        parent = parent.child(pi);
+      }
+
+      console.log(parent, item, index.last);
+      parent.insert(item, index.last);
+
+      editor.doc.cacheIndexes();
     }
   }
 
@@ -101,11 +120,18 @@ export class InsertAction extends HistoryAction {
 }
 
 export class DeleteAction extends HistoryAction {
+  constructor(data) {
+    super(data);
+
+    // Ensure items are sorted by index
+    data.items = data.items.sort((a, b) => {
+      return b.index.less(a.index);
+    });
+  }
+
   perform(editor) {
     let indexes = this.data.items.map((item) => {
       return item.index;
-    }).sort((a, b) => {
-      return b.less(a);
     });
 
     editor.doc.removeIndexes(indexes);

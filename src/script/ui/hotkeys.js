@@ -307,6 +307,7 @@ let hotkeys = {
 
 
   simulatedKeypress() {
+    //console.trace();
     /*
       Since we delay the simulated keypress interval, often a key will be pushed and released before the interval starts,
       and the interval will start after and continue running in the background.

@@ -34,6 +34,10 @@ Array.prototype.remove = function(el) {
   }
 }
 
+Array.prototype.insertAt = function(elem, i) {
+  return this.slice(0, i).concat([elem]).concat(this.slice(i));
+}
+
 Number.prototype.within = function(tolerance, other) {
   // I/P: Two numbers
   // O/P: Is this within tolerance of other?

@@ -27,4 +27,11 @@ export default class Layer {
     return cf;
   }
 
+  child(i) {
+    return this.children[i];
+  }
+
+  insert(child, i) {
+    this.children = this.children.insertAt(child, i);
+  }
 }

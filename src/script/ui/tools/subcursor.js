@@ -23,7 +23,7 @@ export default class SubCursor extends Tool {
     let checked = 0;
 
 
-    for (let elem of this.editor.doc.elements) {
+    for (let elem of this.editor.doc.elementsFlat) {
       let points = elem.points.all();
 
       // Make sure we're anywhere near this element before we spend time iterating
@@ -72,7 +72,7 @@ export default class SubCursor extends Tool {
 
       let newSelection = [];
 
-      let elems = this.editor.doc.elements.slice(0).reverse();
+      let elems = this.editor.doc.elementsFlat.slice(0).reverse();
       for (let elem of elems) {
         for (let pt of elem.points.all()) {
           if (shapes.contains(bounds, pt)) {

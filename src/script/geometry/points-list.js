@@ -100,8 +100,12 @@ export default class PointsList {
     return this.segments.reduce((a, b) => a.concat(b.points), []);
   }
 
-  indexOf(pt) {
-    return this.all().indexOf(pt);
+  indexOf(item) {
+    if (item instanceof PointsSegment) {
+      return this.segments.indexOf(item);
+    } else if (item instanceof PathPoint) {
+      return this.all().indexOf(item);
+    }
   }
 
   push(point) {
@@ -111,27 +115,16 @@ export default class PointsList {
       this.pushSegment(new PointsSegment([], this));
     }
 
-    point.at = this.lastSegment.points.length;
+    point.i = this.lastSegment.points.length;
     this.lastSegment.push(point);
 
-    /*
-    if (this.last != null) {
-      this.last.setSucc(point);
-      point.setPrec(this.last);
-    } else {
-      point.setPrec(point);
-    }
-
-    if (this.first != null) {
-      this.first.setPrec(point);
-      point.setSucc(this.first);
-    } else {
-      point.setSucc(point);
-    }
-    */
     this.last = point;
 
     return this;
+  }
+
+  insert(segment, index) {
+    this.segments = this.segments.insertAt(child, i);
   }
 
   closeSegment() {
@@ -150,8 +143,9 @@ export default class PointsList {
     return new PointsList([], this.segments.map(s => s.reverse()));
   }
 
-  at(n) {
-    return this.segmentContaining(parseInt(n, 10)).at(n);
+  i(n) {
+    n = parseInt(n, 10);
+    return this.segmentContaining(n).i(n);
   }
 
   close() {
@@ -187,7 +181,7 @@ export default class PointsList {
 
   remove(x) {
     if (typeof x === "number") {
-      x = this.at(x);
+      x = this.i(x);
     }
     if (x instanceof Array) {
       return Array.from(x).map((p) =>

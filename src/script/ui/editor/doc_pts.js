@@ -15,7 +15,7 @@ export default class DocumentPointsUIElement extends UIElement {
     let tool = this.editor.state.tool;
 
     if (tool.id === 'subcursor') {
-      for (let elem of this.editor.doc.elements) {
+      for (let elem of this.editor.doc.elementsFlat) {
         if (!elem.points) continue;
         let points = elem.points.all();
         for (let i = 0; i < points.length; i ++) {
@@ -37,31 +37,35 @@ export default class DocumentPointsUIElement extends UIElement {
       // draw selected pts
       for (let i = 0; i < this.editor.state.selection.length; i ++) {
         let pt = this.editor.state.selection[i];
-        this.handlePoint(pt, i, layer);
+        this.handlePoint(pt, i, layer, {
+          includeHandles: true
+        });
       }
     }
   }
 
-  handlePoint(pt, i, layer) {
+  handlePoint(pt, i, layer, opts={}) {
     let mainPosn = this.editor.projection.posn(pt);
 
-    for (let name of ['sHandle', 'pHandle']) {
-      let handle = pt[name];
-      if (!handle) continue;
+    if (opts.includeHandles) {
+      for (let name of ['sHandle', 'pHandle']) {
+        let handle = pt[name];
+        if (!handle) continue;
 
-      let sp = this.editor.projection.posn(handle);
-      let id = 'selectedPoint:'+i+':'+name;
-      layer.drawLineSegment(mainPosn, sp);
+        let sp = this.editor.projection.posn(handle);
+        let id = 'selectedPoint:'+i+':'+name;
+        layer.drawLineSegment(mainPosn, sp);
 
-      this.drawPoint(id, handle, sp, layer);
+        this.drawPoint(id, handle, sp, layer);
 
-      this.registerPoint(id, sp, (e) => {
-        // noop on down
-      }, (e, posn, lastPosn) => {
-        let xd = posn.x - lastPosn.x;
-        let yd = posn.y - lastPosn.y;
-        this.editor.nudgeHandle(name, xd, yd);
-      });
+        this.registerPoint(id, sp, (e) => {
+          // noop on down
+        }, (e, posn, lastPosn) => {
+          let xd = posn.x - lastPosn.x;
+          let yd = posn.y - lastPosn.y;
+          this.editor.nudgeHandle(name, xd, yd);
+        });
+      }
     }
 
     let mainId = 'selectedPoint:'+i;
@@ -82,21 +86,20 @@ export default class DocumentPointsUIElement extends UIElement {
   }
 
   drawPoint(id, point, posn, layer, onDrag) {
-    let style = { stroke: consts.point, fill: consts.point };
+    let style = { stroke: consts.point, fill: 'white' };
     let radius = 2.5;
     if (this.editor.isSelected(point)) {
-      style.fill = 'white';
       style.stroke = 'blue';
       radius = 3.5;
     } else if (this.editor.cursorHandler.isActive(id)) {
-      style.fill = 'red';
-      style.stroke = 'red';
+      style.stroke = 'blue';
+      radius = 3.5;
     }
     layer.drawCircle(posn, radius, style);
   }
 
   registerPoint(id, posn, onDown, onDrag) {
-    let hitArea = new Circle(posn, 10);
+    let hitArea = new Circle(posn, 12);
     let elem = new Element(id, hitArea, {
       'mousedown': (e, posn) => {
         e.stopPropagation();

@@ -7,6 +7,7 @@ import Posn from 'geometry/posn'
 import Group from 'geometry/group';
 import Path from 'geometry/path';
 import PathPoint from 'geometry/path-point';
+import PointsSegment from 'geometry/points-segment';
 import Item from 'geometry/item';
 
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg'
@@ -16,7 +17,7 @@ const CHARSET  = 'utf-8';
 
 export default class Doc {
   constructor(attrs) {
-    this.children = attrs.children;
+    this.layers = attrs.layers;
     this.width = attrs.width;
     this.height = attrs.height;
 
@@ -42,7 +43,7 @@ export default class Doc {
     });
 
     return new Doc({
-      children: [layer],
+      layers: [layer],
       width,
       height,
     });
@@ -50,16 +51,24 @@ export default class Doc {
 
   get elements() {
     // Flatten groups
-    return this.children.reduce((accum, layer) => {
+    return this.layers.reduce((accum, layer) => {
       return accum.concat(layer.children)
     }, []);
   }
 
   get elementsFlat() {
     // Flatten groups
-    return this.children.reduce((accum, layer) => {
+    return this.layers.reduce((accum, layer) => {
       return accum.concat(layer.childrenFlat)
     }, []);
+  }
+
+  get children() {
+    return this.layers;
+  }
+
+  child(i) {
+    return this.layers[i];
   }
 
   toSVG() {
@@ -111,28 +120,11 @@ export default class Doc {
   }
 
   getLayerWithElement(elem) {
-    for (let layer of this.children) {
+    for (let layer of this.layers) {
       if (layer.children.indexOf(elem) !== -1) {
         return layer;
       }
     }
-  }
-
-  removeId(id) {
-    let index = -1;
-    let newElems = [];
-    for (let i = 0; i < this.children.length; i ++) {
-      let elem = this.children[i];
-      if (elem.id === id) {
-        index = i;
-      } else {
-        newElems.push(elem);
-      }
-    }
-
-    this.children = newElems;
-
-    return index;
   }
 
   center() {
@@ -147,7 +139,7 @@ export default class Doc {
     return `data:${MIMETYPE};charset=${CHARSET};base64,${this.toString()}`;
   }
 
-  cacheIndexes(root, accum=[]) {
+  cacheIndexes(root=this, accum=[]) {
     for (let i = 0; i < root.children.length; i ++) {
       let child = root.children[i];
       child.index = new Index(accum.concat([i]));
@@ -157,24 +149,6 @@ export default class Doc {
     }
   }
 
-  /*
-  getIndex(item) {
-    // TODO add Group support
-    if (item instanceof Item || item instanceof Group) {
-      return item.index;
-    } else if (item instanceof PathPoint) {
-      // Return two indices in format 4:82
-      let owner = item.owner;
-      let pts = owner.points.all();
-      let ptI = pts.indexOf(item);
-
-      if (ptI > -1) {
-        return new Index(owner.index.parts.concat([ptI]));
-      }
-    }
-  }
-  */
-
   getFromIndex(index) {
     let cursor = this;
 
@@ -182,7 +156,9 @@ export default class Doc {
       if (cursor === this || cursor instanceof Group || cursor instanceof Layer) {
         cursor = cursor.children[i];
       } else if (cursor instanceof Path) {
-        cursor = cursor.points.all()[i];
+        cursor = cursor.points.segments[i];
+      } else if (cursor instanceof PointsSegment) {
+        cursor = cursor.points[i];
       } else {
         console.error('Cant handle index drill-down for cursor', cursor);
       }
@@ -202,19 +178,7 @@ export default class Doc {
     return elems;
   }
 
-  insertElement(elem, index) {
-    let parent = this;
-    for (let pi of index.parts.slice(0,-1)) {
-      parent = parent.children[pi];
-    }
-
-    let fi = index.parts[index.parts.length-1];
-
-    console.log(parent, fi);
-
-    // Slice elem into final array
-    parent.children = parent.children.slice(0, fi).concat([elem]).concat(parent.children.slice(fi));
-
-    this.cacheIndexes(this);
+  insert(layer, i) {
+    this.layers = this.layers.insertAt(layer, i);
   }
 }

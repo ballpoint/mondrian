@@ -30,7 +30,6 @@ export default class PointsSegment {
     }
 
     this.list = list;
-    this.startsAt = this.points.length !== 0 ? this.points[0].at : 0;
 
     if (this.list != null) {
       this.owner = this.list.owner;
@@ -47,20 +46,70 @@ export default class PointsSegment {
     }
   }
 
-  insert(point, at) {
-    let head = this.points.slice(0, at);
-    let tail = this.points.slice(at);
+  child(i) {
+    return this.points[i];
+  }
+
+  get first() {
+    return this.points[0];
+  }
+
+  get last() {
+    return this.points[this.points.length-1];
+  }
+
+  relink() {
+    for (let i = 0; i < this.points.length; i++) {
+      let point = this.points[i];
+      let prec, succ;
+      if (i === 0) {
+        prec = this.last;
+        succ = this.points[i+1];
+      } else if (i === this.points.length-1) {
+        succ = this.first;
+        prec = this.points[i-1];
+      } else {
+        succ = this.points[i+1];
+        prec = this.points[i-1];
+      }
+
+      point.prec = prec;
+      point.succ = succ;
+    }
+  }
+
+  insert(point, index) {
+    if (index === this.points.length) {
+      let oldLast = this.last;
+      this.points.push(point);
+      point.prec = oldLast;
+      point.succ = this.first;
+    } else {
+      this.points = this.points.insertAt(point, index);
+    }
+
+    this.relink();
+    return;
+
+    let head = this.points.slice(0, index);
+    let tail = this.points.slice(index);
+
 
     if (point instanceof Array) {
-      tail.forEach(p => p.at += point.length);
+      tail.forEach(p => p.index += point.length);
+
+      point.segment = this;
 
       return head = head.concat(point);
 
-    } else if (point instanceof Point) {
-      tail.forEach(p => p.at += 1);
+    } else if (point instanceof PathPoint) {
+      debugger;
+      tail.forEach(p => p.index += 1);
 
       head[head.length - 1].setSucc(point);
       tail[0].setPrec(point);
+
+      point.segment = this;
 
       return head.push(point);
     } else {
@@ -78,6 +127,11 @@ export default class PointsSegment {
       fp.prec = point;
     }
     this.points.push(point);
+    point.segment = this;
+  }
+
+  indexOf(point) {
+    return this.points.indexOf(point);
   }
 
   close() {
@@ -111,8 +165,8 @@ export default class PointsSegment {
   }
 
 
-  at(n) {
-    return this.points[n - this.startsAt];
+  i(n) {
+    return this.points[n - this.points[0].i];
   }
 
 
@@ -136,7 +190,7 @@ export default class PointsSegment {
 
     } else if (replacement instanceof Array) {
       let replen = replacement.length;
-      let { at } = old;
+      let { i } = old;
       let { prec } = old;
       let { succ } = old;
       old.succ.prec = replacement[replen - 1];
@@ -144,18 +198,18 @@ export default class PointsSegment {
       for (let np of Array.from(replacement)) {
         np.owner = this.owner;
 
-        np.at = at;
+        np.i = i;
         np.prec = prec;
         np.succ = succ;
         prec.succ = np;
         prec = np;
-        at += 1;
+        i += 1;
       }
 
       this.points = this.points.replace(old, replacement);
 
-      for (let p of Array.from(this.points.slice(at))) {
-        p.at += (replen - 1);
+      for (let p of Array.from(this.points.slice(i))) {
+        p.i += (replen - 1);
       }
     }
 
@@ -186,6 +240,11 @@ export default class PointsSegment {
     }
 
     if (p1 || p2) {
+      if (!p1) {
+        p1 = prec;
+      } else if (!p2) {
+        p2 = p;
+      }
       layer.bezierCurveTo(p1, p2, p);
     } else {
       layer.lineTo(p);
