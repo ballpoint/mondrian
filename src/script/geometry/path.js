@@ -96,7 +96,7 @@ export default class Path extends Item {
   importNewPoints(points) {
     if (points instanceof PointsList) {
       this.points = points;
-      points.setOwner(this);
+      points.path = this;
     } else if (typeof(points) === 'string') {
       console.log(PointsList.fromString(points, this));
       this.points = PointsList.fromString(points, this);

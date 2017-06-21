@@ -492,6 +492,37 @@ export default class Editor extends EventEmitter {
   perform(action) {
     action.perform(this);
     this.history.push(action);
+
+    // Do clean-up after
+    if (action instanceof actions.DeleteAction) {
+      this.cleanUpEmptyItems(action);
+    }
+  }
+
+  cleanUpEmptyItems(action) {
+    let markedForRemoval = [];
+    for (let pair of action.data.items) {
+      let { index, item } = pair;
+
+      let toRemove;
+
+      while (true) {
+        let parent = this.doc.getFromIndex(index.parent);
+        if (!parent) break;
+
+        if (parent.empty()) {
+          toRemove = parent;
+        } else {
+          break;
+        }
+      }
+
+      if (toRemove) {
+        markedForRemoval.push(toRemove);
+      }
+    }
+
+    console.log(markedForRemoval, 'to remove');
   }
 
   undo() {

@@ -15,8 +15,9 @@ export default class PointsList {
     this.prototype.closed = false;
   }
 
-  constructor(segments=[]) {
+  constructor(segments=[], path) {
     this.segments = segments;
+    this.path = path;
   }
 
   static commandsFromString(string) {
@@ -43,8 +44,8 @@ export default class PointsList {
     return commands;
   }
 
-  static fromString(string, owner) {
-    let list = new PointsList([]);
+  static fromString(string, path) {
+    let list = new PointsList([], path);
 
     let commands = this.commandsFromString(string);
 
@@ -65,7 +66,7 @@ export default class PointsList {
       let points = PathPoint.fromString(str, previous);
 
       for (let point of points) {
-        point.setOwner(owner);
+        point.path = path;
         list.push(point);
         previous = point;
       }
@@ -76,10 +77,8 @@ export default class PointsList {
     return list;
   }
 
-  setOwner(owner) {
-    for (let segment of this.segments) {
-      segment.setOwner(owner);
-    }
+  get parent() {
+    return this.path;
   }
 
   pushSegment(segment) {

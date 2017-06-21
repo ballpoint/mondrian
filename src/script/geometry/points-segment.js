@@ -40,10 +40,8 @@ export default class PointsSegment {
     return this.points.length;
   }
 
-  setOwner(owner) {
-    for (let point of this.points) {
-      point.setOwner(owner);
-    }
+  get path() {
+    return this.list.path;
   }
 
   child(i) {
@@ -56,6 +54,12 @@ export default class PointsSegment {
 
   get last() {
     return this.points[this.points.length-1];
+  }
+
+  get parent() {
+    // We skip the PointsList level in the hierarchy
+    // because each Path only has one PointsList
+    return this.parent.parent;
   }
 
   relink() {

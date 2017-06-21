@@ -46,4 +46,8 @@ export default class Index {
   get last() {
     return this.parts[this.parts.length-1];
   }
+
+  get parent() {
+    return new Index(this.parts.slice(0, this.parts.length-1));
+  }
 }
