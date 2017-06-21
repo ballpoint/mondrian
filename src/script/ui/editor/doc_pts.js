@@ -63,7 +63,7 @@ export default class DocumentPointsUIElement extends UIElement {
         }, (e, posn, lastPosn) => {
           let xd = posn.x - lastPosn.x;
           let yd = posn.y - lastPosn.y;
-          this.editor.nudgeHandle(name, xd, yd);
+          this.editor.nudgeHandle(pt.index, name, xd, yd);
         });
       }
     }

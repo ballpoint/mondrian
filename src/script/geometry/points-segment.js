@@ -56,12 +56,6 @@ export default class PointsSegment {
     return this.points[this.points.length-1];
   }
 
-  get parent() {
-    // We skip the PointsList level in the hierarchy
-    // because each Path only has one PointsList
-    return this.list.parent;
-  }
-
   get index() {
     let pathIndex = this.path.index;
     let list = this.list;

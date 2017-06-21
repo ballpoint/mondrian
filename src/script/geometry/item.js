@@ -38,11 +38,6 @@ export default class Item {
     }
   }
 
-  set parent(parent) {
-    this.parent = parent;
-  }
-
-
   /*
    * TODO move this into an external SVG serialization lib
   toSVG() {

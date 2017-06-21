@@ -5,8 +5,14 @@ import Color from 'ui/color';
 import EventEmitter from 'lib/events';
 import math from 'lib/math';
 import Canvas from 'ui/canvas';
+
 import Posn from 'geometry/posn';
+import Group from 'geometry/group';
+import Path from 'geometry/path';
 import PathPoint from 'geometry/path-point';
+import PointsSegment from 'geometry/points-segment';
+import Layer from 'io/layer';
+
 import Projection from 'ui/projection';
 import hotkeys from 'ui/hotkeys';
 import Bounds from 'geometry/bounds'
@@ -251,7 +257,19 @@ export default class Editor extends EventEmitter {
   }
 
   setSelection(items) {
-    this.state.selection = items;
+    let finalItems = [];
+    for (let item of items) {
+      if ((item instanceof Path) || (item instanceof PathPoint)) {
+        finalItems.push(item);
+      } else if (item instanceof PointsSegment) {
+        // Reduce PointsSegments to just the contained PathPoints
+        finalItems = finalItems.concat(item.points);
+      } else if ((item instanceof Group) || (item instanceof Layer)) {
+        finalItems = finalItems.concat(item.childrenFlat);
+      }
+    }
+
+    this.state.selection = finalItems;
 
     if (items[0] instanceof PathPoint) {
       this.state.selectionType = 'POINTS';
@@ -452,10 +470,9 @@ export default class Editor extends EventEmitter {
     this.trigger('change');
   }
 
-  nudgeHandle(handle, xd, yd) {
+  nudgeHandle(index, handle, xd, yd) {
     let action = new actions.NudgeHandleAction({
-      indexes: this.selectedIndexes(),
-      xd, yd, handle,
+      indexes: [index], xd, yd, handle,
     });
 
     this.perform(action);
@@ -508,11 +525,13 @@ export default class Editor extends EventEmitter {
       let parent = item;
 
       while (true) {
-        parent = parent.parent;
-        if (!parent) break;
+        let index = parent.index;
+        let nextParent = this.doc.getFromIndex(index.parent);
+        if (!nextParent) break;
 
-        if (parent.empty) {
-          toRemove = parent;
+        if (nextParent.empty) {
+          toRemove = nextParent;
+          parent = nextParent;
         } else {
           break;
         }

@@ -99,6 +99,7 @@ export class InsertAction extends HistoryAction {
   }
 
   perform(editor) {
+    let indexes = [];
     for (let pair of this.data.items) {
       let { item, index } = pair;
       let parent = editor.doc;
@@ -107,11 +108,14 @@ export class InsertAction extends HistoryAction {
         parent = parent.child(pi);
       }
 
-      console.log(parent, item, index.last);
       parent.insert(item, index.last);
+
+      indexes.push(index);
 
       editor.doc.cacheIndexes();
     }
+
+    editor.selectFromIndexes(indexes);
   }
 
   opposite() {

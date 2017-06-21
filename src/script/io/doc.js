@@ -86,7 +86,8 @@ export default class Doc {
     let marked = indexes.map(this.getFromIndex.bind(this));
 
     for (let item of marked) {
-      item.parent.remove(item);
+      let parent = this.getFromIndex(item.index.parent);
+      parent.remove(item);
     }
 
     this.cacheIndexes(this);

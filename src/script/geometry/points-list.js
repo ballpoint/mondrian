@@ -79,10 +79,6 @@ export default class PointsList {
     return list;
   }
 
-  get parent() {
-    return this.path;
-  }
-
   pushSegment(segment) {
     this.lastSegment = segment;
     this.segments.push(segment);

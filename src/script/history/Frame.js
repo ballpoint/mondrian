@@ -41,20 +41,14 @@ export default class HistoryFrame {
   }
 
   isSealed() {
-    return this.sealed || (new Date() > this.sealTime);
+    return this.sealed || (new Date().valueOf() > this.sealTime.valueOf());
   }
 
   canMerge(action) {
-    if (this.isSealed()) return false;
-
     if (this.actions.length !== 1) return false;
-
     let a = this.actions[0];
 
-    return (
-      (a.constructor !== action.constructor) &&
-      (!a.constructor.prototype.merge)
-    );
+    return (a.constructor === action.constructor && a.constructor.prototype.merge);
   }
 
   seal() {
