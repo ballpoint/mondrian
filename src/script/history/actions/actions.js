@@ -93,8 +93,8 @@ export class InsertAction extends HistoryAction {
     super(data);
 
     // Ensure items are sorted by index
-    data.items = data.items.sort((a, b) => {
-      return b.index.less(a.index);
+    data.items.sort((a, b) => {
+      return a.index.compare(b.index);
     });
   }
 
@@ -124,8 +124,8 @@ export class DeleteAction extends HistoryAction {
     super(data);
 
     // Ensure items are sorted by index
-    data.items = data.items.sort((a, b) => {
-      return b.index.less(a.index);
+    data.items.sort((a, b) => {
+      return a.index.compare(b.index);
     });
   }
 

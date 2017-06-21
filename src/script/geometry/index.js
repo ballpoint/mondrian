@@ -19,20 +19,20 @@ export default class Index {
     return new Index(index.split(':').map((i) => { return parseInt(i,10) }));
   }
 
-  less(other) {
+  compare(other) {
     let minL = Math.min(this.length, other.length);
     for (let i = 0; i < minL; i ++) {
       let mp = this.parts[i];
       let op = other.parts[i];
 
       if (mp < op) {
-        return true;
+        return -1;
       } else if (mp > op) {
-        return false;
+        return 1;
       }
     }
 
-    return false;
+    return 0;
   }
 
   equal(other) {
