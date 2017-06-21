@@ -505,24 +505,36 @@ export default class Editor extends EventEmitter {
       let { index, item } = pair;
 
       let toRemove;
+      let parent = item;
 
       while (true) {
-        let parent = this.doc.getFromIndex(index.parent);
+        parent = parent.parent;
         if (!parent) break;
 
-        if (parent.empty()) {
+        if (parent.empty) {
           toRemove = parent;
         } else {
           break;
         }
       }
 
-      if (toRemove) {
+      if (toRemove && markedForRemoval.indexOf(toRemove) === -1) {
         markedForRemoval.push(toRemove);
       }
     }
 
-    console.log(markedForRemoval, 'to remove');
+    if (markedForRemoval.length > 0) {
+      console.log(markedForRemoval, 'to remove');
+
+      let cleanUpAction = new actions.DeleteAction({
+        items: markedForRemoval.map((item) => {
+          return { item, index: item.index }
+        })
+      });
+
+      this.perform(cleanUpAction);
+    }
+
   }
 
   undo() {

@@ -18,6 +18,9 @@ export default class PointsList {
   constructor(segments=[], path) {
     this.segments = segments;
     this.path = path;
+    for (let segment of segments) {
+      segment.list = this;
+    }
   }
 
   static commandsFromString(string) {
@@ -66,7 +69,6 @@ export default class PointsList {
       let points = PathPoint.fromString(str, previous);
 
       for (let point of points) {
-        point.path = path;
         list.push(point);
         previous = point;
       }
@@ -99,6 +101,10 @@ export default class PointsList {
     return this.segments.reduce((a, b) => a.concat(b.points), []);
   }
 
+  get empty() {
+    return this.all().length === 0;
+  }
+
   indexOf(item) {
     if (item instanceof PointsSegment) {
       return this.segments.indexOf(item);
@@ -122,8 +128,8 @@ export default class PointsList {
     return this;
   }
 
-  insert(segment, index) {
-    this.segments = this.segments.insertAt(child, i);
+  insert(segment, i) {
+    this.segments = this.segments.insertAt(segment, i);
   }
 
   closeSegment() {
@@ -177,6 +183,9 @@ export default class PointsList {
     return this.filter(p => p.within(tolerance, point)).length > 0;
   }
 
+  removeSegment(segment) {
+    this.segments = this.segments.filter((s) => { return s !== segment });
+  }
 
   remove(x) {
     if (typeof x === "number") {

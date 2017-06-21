@@ -38,6 +38,10 @@ export default class Group {
     return this.children[i];
   }
 
+  get empty() {
+    return this.children.length === 0;
+  }
+
   insert(child, i) {
     this.children = this.children.insertAt(child, i);
   }

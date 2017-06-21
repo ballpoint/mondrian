@@ -10,15 +10,19 @@ export default class DocHistory {
   }
 
   push(action, opts={}) {
-    let canMerge = this.head.canMerge(action);
-    if (canMerge) {
-      this.head.merge(action);
+    if (!this.head.isSealed()){ 
+      if (this.head.canMerge(action)) {
+        this.head.merge(action);
+      } else {
+        this.head.actions.push(action);
+      }
     } else {
       let nf = new HistoryFrame([action]);
       nf.setPrev(this.head);
       this.setHead(nf);
     }
 
+    /*
     if (
       this.head.constructor === action.constructor &&
       (action.created.valueOf() - this.head.created.valueOf()) < FRAME_MERGE_THRESHOLD
@@ -27,7 +31,7 @@ export default class DocHistory {
       this.head.merge(action);
       return;
     }
-
+    */
   }
 
   setHead(action) {

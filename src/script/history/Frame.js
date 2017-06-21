@@ -40,24 +40,21 @@ export default class HistoryFrame {
     this.merges++;
   }
 
-  canMerge(action) {
-    if (this.sealed) return false;
+  isSealed() {
+    return this.sealed || (new Date() > this.sealTime);
+  }
 
-    if (new Date() > this.sealTime) return false;
+  canMerge(action) {
+    if (this.isSealed()) return false;
 
     if (this.actions.length !== 1) return false;
 
     let a = this.actions[0];
 
-    if (a.constructor !== action.constructor) {
-      return false;
-    }
-
-    if (!a.constructor.prototype.merge) {
-      return false;
-    }
-
-    return true;
+    return (
+      (a.constructor !== action.constructor) &&
+      (!a.constructor.prototype.merge)
+    );
   }
 
   seal() {

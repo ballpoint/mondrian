@@ -85,15 +85,8 @@ export default class Doc {
   removeIndexes(indexes) {
     let marked = indexes.map(this.getFromIndex.bind(this));
 
-    // Assuming that all marked elements are of the same type
-    // - Item
-    // - PathPoint
     for (let item of marked) {
-      if (item instanceof Item || item instanceof Group) {
-        this.removeItem(item);
-      } else if (item instanceof PathPoint) {
-        this.removePathPoint(item);
-      }
+      item.parent.remove(item);
     }
 
     this.cacheIndexes(this);
@@ -103,13 +96,6 @@ export default class Doc {
     let layer = this.getLayerWithElement(elem);
     if (layer) {
       layer.remove(elem);
-    }
-  }
-
-  removePathPoint(pt) {
-    let owner = pt.owner;
-    if (owner) {
-      owner.removePoint(pt);
     }
   }
 

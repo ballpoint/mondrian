@@ -34,4 +34,8 @@ export default class Layer {
   insert(child, i) {
     this.children = this.children.insertAt(child, i);
   }
+
+  get empty() {
+    return this.children.length === 0;
+  }
 }

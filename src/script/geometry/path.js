@@ -98,7 +98,6 @@ export default class Path extends Item {
       this.points = points;
       points.path = this;
     } else if (typeof(points) === 'string') {
-      console.log(PointsList.fromString(points, this));
       this.points = PointsList.fromString(points, this);
     }
 
@@ -111,11 +110,18 @@ export default class Path extends Item {
     return this.points.segments[i];
   }
 
-  removePoint(pt) {
-    let segment = this.points.segmentContaining(pt);
-    if (segment) {
-      segment.remove(pt);
+  get empty() {
+    return this.points.empty;
+  }
+
+  remove(item) {
+    if (item instanceof PointsSegment) {
+      this.points.removeSegment(item);
     }
+  }
+
+  insert(segment, index) {
+    this.points.insert(segment, index);
   }
 
   nudgeCachedObjects(x, y) {
