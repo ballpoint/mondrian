@@ -1,6 +1,7 @@
 import { PIXEL_RATIO } from 'lib/math';
 import LineSegment from 'geometry/line-segment';
 import CubicBezier from 'geometry/cubic-bezier-line-segment';
+import math from 'lib/math';
 
 export default class Layer {
   constructor(id) {
@@ -129,6 +130,26 @@ export default class Layer {
       this.context.lineTo(p2.x, p2.y);
       this.context.stroke();
     }, opts);
+  }
+
+  drawText(posn, text, opts) {
+    this.context.textAlign = opts.align || 'left';
+
+    if (opts.rotate) {
+      this.context.save();
+      this.context.translate(posn.x, posn.y);
+      this.context.rotate(math.degreesToRadians(opts.rotate));
+
+      this.do(() => {
+        this.context.fillText(text, 0, 0);
+      }, opts);
+
+      this.context.restore();
+    } else {
+      this.do(() => {
+        this.context.fillText(text, posn.x, posn.y);
+      }, opts);
+    }
   }
 
   moveTo(posn) {

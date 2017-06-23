@@ -3,7 +3,6 @@ import { scaleLinear } from 'd3-scale';
 import consts from 'consts';
 import Color from 'ui/color';
 import EventEmitter from 'lib/events';
-import math from 'lib/math';
 import Canvas from 'ui/canvas';
 
 import Posn from 'geometry/posn';
@@ -27,8 +26,7 @@ import SubCursor from 'ui/tools/subcursor';
 import Zoom from 'ui/tools/zoom';
 import Paw from 'ui/tools/paw';
 
-const RULER_DIMEN = math.sharpen(20);
-
+import RulersUIElement from 'ui/editor/rulers';
 import TransformerUIElement from 'ui/editor/transformer';
 import DocumentPointsUIElement from 'ui/editor/doc_pts';
 import DocumentElemsUIElement from 'ui/editor/doc_elems';
@@ -71,7 +69,8 @@ export default class Editor extends EventEmitter {
     let uiElems = [
       new DocumentPointsUIElement(this, 'doc-pts'),
       new DocumentElemsUIElement(this, 'doc-elems'),
-      new TransformerUIElement(this, 'transformer')
+      new TransformerUIElement(this, 'transformer'),
+      new RulersUIElement(this, 'rulers'),
     ]
 
     this.canvas.createLayer('background', this.refreshBackground.bind(this));
@@ -82,7 +81,6 @@ export default class Editor extends EventEmitter {
         elem.refresh(layer, context);
       }
     });
-    this.canvas.createLayer('guides', this.refreshGuides.bind(this));
     this.canvas.createLayer('debug', () => {});
 
     this.cursorHandler.on('mousemove', (e, posn) => {
@@ -406,58 +404,6 @@ export default class Editor extends EventEmitter {
       let bounds = this.screenBounds();
       layer.drawRect(bounds, { fill: new Color('#ffffff') });
     }
-  }
-
-  refreshGuides(layer, context) {
-    layer.setLineWidth(1);
-
-    let docBounds;
-
-    if (this.doc) {
-      docBounds = this.screenBounds().sharp();
-      layer.drawRect(docBounds, { stroke: 'black' });
-    }
-
-    // Draw ruler
-    layer.drawRect(new Bounds(-1, -1, 21, 21).sharp(), { fill: '#ffffff' });
-    layer.drawRect(new Bounds(20, -1, this.canvas.width, 21).sharp(), { fill: '#ffffff' });
-    layer.drawRect(new Bounds(-1, 20, 21, this.canvas.height).sharp(), { fill: '#ffffff' });
-    layer.drawLineSegment(
-      { x: -1, y: RULER_DIMEN  },
-      { x: this.canvas.width, y: RULER_DIMEN  },
-      { stroke: '#c9c9c9' }
-    );
-    layer.drawLineSegment(
-      { x: RULER_DIMEN  , y: -1 },
-      { x: RULER_DIMEN  , y: this.canvas.height },
-      { stroke: '#c9c9c9' }
-    );
-
-    for (let x = math.roundTo(this.projection.xInvert(RULER_DIMEN), 100); x < this.projection.xInvert(this.canvas.width); x += 100) {
-      this.drawRulerXTick(layer, x);
-    }
-
-    for (let y = math.roundTo(this.projection.yInvert(RULER_DIMEN), 100); y < this.projection.yInvert(this.canvas.height); y += 100) {
-      this.drawRulerYTick(layer, y);
-    }
-  }
-
-  drawRulerXTick(layer, xval) {
-    let x = this.projection.x(xval);
-    layer.drawLineSegment(
-      { x, y: RULER_DIMEN - 10 },
-      { x, y: RULER_DIMEN },
-      { stroke: '#000000' }
-    );
-  }
-
-  drawRulerYTick(layer, yval) {
-    let y = this.projection.y(yval);
-    layer.drawLineSegment(
-      { x: RULER_DIMEN - 10, y },
-      { x: RULER_DIMEN, y },
-      { stroke: '#000000' }
-    );
   }
 
   nudgeSelected(xd, yd) {

@@ -22,5 +22,13 @@ export default {
 
   sharpen(n) {
     return Math.floor(n) + (0.5/PIXEL_RATIO);
+  },
+
+  degreesToRadians(deg) {
+    return deg * (Math.PI / 180);
+  },
+
+  radiansToDegrees(rad) {
+    return rad * (180 / Math.PI);
   }
 }
