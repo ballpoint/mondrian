@@ -5,15 +5,13 @@ describe("Index", function() {
 	it("sorts correctly", function(done) {
 		let q1 = new Index([0,2]);
 		let q2 = new Index([0,3]);
+		let q3 = new Index([0,3,4]);
+		let q4 = new Index([1,0]);
 
     assert.equal(-1, q1.compare(q2));
-
-
-		let q3 = new Index([0,3,4]);
-
-    // Queries of unequal depth always return false
-    assert.equal(0, q2.compare(q3));
-    assert.equal(0, q3.compare(q2));
+    assert.equal(-1, q2.compare(q3), 'shallower index with equal common parts is lesser');
+    assert.equal(1, q3.compare(q2), 'deeper index with equal common parts is greater');
+    assert.equal(-1, q3.compare(q4), 'different length indexes with unequal common parts sort the same way');
 
     let qs = [
       new Index([0,2,5]),

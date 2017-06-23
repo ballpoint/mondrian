@@ -299,6 +299,10 @@ export default class Editor extends EventEmitter {
   }
 
   deleteSelection() {
+    if (this.state.selection.length === 0) {
+      return;
+    }
+
     let action = new actions.DeleteAction({ 
       items: this.state.selection.slice(0).map((item) => {
         return { item, index: item.index }
@@ -457,6 +461,10 @@ export default class Editor extends EventEmitter {
   }
 
   nudgeSelected(xd, yd) {
+    if (this.state.selection.length === 0) {
+      return;
+    }
+
     let action = new actions.NudgeAction({
       indexes: this.selectedIndexes(),
       xd, yd,
@@ -471,6 +479,10 @@ export default class Editor extends EventEmitter {
   }
 
   nudgeHandle(index, handle, xd, yd) {
+    if (this.state.selection.length === 0) {
+      return;
+    }
+
     let action = new actions.NudgeHandleAction({
       indexes: [index], xd, yd, handle,
     });
@@ -484,6 +496,10 @@ export default class Editor extends EventEmitter {
   }
 
   scaleSelected(x, y, origin) {
+    if (this.state.selection.length === 0) {
+      return;
+    }
+
     let action = new actions.ScaleAction({
       indexes: this.selectedIndexes(),
       x, y, origin,
@@ -498,6 +514,10 @@ export default class Editor extends EventEmitter {
   }
 
   rotateSelected(angle, origin) {
+    if (this.state.selection.length === 0) {
+      return;
+    }
+
     for (let elem of this.state.selection) {
       elem.rotate(angle, origin);
     }

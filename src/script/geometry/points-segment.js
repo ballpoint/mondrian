@@ -250,7 +250,7 @@ export default class PointsSegment {
 
     if (p1 || p2) {
       if (!p1) {
-        p1 = prec;
+        p1 = projection.posn(prec);
       } else if (!p2) {
         p2 = p;
       }

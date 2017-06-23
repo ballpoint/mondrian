@@ -32,6 +32,13 @@ export default class Index {
       }
     }
 
+    // The common parts are equal
+    if (this.length < other.length) {
+      return -1;
+    } else if (other.length < this.length) {
+      return 1;
+    }
+
     return 0;
   }
 
