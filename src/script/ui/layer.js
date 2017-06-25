@@ -103,11 +103,12 @@ export default class Layer {
       if (opts.fill) {
         this.context.fillRect(x, y, width, height);
       }
+
       if (opts.stroke) {
-        this.drawLineSegment({ x, y }, { x, y: bounds.y2 }, { stroke: opts.stroke});
-        this.drawLineSegment({ x, y }, { x: bounds.x2, y }, { stroke: opts.stroke});
-        this.drawLineSegment({ x: bounds.x2, y: bounds.y2 }, { x, y: bounds.y2 }, { stroke: opts.stroke});
-        this.drawLineSegment({ x: bounds.x2, y: bounds.y2 }, { x: bounds.x2, y }, { stroke: opts.stroke});
+        this.drawLineSegment(bounds.tl(), bounds.tr(), { stroke: opts.stroke});
+        this.drawLineSegment(bounds.tr(), bounds.br(), { stroke: opts.stroke});
+        this.drawLineSegment(bounds.br(), bounds.bl(), { stroke: opts.stroke});
+        this.drawLineSegment(bounds.bl(), bounds.tl(), { stroke: opts.stroke});
       }
     }, opts);
   }

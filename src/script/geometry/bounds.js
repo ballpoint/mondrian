@@ -20,10 +20,6 @@ export default class Bounds {
       this.x2 = this.x + width;
       this.y2 = this.y + height;
     }
-    if (isNaN(this.x)) {
-      //console.trace();
-      debugger;
-    }
 
     this.xr = new Range(this.x, this.x + width);
     this.yr = new Range(this.y, this.y + height);
@@ -178,7 +174,6 @@ export default class Bounds {
   }
 
   moveEdge(edge, amount) {
-    console.log(edge, amount);
     switch (edge) {
       case 't':
         if (this.y < this.y2) {

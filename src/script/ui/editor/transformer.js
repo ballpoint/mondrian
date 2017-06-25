@@ -1,3 +1,4 @@
+import Posn from 'geometry/posn';
 import LineSegment from 'geometry/line-segment'
 import Bounds from 'geometry/bounds'
 import Element from 'ui/element';
@@ -99,6 +100,8 @@ export default class TransformerUIElement extends UIElement {
     }
 
     let bounds = this.editor.projection.bounds(this.editor.state.selectionBounds.bounds);
+    let { angle, center } = this.editor.state.selectionBounds;
+    center = this.editor.projection.posn(center);
 
     // Draw transformer box
 
@@ -116,21 +119,62 @@ export default class TransformerUIElement extends UIElement {
 
     // Control point dimens
     const d = CTRL_PT_DIMEN;
+    const d2 = d/2;
     const opts = { stroke: 'blue' };
     const ctrlOpts = { stroke: 'blue', centerPosn: true };
 
-    // Top edge
-    layer.drawLineSegment(tl, tm, opts);
-    layer.drawLineSegment(tm, tr,  opts);
-    // Bottom edge
-    layer.drawLineSegment(bl, bm, opts);
-    layer.drawLineSegment(bm, br,  opts);
-    // Left edge
-    layer.drawLineSegment(tl, lm, opts);
-    layer.drawLineSegment(lm, bl, opts);
-    // Right edge
-    layer.drawLineSegment(tr, rm, opts);
-    layer.drawLineSegment(rm, br, opts);
+    // TL -> TM
+    layer.drawLineSegment(
+      new Posn(bounds.l, bounds.t).nudge(d2, 0).rotate(angle, center),
+      new Posn(bounds.l+(bounds.width/2), bounds.t).nudge(-d2, 0).rotate(angle, center),
+    opts);
+
+    // TM -> TR
+    layer.drawLineSegment(
+      new Posn(bounds.l+(bounds.width/2), bounds.t).nudge(d2, 0).rotate(angle, center),
+      new Posn(bounds.r, bounds.t).nudge(-d2, 0).rotate(angle, center),
+      lm, bl,
+    opts);
+
+    // BL -> BM
+    layer.drawLineSegment(
+      new Posn(bounds.l, bounds.b).nudge(d2, 0).rotate(angle, center),
+      new Posn(bounds.l+(bounds.width/2), bounds.b).nudge(-d2, 0).rotate(angle, center),
+    opts);
+
+    // BM -> BR
+    layer.drawLineSegment(
+      new Posn(bounds.l+(bounds.width/2), bounds.b).nudge(d2, 0).rotate(angle, center),
+      new Posn(bounds.r, bounds.b).nudge(-d2, 0).rotate(angle, center),
+      lm, bl,
+    opts);
+
+    // TL -> LM
+    layer.drawLineSegment(
+      new Posn(bounds.l, bounds.t).nudge(0, d2).rotate(angle, center),
+      new Posn(bounds.l, bounds.t+(bounds.height/2)).nudge(0, -d2).rotate(angle, center),
+    opts);
+
+    // LM -> BL
+    layer.drawLineSegment(
+      new Posn(bounds.l, bounds.t+(bounds.height/2)).nudge(0, d2).rotate(angle, center),
+      new Posn(bounds.l, bounds.b).nudge(0, -d2).rotate(angle, center),
+      lm, bl,
+    opts);
+
+
+    // TR -> RM
+    layer.drawLineSegment(
+      new Posn(bounds.r, bounds.t).nudge(0, d2).rotate(angle, center),
+      new Posn(bounds.r, bounds.t+(bounds.height/2)).nudge(0, -d2).rotate(angle, center),
+    opts);
+
+    // RM -> BR
+    layer.drawLineSegment(
+      new Posn(bounds.r, bounds.t+(bounds.height/2)).nudge(0, d2).rotate(angle, center),
+      new Posn(bounds.r, bounds.b).nudge(0, -d2).rotate(angle, center),
+      lm, bl,
+    opts);
 
     // Corner ctrl points
     this.registerCtrlPoint('tl', layer, tl);
@@ -161,8 +205,9 @@ export default class TransformerUIElement extends UIElement {
       ctrlOpts.fill = 'blue';
     }
 
+    let { angle } = this.editor.state.selectionBounds;
+    ctrlBounds.angle = angle;
     layer.drawRect(ctrlBounds, ctrlOpts);
-
 
     let elem = new Element(id, ctrlBounds, {
       'mousedown': (e, posn) => {
@@ -195,8 +240,6 @@ export default class TransformerUIElement extends UIElement {
         // to be operating on bounds on the doc level (rather than the UI level)
         let bounds = this.editor.state.selectionBounds.bounds;
         let resultBounds = bounds.clone();
-
-        console.log(bounds.angle, resultBounds.angle);
 
         switch (which) {
           case 'tl':
