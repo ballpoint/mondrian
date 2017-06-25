@@ -133,6 +133,7 @@ export default class Path extends Item {
   scaleCachedObjects(x, y, origin) {
     if (this.boundsCached != null) {
       this.boundsCached.scale(x, y, origin);
+      this.boundsCached.unflip();
     }
   }
 
@@ -176,7 +177,7 @@ export default class Path extends Item {
     // Don't do unecessary work: only do rotation if shape has an angle other than 0
     if (angle !== 0) {
       // Rotate the shape to normal (0 degrees) before doing the scaling.
-      this.rotate(360 - angle, origin);
+      this.rotate(-angle, origin);
     }
 
     // After we've unrotated it, scale it
@@ -199,19 +200,20 @@ export default class Path extends Item {
   }
 
 
-  rotate(a, origin) {
+  rotate(a, origin=this.center()) {
     // Add to the transform angle we're keeping track of.
-    if (origin == null) { origin = this.center(); }
     this.metadata.angle += a;
 
     // Normalize it to be 0 <= n <= 360
-    this.metadata.angle %= 360;
+    //this.metadata.angle %= 360;
 
     // At this point the bounds are no longer valid, so ditch it.
-    this.clearCachedObjects();
+    //this.clearCachedObjects();
 
     // Rotate all the points!
     this.points.map(p => p.rotate(a, origin));
+
+    this.clearCachedObjects();
   }
 
   getPoints() {

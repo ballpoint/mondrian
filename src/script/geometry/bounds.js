@@ -4,40 +4,43 @@ import Range from 'geometry/range';
 
 export default class Bounds {
 
-  constructor(x1, y1, width, height) {
-    let x, y;
-    this.x = x1;
-    this.y = y1;
-    this.width = width;
-    this.height = height;
-    if (this.x instanceof Array) {
+  constructor(x1, y1, width, height, angle=0) {
+    this.angle = angle;
+    if (x1 instanceof Array) {
       // A list of bounds
-      let minX = Math.min.apply(this, this.x.map(b => b.x));
-      this.y   = Math.min.apply(this, this.x.map(b => b.y));
-      this.x2  = Math.max.apply(this, this.x.map(b => b.x2));
-      this.y2  = Math.max.apply(this, this.x.map(b => b.y2));
-      this.x   = minX;
-      this.width  = this.x2 - this.x;
-      this.height = this.y2 - this.y;
-    } else if (this.x instanceof Posn && this.y instanceof Posn) {
-      // A pair of posns
-
-      x = Math.min(this.x.x, this.y.x);
-      y = Math.min(this.x.y, this.y.y);
-      this.x2 = Math.max(this.x.x, this.y.x);
-      this.y2 = Math.max(this.x.y, this.y.y);
-      this.x = x;
-      this.y = y;
-      this.width = this.x2 - this.x;
-      this.height = this.y2 - this.y;
-
+      let lob = x1;
+      this.x  = Math.min.apply(this, lob.map(b => b.x));
+      this.y  = Math.min.apply(this, lob.map(b => b.y));
+      this.x2 = Math.max.apply(this, lob.map(b => b.x2));
+      this.y2 = Math.max.apply(this, lob.map(b => b.y2));
     } else {
-      this.x2 = this.x + this.width;
-      this.y2 = this.y + this.height;
+      let x, y;
+      this.x = x1;
+      this.y = y1;
+      this.x2 = this.x + width;
+      this.y2 = this.y + height;
+    }
+    if (isNaN(this.x)) {
+      //console.trace();
+      debugger;
     }
 
-    this.xr = new Range(this.x, this.x + this.width);
-    this.yr = new Range(this.y, this.y + this.height);
+    this.xr = new Range(this.x, this.x + width);
+    this.yr = new Range(this.y, this.y + height);
+  }
+
+  get l() { return Math.min(this.x, this.x2); }
+  get r() { return Math.max(this.x, this.x2); }
+  get t() { return Math.min(this.y, this.y2); }
+  get b() { return Math.max(this.y, this.y2); }
+
+
+  get width() {
+    return this.r - this.l;
+  }
+
+  get height() {
+    return this.b - this.t;
   }
 
   static fromPosns(posns) {
@@ -61,22 +64,22 @@ export default class Bounds {
   }
 
   // Corners
-  tl() { return new Posn(this.x, this.y); }
-  tr() { return new Posn(this.x2, this.y); }
-  br() { return new Posn(this.x2, this.y2); }
-  bl() { return new Posn(this.x, this.y2); }
+  tl() { return new Posn(this.l, this.t).rotate(this.angle, this.center()); }
+  tr() { return new Posn(this.r, this.t).rotate(this.angle, this.center()); }
+  br() { return new Posn(this.r, this.b).rotate(this.angle, this.center()); }
+  bl() { return new Posn(this.l, this.b).rotate(this.angle, this.center()); }
 
   // Middles
-  tm() { return new Posn(this.x+((this.x2-this.x)/2), this.y); }
-  bm() { return new Posn(this.x+((this.x2-this.x)/2), this.y2); }
-  rm() { return new Posn(this.x2, this.y+((this.y2-this.y)/2)); }
-  lm() { return new Posn(this.x, this.y+((this.y2-this.y)/2)); }
+  tm() { return new Posn(this.l+(this.width/2), this.t).rotate(this.angle, this.center()); }
+  bm() { return new Posn(this.l+(this.width/2), this.b).rotate(this.angle, this.center()); }
+  rm() { return new Posn(this.r, this.t+(this.height/2)).rotate(this.angle, this.center()); }
+  lm() { return new Posn(this.l, this.t+(this.height/2)).rotate(this.angle, this.center()); }
 
   transform(x, y, z) {
-    return new Bounds(x(this.x), y(this.y), z(this.width), z(this.height));
+    return new Bounds(x(this.x), y(this.y), z(this.width), z(this.height), this.angle);
   }
 
-  clone() { return new Bounds(this.x, this.y, this.width, this.height); }
+  clone() { return new Bounds(this.x, this.y, this.width, this.height, this.angle); }
 
   center() {
     return new Posn(this.x + (this.width / 2), this.y + (this.height / 2));
@@ -103,8 +106,8 @@ export default class Bounds {
   }
 
   scale(x, y, origin) {
-    let tl = new Posn(this.x, this.y);
-    let br = new Posn(this.x2, this.y2);
+    let tl = this.tl();
+    let br = this.br();
     tl.scale(x, y, origin);
     br.scale(x, y, origin);
 
@@ -113,8 +116,9 @@ export default class Bounds {
     this.x2 = br.x;
     this.y2 = br.y;
 
-    this.width *= x;
-    this.height *= y;
+    if (isNaN(this.x)) {
+      debugger;
+    }
 
     this.xr.scale(x, origin);
     this.yr.scale(y, origin);
@@ -174,27 +178,60 @@ export default class Bounds {
   }
 
   moveEdge(edge, amount) {
+    console.log(edge, amount);
     switch (edge) {
       case 't':
-        this.y += amount;
-        this.height -= amount;
-        return this;
+        if (this.y < this.y2) {
+          this.y += amount;
+        } else {
+          this.y2 += amount;
+        }
+        break;
       case 'b':
-        this.y2 += amount;
-        this.height += amount;
-        return this;
+        if (this.y > this.y2) {
+          this.y += amount;
+        } else {
+          this.y2 += amount;
+        }
+        break;
       case 'l':
-        this.x += amount;
-        this.width -= amount;
-        return this;
+        if (this.x < this.x2) {
+          this.x += amount;
+        } else {
+          this.x2 += amount;
+        }
+        break;
       case 'r':
-        this.x2 += amount;
-        this.width += amount;
-        return this;
+        if (this.x > this.x2) {
+          this.x += amount;
+        } else {
+          this.x2 += amount;
+        }
+        break;
     }
     return this;
   }
 
+  flipped(axis) {
+    switch (axis) {
+      case 'x':
+        return this.x2 < this.x;
+      case 'y':
+        return this.y2 < this.y;
+    }
+  }
 
+  unflip() {
+    if (this.flipped('x')) {
+      let { x, x2 } = this;
+      this.x = x2;
+      this.x2 = x;
+    }
+    if (this.flipped('y')) {
+      let { y, y2 } = this;
+      this.y = y2;
+      this.y2 = y;
+    }
+  }
 }
 

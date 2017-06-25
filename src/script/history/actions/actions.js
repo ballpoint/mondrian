@@ -41,6 +41,31 @@ export class NudgeAction extends HistoryAction {
   }
 }
 
+export class RotateAction extends HistoryAction {
+  perform(editor) {
+    editor.selectFromIndexes(this.data.indexes);
+    for (let item of editor.state.selection) {
+      item.rotate(this.data.a, this.data.origin);
+    }
+  }
+
+  merge(action) {
+    this.data.a += action.data.a;
+    if (this.data.a < 0) {
+      this.data.a += 360;
+    }
+    this.data.a %= 360;
+  }
+
+  opposite() {
+    return new RotateAction({
+      indexes: this.data.indexes,
+      a: -this.data.a,
+      origin: this.data.origin
+    });
+  }
+}
+
 export class NudgeHandleAction extends HistoryAction {
   perform(editor) {
     let points = this.data.indexes.map((q) => { return editor.doc.getFromIndex(q) });

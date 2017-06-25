@@ -54,7 +54,9 @@ export default class LineSegment {
     // O/P : self
 
     this.slope = (this.a.y - this.b.y) / (this.b.x - this.a.x);
+
     this.angle = Math.atan(this.slope) / (Math.PI / 180);
+
     this.length = Math.sqrt(Math.pow((this.b.x - this.a.x), 2) + Math.pow((this.b.y - this.a.y), 2));
     return this;
   }
@@ -79,7 +81,7 @@ export default class LineSegment {
     return `new LineSegment(${this.a.constructorString()}, ${this.b.constructorString()})`;
   }
 
-  angle360() {
+  get angle360() {
     return this.b.angle360(this.a);
   }
 

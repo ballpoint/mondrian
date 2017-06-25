@@ -282,6 +282,7 @@ export default class Editor extends EventEmitter {
 
     this.canvas.refreshAll();
     this.trigger('change');
+    this.trigger('change:selection');
   }
 
   isSelected(item) {
@@ -309,7 +310,7 @@ export default class Editor extends EventEmitter {
 
     this.perform(action);
 
-    this.state.selection = [];
+    this.setSelection([]);
     this.canvas.refreshAll();
 
     this.calculateSelectionBounds();
@@ -317,22 +318,49 @@ export default class Editor extends EventEmitter {
   }
 
   calculateSelectionBounds() {
-    if (this.state.selection.length > 0) {
+    let selectionBounds = {};
 
-      if (this.state.selection[0] instanceof PathPoint) {
-        this.state.selectionBounds = Bounds.fromPosns(this.state.selection);
-      } else {
-        let boundsList = [];
+    if (this.state.selectionType === 'ELEMENTS' && this.state.selection.length > 0) {
+      let angle = 0;
+      let center;
 
-        for (let elem of this.state.selection) {
-          boundsList.push(elem.bounds());
-        }
-
-        this.state.selectionBounds = new Bounds(boundsList);
+      let selectedAngles = _.uniq(this.state.selection.map((e) => { return e.metadata.angle }));
+      if (selectedAngles.length === 1) {
+        angle = selectedAngles[0];
       }
-    } else {
-      this.state.selectionBounds = null;
+
+      let boundsList = [];
+
+      for (let elem of this.state.selection) {
+        if (angle !== 0) {
+          elem.rotate(-angle, new Posn(0,0));
+        }
+        boundsList.push(elem.bounds());
+        if (angle !== 0) {
+          elem.rotate(angle, new Posn(0,0));
+        }
+      }
+
+      let bounds = new Bounds(boundsList);
+
+
+      center = bounds.center();
+      if (angle) {
+        center = center.rotate(angle, new Posn(0,0));
+        bounds.centerOn(center);
+        bounds.angle = angle;
+      }
+
+      selectionBounds.bounds = bounds;
+      selectionBounds.angle = angle;
+      selectionBounds.center = center;
+
+      if (bounds.flipped('x')) {
+        debugger;
+      }
     }
+
+    this.state.selectionBounds = selectionBounds;
   }
 
   selectedIndexes() {
@@ -459,17 +487,41 @@ export default class Editor extends EventEmitter {
     this.trigger('change');
   }
 
+  fitSelectedToBounds(bounds) {
+    let xd = bounds.l - this.state.selectionBounds.bounds.l;
+    let yd = bounds.t - this.state.selectionBounds.bounds.t;
+    let sx = bounds.width / this.state.selectionBounds.bounds.width;
+    let sy = bounds.height / this.state.selectionBounds.bounds.height;
+    console.log(xd, yd, sx, sy);
+
+    let scaleAction = new actions.ScaleAction({
+      indexes: this.selectedIndexes(), x: sx, y: sy, origin: bounds.tl()
+    });
+    this.perform(scaleAction);
+    let nudgeAction = new actions.NudgeAction({
+      indexes: this.selectedIndexes(), xd, yd,
+    });
+    this.perform(nudgeAction);
+    this.history.head.seal();
+  }
+
   rotateSelected(angle, origin) {
     if (this.state.selection.length === 0) {
       return;
     }
 
-    for (let elem of this.state.selection) {
-      elem.rotate(angle, origin);
-    }
+    let action = new actions.RotateAction({
+      indexes: this.selectedIndexes(),
+      a: angle,
+      origin
+    });
 
-    //this.calculateSelectionBounds();
+    this.perform(action);
+
+    this.calculateSelectionBounds();
     this.canvas.refreshAll();
+
+    this.trigger('change');
   }
 
   perform(action) {

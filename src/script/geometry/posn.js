@@ -190,6 +190,7 @@ export default class Posn {
   }
 
   rotate(angle, origin) {
+    if (angle === 0) return this;
 
     if (origin == null) { origin = new Posn(0, 0); }
     if (origin.equal(this)) { return this; }

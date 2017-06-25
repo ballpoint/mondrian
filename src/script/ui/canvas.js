@@ -69,9 +69,11 @@ export default class Canvas extends EventEmitter {
   }
 
   _refreshLayer(layer) {
+    //console.time('refresh:'+layer.id);
     layer.clear();
     let handler = this.handlersMap[layer.id];
     handler(layer, layer.context);
+    //console.timeEnd('refresh:'+layer.id);
   }
 
 }

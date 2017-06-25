@@ -15,6 +15,7 @@ let SelectionUtil = React.createClass({
   metadata() {
     let { state, doc } = this.props.editor;
     if (state.selectionType === 'ELEMENTS' && state.selection.length > 0) {
+      return null;
       return <div>
         <div>
           x = {state.selectionBounds.x.toFixed(2)}
