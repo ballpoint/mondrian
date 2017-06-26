@@ -231,20 +231,8 @@ export default class PointsList {
     return new Range(Math.min.apply(this, ys), Math.max.apply(this, ys));
   }
 
-  toString() {
-    return this.segments.join(' ') + (this.closed ? "z" : "");
-  }
-
-  insideOf(other) {
-    return this.all().filter(p => p.insideOf(other));
-  }
-
-  notInsideOf(other) {
-    return this.all().filter(p => !p.insideOf(other));
-  }
-
-  withoutMoveTos() {
-    return new PointsList([], this.filterSegments(p => !(p instanceof MoveTo)));
+  toSVGString() {
+    return this.segments.map((s) => { return s.toSVGString() }).join(' ');
   }
 }
 PointsList.initClass();

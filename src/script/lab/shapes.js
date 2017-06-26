@@ -7,6 +7,10 @@ import CubicBezier from 'geometry/cubic-bezier-line-segment';
 export default {
 
   contains(shape, posn) {
+    if (shape instanceof Circle) {
+      return posn.distanceFrom(shape.center) <= shape.radius;
+    }
+
     // Cheap check up front
     if (!(shape instanceof Bounds)) {
       let bounds = shape.bounds();
@@ -15,9 +19,6 @@ export default {
       }
     }
 
-    if (shape instanceof Circle) {
-      return posn.distanceFrom(shape.center) <= shape.radius;
-    }
 
 
     // Draw a horizontal ray starting at this posn.

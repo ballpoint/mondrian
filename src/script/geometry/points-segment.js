@@ -169,8 +169,26 @@ export default class PointsSegment {
     return this.list.path;
   }
 
-  toString() {
-    return this.points.join(' ');
+  toSVGString() {
+    let s = '';
+
+    for (let i = 0; i < this.points.length; i++) {
+      let pt = this.points[i];
+      if (i === 0) {
+        s += `M${pt.x},${pt.y}`;
+      } else {
+        s += ' ';
+        s += pt.toSVGString();
+      }
+    }
+
+    if (this.closed) {
+      let fpt = this.points[0];
+      s += ' ';
+      s += fpt.toSVGString();
+    }
+
+    return s;
   }
 
 
@@ -264,9 +282,9 @@ export default class PointsSegment {
     if (!(this.points[0] instanceof PathPoint)) {
       return;
     }
-    let prec;
     for (let i = 0; i < this.points.length; i++) {
       let point = this.points[i];
+      let prec = point.prec;
       let p = projection.posn(point);
       if (i === 0) {
         layer.moveTo(projection.posn(point))
@@ -274,7 +292,6 @@ export default class PointsSegment {
         this.drawPointToCanvas(point, prec, layer, projection);
       }
 
-      prec = point;
     }
 
     if (this.closed) {

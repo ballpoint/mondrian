@@ -72,6 +72,7 @@ export default class Cursor extends Tool {
       let newSelection = [];
 
       let elems = this.editor.doc.elements.slice(0).reverse();
+      console.log(elems.length);
       for (let elem of elems) {
         if (shapes.overlap(bounds, elem)) {
           newSelection.push(elem);

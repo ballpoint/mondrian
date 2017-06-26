@@ -9,6 +9,10 @@ export default class Zoom extends Tool {
     this.dragEnd = null;
   }
 
+  get id() {
+    return 'zoom';
+  }
+
   handleMousemove(e, posn) {
   }
 

@@ -46,6 +46,10 @@ export default class Group {
     this.children = this.children.insertAt(child, i);
   }
 
+  remove(child) {
+    this.children = this.children.filter((existing) => { return existing !== child });
+  }
+
   nudge()  { this.propagate('nudge', arguments); }
 
   scale()  { this.propagate('scale', arguments); }

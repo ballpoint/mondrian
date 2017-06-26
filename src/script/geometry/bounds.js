@@ -123,7 +123,7 @@ export default class Bounds {
   }
 
   padded(n) {
-    return new Bounds(this.x - n, this.y - n, this.width + (n*2), this.height + (n*2))
+    return new Bounds(this.l - n, this.t - n, this.width + (n*2), this.height + (n*2), this.angle)
   }
 
   squareSmaller(anchor) {

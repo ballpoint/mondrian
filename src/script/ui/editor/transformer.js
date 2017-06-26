@@ -1,6 +1,7 @@
 import Posn from 'geometry/posn';
 import LineSegment from 'geometry/line-segment'
 import Bounds from 'geometry/bounds'
+import Circle from 'geometry/circle'
 import Element from 'ui/element';
 import UIElement from 'ui/editor/ui_element';
 
@@ -187,7 +188,11 @@ export default class TransformerUIElement extends UIElement {
     this.registerCtrlPoint('l', layer, lm);
     this.registerCtrlPoint('r', layer, rm);
 
-    this.registerRotationPoint('tl', layer, tl.clone().nudge(-CTRL_PT_DIMEN,-CTRL_PT_DIMEN));
+    let rotationExpandedBounds = bounds.clone().padded(6);
+    this.registerRotationPoint('tl', layer, rotationExpandedBounds.tl());
+    this.registerRotationPoint('tr', layer, rotationExpandedBounds.tr());
+    this.registerRotationPoint('bl', layer, rotationExpandedBounds.bl());
+    this.registerRotationPoint('br', layer, rotationExpandedBounds.br());
   }
 
   registerCtrlPoint(which, layer, origin) {
@@ -211,13 +216,6 @@ export default class TransformerUIElement extends UIElement {
 
     let elem = new Element(id, ctrlBounds, {
       'mousedown': (e, posn) => {
-
-        let bounds = this.editor.state.selectionBounds.bounds;
-
-        opposite = this.oppositeForPoint(which, bounds);
-
-        this.scalingOpposite = opposite;
-        if (isNaN(opposite.x)) debugger;
         e.stopPropagation();
       },
       'click': function (e, posn) {
@@ -225,6 +223,10 @@ export default class TransformerUIElement extends UIElement {
       },
       'drag': (e, posn, lastPosn) => {
         e.stopPropagation();
+
+        let bounds = this.editor.state.selectionBounds.bounds;
+
+        opposite = this.oppositeForPoint(which, bounds);
 
         let { angle, center } = this.editor.state.selectionBounds;
 
@@ -238,7 +240,6 @@ export default class TransformerUIElement extends UIElement {
 
         // NOTE: When it comes time to do snapping, we may want to switch this code
         // to be operating on bounds on the doc level (rather than the UI level)
-        let bounds = this.editor.state.selectionBounds.bounds;
         let resultBounds = bounds.clone();
 
         switch (which) {
@@ -287,17 +288,19 @@ export default class TransformerUIElement extends UIElement {
           this.editor.scaleSelected(xScale, yScale, opposite);
 
           if (flipX) {
-            which = this.oppositeX(which);
+            this.editor.cursorHandler.setActive('transformer:scale:'+this.oppositeX(which));
+            //which = this.oppositeX(which);
             // Take new opposite from editor-calculated bounds so that it's perfect
             // Taking it from resultBounds in here is imperfect by at least 0.00001
-            opposite = this.oppositeForPoint(which, this.editor.state.selectionBounds.bounds);
+            //opposite = this.oppositeForPoint(which, this.editor.state.selectionBounds.bounds);
           }
 
           if (flipY) {
-            which = this.oppositeY(which);
+            this.editor.cursorHandler.setActive('transformer:scale:'+this.oppositeY(which));
+            //which = this.oppositeY(which);
             // Take new opposite from editor-calculated bounds so that it's perfect
             // Taking it from resultBounds in here is imperfect by at least 0.00001
-            opposite = this.oppositeForPoint(which, this.editor.state.selectionBounds.bounds);
+            //opposite = this.oppositeForPoint(which, this.editor.state.selectionBounds.bounds);
           }
         }
       },
@@ -317,16 +320,11 @@ export default class TransformerUIElement extends UIElement {
   registerRotationPoint(id, layer, posn) {
     id = 'transformer:rotate:'+id;
     let ctrlBounds = Bounds.centeredOnPosn(posn.sharp(), CTRL_PT_DIMEN, CTRL_PT_DIMEN);
+    let ctrlPt = new Circle(posn, 10);
 
-    let ctrlOpts = { stroke: 'red' };
+    layer.drawCircle(posn, 10, { stroke: 'red' });
 
-    if (this.editor.cursorHandler.active && this.editor.cursorHandler.active.id === id) {
-      ctrlOpts.fill = 'red';
-    }
-
-    layer.drawRect(ctrlBounds, ctrlOpts);
-
-    let elem = new Element(id, ctrlBounds, {
+    let elem = new Element(id, ctrlPt, {
       'mousedown': function (e, posn) {
         e.stopPropagation();
       },

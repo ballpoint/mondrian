@@ -38,6 +38,10 @@ export default class CursorHandler extends EventEmitter {
     cursor.on('scroll:y', (e, delta) => {
       this.handleEvent('scroll:y', e, delta);
     });
+
+    cursor.on('scroll:x', (e, delta) => {
+      this.handleEvent('scroll:x', e, delta);
+    });
   }
 
   handleEvent(name, event, ...args) {
@@ -79,6 +83,15 @@ export default class CursorHandler extends EventEmitter {
   isActive(id) {
     if (!this.active) return false;
     return this.active.id === id;
+  }
+
+  setActive(id) {
+    for (let elem of this.elements) {
+      if (elem.id === id) {
+        this.active = elem;
+        return;
+      }
+    }
   }
 
   resetElements() {

@@ -38,12 +38,6 @@ export default class CursorTracking extends EventEmitter {
     document.onmousemove = this._mousemove.bind(this);
     document.onmouseover = this._mouseover.bind(this);
     document.addEventListener('mousewheel', this._scroll.bind(this));
-
-
-    // Reset the cursor to somewhere off the screen if they switch tabs and come back
-    return window.onfocus = () => {
-      return this.currentPosn = new Posn(-100, -100);
-    };
   }
 
   reset() {
@@ -152,7 +146,6 @@ export default class CursorTracking extends EventEmitter {
     } else {
       if (this.doubleclickArmed) {
         this.doubleclickArmed = false;
-        console.log('doubleclick');
         this.trigger('doubleclick', e, this.currentPosn);
       } else {
         // It's a static click, meaning the cursor didn't move
@@ -206,6 +199,9 @@ export default class CursorTracking extends EventEmitter {
   _scroll(e) {
     if (e.deltaY !== 0) {
       this.trigger('scroll:y', e, e.deltaY);
+    }
+    if (e.deltaX !== 0) {
+      this.trigger('scroll:x', e, e.deltaX);
     }
   }
 

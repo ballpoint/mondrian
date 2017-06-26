@@ -7,6 +7,7 @@ import Canvas from 'ui/canvas';
 
 import Posn from 'geometry/posn';
 import Group from 'geometry/group';
+import Index from 'geometry/index';
 import Path from 'geometry/path';
 import PathPoint from 'geometry/path-point';
 import PointsSegment from 'geometry/points-segment';
@@ -119,10 +120,21 @@ export default class Editor extends EventEmitter {
       this.canvas.refresh('ui');
     });
 
+    this.cursorHandler.on('scroll:x', (e, delta) => {
+      if (this.state.tool.id === 'zoom') {
+      } else {
+        this.nudge(this.projection.zInvert(delta), 0);
+      }
+    });
+
     this.cursorHandler.on('scroll:y', (e, delta) => {
-      let zd = 1-(delta / 1000);
-      let anchor = this.cursor.lastPosn;
-      this.setZoom(this.state.zoomLevel*zd, anchor);
+      if (this.state.tool.id === 'zoom') {
+        let zd = 1-(delta / 1000);
+        let anchor = this.cursor.lastPosn;
+        this.setZoom(this.state.zoomLevel*zd, anchor);
+      } else {
+        this.nudge(0, this.projection.zInvert(delta));
+      }
     });
 
     hotkeys.on('down', 'downArrow', () => { this.nudgeSelected(0, 1); });
@@ -162,9 +174,11 @@ export default class Editor extends EventEmitter {
       this.redo();
     });
 
+    /*
     hotkeys.on('down', 'ctrl-V', () => { 
       this.paste();
     });
+    */
 
     document.addEventListener('copy', (e) => { this.copy(e) });
     document.addEventListener('paste', (e) => { this.paste(e) });
@@ -182,12 +196,14 @@ export default class Editor extends EventEmitter {
         zoomLevel: cached.zoomLevel,
         position: new Posn(cached.position),
         selection: [],
+        scope: new Index([0]),
         tool: new Cursor(this)
       }
     } else {
       this.state = {
         zoomLevel: 1,
         selection: [],
+        scope: new Index([0]),
         tool: new Cursor(this)
       };
 
@@ -487,24 +503,6 @@ export default class Editor extends EventEmitter {
     this.trigger('change');
   }
 
-  fitSelectedToBounds(bounds) {
-    let xd = bounds.l - this.state.selectionBounds.bounds.l;
-    let yd = bounds.t - this.state.selectionBounds.bounds.t;
-    let sx = bounds.width / this.state.selectionBounds.bounds.width;
-    let sy = bounds.height / this.state.selectionBounds.bounds.height;
-    console.log(xd, yd, sx, sy);
-
-    let scaleAction = new actions.ScaleAction({
-      indexes: this.selectedIndexes(), x: sx, y: sy, origin: bounds.tl()
-    });
-    this.perform(scaleAction);
-    let nudgeAction = new actions.NudgeAction({
-      indexes: this.selectedIndexes(), xd, yd,
-    });
-    this.perform(nudgeAction);
-    this.history.head.seal();
-  }
-
   rotateSelected(angle, origin) {
     if (this.state.selection.length === 0) {
       return;
@@ -594,17 +592,19 @@ export default class Editor extends EventEmitter {
 
   paste(e) {
     if (this.state.clipboard) {
-      let params = [];
+      let items = [];
+      let parent = this.doc.getFromIndex(this.state.scope);
+      let nextIndex = parent.children.length;
 
-      for (let element of this.state.clipboard) {
-        params.push({ element });
+      console.log(this.state.clipboard);
+      for (let item of this.state.clipboard) {
+        items.push({ item, index: this.state.scope.concat([nextIndex]) });
+        nextIndex++;
       }
 
-      let action = new actions.InsertAction(params);
+      let action = new actions.InsertAction({ items });
 
       this.perform(action);
-
-      this.setSelection(this.state.clipboard);
     }
   }
 

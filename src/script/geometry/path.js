@@ -220,25 +220,9 @@ export default class Path extends Item {
     return this.points.all();
   }
 
-  fitToBounds(bounds) {
-    this.clearCachedObjects();
-    let mb = this.bounds();
-    // Make up for the difference
-
-    let myWidth = mb.width;
-    let myHeight = mb.height;
-
-    let sx = bounds.width / mb.width;
-    let sy = bounds.height / mb.height;
-
-    if ((isNaN(sx)) || (sx === Infinity) || (sx === -Infinity) || (sx === 0)) { sx = 1; }
-    if ((isNaN(sy)) || (sy === Infinity) || (sy === -Infinity) || (sy === 0)) { sy = 1; }
-
-    sx = Math.max(1e-5, sx);
-    sy = Math.max(1e-5, sy);
-
-    this.scale(sx, sy, new Posn(mb.x, mb.y));
-    return this.nudge(bounds.x - mb.x, mb.y - bounds.y);
+  commitData() {
+    // Write this.data.d from points
+    this.data.d = this.points.toSVGString();
   }
 
   drawToCanvas(layer, context, projection) {

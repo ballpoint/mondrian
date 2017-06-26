@@ -294,4 +294,25 @@ export default class PathPoint extends Posn {
       }
     }
   }
+
+  toSVGString() {
+    let p1;
+    let p2;
+    if (this.prec && this.prec.sHandle) {
+      p1 = this.prec.sHandle;
+    }
+    if (this.pHandle) {
+      p2 = this.pHandle;
+    }
+
+    if (p1 || p2) {
+      if (!p1) p1 = prec;
+      if (!p2) p2 = this;;
+      return `C${p1.x},${p1.y} ${p2.x},${p2.y} ${this.x},${this.y}`;
+      // CurveTo
+    } else {
+      // LineTo
+      return `L${this.x},${this.y}`;
+    }
+  }
 }

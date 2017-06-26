@@ -90,6 +90,7 @@ export default class Item {
   }
 
   clone() {
+    this.commitData();
     let cloneData = _.clone(this.data);
     let cloneTransform = _.clone(this.transform);
     delete cloneData.id;
