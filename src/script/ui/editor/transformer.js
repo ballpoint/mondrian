@@ -16,7 +16,12 @@ export default class TransformerUIElement extends UIElement {
 
   reset() {
     for (let id of ['tl', 'tr', 'bl', 'br', 'tm', 'lm', 'rm', 'bm']) {
-      this.unregisterCtrlPoint(id);
+      id = 'transformer:scale:'+id;
+      this.editor.cursorHandler.unregisterElement(id);
+    }
+    for (let id of ['tl', 'tr', 'bl', 'br']) {
+      id = 'transformer:rotate:'+id;
+      this.editor.cursorHandler.unregisterElement(id);
     }
   }
 
@@ -312,17 +317,12 @@ export default class TransformerUIElement extends UIElement {
     this.editor.cursorHandler.registerElement(elem)
   }
 
-  unregisterCtrlPoint(id) {
-    id = 'transformer:scale:'+id;
-    this.editor.cursorHandler.unregisterElement(id);
-  }
-
   registerRotationPoint(id, layer, posn) {
     id = 'transformer:rotate:'+id;
     let ctrlBounds = Bounds.centeredOnPosn(posn.sharp(), CTRL_PT_DIMEN, CTRL_PT_DIMEN);
     let ctrlPt = new Circle(posn, 10);
 
-    layer.drawCircle(posn, 10, { stroke: 'red' });
+    //layer.drawCircle(posn, 10, { stroke: 'red' });
 
     let elem = new Element(id, ctrlPt, {
       'mousedown': function (e, posn) {
