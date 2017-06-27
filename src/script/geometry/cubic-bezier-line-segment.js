@@ -40,7 +40,7 @@ export default class CubicBezier {
 
   static fromPathPoint(point) {
     let prec = point.prec;
-    return new CubicBezier(prec, prec.getSHandle(), point.getPHandle(), point);
+    return new CubicBezier(prec.toPosn(), prec.getSHandle(), point.getPHandle(), point.toPosn());
   }
 
   /*
@@ -49,14 +49,8 @@ export default class CubicBezier {
   */
 
   toString() {
-    return `new CubicBezier(${this.p1}, ${this.p2}, ${this.p3}, ${this.p4})`;
+    return `${this.p1}, ${this.p2}, ${this.p3}, ${this.p4}`;
   }
-
-  toCurveTo() {
-    return new CurveTo(this.p2.x, this.p2.y, this.p3.x, this.p3.y, this.p4.x, this.p4.y);
-  }
-
-  toSVGPoint() { return this.toCurveTo(); }
 
   length() {
     // Not that accurate lol
@@ -130,8 +124,13 @@ export default class CubicBezier {
     return [this.p1, this.p4];
   }
 
+  posnAt(perc) {
+    let result = this.splitAt(perc);
+    return result[0].p4;
+  }
+
   midPoint() {
-    return this.splitAt(0.5)[0].p4;
+    return this.posnAt(0.5);
   }
 
   bounds(useCached) {
@@ -239,12 +238,12 @@ export default class CubicBezier {
     if (force == null) { force = null; }
     if (typeof t === "number") {
 
-      let p5 = new LineSegment(this.p1, this.p2).posnAtPercent(t);
-      let p6 = new LineSegment(this.p2, this.p3).posnAtPercent(t);
-      let p7 = new LineSegment(this.p3, this.p4).posnAtPercent(t);
-      let p8 = new LineSegment(p5, p6).posnAtPercent(t);
-      let p9 = new LineSegment(p6, p7).posnAtPercent(t);
-      let p10 = force ? force : new LineSegment(p8, p9).posnAtPercent(t);
+      let p5 = new LineSegment(this.p1, this.p2).posnAt(t);
+      let p6 = new LineSegment(this.p2, this.p3).posnAt(t);
+      let p7 = new LineSegment(this.p3, this.p4).posnAt(t);
+      let p8 = new LineSegment(p5, p6).posnAt(t);
+      let p9 = new LineSegment(p6, p7).posnAt(t);
+      let p10 = force ? force : new LineSegment(p8, p9).posnAt(t);
 
       return [new CubicBezier(this.p1, p5, p8, p10), new CubicBezier(p10, p9, p7, this.p4)];
 

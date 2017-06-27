@@ -1,4 +1,5 @@
 import Posn from 'geometry/posn';
+import Bounds from 'geometry/bounds';
 import Range from 'geometry/range';
 /*
   Internal representation of a straight line segment
@@ -193,7 +194,7 @@ export default class LineSegment {
     return [a, b];
   }
 
-  posnAtPercent(p) {
+  posnAt(p) {
     // I/P: p, number between 0 and 1
     // O/P: Posn at that point on the LineSegment
 
@@ -209,7 +210,6 @@ export default class LineSegment {
     return distanceA / (distanceA + p.distanceFrom(this.b));
   }
 
-
   splitAt(p, forced) {
     // I/P: p, a float between 0 and 1
     //
@@ -222,7 +222,7 @@ export default class LineSegment {
 
     if (forced == null) { forced = null; }
     if (typeof p === "number") {
-      let split = forced ? forced : this.posnAtPercent(p);
+      let split = forced ? forced : this.posnAt(p);
       return [new LineSegment(this.a, split), new LineSegment(split, this.b)];
 
     } else if (p instanceof Array) {

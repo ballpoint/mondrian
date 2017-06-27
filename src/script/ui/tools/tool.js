@@ -4,7 +4,6 @@ export default class Tool {
   }
 
   handleMousemove(e, posn) {
-
   }
 
   handleMousedown(e, posn) {

@@ -1,4 +1,5 @@
 import Posn from 'geometry/posn';
+import Bounds from 'geometry/bounds';
 import LineSegment from 'geometry/line-segment';
 import CubicBezier from 'geometry/cubic-bezier-line-segment';
 import math from 'lib/math';

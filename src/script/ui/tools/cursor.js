@@ -16,9 +16,7 @@ export default class Cursor extends Tool {
   }
 
   handleMousemove(e, posn) {
-    if (this.editor.cursor.dragging) {
-      return;
-    }
+    if (this.dragSelectStart) return;
 
     delete this.hovering;
 

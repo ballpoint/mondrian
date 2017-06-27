@@ -14,6 +14,8 @@ export default class SubCursor extends Tool {
   }
 
   handleMousemove(e, posn) {
+    if (this.dragSelectStart) return;
+
     let pointsToCheck = [];
 
     let closestPoint;

@@ -25,6 +25,7 @@ import * as actions from 'history/actions/actions';
 import Cursor from 'ui/tools/cursor';
 import SubCursor from 'ui/tools/subcursor';
 import Zoom from 'ui/tools/zoom';
+import Pen from 'ui/tools/pen';
 import Paw from 'ui/tools/paw';
 
 import RulersUIElement from 'ui/editor/rulers';
@@ -149,6 +150,7 @@ export default class Editor extends EventEmitter {
     hotkeys.on('down', 'V', () => { this.selectTool(new Cursor(this)); });
     hotkeys.on('down', 'A', () => { this.selectTool(new SubCursor(this)); });
     hotkeys.on('down', 'Z', () => { this.selectTool(new Zoom(this)); });
+    hotkeys.on('down', 'P', () => { this.selectTool(new Pen(this)); });
     hotkeys.on('down', 'space', () => { this.selectTool(new Paw(this)); });
     hotkeys.on('up', 'space', () => { this.selectTool(this.state.lastTool); });
 

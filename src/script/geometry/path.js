@@ -2,7 +2,6 @@ import Item from 'geometry/item'
 import PointsSegment from 'geometry/points-segment'
 import PointsList from 'geometry/points-list'
 import Range from 'geometry/range'
-import lab from 'lab/lab'
 import PathPoint from 'geometry/path-point';
 import Posn from 'geometry/posn';
 
@@ -143,9 +142,6 @@ export default class Path extends Item {
   }
 
   lineSegments() {
-    // No I/P
-    //
-    // O/P: A list of LineSegments and/or CubicBeziers representing this path
     let ls = this.points.segments.reduce((a, b) => {
       return a.concat(b.lineSegments());
     }, []);

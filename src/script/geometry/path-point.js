@@ -32,6 +32,10 @@ export default class PathPoint extends Posn {
     return new PathPoint(x, y, pX, pY, sX, sY);
   }
 
+  toPosn() {
+    return new Posn(this.x, this.y);
+  }
+
   static fromString(string, prec) {
     // Given a string like "M 10.2 502.19"
     // return the corresponding Point.
