@@ -153,6 +153,9 @@ export default class Pen extends Tool {
 
       this.editor.perform(frame);
 
+      // Only select the new point
+      this.editor.selectFromIndexes([startIndex.plus(1)]);
+
       delete this.closest;
     }
   }
