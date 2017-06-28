@@ -3,7 +3,6 @@ import Circle from 'geometry/circle';
 import Element from 'ui/element';
 import UIElement from 'ui/editor/ui_element';
 
-
 export default class DocumentPointsUIElement extends UIElement {
   reset() {
     this.editor.cursorHandler.unregisterElement(/selectedPoint.*/);    
@@ -29,22 +28,24 @@ export default class DocumentPointsUIElement extends UIElement {
       }
 
       if (tool.hovering && this.editor.state.selection.indexOf(tool.hovering)) {
-        this.handlePoint(tool.hovering, 'h', layer);
+        this.handlePoint(tool.hovering, layer);
       }
+    }
+
+    // Don't draw selected points when we're manipulating points
+    if (tool.id === 'pen' && tool.closest) {
+      return;
     }
 
     if (this.editor.state.selectionType === 'POINTS') {
       // draw selected pts
-      for (let i = 0; i < this.editor.state.selection.length; i ++) {
-        let pt = this.editor.state.selection[i];
-        this.handlePoint(pt, i, layer, {
-          includeHandles: true
-        });
+      for (let pt of this.editor.state.selection) {
+        this.handlePoint(pt, layer, { includeHandles: true });
       }
     }
   }
 
-  handlePoint(pt, i, layer, opts={}) {
+  handlePoint(pt, layer, opts={}) {
     let mainPosn = this.editor.projection.posn(pt);
 
     if (opts.includeHandles) {
@@ -53,8 +54,8 @@ export default class DocumentPointsUIElement extends UIElement {
         if (!handle) continue;
 
         let sp = this.editor.projection.posn(handle);
-        let id = 'selectedPoint:'+i+':'+name;
-        layer.drawLineSegment(mainPosn, sp);
+        let id = 'selectedPoint:'+pt.index.toString()+':'+name;
+        layer.drawLineSegment(mainPosn, sp, { stroke: consts.point });
 
         this.drawPoint(id, handle, sp, layer);
 
@@ -68,13 +69,12 @@ export default class DocumentPointsUIElement extends UIElement {
       }
     }
 
-    let mainId = 'selectedPoint:'+i;
+    let mainId = 'selectedPoint:'+pt.index.toString();
     let mp = this.editor.projection.posn(pt);
 
     // Main point
     this.drawPoint(mainId, pt, mp, layer);
     this.registerPoint(mainId, mp, (e) => {
-      console.log(pt);
       if (!this.editor.state.selection.has(pt)) {
         this.editor.setSelection([pt]);
       }
@@ -89,10 +89,10 @@ export default class DocumentPointsUIElement extends UIElement {
     let style = { stroke: consts.point, fill: 'white' };
     let radius = 2.5;
     if (this.editor.isSelected(point)) {
-      style.stroke = 'blue';
+      //style.stroke = 'blue';
       radius = 3.5;
     } else if (this.editor.cursorHandler.isActive(id)) {
-      style.stroke = 'blue';
+      //style.stroke = 'blue';
       radius = 3.5;
     }
     layer.drawCircle(posn, radius, style);

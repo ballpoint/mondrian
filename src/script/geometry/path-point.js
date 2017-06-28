@@ -1,5 +1,7 @@
 import Posn from 'geometry/posn';
 import Index from 'geometry/index';
+import LineSegment from 'geometry/line-segment';
+import CubicBezier from 'geometry/cubic-bezier-line-segment';
 
 // PathPoint
 
@@ -210,6 +212,14 @@ export default class PathPoint extends Posn {
     }
 
     return points;
+  }
+
+  toLineSegment() {
+    if (this.hasHandles()) {
+      return CubicBezier.fromPathPoint(this);
+    } else {
+      return LineSegment.fromPathPoint(this);
+    }
   }
 
   setPHandle(pX, pY) {

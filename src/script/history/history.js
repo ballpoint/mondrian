@@ -9,7 +9,12 @@ export default class DocHistory {
     this.head.seal();
   }
 
-  push(action, opts={}) {
+  pushFrame(frame) {
+    frame.setPrev(this.head);
+    this.setHead(frame);
+  }
+
+  pushAction(action) {
     if (!this.head.isSealed()){ 
       if (this.head.canMerge(action)) {
         this.head.merge(action);

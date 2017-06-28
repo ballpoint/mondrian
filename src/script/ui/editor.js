@@ -19,8 +19,10 @@ import Bounds from 'geometry/bounds'
 import Element from 'ui/element';
 import CursorTracking from 'ui/cursor-tracking';
 import CursorHandler from 'ui/cursor-handler';
+
 import DocHistory from 'history/history';
 import * as actions from 'history/actions/actions';
+import HistoryFrame from 'history/Frame';
 
 import Cursor from 'ui/tools/cursor';
 import SubCursor from 'ui/tools/subcursor';
@@ -66,6 +68,7 @@ export default class Editor extends EventEmitter {
     this.cursor = new CursorTracking(this.root);
 
     this.cursorHandler = new CursorHandler(this.cursor);
+    window.$ch = this.cursorHandler;
 
     // UIElements
     let uiElems = [
@@ -524,13 +527,21 @@ export default class Editor extends EventEmitter {
     this.trigger('change');
   }
 
-  perform(action) {
-    action.perform(this);
-    this.history.push(action);
+  perform(h) {
+    if (h instanceof HistoryFrame) {
+      for (let action of h.actions) {
+        action.perform(this);
+      }
+      this.history.pushFrame(h);
 
-    // Do clean-up after
-    if (action instanceof actions.DeleteAction) {
-      this.cleanUpEmptyItems(action);
+    } else if (h instanceof actions.HistoryAction) {
+      h.perform(this);
+      this.history.pushAction(h);
+
+      // Do clean-up after
+      if (h instanceof actions.DeleteAction) {
+        this.cleanUpEmptyItems(h);
+      }
     }
   }
 

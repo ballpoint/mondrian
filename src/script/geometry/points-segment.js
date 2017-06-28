@@ -94,6 +94,9 @@ export default class PointsSegment {
     }
 
     this.relink();
+
+    point.segment = this;
+
     return;
 
     let head = this.points.slice(0, index);
@@ -244,15 +247,7 @@ export default class PointsSegment {
   }
 
   lineSegments() {
-    let ls = [];
-    for (let p of this.points.slice(0)) {
-      if (p.hasHandles()) {
-        ls.push(CubicBezier.fromPathPoint(p));
-      } else {
-        ls.push(LineSegment.fromPathPoint(p));
-      }
-    }
-    return ls;
+    return this.points.map((p) => { return p.toLineSegment() });
   }
 
   drawPointToCanvas(point, prec, layer, projection) {

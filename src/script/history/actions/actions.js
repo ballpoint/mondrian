@@ -2,7 +2,7 @@ import Path from 'geometry/path';
 import PathPoint from 'geometry/path-point';
 import Item from 'geometry/item';
 
-class HistoryAction {
+export class HistoryAction {
   constructor(data) {
     this.data = data;
     this.created = new Date();

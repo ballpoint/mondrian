@@ -26,12 +26,13 @@ export default class SubCursor extends Tool {
 
 
     for (let elem of this.editor.doc.elementsFlat) {
-      let points = elem.points.all();
 
       // Make sure we're anywhere near this element before we spend time iterating
       // through all of its points
       let bounds = elem.bounds().padded(10);
       if (shapes.contains(bounds, posn)) {
+        let points = elem.points.all();
+        window.$p = points;
         pointsToCheck = pointsToCheck.concat(points);
       }
     }

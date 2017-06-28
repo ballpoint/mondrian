@@ -57,4 +57,10 @@ export default class Index {
   get parent() {
     return new Index(this.parts.slice(0, this.parts.length-1));
   }
+
+  plus(n) {
+    let parts = this.parts.slice(0);
+    parts[parts.length-1] += n;
+    return new Index(parts);
+  }
 }

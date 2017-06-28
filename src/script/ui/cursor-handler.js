@@ -100,34 +100,29 @@ export default class CursorHandler extends EventEmitter {
   }
 
   registerElement(elem) {
-    let existing = this.elementsMap[elem.id];
-    if (existing) {
-      // Replace it
-      let index = existing.index;
-      elem.index = index;
-      this.elements[index] = elem;
-      this.elementsMap[elem.id] = elem;
-    } else {
-      elem.index = this.elements.length;
-      this.elements.push(elem);
-      this.elementsMap[elem.id] = elem;
-    }
+    this.removeId(elem.id);
+    this.elementsMap[elem.id] = elem;
+    this.elements.push(elem);
   }
 
   unregisterElement(query) {
     if (typeof(query) === 'string') {
       let existing = this.elementsMap[query];
       if (existing) {
-        this.elements = this.elements.removeIndex(existing.index);
-        delete this.elementsMap[query];
+        this.removeId(query);
       }
     } else if (query instanceof RegExp) {
       for (let id in this.elementsMap) {
         if (query.test(id)) {
-          this.unregisterElement(id);
+          this.removeId(id);
         }
       }
     }
+  }
+
+  removeId(id) {
+    this.elements = this.elements.filter((e) => { return e.id !== id });
+    delete this.elementsMap[id];
   }
 
 
