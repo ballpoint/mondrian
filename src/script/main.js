@@ -4,6 +4,7 @@ import Doc from 'io/doc';
 import abq from 'abq.svg';
 import sbux from 'sbux.svg';
 import cmg from 'cmg.svg';
+import windows from 'windows.svg';
 import google from 'google.svg';
 import Editor from 'ui/editor';
 import Utils from 'ui/components/Utils';
