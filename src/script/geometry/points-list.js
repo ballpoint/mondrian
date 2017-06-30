@@ -5,18 +5,16 @@ import PathPoint from 'geometry/path-point';
 
 export default class PointsList {
   static initClass() {
-  
-    this.prototype.first = null;
-    this.prototype.last = null;
-  
-    this.prototype.firstSegment = null;
-    this.prototype.lastSegment = null;
-  
     this.prototype.closed = false;
   }
 
   constructor(segments=[], path) {
     this.segments = segments;
+
+    if (this.segments.length === 0) {
+      this.pushSegment(new PointsSegment([], this));
+    }
+
     this.path = path;
     for (let segment of segments) {
       segment.list = this;
@@ -79,8 +77,23 @@ export default class PointsList {
     return list;
   }
 
+  get firstSegment() {
+    return this.segments[0];
+  }
+
+  get lastSegment() {
+    return this.segments[this.segments.length-1];
+  }
+
+  get first() {
+    return this.firstSegment.first;
+  }
+
+  get last() {
+    return this.lastSegment.last;
+  }
+
   pushSegment(segment) {
-    this.lastSegment = segment;
     this.segments.push(segment);
   }
 
@@ -111,16 +124,7 @@ export default class PointsList {
 
   push(point) {
     // Add a new point!
-
-    if (this.segments.length === 0) {
-      this.pushSegment(new PointsSegment([], this));
-    }
-
-    point.i = this.lastSegment.points.length;
     this.lastSegment.push(point);
-
-    this.last = point;
-
     return this;
   }
 
@@ -129,10 +133,10 @@ export default class PointsList {
   }
 
   closeSegment() {
-    if (this.lastSegment) {
+    if (this.lastSegment && !this.lastSegment.empty) {
       this.lastSegment.close();
+      this.pushSegment(new PointsSegment([], this));
     }
-    this.pushSegment(new PointsSegment([], this));
   }
 
   replace(old, replacement) {

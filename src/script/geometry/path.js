@@ -17,6 +17,8 @@ export default class Path extends Item {
     super(data);
     if (this.data && this.data.d) {
       this.importNewPoints(this.data.d);
+    } else {
+      this.points = new PointsList([], this);
     }
   }
 

@@ -90,6 +90,37 @@ export class NudgeHandleAction extends HistoryAction {
   }
 }
 
+export class AddHandleAction extends HistoryAction {
+  perform(editor) {
+    for (let index of this.data.indexes) {
+      let pp = editor.doc.getFromIndex(index);
+      pp.setHandle(this.data.handle, this.data.posn);
+      if (this.data.reflect) {
+        pp.reflectHandle(this.data.handle);
+      }
+    }
+  }
+
+  opposite() {
+    return new RemoveHandleAction({
+      indexes: this.data.indexes,
+      reflect: this.data.reflect
+    });
+  }
+}
+
+export class RemoveHandleAction extends HistoryAction {
+  perform(editor) {
+    for (let index of this.data.indexes) {
+      let pp = editor.doc.getFromIndex(index);
+      pp.unsetHandle(this.data.handle);
+      if (this.data.reflect) {
+        pp.unsetHandle(this.data.handle === 'pHandle' ? 'sHandle' : 'pHandle');
+      }
+    }
+  }
+}
+
 export class ScaleAction extends HistoryAction {
   perform(editor) {
     editor.selectFromIndexes(this.data.indexes);

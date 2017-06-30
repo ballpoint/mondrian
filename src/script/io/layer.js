@@ -35,7 +35,15 @@ export default class Layer {
     this.children = this.children.insertAt(child, i);
   }
 
+  push(child) {
+    this.children.push(child);
+  }
+
   get empty() {
     return this.children.length === 0;
+  }
+
+  nextChildIndex() {
+    return this.index.concat([this.children.length]);
   }
 }

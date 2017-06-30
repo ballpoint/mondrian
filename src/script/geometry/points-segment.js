@@ -95,6 +95,8 @@ export default class PointsSegment {
 
     this.relink();
 
+    this.path.clearCachedObjects();
+
     point.segment = this;
 
     return;
@@ -204,12 +206,6 @@ export default class PointsSegment {
     // Relink things
     x.prec.succ = x.succ;
     x.succ.prec = x.prec;
-    if (x === this.list.last) {
-      this.list.last = x.prec;
-    }
-    if (x === this.list.first) {
-      this.list.first = x.succ;
-    }
     this.points = this.points.remove(x);
   }
 
@@ -247,7 +243,11 @@ export default class PointsSegment {
   }
 
   lineSegments() {
-    return this.points.map((p) => { return p.toLineSegment() });
+    return this.points.map((p) => { return p.toLineSegment() }).filter((ls) => { return ls !== null });
+  }
+
+  nextChildIndex() {
+    return this.index.concat([this.children.length]);
   }
 
   drawPointToCanvas(point, prec, layer, projection) {

@@ -33,11 +33,17 @@ export default class HistoryFrame {
   }
 
   merge(action) {
-    let a = this.actions[0];
-    a.merge(action);
+    for (let a of this.actions) {
+      if (a.constructor === action.constructor) {
+        a.merge(action);
+        this.setSealTime(action.created);
+        this.merges++;
+      }
+    }
+  }
 
-    this.setSealTime(action.created);
-    this.merges++;
+  push(action) {
+    this.actions.push(action);
   }
 
   isSealed() {
@@ -45,10 +51,13 @@ export default class HistoryFrame {
   }
 
   canMerge(action) {
-    if (this.actions.length !== 1) return false;
-    let a = this.actions[0];
+    for (let a of this.actions) {
+      if (a.constructor === action.constructor && a.constructor.prototype.merge) {
+        return true;
+      }
+    }
 
-    return (a.constructor === action.constructor && a.constructor.prototype.merge);
+    return false;
   }
 
   seal() {

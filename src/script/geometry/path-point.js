@@ -215,6 +215,9 @@ export default class PathPoint extends Posn {
   }
 
   toLineSegment() {
+    if (!this.prec) {
+      return null;
+    }
     if (this.hasHandles()) {
       return CubicBezier.fromPathPoint(this);
     } else {
@@ -297,15 +300,41 @@ export default class PathPoint extends Posn {
       handle.nudge(xd, yd);
 
       if (oppHandle && this.handlesLocked) {
-        switch (which) {
-          case 'sHandle':
-            this.setPHandle(this.sHandle.reflect(this));
-            break;
-          case 'pHandle':
-            this.setSHandle(this.pHandle.reflect(this));
-            break;
-        }
+        this.reflectHandle(which);
       }
+    }
+  }
+
+  setHandle(which, posn) {
+    switch (which) {
+      case 'sHandle':
+        this.setSHandle(posn);
+        break;
+      case 'pHandle':
+        this.setPHandle(posn);
+        break;
+    }
+  }
+
+  unsetHandle(which) {
+    switch (which) {
+      case 'sHandle':
+        delete this.sHandle;
+        break;
+      case 'pHandle':
+        delete this.pHandle;
+        break;
+    }
+  }
+
+  reflectHandle(which) {
+    switch (which) {
+      case 'sHandle':
+        this.setPHandle(this.sHandle.reflect(this));
+        break;
+      case 'pHandle':
+        this.setSHandle(this.pHandle.reflect(this));
+        break;
     }
   }
 

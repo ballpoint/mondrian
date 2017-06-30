@@ -2,6 +2,7 @@ import consts from 'consts';
 import shapes from 'lab/shapes';
 import Tool from 'ui/tools/tool';
 import Bounds from 'geometry/bounds';
+import Path from 'geometry/path';
 import PathPoint from 'geometry/path-point';
 import HistoryFrame from 'history/Frame';
 import * as actions from 'history/actions/actions';
@@ -24,6 +25,12 @@ export default class Pen extends Tool {
       return;
     }
 
+    if (this.pathItem) {
+      return;
+    }
+
+    delete this.closest;
+
     let elemsToScan = [];
 
     let p = this.editor.projection.posn(posn);
@@ -36,9 +43,6 @@ export default class Pen extends Tool {
       }
     }
 
-    delete this.closest;
-
-    let closest;
 
     for (let elem of elemsToScan) {
       let points = elem.getPoints();
@@ -111,6 +115,43 @@ export default class Pen extends Tool {
   }
 
   handleMousedown(e, posn) {
+    if (this.closest) {
+      return;
+    }
+
+    // If we're not focusing on adding a point to an existing shape, start a new shape
+    let frame = new HistoryFrame();
+
+    let pathIndex;
+
+    if (!this.pathItem) {
+      this.pathItem = new Path({
+        fill: '#a877d6',
+        stroke: '#000000',
+      });
+
+      pathIndex = doc.layers[0].nextChildIndex()
+
+      frame.push(new actions.InsertAction({
+        items: [
+          { item: this.pathItem, index: pathIndex }
+        ]
+      }));
+    } else {
+      pathIndex = this.pathItem.index;
+    }
+
+    let pp = new PathPoint(posn.x, posn.y);
+
+    frame.push(new actions.InsertAction({
+      items: [
+        { item: pp, index: pathIndex.concat([0, this.pathItem.points.segments[0].points.length]) }
+      ]
+    }));
+
+    frame.seal();
+
+    this.editor.perform(frame);
   }
 
   handleClick(e, posn) {
@@ -151,6 +192,8 @@ export default class Pen extends Tool {
         }),
       ]);
 
+      frame.seal();
+
       this.editor.perform(frame);
 
       // Only select the new point
@@ -160,10 +203,38 @@ export default class Pen extends Tool {
     }
   }
 
-  handleDragStart(e, posn) {
+  handleDragStart(e, posn, lastPosn) {
   }
 
-  handleDrag(e, posn) {
+  handleDrag(e, posn, lastPosn) {
+    let currentPoint = this.pathItem.points.last;
+    let action;
+
+    if (currentPoint.sHandle) {
+      // Already exists; move it
+
+      let xd = posn.x - lastPosn.x;
+      let yd = posn.y - lastPosn.y;
+
+      action = new actions.NudgeHandleAction({
+        indexes: [currentPoint.index],
+        handle: 'sHandle',
+        reflect: true,
+        xd, yd,
+      });
+
+    } else {
+      // Set it for the first time
+      action = new actions.AddHandleAction({
+        indexes: [currentPoint.index],
+        handle: 'sHandle',
+        reflect: true,
+        posn,
+      });
+    }
+
+    this.editor.perform(action);
+
   }
 
   handleDragStop(e, posn) {

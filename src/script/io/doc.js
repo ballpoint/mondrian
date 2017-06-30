@@ -100,12 +100,6 @@ export default class Doc {
     }
   }
 
-  insertAtQueries(items) {
-    items = items.sort((a, b) => {
-      return b.index - a.index;
-    });
-  }
-
   getLayerWithElement(elem) {
     for (let layer of this.layers) {
       if (layer.children.indexOf(elem) !== -1) {
