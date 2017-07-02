@@ -6,7 +6,6 @@ export default class Cursor extends Tool {
   constructor(editor) {
     super(editor);
 
-    this.hovering = null;
     this.dragSelectStart = null;
     this.dragSelectEnd = null;
   }
@@ -18,29 +17,22 @@ export default class Cursor extends Tool {
   handleMousemove(e, posn) {
     if (this.dragSelectStart) return;
 
-    delete this.hovering;
-
     if (!this.editor.doc) return;
 
     let elems = this.editor.doc.elements.slice(0).reverse();
 
     for (let element of elems) {
       if (shapes.contains(element, posn)) {
-        this.hovering = element;
-        break;
+        this.editor.setHovering([element]);
+        return;
       }
     }
 
+    this.editor.setHovering([]);
   }
 
   handleMousedown(e, posn) {
-    if (this.hovering) {
-      if (!this.editor.state.selection.has(this.hovering)) {
-        this.editor.setSelection([this.hovering]);
-      }
-    } else {
-      this.editor.setSelection([]);
-    }
+    this.editor.setSelection(this.editor.state.hovering);
   }
 
   handleClick(e, posn) {

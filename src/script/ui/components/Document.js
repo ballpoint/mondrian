@@ -26,14 +26,24 @@ let DocumentUtil = React.createClass({
     }
 
     return (
-      <div className="doc-util__item">
+      <div className={classnames({
+        "doc-util__item": true,
+        "selected": isSelected,
+      })}>
         <div
           className={classnames({
             "doc-util__item__bar": true,
-            "selected": isSelected,
           })}
           onClick={() => {
             this.props.editor.setSelection([child]);
+          }}
+          onMouseMove={(e) => {
+            e.stopPropagation();
+            this.props.editor.setHovering([child]);
+          }}
+          onMouseOut={(e) => {
+            e.stopPropagation();
+            this.props.editor.setHovering([]);
           }}
         >
           {child.constructor.name}

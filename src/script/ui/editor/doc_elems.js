@@ -18,16 +18,12 @@ export default class DocumentPointsUIElement extends UIElement {
       }
     }
 
-    let hovering;
+    let hovering = this.editor.state.hovering;
 
-    switch (tool.id) {
-      case 'cursor':
-        hovering = tool.hovering;
-        break;
-    }
-
-    if (hovering && !this.editor.isSelected(hovering)) {
-      this.drawOutlines(hovering, layer);
+    for (let elem of hovering) {
+      if (!this.editor.isSelected(elem)) {
+        this.drawOutlines(elem, layer);
+      }
     }
   }
 

@@ -201,6 +201,7 @@ export default class Editor extends EventEmitter {
         zoomLevel: cached.zoomLevel,
         position: new Posn(cached.position),
         selection: [],
+        hovering:  [],
         scope: new Index([0]),
         tool: new Cursor(this)
       }
@@ -208,6 +209,7 @@ export default class Editor extends EventEmitter {
       this.state = {
         zoomLevel: 1,
         selection: [],
+        hovering:  [],
         scope: new Index([0]),
         tool: new Cursor(this)
       };
@@ -275,7 +277,7 @@ export default class Editor extends EventEmitter {
     this.setSelection(this.doc.elements.slice(0));
   }
 
-  setSelection(items) {
+  flattenGroupItems(items) {
     let finalItems = [];
     for (let item of items) {
       if ((item instanceof Path) || (item instanceof PathPoint)) {
@@ -287,10 +289,14 @@ export default class Editor extends EventEmitter {
         finalItems = finalItems.concat(item.childrenFlat);
       }
     }
+    return finalItems;
+  }
 
-    this.state.selection = finalItems;
+  setSelection(items) {
+    let flatItems = this.flattenGroupItems(items);
+    this.state.selection = flatItems;
 
-    if (items[0] instanceof PathPoint) {
+    if (flatItems[0] instanceof PathPoint) {
       this.state.selectionType = 'POINTS';
     } else {
       this.state.selectionType = 'ELEMENTS';
@@ -306,8 +312,34 @@ export default class Editor extends EventEmitter {
     this.trigger('change:selection');
   }
 
+  setHovering(items) {
+    let flatItems = this.flattenGroupItems(items);
+    this.state.hovering = flatItems;
+
+    if (flatItems[0] instanceof PathPoint) {
+      this.state.hoveringType = 'POINTS';
+    } else {
+      this.state.hoveringType = 'ELEMENTS';
+    }
+
+    this.canvas.refreshAll();
+    this.trigger('change');
+    this.trigger('change:hovering');
+  }
+
   isSelected(item) {
-    return this.state.selection.indexOf(item) > -1;
+    if (item instanceof Group) {
+      let isSelected = true;
+      for (let child of item.children) {
+        isSelected = isSelected && this.isSelected(child);
+        if (!isSelected) break;
+      }
+      return isSelected;
+    } else if (item instanceof Layer) {
+      return false;
+    } else {
+      return this.state.selection.indexOf(item) > -1;
+    }
   }
 
   selectTool(tool) {

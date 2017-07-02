@@ -1,16 +1,30 @@
 .doc-util__item {
+  border-left: 5px solid #ccc;
+  font-size: 14px;
+
   .doc-util__item__bar {
-    padding: 6px;
+    padding: 4px;
     border-bottom: 1px solid #ccc;
 
-    &.selected {
-      background: blue;
-      color: white;
+    &:hover {
+      color: blue;
     }
   }
 
   .doc-util__item__children {
+    margin-left: 2px;
+  }
+
+
+  &.selected {
     border-left: 5px solid blue;
+
+    .doc-util__item__bar {
+      color: blue;
+    }
+
+    .doc-util__item__children {
+    }
   }
 
 }
