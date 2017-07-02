@@ -15,9 +15,10 @@ let DocumentUtilChild = React.createClass({
     let children;
     let isSelected = this.props.editor.isSelected(child);
 
-    if (this.state.expanded && child.children && child.children.length > 0) {
+    if (child.children && child.children.length > 0) {
       children = <div className={classnames({
         "doc-util__item__children": true,
+        "doc-util__item__children--hidden": !this.state.expanded,
       })}>
         {
           child.children.map((child) => {

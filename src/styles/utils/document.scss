@@ -18,6 +18,11 @@
     }
   }
 
+  &.doc-util__item--layer:first-child .doc-util__item__bar {
+    border-top: none;
+  }
+
+
   &.doc-util__item--layer > .doc-util__item__bar {
     padding: 12px 4px;
   }
@@ -28,6 +33,10 @@
 
     .doc-util__item:last-child {
       border-bottom: 1px solid #ccc;
+    }
+
+    &.doc-util__item__children--hidden {
+      display: none;
     }
   }
 
