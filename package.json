@@ -24,6 +24,7 @@
     "babel": "^6.23.0",
     "babel-core": "^6.24.1",
     "babel-loader": "^7.0.0",
+    "classnames": "^2.2.5",
     "css-loader": "^0.28.0",
     "d3-scale": "^1.0.5",
     "extract-text-webpack-plugin": "^2.1.0",

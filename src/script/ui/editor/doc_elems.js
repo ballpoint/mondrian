@@ -1,3 +1,4 @@
+import consts from 'consts';
 import UIElement from 'ui/editor/ui_element';
 
 export default class DocumentPointsUIElement extends UIElement {
@@ -17,12 +18,16 @@ export default class DocumentPointsUIElement extends UIElement {
       }
     }
 
-    if (tool.id === 'cursor') {
+    let hovering;
 
-      let hovering = tool.hovering;
-      if (hovering && !this.editor.isSelected(hovering)) {
-        this.drawOutlines(hovering, layer);
-      }
+    switch (tool.id) {
+      case 'cursor':
+        hovering = tool.hovering;
+        break;
+    }
+
+    if (hovering && !this.editor.isSelected(hovering)) {
+      this.drawOutlines(hovering, layer);
     }
   }
 
@@ -31,7 +36,7 @@ export default class DocumentPointsUIElement extends UIElement {
     for (let line of ls) {
       layer.context.beginPath();
       layer.drawLine(this.editor.projection.line(line));
-      layer.context.strokeStyle = 'blue';
+      layer.context.strokeStyle = consts.blue;
       layer.context.stroke();
     }
 

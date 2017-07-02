@@ -1,3 +1,4 @@
+import consts from 'consts';
 import Posn from 'geometry/posn';
 import LineSegment from 'geometry/line-segment'
 import Bounds from 'geometry/bounds'
@@ -101,11 +102,17 @@ export default class TransformerUIElement extends UIElement {
       return;
     }
 
-    if (this.editor.state.selectionType !== 'ELEMENTS') {
+    //if (this.editor.state.selectionType !== 'ELEMENTS') {
+     // return;
+    //}
+
+    let bounds = this.editor.projection.bounds(this.editor.state.selectionBounds.bounds);
+
+    if (bounds.width === 0 || bounds.height === 0) {
+      // Don't draw one or two dimensional transformer
       return;
     }
 
-    let bounds = this.editor.projection.bounds(this.editor.state.selectionBounds.bounds);
     let { angle, center } = this.editor.state.selectionBounds;
     center = this.editor.projection.posn(center);
 
@@ -126,8 +133,8 @@ export default class TransformerUIElement extends UIElement {
     // Control point dimens
     const d = CTRL_PT_DIMEN;
     const d2 = d/2;
-    const opts = { stroke: 'blue' };
-    const ctrlOpts = { stroke: 'blue', centerPosn: true };
+    const opts = { stroke: consts.blue };
+    const ctrlOpts = { stroke: consts.blue, centerPosn: true };
 
     // TL -> TM
     layer.drawLineSegment(

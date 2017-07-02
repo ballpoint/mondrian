@@ -331,6 +331,8 @@ export default class Editor extends EventEmitter {
 
     this.perform(action);
 
+    this.cleanUpEmptyItems(action);
+
     this.setSelection([]);
     this.canvas.refreshAll();
 
@@ -341,31 +343,53 @@ export default class Editor extends EventEmitter {
   calculateSelectionBounds() {
     let selectionBounds = {};
 
-    if (this.state.selectionType === 'ELEMENTS' && this.state.selection.length > 0) {
+    if (this.state.selection.length > 0) {
+      let bounds;
       let angle = 0;
       let center;
 
-      let selectedAngles = _.uniq(this.state.selection.map((e) => { return e.metadata.angle }));
-      if (selectedAngles.length === 1) {
-        angle = selectedAngles[0];
+      if (this.state.selectionType === 'ELEMENTS') {
+        let selectedAngles = _.uniq(this.state.selection.map((e) => { return e.metadata.angle }));
+        if (selectedAngles.length === 1) {
+          angle = selectedAngles[0];
+        }
+
+        let boundsList = [];
+
+        for (let elem of this.state.selection) {
+          if (angle !== 0) {
+            elem.rotate(-angle, new Posn(0,0));
+          }
+          boundsList.push(elem.bounds());
+          if (angle !== 0) {
+            elem.rotate(angle, new Posn(0,0));
+          }
+        }
+
+        bounds = new Bounds(boundsList);
+        center = bounds.center();
+
+      } else if (this.state.selectionType === 'POINTS') {
+        let selectedAngles = _.uniq(this.state.selection.map((e) => { return e.path.metadata.angle }));
+        if (selectedAngles.length === 1) {
+          angle = selectedAngles[0];
+        }
+
+        if (angle !== 0) {
+          for (let pt of this.state.selection) {
+            pt.rotate(-angle, new Posn(0, 0));
+          }
+        }
+        bounds = Bounds.fromPosns(this.state.selection);
+        if (angle !== 0) {
+          for (let pt of this.state.selection) {
+            pt.rotate(angle, new Posn(0, 0));
+          }
+        }
+
+        center = bounds.center();
       }
 
-      let boundsList = [];
-
-      for (let elem of this.state.selection) {
-        if (angle !== 0) {
-          elem.rotate(-angle, new Posn(0,0));
-        }
-        boundsList.push(elem.bounds());
-        if (angle !== 0) {
-          elem.rotate(angle, new Posn(0,0));
-        }
-      }
-
-      let bounds = new Bounds(boundsList);
-
-
-      center = bounds.center();
       if (angle) {
         center = center.rotate(angle, new Posn(0,0));
         bounds.centerOn(center);
@@ -375,10 +399,6 @@ export default class Editor extends EventEmitter {
       selectionBounds.bounds = bounds;
       selectionBounds.angle = angle;
       selectionBounds.center = center;
-
-      if (bounds.flipped('x')) {
-        debugger;
-      }
     }
 
     this.state.selectionBounds = selectionBounds;
@@ -533,15 +553,9 @@ export default class Editor extends EventEmitter {
         action.perform(this);
       }
       this.history.pushFrame(h);
-
     } else if (h instanceof actions.HistoryAction) {
       h.perform(this);
       this.history.pushAction(h);
-
-      // Do clean-up after
-      if (h instanceof actions.DeleteAction) {
-        this.cleanUpEmptyItems(h);
-      }
     }
   }
 
@@ -572,8 +586,6 @@ export default class Editor extends EventEmitter {
     }
 
     if (markedForRemoval.length > 0) {
-      console.log(markedForRemoval, 'to remove');
-
       let cleanUpAction = new actions.DeleteAction({
         items: markedForRemoval.map((item) => {
           return { item, index: item.index }

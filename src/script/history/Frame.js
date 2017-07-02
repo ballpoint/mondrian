@@ -50,14 +50,15 @@ export default class HistoryFrame {
     return this.sealed || (new Date().valueOf() > this.sealTime.valueOf());
   }
 
-  canMerge(action) {
-    for (let a of this.actions) {
-      if (a.constructor === action.constructor && a.constructor.prototype.merge) {
-        return true;
-      }
-    }
+  get last() {
+    return this.actions[this.actions.length-1];
+  }
 
-    return false;
+  canMerge(action) {
+    return (
+      this.last.constructor === action.constructor &&
+      this.last.constructor.prototype.merge
+    );
   }
 
   seal() {

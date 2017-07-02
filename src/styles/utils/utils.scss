@@ -1,4 +1,4 @@
-@import 'vars.scss';
+@import '~vars.scss';
 
 $util-grey: darken($bg-grey, 13%);
 
@@ -7,7 +7,7 @@ $util-grey: darken($bg-grey, 13%);
   position: absolute;
   top: $app-header-height + 30px;
   right: 0;
-  width: 400px;
+  width: 360px;
   bottom: 20px;
   pointer-events: none;
 }
@@ -28,7 +28,6 @@ $util-grey: darken($bg-grey, 13%);
 
   .util-body {
     background: white;
-    padding: 5px;
     border-bottom: 1px solid $fg-grey;
     border-left: 1px solid $fg-grey;
     border-right: 1px solid $fg-grey;

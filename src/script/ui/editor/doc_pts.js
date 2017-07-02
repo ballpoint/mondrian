@@ -40,7 +40,7 @@ export default class DocumentPointsUIElement extends UIElement {
     if (this.editor.state.selectionType === 'POINTS') {
       // draw selected pts
       for (let pt of this.editor.state.selection) {
-        this.handlePoint(pt, layer, { includeHandles: true });
+        this.handlePoint(pt, layer, { includeHandles: this.editor.state.selection.length === 1 });
       }
     }
   }

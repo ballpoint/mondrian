@@ -1,0 +1,16 @@
+.doc-util__item {
+  .doc-util__item__bar {
+    padding: 6px;
+    border-bottom: 1px solid #ccc;
+
+    &.selected {
+      background: blue;
+      color: white;
+    }
+  }
+
+  .doc-util__item__children {
+    border-left: 5px solid blue;
+  }
+
+}

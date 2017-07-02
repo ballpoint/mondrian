@@ -4,6 +4,8 @@ import Tool from 'ui/tools/tool';
 import Bounds from 'geometry/bounds';
 import Path from 'geometry/path';
 import PathPoint from 'geometry/path-point';
+import LineSegment from 'geometry/line-segment';
+import CubicBezier from 'geometry/cubic-bezier-line-segment';
 import HistoryFrame from 'history/Frame';
 import * as actions from 'history/actions/actions';
 
@@ -161,17 +163,25 @@ export default class Pen extends Tool {
       let d2 = this.closest.pathPoint;
 
       // Build the three new points we're replacing the original two with
-      let n1 = new PathPoint(d1.x, d1.y);
-      n1.setPHandle(d1.getPHandle());          // Stays the same
-      n1.setSHandle(splits[0].p2); // Derived from new split bezier
+      let n1 = new PathPoint(d1.x, d1.y); // Replaces d1
+      n1.setPHandle(d1.getPHandle());     // Stays the same
+      if (splits[0] instanceof CubicBezier) {
+        n1.setSHandle(splits[0].p2);      // Derived from new split bezier
+      }
 
-      let n2 = new PathPoint(this.closest.posn);
-      n2.setPHandle(splits[0].p3);
-      n2.setSHandle(splits[1].p2);
+      let n2 = new PathPoint(this.closest.posn); // The newly inserted point
+      if (splits[0] instanceof CubicBezier) {
+        n2.setPHandle(splits[0].p3);               // Derived
+      }
+      if (splits[1] instanceof CubicBezier) {
+        n2.setSHandle(splits[1].p2);               // Derived
+      }
 
-      let n3 = new PathPoint(d2.x, d2.y);
-      n3.setPHandle(splits[1].p3);    // Derived from new split bezier
-      n3.setSHandle(d2.getSHandle()); // Stays the same
+      let n3 = new PathPoint(d2.x, d2.y); // Replaces d2
+      if (splits[1] instanceof CubicBezier) {
+        n3.setPHandle(splits[1].p3);      // Derived from new split bezier
+      }
+      n3.setSHandle(d2.getSHandle());     // Stays the same
 
       let startIndex = this.closest.pathPoint.prec.index;
 
@@ -242,38 +252,46 @@ export default class Pen extends Tool {
 
   refresh(layer, context) {
     if (this.closest) {
+      let proj = this.editor.projection;
       let splits = this.closest.splits;
-      let pHandle = splits[0].p3;
-      let sHandle = splits[1].p2;
-
-      let pt = new PathPoint(
-        this.closest.posn.x, this.closest.posn.y
-      );
-      pt.setPHandle(pHandle);
-      pt.setSHandle(sHandle);
-
-      let p = this.editor.projection.posn(pt);
-      let pp = this.editor.projection.posn(pt.pHandle);
-      let ps = this.editor.projection.posn(pt.sHandle);
-
       let pointStyles = { stroke: consts.point, fill: 'white' };
 
-      layer.drawLineSegment(p, ps, pointStyles)
-      layer.drawLineSegment(p, pp, pointStyles)
+      if (splits[0] instanceof CubicBezier && splits[1] instanceof CubicBezier) {
+        let pHandle = splits[0].p3;
+        let sHandle = splits[1].p2;
 
-      layer.drawLineSegment(this.editor.projection.posn(splits[0].p1), this.editor.projection.posn(splits[0].p2), pointStyles)
-      layer.drawLineSegment(this.editor.projection.posn(splits[1].p3), this.editor.projection.posn(splits[1].p4), pointStyles)
+        let pt = new PathPoint(
+          this.closest.posn.x, this.closest.posn.y
+        );
+        pt.setPHandle(pHandle);
+        pt.setSHandle(sHandle);
 
-      // Draw new point
-      layer.drawCircle(p, 3.5, pointStyles)
-      layer.drawCircle(pp, 2.5, pointStyles)
-      layer.drawCircle(ps, 2.5, pointStyles)
+        let p = proj.posn(pt);
+        let pp = proj.posn(pt.pHandle);
+        let ps = proj.posn(pt.sHandle);
 
-      // Draw new section of existing points
-      layer.drawCircle(this.editor.projection.posn(splits[0].p1), 3.5, pointStyles)
-      layer.drawCircle(this.editor.projection.posn(splits[0].p2), 2.5, pointStyles)
-      layer.drawCircle(this.editor.projection.posn(splits[1].p3), 2.5, pointStyles)
-      layer.drawCircle(this.editor.projection.posn(splits[1].p4), 3.5, pointStyles)
+
+        layer.drawLineSegment(p, ps, pointStyles)
+        layer.drawLineSegment(p, pp, pointStyles)
+
+        layer.drawLineSegment(proj.posn(splits[0].p1), proj.posn(splits[0].p2), pointStyles)
+        layer.drawLineSegment(proj.posn(splits[1].p3), proj.posn(splits[1].p4), pointStyles)
+
+        // Draw new point
+        layer.drawCircle(p, 3.5, pointStyles)
+        layer.drawCircle(pp, 2.5, pointStyles)
+        layer.drawCircle(ps, 2.5, pointStyles)
+
+        // Draw new section of existing points
+        layer.drawCircle(proj.posn(splits[0].p1), 3.5, pointStyles)
+        layer.drawCircle(proj.posn(splits[0].p2), 2.5, pointStyles)
+        layer.drawCircle(proj.posn(splits[1].p3), 2.5, pointStyles)
+        layer.drawCircle(proj.posn(splits[1].p4), 3.5, pointStyles)
+      } else if (splits[0] instanceof LineSegment && splits[1] instanceof LineSegment) {
+        layer.drawCircle(proj.posn(splits[0].a), 3.5, pointStyles);
+        layer.drawCircle(proj.posn(splits[0].b), 3.5, pointStyles);
+        layer.drawCircle(proj.posn(splits[1].b), 3.5, pointStyles);
+      }
     }
   }
 
