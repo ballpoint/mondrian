@@ -233,9 +233,11 @@ let io = {
     }
 
 
+    /*
     if (data.id === undefined) {
       data.id = UUIDV4(); 
     }
+    */
 
     // By now any transform attrs should be permanent
     //elem.removeAttribute("transform")

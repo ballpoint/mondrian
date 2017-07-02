@@ -16,7 +16,7 @@ export default class TransformerUIElement extends UIElement {
   }
 
   reset() {
-    for (let id of ['tl', 'tr', 'bl', 'br', 'tm', 'lm', 'rm', 'bm']) {
+    for (let id of ['tl', 'tr', 'bl', 'br', 't', 'l', 'r', 'b']) {
       id = 'transformer:scale:'+id;
       this.editor.cursorHandler.unregisterElement(id);
     }

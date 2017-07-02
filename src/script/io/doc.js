@@ -42,8 +42,19 @@ export default class Doc {
       children
     });
 
+    let layer2 = new Layer({
+      id: 'layer2',
+      children: []
+    });
+
+    let layer3 = new Layer({
+      id: 'layer3',
+      children: []
+    });
+
+
     return new Doc({
-      layers: [layer],
+      layers: [layer3, layer, layer2],
       width,
       height,
     });

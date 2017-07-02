@@ -132,7 +132,7 @@ export default class Pen extends Tool {
         stroke: '#000000',
       });
 
-      pathIndex = doc.layers[0].nextChildIndex()
+      pathIndex = this.editor.state.layer.nextChildIndex()
 
       frame.push(new actions.InsertAction({
         items: [

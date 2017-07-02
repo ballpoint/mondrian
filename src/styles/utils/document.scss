@@ -1,30 +1,44 @@
+@import "~vars.scss";
+
 .doc-util__item {
-  border-left: 5px solid #ccc;
   font-size: 14px;
+  user-select: none;
+
+  &:not(.doc-util__item--layer) {
+    border-left: 5px solid #ccc;
+  }
 
   .doc-util__item__bar {
     padding: 4px;
-    border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+    cursor: pointer;
 
     &:hover {
-      color: blue;
+      color: $blue;
     }
   }
 
-  .doc-util__item__children {
-    margin-left: 2px;
+  &.doc-util__item--layer > .doc-util__item__bar {
+    padding: 12px 4px;
   }
 
+  .doc-util__item__children {
+    margin-left: 3px;
+    padding-bottom: 3px;
+
+    .doc-util__item:last-child {
+      border-bottom: 1px solid #ccc;
+    }
+  }
 
   &.selected {
-    border-left: 5px solid blue;
+    border-color: $blue;
 
-    .doc-util__item__bar {
-      color: blue;
+    > .doc-util__item__bar {
+      color: $blue;
     }
 
     .doc-util__item__children {
     }
   }
-
 }

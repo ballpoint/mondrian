@@ -22,9 +22,7 @@ let Utils = React.createClass({
   getWindows() {
     let w = [];
 
-    if (this.props.editor.state.selection.length > 0) {
-      w.push(<SelectionUtil key="selection" editor={this.props.editor} />);
-    }
+    w.push(<SelectionUtil key="selection" editor={this.props.editor} />);
 
     if (this.props.editor.doc) {
       w.push(<DocumentUtil key="document" editor={this.props.editor} />);

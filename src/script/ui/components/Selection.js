@@ -1,3 +1,4 @@
+import 'utils/selection.scss';
 import Util from 'ui/components/Util';
 
 let SelectionUtil = React.createClass({
@@ -14,27 +15,32 @@ let SelectionUtil = React.createClass({
 
   metadata() {
     let { state, doc } = this.props.editor;
+
     if (state.selectionType === 'ELEMENTS' && state.selection.length > 0) {
-      return null;
-      return <div>
-        <div>
-          x = {state.selectionBounds.x.toFixed(2)}
+      if (state.selectionBounds) {
+        let bounds = state.selectionBounds.bounds;
+        return <div className="sel-util">
+          <div>
+            x = {bounds.x.toFixed(2)}
+          </div>
+          <div>
+            y = {bounds.y.toFixed(2)}
+          </div>
+          <div>
+            w = {bounds.width.toFixed(2)}
+          </div>
+          <div>
+            h = {bounds.height.toFixed(2)}
+          </div>
+          <div>
+            indexes = {state.selection.map((elem) => { return elem.index.toString() }).join(' ')}
+          </div>
         </div>
-        <div>
-          y = {state.selectionBounds.y.toFixed(2)}
-        </div>
-        <div>
-          w = {state.selectionBounds.width.toFixed(2)}
-        </div>
-        <div>
-          h = {state.selectionBounds.height.toFixed(2)}
-        </div>
-        <div>
-          indexes = {state.selection.map((elem) => { return elem.index.toString() }).join(' ')}
-        </div>
-      </div>
+      } else {
+        return 'wedep';
+      }
     } else if (doc) {
-      return <div>
+      return <div className="sel-util">
         {doc.elements.length} elements
       </div>
     }

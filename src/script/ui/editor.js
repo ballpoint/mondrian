@@ -11,6 +11,7 @@ import Index from 'geometry/index';
 import Path from 'geometry/path';
 import PathPoint from 'geometry/path-point';
 import PointsSegment from 'geometry/points-segment';
+
 import Layer from 'io/layer';
 
 import Projection from 'ui/projection';
@@ -40,6 +41,8 @@ export default class Editor extends EventEmitter {
   constructor(rootSelector) {
     super();
 
+    window.$e = this; // DEBUGGING
+
     let root = document.querySelector(rootSelector);
     if (root) {
       this.root = root;
@@ -58,6 +61,7 @@ export default class Editor extends EventEmitter {
     window.h = this.history;
 
     this.setPosition(doc.center());
+    this.setCurrentLayer(doc.layers[0]);
 
     this.canvas.refreshAll();
   }
@@ -336,10 +340,18 @@ export default class Editor extends EventEmitter {
       }
       return isSelected;
     } else if (item instanceof Layer) {
-      return false;
+      return this.state.layer === item;
     } else {
       return this.state.selection.indexOf(item) > -1;
     }
+  }
+
+  setCurrentLayer(layer) {
+    this.state.layer = layer;
+
+    this.canvas.refreshAll();
+    this.trigger('change');
+    this.trigger('change:layer');
   }
 
   selectTool(tool) {
