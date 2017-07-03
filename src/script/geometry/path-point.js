@@ -9,10 +9,12 @@ export default class PathPoint extends Posn {
   constructor(x, y, pX, pY, sX, sY) {
     super(x, y);
 
-    if (pX && pY) {
+    if (isNaN(x) || isNaN(y)) debugger;
+
+    if (pX !== undefined && pY !== undefined) {
       this.setPHandle(pX, pY);
     }
-    if (sX && sY) {
+    if (sX !== undefined && sY !== undefined) {
       this.setSHandle(sX, sY);
     }
   }
