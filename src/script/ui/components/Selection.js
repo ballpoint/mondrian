@@ -15,35 +15,71 @@ let SelectionUtil = React.createClass({
 
   metadata() {
     let { state, doc } = this.props.editor;
+    let content;
 
-    if (state.selectionType === 'ELEMENTS' && state.selection.length > 0) {
-      if (state.selectionBounds) {
-        let bounds = state.selectionBounds.bounds;
-        return <div className="sel-util">
-          <div>
-            x = {bounds.x.toFixed(2)}
+    if (state.selection.length > 0) {
+
+      switch (state.selectionType) {
+        case 'ELEMENTS':
+          if (state.selectionBounds) {
+            let bounds = state.selectionBounds.bounds;
+            content = <div>
+              <div>
+                x = {bounds.x.toFixed(2)}
+              </div>
+              <div>
+                y = {bounds.y.toFixed(2)}
+              </div>
+              <div>
+                w = {bounds.width.toFixed(2)}
+              </div>
+              <div>
+                h = {bounds.height.toFixed(2)}
+              </div>
+              <div>
+                indexes = {state.selection.map((elem) => { return elem.index.toString() }).join(' ')}
+              </div>
+            </div>
+          }
+          break;
+        case 'POINTS':
+          if (state.selection.length === 1) {
+            let pt = state.selection[0];
+            content = <div>
+              <div>x = {pt.x}</div>
+              <div>y = {pt.y}</div>
+              {
+                pt.pHandle ? (
+                  <div>
+                    <div>p x = {pt.pHandle.x}</div>
+                    <div>p y = {pt.pHandle.y}</div>
+                  </div>
+                ) : null
+              }
+
+              {
+                pt.sHandle ? (
+                  <div>
+                    <div>s x = {pt.sHandle.x}</div>
+                    <div>s y = {pt.sHandle.y}</div>
+                  </div>
+                ) : null
+              }
+
+            </div>
+          } else {
+
+          }
+          break;
+        default:
+          content = <div>
           </div>
-          <div>
-            y = {bounds.y.toFixed(2)}
-          </div>
-          <div>
-            w = {bounds.width.toFixed(2)}
-          </div>
-          <div>
-            h = {bounds.height.toFixed(2)}
-          </div>
-          <div>
-            indexes = {state.selection.map((elem) => { return elem.index.toString() }).join(' ')}
-          </div>
-        </div>
-      } else {
-        return 'wedep';
       }
-    } else if (doc) {
-      return <div className="sel-util">
-        {doc.elements.length} elements
-      </div>
+    } else {
+      content = <div>No selection</div>;
     }
+
+    return <div className="sel-util">{content}</div>;
   },
 
   render() {

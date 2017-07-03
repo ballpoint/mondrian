@@ -33,8 +33,8 @@ export default class Doc {
       throw new Error('No svg node in given doc');
     }
     let children = io.parse(doc.querySelector('svg'));
-    let width = parseInt(root.getAttribute('width'), 10);
-    let height = parseInt(root.getAttribute('height'), 10);
+
+    let { width, height } = this.parseDimensions(root);
 
     // TODO parse layers from SVG mondrian: attr
     let layer = new Layer({
@@ -58,6 +58,38 @@ export default class Doc {
       width,
       height,
     });
+  }
+
+  static parseDimensions(root) {
+    let width, height;
+
+    let widthAttr = root.getAttribute('width');
+    let heightAttr = root.getAttribute('height');
+    let viewboxAttr = root.getAttribute('viewBox') || root.getAttribute('viewbox');
+
+    if (viewboxAttr) {
+      let parts = viewboxAttr.split(' ').filter((p) => { return p !== '' });
+
+      if (parts.length === 4) {
+        parts = parts.map(parseFloat);
+        let x = parts[0];
+        let y = parts[1];
+        let w = parts[2];
+        let h = parts[3];
+
+        width = w;
+        height = h;
+      }
+    } else {
+      if (widthAttr) {
+        width = parseFloat(widthAttr);
+      }
+      if (heightAttr) {
+        height = parseFloat(heightAttr);
+      }
+    }
+
+    return { width, height }
   }
 
   get elements() {

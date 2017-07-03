@@ -187,9 +187,13 @@ export default class PathPoint extends Posn {
             }
 
             let point = PathPoint.fromPosns(p, pHandle);
+
             if (prec && prec_sHandle) {
               prec.setSHandle(prec_sHandle.x, prec_sHandle.y);
             }
+
+            point.str = string;
+
 
             points.push(point);
             prec = point;

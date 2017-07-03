@@ -74,7 +74,7 @@ export default class Path extends Item {
 
   static polyline(data) {
     let segment = new PointsSegment(
-      data.points.split(' ').map((p,i) => {
+      data.points.split(' ').filter((p) => { return p !== '' }).map((p,i) => {
         let parts = p.split(',');
         let x = parseFloat(parts[0]);
         let y = parseFloat(parts[1]);
