@@ -34,7 +34,14 @@ export default class Doc {
     }
     let children = io.parse(doc.querySelector('svg'));
 
-    let { width, height } = this.parseDimensions(root);
+    let { width, height, transform } = this.parseDimensions(root);
+
+    // Apply viewbox transformation
+    if (transform) {
+      for (let child of children) {
+        transform(child);
+      }
+    }
 
     // TODO parse layers from SVG mondrian: attr
     let layer = new Layer({
@@ -61,7 +68,7 @@ export default class Doc {
   }
 
   static parseDimensions(root) {
-    let width, height;
+    let width, height, transform;
 
     let widthAttr = root.getAttribute('width');
     let heightAttr = root.getAttribute('height');
@@ -79,6 +86,12 @@ export default class Doc {
 
         width = w;
         height = h;
+
+        if (x !== 0 || y !== 0) {
+          transform = (item) => {
+            item.nudge(-x, -y);
+          }
+        }
       }
     } else {
       if (widthAttr) {
@@ -89,7 +102,7 @@ export default class Doc {
       }
     }
 
-    return { width, height }
+    return { width, height, transform }
   }
 
   get elements() {

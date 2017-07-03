@@ -10,7 +10,7 @@ import google from 'google.svg';
 import Editor from 'ui/editor';
 import Utils from 'ui/components/Utils';
 
-let doc = Doc.fromSVG(sbux2);
+let doc = Doc.fromSVG(sbux);
 
 let editor = new Editor('#app-render');
 
