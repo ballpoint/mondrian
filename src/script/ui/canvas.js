@@ -13,29 +13,45 @@ export default class Canvas extends EventEmitter {
 
     this.refreshNeeded = {};
 
-    this.container = document.createElement('div');
-    this.container.className = 'canvas-container';
+    if (parent) {
+      this.container = document.createElement('div');
+      this.container.className = 'canvas-container';
+      parent.appendChild(this.container);
 
-    parent.appendChild(this.container);
-
-    window.onresize = () => {
-      this.updateDimensions();
-      this.refreshAll();
-    }
+      window.onresize = () => {
+        this.updateDimensions();
+        this.refreshAll();
+      }
+    } // Otherwise run in headless mode
   }
 
   createLayer(id, handler) {
     let layer = new Layer(id);
     this.layers.push(layer);
     this.layersMap[id] = layer;
-    this.handlersMap[id] = handler;
 
-    this.container.appendChild(layer.node);
+    if (handler) {
+      this.handlersMap[id] = handler;
+    }
+
+    if (this.container) {
+      this.container.appendChild(layer.node);
+    }
+
+    this.updateDimensions();
+
+    return layer;
   }
 
   updateDimensions() {
-    let w = this.container.offsetWidth;
-    let h = this.container.offsetHeight;
+    if (this.container) {
+      let w = this.container.offsetWidth;
+      let h = this.container.offsetHeight;
+      this.setDimensions(w, h);
+    }
+  }
+
+  setDimensions(w, h) {
     this.width = w;
     this.height = h;
     for (let layer of this.layers) {
@@ -72,7 +88,9 @@ export default class Canvas extends EventEmitter {
     //console.time('refresh:'+layer.id);
     layer.clear();
     let handler = this.handlersMap[layer.id];
-    handler(layer, layer.context);
+    if (handler) {
+      handler(layer, layer.context);
+    }
     //console.timeEnd('refresh:'+layer.id);
   }
 

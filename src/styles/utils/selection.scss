@@ -1,4 +1,108 @@
+$sel-height: 200px;
+$sel-thumb-height: 120px;
+$sel-thumb-width: 160px;
+
 .sel-util {
-  height: 140px;
+  height: $sel-height;
+
+  input[type="text"] {
+    width: 70px;
+  }
+
+  .sel-util__main {
+    height: $sel-height - 20px;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .sel-util__top {
+      display: flex;
+      justify-content: center;
+
+      .sel-util__coords {
+        width: 80px;
+        text-align: right;
+        input[type="text"] {
+          margin-bottom: 5px;
+        }
+      }
+
+      .sel-util__thumb {
+        margin: 20px;
+        flex: 0;
+        display: flex;
+
+        .sel-util__thumb__img {
+          display: flex;
+          justify-content: center;
+          margin-top: auto;
+          margin-bottom: auto;
+          margin-left: auto;
+          margin-right: auto;
+          position: relative;
+          flex: 0;
+
+          img {
+            align-self: center;
+            max-width: $sel-thumb-width - 20px;
+            max-height: $sel-thumb-height - 20px;
+            border: 1px solid #ccc;
+          }
+        }
+
+        .sel-util__thumb__height-bracket {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          right: -10px;
+          width: 5px;
+          border-right: 1px solid #ccc;
+          border-top: 1px solid #ccc;
+          border-bottom: 1px solid #ccc;
+        }
+
+        .sel-util__thumb__width-bracket {
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: -10px;
+          height: 5px;
+          border-right: 1px solid #ccc;
+          border-left: 1px solid #ccc;
+          border-bottom: 1px solid #ccc;
+        }
+
+      }
+
+      .sel-util__height {
+        display: flex;
+        width: 80px;
+
+        .sel-util__height__input {
+          margin-top: auto;
+          margin-bottom: auto;
+        }
+      }
+    }
+  }
+
+
+
+  .sel-util__middle {
+    display: flex;
+    justify-content: center;
+
+    .sel-util__width {
+    }
+  }
+
+  .sel-util__bottom {
+    border-top: 1px solid #ccc;
+  }
+
+  .sel-util__subheader {
+  }
+
 }
 

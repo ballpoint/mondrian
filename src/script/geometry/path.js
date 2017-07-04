@@ -6,13 +6,6 @@ import PathPoint from 'geometry/path-point';
 import Posn from 'geometry/posn';
 
 export default class Path extends Item {
-  static initClass() {
-    this.prototype.type = 'path';
-  
-    // Caching expensive metadata
-    this.prototype.caching = true;
-  }
-
   constructor(data) {
     super(data);
     if (this.data && this.data.d) {
@@ -20,6 +13,10 @@ export default class Path extends Item {
     } else {
       this.points = new PointsList([], this);
     }
+  }
+
+  get type() {
+    return 'path';
   }
 
   // Constructors
@@ -125,24 +122,6 @@ export default class Path extends Item {
     this.points.insert(segment, index);
   }
 
-  nudgeCachedObjects(x, y) {
-    if (this.boundsCached != null) {
-      this.boundsCached.nudge(x, y);
-    }
-  }
-
-  scaleCachedObjects(x, y, origin) {
-    if (this.boundsCached != null) {
-      this.boundsCached.scale(x, y, origin);
-      this.boundsCached.unflip();
-    }
-  }
-
-  clearCachedObjects() {
-    this.boundsCached = null;
-    return this;
-  }
-
   lineSegments() {
     let ls = this.points.segments.reduce((a, b) => {
       return a.concat(b.lineSegments());
@@ -230,10 +209,4 @@ export default class Path extends Item {
     }
     this.finishToCanvas(context, projection);
   }
-}
-Path.initClass();
-
-
-function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
 }

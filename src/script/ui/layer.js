@@ -85,6 +85,7 @@ export default class Layer {
       this.setFill(opts.fill);
     }
     if (opts.stroke) {
+      this.context.lineWidth = math.PIXEL_RATIO;
       this.setStroke(opts.stroke);
     }
 
@@ -177,5 +178,9 @@ export default class Layer {
         line.p4,
       );
     }
+  }
+
+  get url() {
+    return this.node.toDataURL();
   }
 }

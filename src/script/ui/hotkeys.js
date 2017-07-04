@@ -129,13 +129,10 @@ let hotkeys = {
     });
 
     document.onkeydown = (e) => {
-      let newStroke;
-
-      if (isDefaultQuarantined(e.target)) {
-        if (!e.target.hasAttribute("h")) {
-          return true;
-        }
+      if (e.target.nodeName.toLowerCase() === 'input') {
+        return;
       }
+      let newStroke;
 
       // Stop immediately if hotkeys are disabled
       if (this.disabled) { return true; }
@@ -247,6 +244,10 @@ let hotkeys = {
     }
     
     document.onkeyup = (e) => {
+      if (e.target.nodeName.toLowerCase() === 'input') {
+        return;
+      }
+
       if (this.disabled) { return true; }
 
       keystroke = this.parseKeystroke(e);

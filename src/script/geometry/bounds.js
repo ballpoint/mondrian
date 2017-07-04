@@ -8,11 +8,7 @@ export default class Bounds {
     this.angle = angle;
     if (x1 instanceof Array) {
       // A list of bounds
-      let lob = x1;
-      this.x  = Math.min.apply(this, lob.map(b => b.x));
-      this.y  = Math.min.apply(this, lob.map(b => b.y));
-      this.x2 = Math.max.apply(this, lob.map(b => b.x2));
-      this.y2 = Math.max.apply(this, lob.map(b => b.y2));
+      return Bounds.fromBounds(x1);
     } else {
       let x, y;
       this.x = x1;
@@ -48,6 +44,14 @@ export default class Bounds {
     let maxY = Math.max(...ys);
 
     return new Bounds(minX, minY, maxX - minX, maxY - minY);
+  }
+
+  static fromBounds(bounds) {
+    let x  = Math.min.apply(this, bounds.map(b => b.x));
+    let y  = Math.min.apply(this, bounds.map(b => b.y));
+    let x2 = Math.max.apply(this, bounds.map(b => b.x2));
+    let y2 = Math.max.apply(this, bounds.map(b => b.y2));
+    return new Bounds(x, y, x2-x, y2-y);
   }
 
   sharp() {
@@ -146,22 +150,13 @@ export default class Bounds {
     return new Bounds(0, 0, this.width / sm, this.height / sm);
   }
 
-  static centeredOnPosn(posn, w, h) {
-    return new Bounds(posn.x-(w/2), posn.y-(h/2), w, h);
+  fitToDimension(dimen) {
+    let b = new Bounds(0, 0, dimen, dimen);
+    return this.fitTo(b);
   }
 
-  adjustElemsTo(bounds) {
-    // Returns a method that can run on Item objects
-    // that will nudge and scale them so they go from these bounds
-    // to look proportionately the same in the given bounds.
-    let offset = this.tl().subtract(bounds.tl());
-    let sw = this.width / bounds.width;
-    let sh = this.height / bounds.height;
-    // Return a function that will adjust a given element to the canvas
-    return function(elem) {
-      elem.scale(1/sw, 1/sh, bounds.tl());
-      return elem.nudge(-offset.x, -offset.y);
-    };
+  static centeredOnPosn(posn, w, h) {
+    return new Bounds(posn.x-(w/2), posn.y-(h/2), w, h);
   }
 
   lineSegments() {

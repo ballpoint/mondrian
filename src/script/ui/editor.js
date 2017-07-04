@@ -192,8 +192,6 @@ export default class Editor extends EventEmitter {
     document.addEventListener('copy', (e) => { this.copy(e) });
     document.addEventListener('paste', (e) => { this.paste(e) });
 
-    this.canvas.updateDimensions();
-
     this.canvas.refreshAll();
   }
 

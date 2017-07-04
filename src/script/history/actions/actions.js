@@ -21,8 +21,8 @@ export class NudgeAction extends HistoryAction {
       
       if (item instanceof Path) {
         item.clearCachedObjects();
-      } else if (item instanceof PathPoint && item.owner) {
-        item.owner.clearCachedObjects();
+      } else if (item instanceof PathPoint && item.path) {
+        item.path.clearCachedObjects();
       }
     }
   }
@@ -72,6 +72,10 @@ export class NudgeHandleAction extends HistoryAction {
     editor.setSelection(points);
     for (let point of points) {
       point.nudgeHandle(this.data.handle, this.data.xd, this.data.yd);
+
+      if (point.path) {
+        point.path.clearCachedObjects();
+      }
     }
   }
 

@@ -32,6 +32,9 @@ export default class Cursor extends Tool {
   }
 
   handleMousedown(e, posn) {
+    if (this.editor.state.hovering.length === 1 && this.editor.isSelected(this.editor.state.hovering[0])) {
+      return;
+    }
     this.editor.setSelection(this.editor.state.hovering);
   }
 

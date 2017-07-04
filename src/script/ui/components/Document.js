@@ -6,7 +6,7 @@ import Layer from 'io/layer';
 let DocumentUtilChild = React.createClass({
   getInitialState() {
     return {
-      expanded: false
+      expanded: false,
     }
   },
 
@@ -21,16 +21,19 @@ let DocumentUtilChild = React.createClass({
         "doc-util__item__children--hidden": !this.state.expanded,
       })}>
         {
-          child.children.map((child) => {
+          child.children.slice(0).reverse().map((child) => {
             return <DocumentUtilChild
               key={child.index.toString()}
               child={child}
               editor={this.props.editor}
+              getThumbnail={this.props.getThumbnail}
             />
           })
         }
       </div>
     }
+
+    let thumbnail = this.props.getThumbnail(this.props.child);
 
     return (
       <div className={classnames({
@@ -62,7 +65,9 @@ let DocumentUtilChild = React.createClass({
             this.props.editor.setHovering([]);
           }}
         >
-          {child.constructor.name} {child.id}
+          { thumbnail ? <div className="doc-util__item__bar__thumb"><img src={thumbnail.url} /></div> : null }
+          <div className="doc-util__item__bar__type">{ child.constructor.name }</div>
+          <div className="doc-util__item__bar__id">{ child.id }</div>
         </div>
         {children}
       </div>
@@ -71,14 +76,45 @@ let DocumentUtilChild = React.createClass({
 });
 
 let DocumentUtil = React.createClass({
+  getInitialState() {
+    return {
+      cachedThumbnails: {}
+    }
+  },
+
+  getThumbnail(child) {
+    let cached = this.state.cachedThumbnails[child.__id__];
+    if (cached) {
+      return cached;
+    }
+
+    // Generate thumbnail
+    let thumb = child.thumbnail;
+
+    this.state.cachedThumbnails[child.__id__] = thumb;
+    return thumb;
+  },
+
+  componentDidMount() {
+    this._clearCachedThumbnails = _.debounce(() => {
+      this.setState({ cachedThumbnails: {} });
+    }, 250);
+  },
+
+  componentWillReceiveProps(prevState) {
+    this._clearCachedThumbnails();
+  },
+
   render() {
     return (
       <Util title="Document">
         {
           this.props.editor.doc.layers.slice(0).reverse().map((child) => {
             return <DocumentUtilChild
+              key={child.index.toString()}
               child={child}
               editor={this.props.editor}
+              getThumbnail={this.getThumbnail}
             />
           })
         }

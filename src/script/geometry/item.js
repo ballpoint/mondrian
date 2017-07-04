@@ -1,7 +1,10 @@
+import _ from 'lodash';
 import Color from 'ui/color';
 import Bounds from 'geometry/bounds';
 import Range from 'geometry/range';
 import Posn from 'geometry/posn';
+import Thumb from 'ui/thumb';
+import UUIDV4 from 'uuid/v4';
 
 /*
 
@@ -36,6 +39,15 @@ export default class Item {
     if (this.data["mondrian:angle"] != null) {
       this.metadata.angle = parseFloat(this.data["mondrian:angle"], 10);
     }
+
+    this.clearCachedThumbnail = _.debounce(() => {
+      console.log('clearing cached thumb', this);
+      this.thumbnailCached = null;
+    }, 500);
+
+    // Internal ID only to be used for caching session-specific state
+    // like thumbnails. Never persisted.
+    this.__id__ = UUIDV4(); 
   }
 
   /*
@@ -173,6 +185,18 @@ export default class Item {
     return this.data['stroke-width'] = val;
   }
 
+  get thumbnail() {
+    if (this.thumbnailCached) {
+      return this.thumbnailCached;
+    }
+
+    // Generate thumbnail
+    let bounds = this.bounds();
+    let thumb = Thumb.fromElements([this]);
+    this.thumbnailCached = thumb;
+    return thumb;
+  }
+
   finishToCanvas(context, projection) {
     if (this.data.fill) {
       context.fillStyle = this.data.fill.toRGBString();
@@ -190,9 +214,32 @@ export default class Item {
     }
   }
 
-  clearCachedObjects() {}
+  nudgeCachedObjects(x, y) {
+    if (this.boundsCached != null) {
+      this.boundsCached.nudge(x, y);
+    }
+  }
+
+  scaleCachedObjects(x, y, origin) {
+    if (this.boundsCached != null) {
+      this.boundsCached.scale(x, y, origin);
+      this.boundsCached.unflip();
+    }
+    this.thumbnailCached = null;
+  }
+
+  clearCachedObjects() {
+    this.boundsCached = null;
+    this.thumbnailCached = null;
+    return this;
+  }
+
+
 
   lineSegments() {}
+
+  fingerprint() {
+  }
 }
 
 
