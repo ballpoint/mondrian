@@ -33,3 +33,13 @@ $util-grey: darken($bg-grey, 13%);
     border-right: 1px solid $fg-grey;
   }
 }
+
+.text-input {
+  label {
+    margin-right: 5px;
+  }
+
+  input[type="text"] {
+    width: 64px;
+  }
+}

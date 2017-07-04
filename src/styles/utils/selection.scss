@@ -1,16 +1,14 @@
-$sel-height: 200px;
+@import "~vars.scss";
+
+$sel-height: 220px;
 $sel-thumb-height: 120px;
 $sel-thumb-width: 160px;
 
 .sel-util {
   height: $sel-height;
 
-  input[type="text"] {
-    width: 70px;
-  }
-
   .sel-util__main {
-    height: $sel-height - 20px;
+    height: $sel-height - 40px;
     padding: 4px;
     display: flex;
     flex-direction: column;
@@ -48,6 +46,55 @@ $sel-thumb-width: 160px;
             max-width: $sel-thumb-width - 20px;
             max-height: $sel-thumb-height - 20px;
             border: 1px solid #ccc;
+          }
+
+          .sel-util__thumb__origin-buttons {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+
+            .sel-util__thumb__origin-button {
+              position: absolute;
+              width: 10px;
+              height: 10px;
+              border: 1px solid #ccc;
+              background: white;
+              border-radius: 10px;
+              cursor: pointer;
+
+              &.sel-util__thumb__origin-button--tl {
+                left: -4px; top: -4px;
+              }
+              &.sel-util__thumb__origin-button--tr {
+                right: -4px; top: -4px;
+              }
+              &.sel-util__thumb__origin-button--br {
+                right: -4px; bottom: -4px;
+              }
+              &.sel-util__thumb__origin-button--bl {
+                left: -4px; bottom: -4px;
+              }
+              &.sel-util__thumb__origin-button--c {
+                top: 50%; left: 50%; margin-left: -4px; margin-top: -4px;
+              }
+
+              &:hover {
+                border-color: $blue;
+                background-color: $paleblue;
+              }
+
+              &:active {
+                border-color: $blue;
+                background-color: $blue;
+              }
+
+              &.sel-util__thumb__origin-button--active {
+                border-color: $blue;
+                background-color: $midblue;
+              }
+            }
           }
         }
 

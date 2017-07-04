@@ -52,7 +52,7 @@ let TextInput = React.createClass({
     />
 
     return (
-      <span>{label}{input}</span>
+      <span className="text-input">{label}{input}</span>
     )
   }
 });

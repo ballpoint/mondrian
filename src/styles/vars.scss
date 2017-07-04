@@ -1,5 +1,7 @@
 $bg-grey: #f2f2f2;
 $fg-grey: #b2b2b2;
 $blue:    #0072d1;
+$paleblue: mix(white, $blue, 80%);
+$midblue: mix(white, $blue, 40%);
 
 $app-header-height: 60px;

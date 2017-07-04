@@ -1,3 +1,4 @@
+import classnames from 'classnames';
 import Thumb from 'ui/thumb';
 import 'utils/selection.scss';
 import Util from 'ui/components/Util';
@@ -6,7 +7,8 @@ import TextInput from 'ui/components/TextInput';
 let SelectionUtil = React.createClass({
   getInitialState() {
     return {
-      cachedThumbnail: null
+      cachedThumbnail: null,
+      originId: 'tl',
     }
   },
 
@@ -57,15 +59,18 @@ let SelectionUtil = React.createClass({
     let { state, doc } = this.props.editor;
     if (state.selectionBounds) {
       let bounds = state.selectionBounds.bounds;
+      let origin = this.getOrigin(bounds);
       switch (which) {
         case 'x':
-          xd = val - bounds.x;
+          xd = val - origin.x;
           break;
         case 'y':
-          yd = val - bounds.y;
+          yd = val - origin.y;
           break;
       }
-      this.props.editor.nudgeSelected(xd, yd);
+      if (xd !== 0 || yd !== 0) {
+        this.props.editor.nudgeSelected(xd, yd);
+      }
     }
   },
 
@@ -74,6 +79,7 @@ let SelectionUtil = React.createClass({
     let { state, doc } = this.props.editor;
     if (state.selectionBounds) {
       let bounds = state.selectionBounds.bounds;
+      let origin = this.getOrigin(bounds);
       switch (which) {
         case 'w':
           xs = val / bounds.width;
@@ -82,8 +88,10 @@ let SelectionUtil = React.createClass({
           ys = val / bounds.height;
           break;
       }
-      this.setState({ cachedThumbnail: null });
-      this.props.editor.scaleSelected(xs, ys, bounds.tl());
+      if (xs !== 1 || ys !== 1) {
+        this.setState({ cachedThumbnail: null });
+        this.props.editor.scaleSelected(xs, ys, origin);
+      }
     }
   },
 
@@ -94,21 +102,60 @@ let SelectionUtil = React.createClass({
     return this.state.cachedThumbnail;
   },
 
+  renderOriginButton(id) {
+    return (
+      <div
+        className={
+          classnames({
+            "sel-util__thumb__origin-button": true,
+            ["sel-util__thumb__origin-button--"+id]: true,
+            "sel-util__thumb__origin-button--active": this.state.originId === id
+          })
+        }
+        onClick={() => { this.setState({ originId: id }) }}
+      />
+    );
+  },
+
   renderThumb() {
     let { state, doc } = this.props.editor;
-    let thumb = this.getThumbnail();
+
     if (state.selectionType === 'ELEMENTS' && state.selection.length > 0) {
+      let thumb = this.getThumbnail();
       return (
         <div className="sel-util__thumb">
           <div className="sel-util__thumb__img">
             <img src={thumb.url} />
             <div className="sel-util__thumb__height-bracket"></div>
             <div className="sel-util__thumb__width-bracket"></div>
+
+            <div className="sel-util__thumb__origin-buttons">
+              {this.renderOriginButton('tl')}
+              {this.renderOriginButton('tr')}
+              {this.renderOriginButton('c')}
+              {this.renderOriginButton('br')}
+              {this.renderOriginButton('bl')}
+            </div>
           </div>
         </div>
       );
     } else {
       return null;
+    }
+  },
+
+  getOrigin(bounds) {
+    switch (this.state.originId) {
+      case 'tl':
+        return bounds.tl();
+      case 'tr':
+        return bounds.tr();
+      case 'bl':
+        return bounds.bl();
+      case 'br':
+        return bounds.br();
+      case 'c':
+        return bounds.center();
     }
   },
 
@@ -118,13 +165,14 @@ let SelectionUtil = React.createClass({
       let bounds = state.selectionBounds.bounds;
 
       if (bounds) {
+        let origin = this.getOrigin(bounds);
         return (
           <div className="sel-util__coords">
             <div className="sel-util__coords__x-input">
-              <TextInput label="x" id="selection-x" value={bounds.x} onSubmit={(val) => { this.onChangeCoord(val, 'x') }} />
+              <TextInput label="x" id="selection-x" value={origin.x} onSubmit={(val) => { this.onChangeCoord(val, 'x') }} />
             </div>
             <div className="sel-util__coords__y-input">
-              <TextInput label="y" id="selection-y" value={bounds.y} onSubmit={(val) => { this.onChangeCoord(val, 'y') }} />
+              <TextInput label="y" id="selection-y" value={origin.y} onSubmit={(val) => { this.onChangeCoord(val, 'y') }} />
             </div>
           </div>
         );
@@ -185,7 +233,7 @@ let SelectionUtil = React.createClass({
             </div>
           </div>
           <div className="sel-util__bottom">
-            { false ? this.renderSubheader() : null }
+            { this.renderSubheader() }
           </div>
         </div>
       </Util>
