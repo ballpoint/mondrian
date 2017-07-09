@@ -1,5 +1,7 @@
 import PointsSegment from 'geometry/points-segment';
 import PathPoint from 'geometry/path-point';
+import Range from 'geometry/range'
+import Bounds from 'geometry/bounds';
 
 //  PointsList
 
@@ -11,6 +13,7 @@ export default class PointsList {
   constructor(segments=[], path) {
     this.segments = segments;
 
+    // Ensure at least one segment
     if (this.segments.length === 0) {
       this.pushSegment(new PointsSegment([], this));
     }
@@ -93,6 +96,12 @@ export default class PointsList {
     return this.lastSegment.last;
   }
 
+  lineSegments() {
+    return this.segments.reduce((a, b) => {
+      return a.concat(b.lineSegments());
+    }, []);
+  }
+
   pushSegment(segment) {
     this.segments.push(segment);
   }
@@ -133,6 +142,9 @@ export default class PointsList {
   }
 
   closeSegment() {
+    if (this.lastSegment.points.length === 0) {
+      debugger;
+    }
     if (this.lastSegment && !this.lastSegment.empty) {
       this.lastSegment.close();
       this.pushSegment(new PointsSegment([], this));
@@ -233,6 +245,28 @@ export default class PointsList {
   yRange() {
     let ys = this.all().map(p => p.y);
     return new Range(Math.min.apply(this, ys), Math.max.apply(this, ys));
+  }
+
+  get ranges() {
+    let lineSegments = this.lineSegments();
+
+    let xrs = Range.fromList(lineSegments.map((ls) => {
+      return ls.xRange();
+    }));
+    let yrs = Range.fromList(lineSegments.map((ls) => {
+      return ls.yRange();
+    }));
+    return { xrs, yrs }
+  }
+
+  bounds() {
+    let { xrs, yrs } = this.ranges;
+    return this.boundsCached = new Bounds(
+      xrs.min,
+      yrs.min,
+      xrs.length(),
+      yrs.length()
+    );
   }
 
   toSVGString() {

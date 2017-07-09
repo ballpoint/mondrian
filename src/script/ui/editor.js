@@ -382,6 +382,21 @@ export default class Editor extends EventEmitter {
     this.trigger('change');
   }
 
+  insertElements(elems) {
+    let items = [];
+    let parent = this.doc.getFromIndex(this.state.scope);
+    let nextIndex = parent.nextChildIndex();
+
+    for (let item of elems) {
+      items.push({ item, index: nextIndex });
+      nextIndex.plus(1);
+    }
+
+    let action = new actions.InsertAction({ items });
+
+    this.perform(action);
+  }
+
   calculateSelectionBounds() {
     let selectionBounds = {};
 
@@ -614,6 +629,9 @@ export default class Editor extends EventEmitter {
         let nextParent = this.doc.getFromIndex(index.parent);
         if (!nextParent) break;
 
+        // We don't remove empty layers;
+        if (nextParent instanceof Layer) break;
+
         if (nextParent.empty) {
           toRemove = nextParent;
           parent = nextParent;
@@ -659,19 +677,7 @@ export default class Editor extends EventEmitter {
 
   paste(e) {
     if (this.state.clipboard) {
-      let items = [];
-      let parent = this.doc.getFromIndex(this.state.scope);
-      let nextIndex = parent.children.length;
-
-      console.log(this.state.clipboard);
-      for (let item of this.state.clipboard) {
-        items.push({ item, index: this.state.scope.concat([nextIndex]) });
-        nextIndex++;
-      }
-
-      let action = new actions.InsertAction({ items });
-
-      this.perform(action);
+      this.insertElements(this.state.clipboard);
     }
   }
 

@@ -129,7 +129,8 @@ export default class Item {
         xrs.min,
         yrs.min,
         xrs.length(),
-        yrs.length());
+        yrs.length()
+      );
     }
   }
 

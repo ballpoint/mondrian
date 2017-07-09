@@ -28,7 +28,7 @@ let Utils = React.createClass({
       w.push(<DocumentUtil key="document" editor={this.props.editor} />);
     }
 
-    //w.push(<BooleanUtil key="boolean" editor={this.props.editor} />);
+    w.push(<BooleanUtil key="boolean" editor={this.props.editor} />);
 
     if (this.props.editor.history) {
       w.push(<HistoryUtil key="history" history={this.props.editor.history} />);

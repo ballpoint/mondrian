@@ -128,10 +128,7 @@ export default class Path extends Item {
   }
 
   lineSegments() {
-    let ls = this.points.segments.reduce((a, b) => {
-      return a.concat(b.lineSegments());
-    }, []);
-    return ls;
+    return this.points.lineSegments();
   }
 
   getRanges() {

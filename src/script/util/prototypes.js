@@ -22,15 +22,18 @@ Array.prototype.removeIndex = function(index) {
   return this.slice(0, index).concat(this.slice(index+1));
 }
 
+Array.prototype.last = function() {
+  return this[this.length-1];
+}
+
+
 Array.prototype.remove = function(el) {
   if (el instanceof RegExp) {
     return this.filter(a => !el.test(a));
+  } else if (el instanceof Array) {
+    return this.filter(a => !el.has(a));
   } else {
-    if (el instanceof Array) {
-      return this.filter(a => !el.has(a));
-    } else {
-      return this.filter(a => el !== a);
-    }
+    return this.filter(a => el !== a);
   }
 }
 

@@ -1,6 +1,7 @@
 import LineSegment from 'geometry/line-segment';
 import Path from 'geometry/path';
 import { EdgeSet } from 'lib/bool';
+import bool from 'lib/bool';
 import assert from 'assert';
 
 describe("Edge", function() {
@@ -97,3 +98,24 @@ describe("EdgeSet", function() {
   });
 });
 
+describe("Boolean operations", function() {
+  let r1 = Path.rectangle({
+    x: 0,
+    y: 0,
+    width: 40,
+    height: 40,
+  });
+
+  let r2 = Path.rectangle({
+    x: 20,
+    y: 20,
+    width: 40,
+    height: 40,
+  });
+
+  it('union', (done) => {
+    bool.union(r1, r2);
+
+    done();
+  });
+});
