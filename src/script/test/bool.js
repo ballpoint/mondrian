@@ -33,7 +33,7 @@ describe("EdgeSet", function() {
       height: 40,
     }));
 
-    assert.equal(8, edges.length);
+    assert.equal(4, edges.length);
 
     assert.equal(edges.get(0).next, edges.get(1));
     assert.equal(edges.get(0).prev, edges.get(3));
@@ -69,8 +69,24 @@ describe("EdgeSet", function() {
 
     es1.intersect(es2);
 
-    assert.equal(12, es1.length);
-    assert.equal(12, es2.length);
+    assert.equal(6, es1.length);
+    assert.equal(6, es2.length);
+
+    for (let edge of es1.edges) {
+      assert.equal(edge.origin.x, edge.prev.destination.x);
+      assert.equal(edge.origin.y, edge.prev.destination.y);
+
+      assert.equal(edge.twin.origin.x, edge.destination.x);
+    }
+
+    for (let edge of es1.twins) {
+      try {
+      assert.equal(edge.origin.x, edge.prev.destination.x);
+      assert.equal(edge.origin.y, edge.prev.destination.y);
+      } catch (e) {
+        debugger;
+      }
+    }
 
     done();
   });

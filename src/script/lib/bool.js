@@ -2,10 +2,14 @@ import Path from 'geometry/path';
 import shapes from 'lab/shapes';
 
 export class Edge {
-  constructor(origin, destination, isTwin=false) {
+  constructor(origin, destination, twin) {
     this.origin = origin.clone();
     this.destination = destination.clone();
-    this.isTwin = isTwin;
+
+    if (twin === undefined) {
+      twin = new Edge(destination, origin, this);
+    }
+    this.twin = twin;
   }
 
   get lineSegment() {
@@ -46,7 +50,14 @@ export class Edge {
       prev = edge;
       origin = xn;
     }
+
     edges[edges.length-1].next = this.next;
+
+    // Link up twins
+    for (let edge of edges) {
+      edge.twin.prev = edge.next.twin;
+      edge.twin.next = edge.prev.twin;
+    }
 
     return edges;
   }
@@ -60,9 +71,6 @@ export class EdgeSet {
   constructor(edges=[]) {
     this.edges = edges;
     this.linkEdges(edges);
-
-    let twins = this.getTwins(edges);
-    this.edges = this.edges.concat(twins);
   }
 
   get length() {
@@ -85,22 +93,10 @@ export class EdgeSet {
       }
       edge.prev = prev;
       edge.next = next;
+
+      edge.twin.next = prev.twin;
+      edge.twin.prev = next.twin;
     }
-  }
-
-  getTwins(edges) {
-    let twins = edges.map((edge) => {
-      let twin = new Edge(edge.destination, edge.origin);
-      edge.twin = twin;
-      twin.twin = edge;
-      twin.isTwin = true;
-      return twin;
-    });
-
-    twins.reverse();
-    this.linkEdges(twins);
-
-    return twins;
   }
 
   static fromPath(path) {
@@ -119,14 +115,14 @@ export class EdgeSet {
     }).concat(replacements);
   }
 
-  getNonTwins() {
-    return this.edges.filter((edge) => { return !edge.isTwin })
+  get twins() {
+    return this.edges.map((edge) => { return edge.twin });
   }
 
   intersect(os) {
-    let thisEdges = this.getNonTwins();
-    let otherEdges = os.getNonTwins();
-    // O(n^2) for now fuck it.
+    let thisEdges = this.edges.slice(0);
+    let otherEdges = os.edges.slice(0);
+
     for (let edge of thisEdges) {
       for (let other of otherEdges) {
         let xns = edge.intersections(other);
@@ -138,16 +134,12 @@ export class EdgeSet {
           console.log(edge.toString())
           console.log(other.toString());
           console.log(xns.join(' '));
-    console.log(this.length);
+
           // Fix this set
           this.replace(edge, edge.splitOn(xns));
-          this.replace(edge.twin, edge.twin.splitOn(xns));
 
           // Fix the other set
           os.replace(other, other.splitOn(xns));
-          os.replace(other.twin, other.twin.splitOn(xns));
-    console.log(this.length);
-
         }
       }
     }
