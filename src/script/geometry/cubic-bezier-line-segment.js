@@ -303,8 +303,6 @@ export default class CubicBezier {
   }
 
   findPercentageOfPoint(posn, HIGH_RES_STEP=0.001) {
-    console.time('findperc');
-
     let closestPercLowRes;
     let closestDLowRes;
     const LOW_RES_STEP = 0.02;
@@ -334,7 +332,6 @@ export default class CubicBezier {
       }
     }
 
-    console.timeEnd('findperc');
     return closestPerc;
   }
 
