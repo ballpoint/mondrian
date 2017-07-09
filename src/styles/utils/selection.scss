@@ -40,12 +40,16 @@ $sel-thumb-width: 160px;
           margin-right: auto;
           position: relative;
           flex: 0;
+          border: 1px solid #ccc;
 
           img {
             align-self: center;
             max-width: $sel-thumb-width - 20px;
             max-height: $sel-thumb-height - 20px;
-            border: 1px solid #ccc;
+          }
+
+          .sel-util__thumb__img--doc {
+            display: block;
           }
 
           .sel-util__thumb__origin-buttons {
@@ -65,19 +69,20 @@ $sel-thumb-width: 160px;
               cursor: pointer;
 
               &.sel-util__thumb__origin-button--tl {
-                left: -4px; top: -4px;
+                left: -5px; top: -5px;
               }
               &.sel-util__thumb__origin-button--tr {
-                right: -4px; top: -4px;
+                right: -5px; top: -5px;
               }
               &.sel-util__thumb__origin-button--br {
-                right: -4px; bottom: -4px;
+                right: -5px; bottom: -5px;
               }
               &.sel-util__thumb__origin-button--bl {
-                left: -4px; bottom: -4px;
+                left: -5px; bottom: -5px;
               }
               &.sel-util__thumb__origin-button--c {
-                top: 50%; left: 50%; margin-left: -4px; margin-top: -4px;
+                top: 50%; left: 50%;
+                margin-left: -5px; margin-top: -5px;
               }
 
               &:hover {
@@ -102,7 +107,7 @@ $sel-thumb-width: 160px;
           position: absolute;
           top: 0;
           bottom: 0;
-          right: -10px;
+          right: -14px;
           width: 5px;
           border-right: 1px solid #ccc;
           border-top: 1px solid #ccc;
@@ -113,7 +118,7 @@ $sel-thumb-width: 160px;
           position: absolute;
           left: 0;
           right: 0;
-          bottom: -10px;
+          bottom: -14px;
           height: 5px;
           border-right: 1px solid #ccc;
           border-left: 1px solid #ccc;
@@ -145,6 +150,7 @@ $sel-thumb-width: 160px;
   }
 
   .sel-util__bottom {
+    padding: 4px;
     border-top: 1px solid #ccc;
   }
 

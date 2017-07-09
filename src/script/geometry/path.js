@@ -21,13 +21,18 @@ export default class Path extends Item {
 
   // Constructors
   static rectangle(data) {
-    let { x, y, w, h } = data;
+    let { x, y, width, height } = data;
+
+    x = parseFloat(x);
+    y = parseFloat(y);
+    width = parseFloat(width);
+    height = parseFloat(height);
 
     let segment = new PointsSegment([
       new PathPoint(x,y),
-      new PathPoint(x+w,y),
-      new PathPoint(x+w,y+h),
-      new PathPoint(x,y+h),
+      new PathPoint(x+width,y),
+      new PathPoint(x+width,y+height),
+      new PathPoint(x,y+height),
     ]);
     segment.close();
 
@@ -35,8 +40,8 @@ export default class Path extends Item {
     data.d = new PointsList([segment]);
     delete data.x;
     delete data.y;
-    delete data.w;
-    delete data.h;
+    delete data.width;
+    delete data.height;
 
     return new Path(data);
   }

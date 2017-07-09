@@ -4,7 +4,10 @@ import 'utils/selection.scss';
 import Util from 'ui/components/Util';
 import TextInput from 'ui/components/TextInput';
 
-let SelectionUtil = React.createClass({
+const THUMB_IMG_MAX_WIDTH  = 140;
+const THUMB_IMG_MAX_HEIGHT = 100;
+
+let TransformUtil = React.createClass({
   getInitialState() {
     return {
       cachedThumbnail: null,
@@ -120,27 +123,58 @@ let SelectionUtil = React.createClass({
   renderThumb() {
     let { state, doc } = this.props.editor;
 
-    if (state.selectionType === 'ELEMENTS' && state.selection.length > 0) {
-      let thumb = this.getThumbnail();
+    let img;
+    let brackets;
+
+    if (!doc) return;
+
+    if (state.selection.length === 0) {
+      let docBounds = doc.bounds.fitToDimensions(THUMB_IMG_MAX_WIDTH, THUMB_IMG_MAX_HEIGHT);
+
       return (
         <div className="sel-util__thumb">
           <div className="sel-util__thumb__img">
-            <img src={thumb.url} />
-            <div className="sel-util__thumb__height-bracket"></div>
-            <div className="sel-util__thumb__width-bracket"></div>
-
-            <div className="sel-util__thumb__origin-buttons">
-              {this.renderOriginButton('tl')}
-              {this.renderOriginButton('tr')}
-              {this.renderOriginButton('c')}
-              {this.renderOriginButton('br')}
-              {this.renderOriginButton('bl')}
+            <div className="sel-util__thumb__img--doc"
+              style={
+                {
+                  width:  docBounds.width,
+                  height: docBounds.height,
+                }
+              }
+            >
             </div>
           </div>
         </div>
       );
+
     } else {
-      return null;
+      if (state.selectionType === 'ELEMENTS') {
+        let thumb = this.getThumbnail();
+        return (
+          <div className="sel-util__thumb">
+            <div className="sel-util__thumb__img">
+              <img src={thumb.url} />
+              <div className="sel-util__thumb__height-bracket"></div>
+              <div className="sel-util__thumb__width-bracket"></div>
+
+              <div className="sel-util__thumb__origin-buttons">
+                {this.renderOriginButton('tl')}
+                {this.renderOriginButton('tr')}
+                {this.renderOriginButton('c')}
+                {this.renderOriginButton('br')}
+                {this.renderOriginButton('bl')}
+              </div>
+            </div>
+          </div>
+        );
+      } else if (state.selectionType === 'POINTS') {
+        return (
+          <div className="sel-util__thumb">
+            <div className="sel-util__thumb__img">
+            </div>
+          </div>
+        )
+      }
     }
   },
 
@@ -184,6 +218,8 @@ let SelectionUtil = React.createClass({
 
   renderHeight() {
     let { state, doc } = this.props.editor;
+    if (!doc) return;
+
     if (state.selectionBounds) {
       let bounds = state.selectionBounds.bounds;
 
@@ -202,6 +238,8 @@ let SelectionUtil = React.createClass({
 
   renderWidth() {
     let { state, doc } = this.props.editor;
+    if (!doc) return;
+
     if (state.selectionBounds) {
       let bounds = state.selectionBounds.bounds;
 
@@ -220,7 +258,7 @@ let SelectionUtil = React.createClass({
 
   render() {
     return (
-      <Util title="Selection">
+      <Util title="Transform">
         <div className="sel-util">
           <div className="sel-util__main">
             <div className="sel-util__top">
@@ -241,4 +279,4 @@ let SelectionUtil = React.createClass({
   }
 });
 
-export default SelectionUtil;
+export default TransformUtil;

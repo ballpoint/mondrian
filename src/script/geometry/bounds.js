@@ -150,9 +150,12 @@ export default class Bounds {
     return new Bounds(0, 0, this.width / sm, this.height / sm);
   }
 
-  fitToDimension(dimen) {
-    let b = new Bounds(0, 0, dimen, dimen);
-    return this.fitTo(b);
+  fitToDimension(d) {
+    return this.fitTo(new Bounds(0, 0, d, d));
+  }
+
+  fitToDimensions(w, h) {
+    return this.fitTo(new Bounds(0, 0, w, h));
   }
 
   static centeredOnPosn(posn, w, h) {

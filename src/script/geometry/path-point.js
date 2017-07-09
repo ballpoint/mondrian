@@ -224,7 +224,7 @@ export default class PathPoint extends Posn {
     if (!this.prec) {
       return null;
     }
-    if (this.hasHandles()) {
+    if (this.hasHandles() || this.prec.hasHandles()) {
       return CubicBezier.fromPathPoint(this);
     } else {
       return LineSegment.fromPathPoint(this);
