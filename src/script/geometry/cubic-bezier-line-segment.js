@@ -38,8 +38,8 @@ export default class CubicBezier {
     this.p4 = p4;
   }
 
-  static fromPathPoint(point) {
-    let prec = point.prec;
+  static fromPathPoint(point, prec) {
+    if (!prec) prec = point.prec;
     return new CubicBezier(prec.toPosn(), prec.getSHandle(), point.getPHandle(), point.toPosn());
   }
 

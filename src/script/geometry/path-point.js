@@ -19,6 +19,10 @@ export default class PathPoint extends Posn {
     }
   }
 
+  clone() {
+    return PathPoint.fromPosns(this, this.pHandle, this.sHandle);
+  }
+
   static fromPosns(p, pHandle, sHandle) {
     let x, y, pX, pY, sX, sY;
     if (p) {
@@ -220,14 +224,14 @@ export default class PathPoint extends Posn {
     return points;
   }
 
-  toLineSegment() {
-    if (!this.prec) {
+  toLineSegment(prec=this.prec) {
+    if (!prec) {
       return null;
     }
-    if (this.hasHandles() || this.prec.hasHandles()) {
-      return CubicBezier.fromPathPoint(this);
+    if (this.hasHandles() || prec.hasHandles()) {
+      return CubicBezier.fromPathPoint(this, prec);
     } else {
-      return LineSegment.fromPathPoint(this);
+      return LineSegment.fromPathPoint(this, prec);
     }
   }
 

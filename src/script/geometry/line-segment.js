@@ -39,8 +39,9 @@ export default class LineSegment {
     this.calculate();
   }
 
-  static fromPathPoint(p) {
-    return new LineSegment(p.prec, p);
+  static fromPathPoint(p, prec) {
+    if (!prec) prec = p.prec;
+    return new LineSegment(prec, p);
   }
 
   calculate() {
