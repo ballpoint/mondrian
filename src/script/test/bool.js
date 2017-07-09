@@ -72,6 +72,9 @@ describe("EdgeSet", function() {
     assert.equal(6, es1.length);
     assert.equal(6, es2.length);
 
+    assert.equal(6, es1.twins.length);
+    assert.equal(6, es2.twins.length);
+
     for (let edge of es1.edges) {
       assert.equal(edge.origin.x, edge.prev.destination.x);
       assert.equal(edge.origin.y, edge.prev.destination.y);

@@ -302,73 +302,41 @@ export default class CubicBezier {
     }
   }
 
+  findPercentageOfPoint(posn, HIGH_RES_STEP=0.001) {
+    console.time('findperc');
 
-  findPercentageOfPoint(posn, tolerance, accumulated, nextstep) {
-    // Recursively find the percentage (float from 0 - 1) of given posn on this bezier, within tolerance given.
-    // This works so well. I am so stoked about it.
-    // Basically, this splits the given bezier in half. If the midpoint is within the tolerance of the posn we're looking for,
-    // return the accumulated float. If not, it will recur on either or both of its halves,
-    // adding (0.5 * n / 2) to the accumulator for the one on the right and keeping it the same for the one on the left
-    // where n is the depth of recursion.
-    //
-    // I/P: posn: the Posn we're looking for
-    //      [tolerance]: find the value for within this much of the x and y of the given posn.
-    //
-    //      Ignore the accumulated and nextstep values, those should start as they're precoded.
-    //
-    // O/P: A float between 0 and 1.
+    let closestPercLowRes;
+    let closestDLowRes;
+    const LOW_RES_STEP = 0.02;
 
-    let ac, bc;
-    if (tolerance == null) { tolerance = 1e-3; }
-    if (accumulated == null) { accumulated = 0.0; }
-    if (nextstep == null) { nextstep = 0.5; }
-    let split = this.splitAt(0.5);
-    let a = split[0];
-    let b = split[1];
-
-
-    // Base case - we've found it! Return the amt accumulated.
-    if (a.p4.within(tolerance, posn) || (nextstep < 1e-4)) {
-      return accumulated;
+    // Do two passes: one low res and one high res
+    for (let perc = 0; perc < 1; perc += LOW_RES_STEP) {
+      let split = this.splitAt(perc);
+      let d = posn.distanceFrom(split[0].p4);
+      if (!closestDLowRes || d < closestDLowRes) {
+        closestPercLowRes = perc;
+        closestDLowRes = d;
+      }
     }
 
-    // Recursion
-    let ab = a.bounds();
-    let bb = b.bounds();
+    let closestPerc = closestPercLowRes;
+    let closestD = closestDLowRes;
 
-    // Both halves might contain the point, if we have a shape that overlaps itself for example.
-    // For this reason we have to actually recur on both the left and right.
-    // When staying with a, however, we don't add to the accumulator because we're not advancing to the second half of the line.
-    // We're simply not making the jump, so we don't count it. But we might make the next smallest jump when we recur on a.
+    let startPerc = Math.max(0, closestPercLowRes-LOW_RES_STEP-HIGH_RES_STEP);
+    let stopPerc = Math.min(1, closestPercLowRes+LOW_RES_STEP+HIGH_RES_STEP);
 
-    if (ab.xr.containsInclusive(posn.x, 0.2) && ab.yr.containsInclusive(posn.y, 0.2)) {
-      ac = a.findPercentageOfPoint(posn, tolerance, accumulated, nextstep / 2);
+    for (let perc = startPerc; perc < stopPerc; perc += HIGH_RES_STEP) {
+      let split = this.splitAt(perc);
+      let d = posn.distanceFrom(split[0].p4);
+      if (d < closestD) {
+        closestPerc = perc;
+        closestD = d;
+      }
     }
-    if (bb.xr.containsInclusive(posn.x, 0.2) && bb.yr.containsInclusive(posn.y, 0.2)) {
-      bc = b.findPercentageOfPoint(posn, tolerance, accumulated + nextstep, nextstep / 2);
-    }
 
-    // This is where the recursion bottoms out. Null means it's not on the bezier line within the tolerance.
-    //
-    //############
-    // IMPORTANT #
-    //############
-    // This is a compromise right now. Since the intersection algorithm is imperfect, we get as close as we can and
-    // return accumulated if there are no options. NOT null, which it used to be.
-    // All this means is that if a point is given that's a bit off the line the recursion will stop when it can't
-    // get any closer to it. So it does what it can, basically.
-    //
-    // This means you can't just feed any point into this and expect it to ignore you given a bad point.
-    // This also means there is some tolerance to a point being a little bit off, which can happen when calculating
-    // several intersections on one curve.
-    //
-    // It's very accurate this way. Nothing to worry about. Just a note so I don't forget. <3
-
-    if (ac != null) { return ac; } else if (bc != null) { return bc; } else { return accumulated; }
+    console.timeEnd('findperc');
+    return closestPerc;
   }
-
-
-
 
   /*
 
