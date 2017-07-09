@@ -1,5 +1,8 @@
 import Path from 'geometry/path';
+import PathPoint from 'geometry/path-point';
 import shapes from 'lab/shapes';
+import LineSegment from 'geometry/line-segment';
+import CubicBezier from 'geometry/cubic-bezier-line-segment';
 
 export class Edge {
   constructor(origin, destination, twin) {
@@ -41,6 +44,43 @@ export class Edge {
     let edges = [];
     let prev = this.prev;
     let origin = this.origin;
+    let splits;
+    let finalDestination;
+
+    for (let xn of xns) {
+      splits = ls.splitAt(xn);
+
+      let dest;
+
+      if (ls instanceof CubicBezier) {
+        origin = PathPoint.fromPosns(splits[0].p1, origin.pHandle, splits[0].p2);
+        dest   = PathPoint.fromPosns(splits[1].p1, splits[0].p3, splits[1].p2);
+        finalDestination = PathPoint.fromPosns(splits[1].p4, splits[1].p3, this.destination.sHandle);
+      } else {
+        origin = PathPoint.fromPosns(splits[0].a);
+        dest   = PathPoint.fromPosns(splits[0].b);
+        finalDestination = PathPoint.fromPosns(splits[1].b);
+      }
+
+      // Keep the rest for the next split
+      ls = splits[1];
+
+      let edge = new Edge(origin, dest, this.isTwin);
+      edge.prev = prev;
+      prev.next = edge;
+      edges.push(edge);
+      prev = edge;
+    }
+
+    // Add final edge
+    let lastEdge = edges[edges.length-1];
+    let edge = new Edge(lastEdge.destination, finalDestination);
+    edges[edges.length-1].next = edge;
+    edge.prev = prev;
+    edge.next = this.next;
+    edges.push(edge);
+
+    /*
     // Intersections now sorted
     for (let xn of xns.concat([this.destination])) {
       let edge = new Edge(origin, xn, this.isTwin);
@@ -50,8 +90,7 @@ export class Edge {
       prev = edge;
       origin = xn;
     }
-
-    edges[edges.length-1].next = this.next;
+    */
 
     // Link up twins
     for (let edge of edges) {

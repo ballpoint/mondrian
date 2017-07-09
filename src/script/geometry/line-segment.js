@@ -226,30 +226,6 @@ export default class LineSegment {
       let split = forced ? forced : this.posnAt(p);
       return [new LineSegment(this.a, split), new LineSegment(split, this.b)];
 
-    } else if (p instanceof Array) {
-      let segments = [];
-      let distances = {};
-
-      for (var posn of Array.from(p)) {
-        distances[posn.distanceFrom(this.a)] = posn;
-      }
-
-      let distancesSorted = Object.keys(distances).map(parseFloat).sort(sortNumbers);
-       // ARE YOU FUICKING SERIOUS JAVASCRIPT
-
-      let nextA = this.a;
-
-      for (let key of Array.from(distancesSorted)) {
-        posn = distances[key];
-        segments.push(new LineSegment(nextA, posn));
-        nextA = posn;
-      }
-
-      segments.push(new LineSegment(nextA, this.b));
-
-      return segments;
-
-
     } else if (p instanceof Posn) {
       // Given a single Posn, find how far along it is on the line
       // and recur with that floating point value.

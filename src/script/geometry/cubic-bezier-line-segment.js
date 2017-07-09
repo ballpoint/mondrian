@@ -235,70 +235,23 @@ export default class CubicBezier {
     // The resulting curves will be
     // [new CubicBezier(p1, p5, p8, p10), new CubicBezier(p10, p9, p7, p4)]
 
-    if (force == null) { force = null; }
     if (typeof t === "number") {
-
       let p5 = new LineSegment(this.p1, this.p2).posnAt(t);
       let p6 = new LineSegment(this.p2, this.p3).posnAt(t);
       let p7 = new LineSegment(this.p3, this.p4).posnAt(t);
       let p8 = new LineSegment(p5, p6).posnAt(t);
       let p9 = new LineSegment(p6, p7).posnAt(t);
-      let p10 = force ? force : new LineSegment(p8, p9).posnAt(t);
+      let p10 = new LineSegment(p8, p9).posnAt(t);
+
+      if (force) {
+        p10 = force;
+      }
 
       return [new CubicBezier(this.p1, p5, p8, p10), new CubicBezier(p10, p9, p7, this.p4)];
 
     } else if (t instanceof Posn) {
       // Given a single Posn, find its percentage and then split the line on it.
       return this.splitAt(this.findPercentageOfPoint(t), t);
-
-
-    } else if (t instanceof Array) {
-      // Given a list of Posns, we have a bit more work to do.
-      // We need to sort the Posns by their percentage along on the original line.
-      // Then we recur on the line, splitting it on each posn that occurs from 0.0 to 1.0.
-
-      // We always recur on the second half of the resulting split with
-      // the next Posn in line.
-
-      // We're going to use the Posns' percentages as keys
-      // with which we'll sort them and split the line on them
-      // one after the other.
-      let sortedPosns = {};
-
-      // This will be the final array of split segments.
-      let segments = [];
-
-      // Find percentage for each posn, save the posn under that percentage.
-      for (let posn of Array.from(t)) {
-        let percent = this.findPercentageOfPoint(posn);
-        sortedPosns[percent] = posn;
-      }
-
-      // Sort the keys - the list of percentages at which posns are available.
-      let percentages = Object.keys(sortedPosns).map(parseFloat).sort(sortNumbers);
-
-
-
-      // Start by splitting the entire bezier.
-      let tail = this;
-
-      // For each posn, going in order of percentages...
-      for (let perc of Array.from(percentages)) {
-        // Split the tail on that single posn
-        let pair = tail.splitAt(sortedPosns[perc]);
-
-        // Keep the first half
-        segments.push(pair[0]);
-        // And "recur" on the second half by redefining tail to be it
-        tail = pair[1];
-      }
-
-      // Don't abandon that last tail! ;)
-      segments.push(tail);
-
-      // Shazam
-
-      return segments;
     }
   }
 

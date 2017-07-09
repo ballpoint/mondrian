@@ -75,20 +75,22 @@ describe("EdgeSet", function() {
     assert.equal(6, es1.twins.length);
     assert.equal(6, es2.twins.length);
 
+    // Make sure pointers are correct
     for (let edge of es1.edges) {
       assert.equal(edge.origin.x, edge.prev.destination.x);
       assert.equal(edge.origin.y, edge.prev.destination.y);
 
       assert.equal(edge.twin.origin.x, edge.destination.x);
-    }
+      assert.equal(edge.twin.origin.y, edge.destination.y);
 
-    for (let edge of es1.twins) {
-      try {
-      assert.equal(edge.origin.x, edge.prev.destination.x);
-      assert.equal(edge.origin.y, edge.prev.destination.y);
-      } catch (e) {
-        debugger;
-      }
+      assert.equal(edge.twin.destination.x, edge.origin.x);
+      assert.equal(edge.twin.destination.y, edge.origin.y);
+
+      assert.equal(edge.twin.prev.destination.x, edge.destination.x);
+      assert.equal(edge.twin.prev.destination.y, edge.destination.y);
+
+      assert.equal(edge.twin.next.origin.x, edge.origin.x);
+      assert.equal(edge.twin.next.origin.y, edge.origin.y);
     }
 
     done();
