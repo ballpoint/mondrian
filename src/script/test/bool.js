@@ -20,6 +20,7 @@ describe("Edge", function() {
     assert.equal(edge1Ls.b.x, 30);
     assert.equal(edge1Ls.b.y, 10);
 
+    done();
   });
 });
 
@@ -32,7 +33,7 @@ describe("EdgeSet", function() {
       height: 40,
     }));
 
-    assert.equal(4, edges.length);
+    assert.equal(8, edges.length);
 
     assert.equal(edges.get(0).next, edges.get(1));
     assert.equal(edges.get(0).prev, edges.get(3));
@@ -68,10 +69,10 @@ describe("EdgeSet", function() {
 
     es1.intersect(es2);
 
-    assert.equal(6, es1.length);
-    assert.equal(6, es2.length);
+    assert.equal(12, es1.length);
+    assert.equal(12, es2.length);
 
-
+    done();
   });
 });
 
