@@ -114,7 +114,7 @@ describe("Boolean operations", function() {
   });
 
   it('union', (done) => {
-    bool.union(r1, r2);
+    bool.union([r1.points, r2.points]);
 
     done();
   });

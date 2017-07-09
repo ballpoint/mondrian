@@ -111,7 +111,6 @@ export class Edge {
 export class EdgeSet {
   constructor(edges=[]) {
     this.edges = edges;
-    this.linkEdges(edges);
   }
 
   get length() {
@@ -122,7 +121,7 @@ export class EdgeSet {
     return this.edges[i];
   }
 
-  linkEdges(edges) {
+  static linkEdges(edges) {
     for (let i = 0; i < edges.length; i++) {
       let edge = edges[i];
       let prev = edges[i-1];
@@ -141,11 +140,20 @@ export class EdgeSet {
   }
 
   static fromPointsList(pl) {
-    let points = pl.all();  
-    let edges = points.map((pt) => {
-      // Going in default dir
-      return new Edge(pt.clone(), pt.succ.clone());
+    let segments = pl.segments.map((seg) => {
+      return seg.points.map((pt) => {
+        // Going in default dir
+        return new Edge(pt.clone(), pt.succ.clone());
+      })
     });
+
+    for (let seg of segments) {
+      this.linkEdges(seg);
+    }
+
+    let edges = segments.reduce((a, b) => {
+      return a.concat(b);
+    }, []);
 
     return new EdgeSet(edges);
 
@@ -179,9 +187,9 @@ export class EdgeSet {
           let replacementsSelf = [];
           let replacementsOther = [];
 
-          console.log(edge.toString())
-          console.log(other.toString());
-          console.log(xns.join(' '));
+          //console.log(edge.toString())
+          //console.log(other.toString());
+          //console.log(xns.join(' '));
 
           // Fix this set
           this.replace(edge, edge.splitOn(xns));
@@ -199,11 +207,15 @@ export class EdgeSet {
 };
 
 function doBoolean(a, b, op) {
+  console.log('a', a, 'b', b);
+
   let aes = EdgeSet.fromPointsList(a);
   let bes = EdgeSet.fromPointsList(b);
 
   // Resolve intersections
   let xns = aes.intersect(bes);
+
+  console.log('xns', xns);
 
   function includePoint(pt, owner, other) {
     // We always keep intersection points
@@ -212,10 +224,19 @@ function doBoolean(a, b, op) {
     }
 
     switch (op) {
-      case 'union':
+      case 'unite':
         // In the case of union, we only keep points not inside
         // the other shape.
         return !shapes.contains(other, pt);
+      case 'intersect':
+        return shapes.contains(other, pt);
+      case 'subtract':
+        switch (owner) {
+          case a:
+            return shapes.contains(b, pt);
+          case b:
+            return !shapes.contains(a, pt);
+        }
     }
   }
 
@@ -226,61 +247,93 @@ function doBoolean(a, b, op) {
   let pl = new PointsList();
 
   let edgesToUse = [];
+  let edgesUsed = [];
   for (let edge of aes.edges) {
-    if (includeEdge(edge, a, b)) edgesToUse.push(edge);
+    if (includeEdge(edge, a, b)) {
+      edgesToUse.push(edge);
+      edgesToUse.push(edge.twin);
+    }
   }
   for (let edge of bes.edges) {
-    if (includeEdge(edge, b, a)) edgesToUse.push(edge);
+    if (includeEdge(edge, b, a)) {
+      edgesToUse.push(edge);
+      edgesToUse.push(edge.twin);
+    }
+  }
+
+  console.log(edgesToUse, 'to use');
+  for (let edge of edgesToUse) {
+    console.log(edge.toString());
+  }
+
+  if (edgesToUse.length === 0) {
+    console.warn('Empty boolean result');
+    return pl;
   }
 
   // Start with the first edge and crawl
   let cursor = edgesToUse[0];
   pl.push(cursor.origin);
+  console.log('start at', cursor.origin.toString());
 
-  let iters = edgesToUse.length;
+  let iters = edgesToUse.length/2;
 
-  //while (edgesToUse.length > 0 && runs < 30) {
-  for (let i = 0; i < iters; i++) {
-    if (pl.first.equal(cursor.destination)) {
+  for (let i = iters; i > 0; i--) {
+    // Push current destination and go on to find the next
+    if (pl.first.equal(cursor.destination) && edgesUsed.indexOf(cursor.next) > -1) {
+      console.log('closing to', cursor.destination.toString());
       pl.closeSegment();
     } else {
       pl.push(cursor.destination);
+      console.log('push', cursor.destination.toString(), '('+cursor.toString()+')');
     }
 
+    console.log('bf rm', edgesToUse.length);
     edgesToUse = edgesToUse.remove(cursor);
+    edgesToUse = edgesToUse.remove(cursor.twin);
+    console.log('af rm', edgesToUse.length);
 
-    // If cursor.next is an edge we want to use, just use it
-    // Otherwise, we are at an intersection and must seek out
-    // which common edge we want instead (going clockwise)
+    edgesUsed.push(cursor);
+
+    if (edgesToUse.length === 0) {
+      break;
+    }
+
     if (edgesToUse.indexOf(cursor.next) > -1) {
+      // If cursor.next or its twin is an edge we want to use, just use it
+      console.log('using next');
       cursor = cursor.next;
+      /*
     } else if (edgesToUse.indexOf(cursor.next.twin) > -1) {
+      console.log('using next twin');
       cursor = cursor.next.twin;
+      */
     } else {
-      // Find next edge
+      // Otherwise, we are at an intersection and must seek out
+      // which common edge we want instead (going clockwise)
+
       let cursorOpts = [];
       for (let edge of edgesToUse) {
         // TODO optimize this lookup
         if (edge.origin.equal(cursor.destination)) {
           cursorOpts.push(edge);
         }
-        if (edge.twin.origin.equal(cursor.destination)) {
-          cursorOpts.push(edge.twin);
-        }
       }
+
       if (cursorOpts.length === 1) {
+        console.log('using only cursorOpts');
         cursor = cursorOpts[0];
       } else if (cursorOpts.length == 0) {
         // The current segment is closed and we need to pick an edge that's remaining
         // to continue in a new segment.
+        console.log('closing and moving on');
         pl.closeSegment();
+
         cursor = edgesToUse[0];
-      } else if (edgesToUse.length > 1) {
+      } else {
+        // TODO handle this case!
         console.log('opts not 1 with edges left', cursor);
         debugger;
-        break;
-      } else {
-        // We're done
         break;
       }
     }
@@ -292,6 +345,7 @@ function doBoolean(a, b, op) {
 };
 
 function doQueue(queue, op) {
+  console.log(queue, op);
   let result = queue[0];
   queue = queue.slice(1);
 
@@ -304,7 +358,13 @@ function doQueue(queue, op) {
 }
 
 export default {
-  union(elems) { 
-    return doQueue(elems, 'union');
-  }
+  unite(elems) { 
+    return doQueue(elems, 'unite');
+  },
+  intersect(elems) { 
+    return doQueue(elems, 'intersect');
+  },
+  subtract(elems) { 
+    return doQueue(elems, 'subtract');
+  },
 };

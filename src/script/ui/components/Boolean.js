@@ -8,7 +8,8 @@ let BooleanUtil = React.createClass({
     let pls = this.props.editor.state.selection.slice(0).map((elem) => {
       return elem.points;
     });
-    let resultPoints = bool.union(pls);
+
+    let resultPoints = bool[op](pls);
 
     let result = new Path({
       d: resultPoints,

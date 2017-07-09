@@ -150,16 +150,19 @@ export default class PointsSegment {
     let firstPoint = this.points[0];
     let lastPoint  = this.points[this.points.length-1];
 
-    if (firstPoint.distanceFrom(lastPoint) < 0.1) {
-      if (lastPoint.pHandle) {
-        firstPoint.setPHandle(lastPoint.pHandle.x, lastPoint.pHandle.y);
+    if (this.points.length > 1) {
+      if (firstPoint.distanceFrom(lastPoint) < 0.1) {
+        if (lastPoint.pHandle) {
+          firstPoint.setPHandle(lastPoint.pHandle.x, lastPoint.pHandle.y);
+        }
+        // Remove last redundant point
+        this.points = this.points.slice(0, this.points.length-1);
       }
-      // Remove last redundant point
-      this.points = this.points.slice(0, this.points.length-1);
+
+      firstPoint = this.points[0];
+      lastPoint  = this.points[this.points.length-1];
     }
 
-    firstPoint = this.points[0];
-    lastPoint  = this.points[this.points.length-1];
     firstPoint.prec = lastPoint;
     lastPoint.succ = firstPoint;
 
