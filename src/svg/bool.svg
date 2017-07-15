@@ -1,5 +1,6 @@
 <svg id="main" width="400" height="400" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:mondrian="http://mondrian.io/xml" viewbox="0 0 400 400" enable-background="new 0 0 800 470.59" style="width: 800px; height: 470.59px; transform: scale(1);">
-<rect opacity="1" fill="#CD0F34" fill-opacity="1" stroke="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="4" stroke-dasharray="none" stroke-opacity="1" id="rect3491" width="100" height="100" x="0" y="0" />
-<rect opacity="1" fill="#8fc69a" fill-opacity="1" stroke="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="4" stroke-dasharray="none" stroke-opacity="1" id="rect3491" width="100" height="100" x="50" y="50" />
+<rect opacity="1" fill="#CD0F34" fill-opacity="1" stroke="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="4" stroke-dasharray="none" stroke-opacity="1" id="rect3491" width="100" height="400" x="100" y="0" />
+<rect opacity="1" fill="#8fc69a" fill-opacity="1" stroke="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="4" stroke-dasharray="none" stroke-opacity="1" id="rect3491" width="400" height="100" x="0" y="100" />
+
 </svg>
 

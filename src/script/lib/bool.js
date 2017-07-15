@@ -82,18 +82,6 @@ export class Edge {
     edge.next = this.next;
     edges.push(edge);
 
-    /*
-    // Intersections now sorted
-    for (let xn of xns.concat([this.destination])) {
-      let edge = new Edge(origin, xn, this.isTwin);
-      edge.prev = prev;
-      prev.next = edge;
-      edges.push(edge);
-      prev = edge;
-      origin = xn;
-    }
-    */
-
     // Link up twins
     for (let edge of edges) {
       edge.twin.prev = edge.next.twin;
@@ -164,9 +152,11 @@ export class EdgeSet {
   }
 
   replace(remove, replacements) {
-    this.edges = this.edges.filter((edge) => {
-      return edge !== remove;
-    }).concat(replacements);
+    console.log('replacing', remove.toString(), 'with', replacements[0].toString(), ';\n', 'pushing', replacements[1].toString());
+    let i = this.edges.indexOf(remove);
+    this.edges[i] = replacements[0];
+    this.edges.push(replacements[1]);
+    return replacements[0];
   }
 
   get twins() {
@@ -174,30 +164,51 @@ export class EdgeSet {
   }
 
   intersect(os) {
-    let thisEdges = this.edges.slice(0);
-    let otherEdges = os.edges.slice(0);
-
     let xnsAll = [];
 
-    for (let edge of thisEdges) {
-      for (let other of otherEdges) {
+    for (let i = 0; i < this.edges.length; i ++) {
+      let edge = this.edges[i];
+
+      let otherEdges = os.edges.slice(0);
+
+      for (let ii = 0; ii < otherEdges.length; ii ++) {
+        let other = os.edges[ii];
+        if (i > 1000 || ii > 1000) {
+          debugger;
+          break;
+        }
         let xns = edge.intersections(other);
-        if (xns && xns.length > 0) {
-          // We have intersections to deal with
-          let replacementsSelf = [];
-          let replacementsOther = [];
 
-          //console.log(edge.toString())
-          //console.log(other.toString());
-          //console.log(xns.join(' '));
+        if (xns instanceof Array) {
 
-          // Fix this set
-          this.replace(edge, edge.splitOn(xns));
+          // TODO figure out if we need to do anything special here, when
+          // the intersection is actually just a shared point
+          xns = xns.filter((xn) => {
+            return !(
+              xn.equal(edge.origin) ||
+              xn.equal(edge.destination) ||
+              xn.equal(other.origin) ||
+              xn.equal(other.destination)
+            );
+            console.log('omitting further split; point is incident');
+          });
 
-          // Fix the other set
-          os.replace(other, other.splitOn(xns));
+          if (xns.length > 0) {
 
-          xnsAll = xnsAll.concat(xns);
+            //console.log(edge.toString())
+            //console.log(other.toString());
+            //console.log(xns.join(' '));
+
+            console.log('split', xns.join(' '), '|',  edge.toString(), '|',  other.toString());
+
+            // Fix this set
+            edge = this.replace(edge, edge.splitOn(xns));
+
+            // Fix the other set
+            os.replace(other, other.splitOn(xns));
+
+            xnsAll = xnsAll.concat(xns);
+          }
         }
       }
     }
@@ -217,11 +228,16 @@ function doBoolean(a, b, op) {
 
   console.log('xns', xns);
 
-  function includePoint(pt, owner, other) {
-    // We always keep intersection points
+  function wasIntersection(pt) {
     for (let xn of xns) {
       if (xn.equal(pt)) return true;
     }
+    return false;
+  }
+
+  function includePoint(pt, owner, other) {
+    // We always keep intersection points
+    if (wasIntersection(pt)) return true;
 
     switch (op) {
       case 'unite':
@@ -241,28 +257,51 @@ function doBoolean(a, b, op) {
   }
 
   function includeEdge(edge, owner, other) {
-    return includePoint(edge.origin, owner, other) && includePoint(edge.destination, owner, other);
+    // TODO debug from here next time... double intersection
+    // need to figure out consistent way to handle this
+    if (wasIntersection(edge.origin) && wasIntersection(edge.destination)) {
+      switch (op) {
+        case 'unite':
+          return false;
+        case 'subtract':
+          return owner === a;
+      }
+    }
+
+    return (
+      includePoint(edge.origin, owner, other) &&
+      includePoint(edge.destination, owner, other)
+    );
   }
 
   let pl = new PointsList();
 
   let edgesToUse = [];
   let edgesUsed = [];
+  let edgesToOmit = [];
   for (let edge of aes.edges) {
     if (includeEdge(edge, a, b)) {
       edgesToUse.push(edge);
       edgesToUse.push(edge.twin);
+    } else {
+      edgesToOmit.push(edge);
     }
   }
   for (let edge of bes.edges) {
     if (includeEdge(edge, b, a)) {
       edgesToUse.push(edge);
       edgesToUse.push(edge.twin);
+    } else {
+      edgesToOmit.push(edge);
     }
   }
 
-  console.log(edgesToUse, 'to use');
+  console.log(edgesToUse, 'to use', edgesToUse.length/2);
   for (let edge of edgesToUse) {
+    console.log(edge.toString());
+  }
+  console.log(edgesToOmit, 'to omit', edgesToOmit.length);
+  for (let edge of edgesToOmit) {
     console.log(edge.toString());
   }
 
@@ -288,10 +327,8 @@ function doBoolean(a, b, op) {
       console.log('push', cursor.destination.toString(), '('+cursor.toString()+')');
     }
 
-    console.log('bf rm', edgesToUse.length);
     edgesToUse = edgesToUse.remove(cursor);
     edgesToUse = edgesToUse.remove(cursor.twin);
-    console.log('af rm', edgesToUse.length);
 
     edgesUsed.push(cursor);
 

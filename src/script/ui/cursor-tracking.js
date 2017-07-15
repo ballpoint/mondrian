@@ -6,15 +6,6 @@ import { insideOf } from 'lib/dom';
 const DRAG_THRESHOLD = 5;
 const DOUBLE_CLICK_THRESHOLD = 500;
 
-/*
-
-  Cursor event overriding :D
-
-  This shit tracks exactly what the cursor is doing and implements some
-  custom cursor functions like dragging, which are dispatched via the ui object.
-
-*/
-
 function isDefaultQuarantined() {
   return false;
 }
