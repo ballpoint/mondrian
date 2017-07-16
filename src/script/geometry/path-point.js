@@ -236,11 +236,13 @@ export default class PathPoint extends Posn {
   }
 
   setPHandle(pX, pY) {
+    if (pX === undefined) return;
     this.pHandle = new Posn(pX, pY);
     this.checkIfHandlesLocked();
   }
 
   setSHandle(sX, sY) {
+    if (sX === undefined) return;
     this.sHandle = new Posn(sX, sY);
     this.checkIfHandlesLocked();
   }
@@ -284,7 +286,8 @@ export default class PathPoint extends Posn {
   }
 
   reverse() {
-    return PathPoint.fromPosns(this, this.sHandle, this.pHandle);
+    let p =  PathPoint.fromPosns(this, this.sHandle, this.pHandle);
+    return p;
   }
 
   nudge(xd, yd) {
@@ -363,8 +366,8 @@ export default class PathPoint extends Posn {
     }
 
     if (p1 || p2) {
-      if (!p1) p1 = prec;
-      if (!p2) p2 = this;;
+      if (!p1) p1 = this.prec;
+      if (!p2) p2 = this;
       return `C${p1.x},${p1.y} ${p2.x},${p2.y} ${this.x},${this.y}`;
       // CurveTo
     } else {

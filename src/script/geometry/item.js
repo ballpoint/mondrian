@@ -209,7 +209,7 @@ export default class Item {
       let lw = parseFloat(this.data['stroke-width']);
       if (lw === undefined) lw = 1;
 
-      context.lineWidth = 0.5;//projection.z(lw);
+      context.lineWidth = projection.z(lw);
 
       context.stroke();
     }

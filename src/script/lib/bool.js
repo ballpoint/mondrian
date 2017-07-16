@@ -86,8 +86,6 @@ export class Edge {
     edge.next = this.next;
     edges.push(edge);
 
-    debugger;
-
     // Link up twins
     for (let edge of edges) {
       edge.twin.prev = edge.next.twin;
@@ -338,10 +336,15 @@ function doBoolean(a, b, op) {
 
       if (seg.length > 1) {
         let lastPoint = seg.last;
-        lastPoint.setSHandle(cursor.origin.sHandle);
+        if (cursor.origin.sHandle) {
+          lastPoint.setSHandle(cursor.origin.sHandle);
+        }
 
         let firstPoint = seg.first;
-        firstPoint.setPHandle(cursor.destination.pHandle);
+        if (cursor.destination)
+        if (cursor.destination.pHandle) {
+          firstPoint.setPHandle(cursor.destination.pHandle);
+        }
       }
 
     } else {
@@ -351,7 +354,9 @@ function doBoolean(a, b, op) {
       // Set the last point's sHandle
       if (seg.length > 1) {
         let prevPoint = seg.points[seg.length-2];
-        prevPoint.setSHandle(cursor.origin.sHandle);
+        if (cursor.origin.sHandle) {
+          prevPoint.setSHandle(cursor.origin.sHandle);
+        }
       }
     }
 
