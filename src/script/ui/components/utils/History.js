@@ -1,4 +1,4 @@
-import Util from 'ui/components/Util';
+import Util from 'ui/components/utils/Util';
 
 let HistoryUtil = React.createClass({
   keyVal(e) {

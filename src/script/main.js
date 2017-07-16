@@ -9,15 +9,22 @@ import bool from 'bool3.svg';
 import xn from 'xn.svg';
 import google from 'google.svg';
 import Editor from 'ui/editor';
-import Utils from 'ui/components/Utils';
+import Utils from 'ui/components/utils/Utils';
+import Menus from 'ui/components/menus/Menus';
 
 let doc = Doc.fromSVG(bool);
 
 let editor = new Editor('#app-render');
 
-ReactDOM.render(React.createElement(Utils, {
-  editor
-}), document.getElementById('app-windows'));
+ReactDOM.render(
+  React.createElement(Utils, { editor }),
+  document.getElementById('app-windows')
+);
+
+ReactDOM.render(
+  React.createElement(Menus, { editor }),
+  document.getElementById('app-menus')
+);
 
 editor.load(doc);
 

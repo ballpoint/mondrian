@@ -1,8 +1,8 @@
 import classnames from 'classnames';
 import Thumb from 'ui/thumb';
 import 'utils/selection.scss';
-import Util from 'ui/components/Util';
-import TextInput from 'ui/components/TextInput';
+import Util from 'ui/components/utils/Util';
+import TextInput from 'ui/components/utils/TextInput';
 
 const THUMB_IMG_MAX_WIDTH  = 140;
 const THUMB_IMG_MAX_HEIGHT = 100;

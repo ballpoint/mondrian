@@ -1,4 +1,4 @@
-import Util from 'ui/components/Util';
+import Util from 'ui/components/utils/Util';
 
 let LayersUtil = React.createClass({
   render() {

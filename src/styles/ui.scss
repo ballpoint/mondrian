@@ -1,0 +1,94 @@
+body#app { 
+  margin: 0;
+  
+  overflow: hidden;
+
+  display: flex;
+  height: 100%;
+}
+
+#app-main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+
+  header#app-header {
+    height: $app-header-height;
+    flex-grow: 0;
+    flex-shrink: 0;
+    border-bottom: 1px solid $fg-grey;
+    display: flex;
+
+    #logo {
+      display: block;
+      padding: 20px 10px;
+      width: $app-toolbar-width;
+      height: $app-header-height;
+      background-color: $bg-grey;
+      border-right: 1px solid $fg-grey;
+      border-bottom: 1px solid $fg-grey;
+
+      rect.logo-bg {
+        fill: #212121;
+      }
+
+      rect.logo-fg {
+        fill: #fff;
+      }
+    }
+
+    #app-controls {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: $app-header-height;
+
+      #app-tbd {
+        flex-grow: 1;
+      }
+      #app-menus {
+        flex-grow: 0;
+        display: flex;
+        .app-menu-button {
+          padding: 5px 10px;
+        }
+      }
+    }
+    #app-account {
+      flex-grow: 0;
+      width: 200px;
+    }
+  }
+
+  #app-view {
+    display: flex;
+    height: 100%;
+
+    #app-tools {
+      width: $app-toolbar-width;
+      border-right: 1px solid $fg-grey;
+
+      .app-tool {
+        width: 100%;
+        padding: 10px;
+        border-bottom: 1px solid $fg-grey;
+      }
+    }
+
+    #app-render {
+      position: relative;
+      flex-grow: 1;
+      height: 100%;
+    }
+  }
+
+  footer#app-footer {
+    height: 20px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    border-top: 1px solid $fg-grey;
+  }
+}
+

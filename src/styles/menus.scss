@@ -1,0 +1,13 @@
+@import "~vars.scss";
+
+.app-menus-row {
+  display: flex;
+
+  .app-menu-button {
+    cursor: default;
+
+    &:hover {
+      color: $blue;
+    }
+  }
+}

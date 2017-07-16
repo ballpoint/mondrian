@@ -1,6 +1,6 @@
 import 'utils/document.scss';
 import classnames from 'classnames';
-import Util from 'ui/components/Util';
+import Util from 'ui/components/utils/Util';
 import Layer from 'io/layer';
 
 let DocumentUtilChild = React.createClass({

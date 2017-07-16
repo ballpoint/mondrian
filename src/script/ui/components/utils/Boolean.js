@@ -1,5 +1,5 @@
 import Path from 'geometry/path';
-import Util from 'ui/components/Util';
+import Util from 'ui/components/utils/Util';
 import bool from 'lib/bool';
 import Color from 'ui/color';
 
