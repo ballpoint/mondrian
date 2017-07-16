@@ -283,6 +283,10 @@ export default class PathPoint extends Posn {
     return this.segment.list.path;
   }
 
+  reverse() {
+    return PathPoint.fromPosns(this, this.sHandle, this.pHandle);
+  }
+
   nudge(xd, yd) {
     super.nudge(xd, yd);
     if (this.pHandle) this.pHandle.nudge(xd, yd);

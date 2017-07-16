@@ -14,7 +14,7 @@ export class Edge {
     this.destination = destination;
 
     if (twin === undefined) {
-      twin = new Edge(destination, origin, this);
+      twin = new Edge(destination.reverse(), origin.reverse(), this);
     }
     this.twin = twin;
   }
@@ -323,6 +323,7 @@ function doBoolean(a, b, op) {
 
   // Start with the first edge and crawl
   let cursor = edgesToUse[0];
+  let prevEdge;
   pl.push(cursor.origin);
   console.log('start at', cursor.origin.toString());
 
@@ -333,8 +334,16 @@ function doBoolean(a, b, op) {
 
     // Push current destination and go on to find the next
     if (seg.length > 0 && seg.first.equal(cursor.destination) && edgesUsed.indexOf(cursor.next) > -1) {
-      console.log('closing to', cursor.destination.toString());
       pl.closeSegment();
+
+      if (seg.length > 1) {
+        let lastPoint = seg.last;
+        lastPoint.setSHandle(cursor.origin.sHandle);
+
+        let firstPoint = seg.first;
+        firstPoint.setPHandle(cursor.destination.pHandle);
+      }
+
     } else {
       seg.push(cursor.destination);
       console.log('push', cursor.destination.toString(), '('+cursor.toString()+')');
@@ -350,6 +359,7 @@ function doBoolean(a, b, op) {
     edgesToUse = edgesToUse.remove(cursor.twin);
 
     edgesUsed.push(cursor);
+    prevEdge = cursor;
 
     if (edgesToUse.length === 0) {
       break;
