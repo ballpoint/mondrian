@@ -2,6 +2,7 @@ import Posn from 'geometry/posn';
 import CubicBezier from 'geometry/cubic-bezier-line-segment';
 import assert from 'assert';
 import assertUtil from 'test/util';
+import shapes from 'lab/shapes';
 
 describe("CubicBezier", function() {
   it('works as expected when it\'s a straight line', (done) => {
@@ -36,6 +37,28 @@ describe("CubicBezier", function() {
       let calculatedPerc = cb.findPercentageOfPoint(posn);
       assertUtil.within(perc, calculatedPerc, 0.001);
     }
+
+    done();
+  });
+
+  it('handles intersections', (done) => {
+    let c1 = new CubicBezier(
+      new Posn(169.78713546239803,104.64514289267613),
+      new Posn(167.43103575881548,130.09348307511416),
+      new Posn(146.04022595452193,150),
+      new Posn(120,150)
+    );
+
+    let c2 = new CubicBezier(
+      new Posn(113.61580366762904,149.5963227684857),
+      new Posn(125.9753648760792,128.44150524428468),
+      new Posn(145.94145691669456,112.20734902976737),
+      new Posn(169.78713546239803,104.64514289267613),
+    );
+
+    let xns = shapes.intersections(c1, c2);
+
+    console.log(xns);
 
     done();
   });

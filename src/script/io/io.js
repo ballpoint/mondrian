@@ -1,97 +1,26 @@
+import consts from 'consts';
 import Bounds from 'geometry/bounds';
 import Path from 'geometry/path';
 import Text from 'geometry/text';
 import Item from 'geometry/item';
 import Group from 'geometry/group';
 import UUIDV4 from 'uuid/v4';
-/*
-
-  io
-
-  The goal of this is an IO that can take anything that could
-  conceivably be SVG and convert it to Item.
-
-*/
-
 
 let io = {
 
-  parse(doc) {
-    let bounds = this.getBounds(doc);
-
-    // Set the proper dimensions
-
-    if ((bounds.width == null)) { bounds.width = 1000; }
-    if ((bounds.height == null)) { bounds.height = 1000; }
-
-    let parsed = this.recParse(doc);
-
-    /*
-    let viewbox = doc.getAttribute("viewBox");
-
-    if (viewbox) {
-      // If there's a viewBox attr, we adjust the contents to fit in the actual canvas
-      // the way they fit in the viewBox.
-      viewbox = viewbox.split(" ");
-      viewbox = new Bounds(viewbox[0], viewbox[1], viewbox[2], viewbox[3]);
-    }
-    */
-
-    return parsed;
-  },
-
-  getBounds(doc) {
-    let width = doc.getAttribute("width");
-    let height = doc.getAttribute("height");
-    let viewbox = doc.getAttribute("viewBox");
-
-    if ((width == null)) {
-      if (viewbox != null) {
-        width = viewbox.split(" ")[2];
-      } else {
-        console.warn("No width, defaulting to 1000");
-        width = 1000;
-      }
-    }
-
-    if ((height == null)) {
-      if (viewbox != null) {
-        height = viewbox.split(" ")[3];
-      } else {
-        console.warn("No height, defaulting to 1000");
-        height = 1000;
-      }
-    }
-
-    width = parseFloat(width);
-    height = parseFloat(height);
-
-    if (isNaN(width)) {
-      console.warn("Width is NaN, defaulting to 1000");
-      width = 1000;
-    }
-
-    if (isNaN(height)) {
-      console.warn("Width is NaN, defaulting to 1000");
-      height = 1000;
-    }
-
-    return new Bounds(0, 0, parseFloat(width), parseFloat(height));
-  },
-
-  recParse(container) {
+  parse(container) {
     let results = [];
     for (let elem of container.childNodes) {
 
       // <defs> symbols... for now we don't do much with this.
       if (elem.nodeName === "defs") {
         continue;
-        let inside = this.recParse(elem);
+        let inside = this.parse(elem);
         results = results.concat(inside);
 
       // <g> group tags... drill down.
       } else if (elem.nodeName === "g") {
-        results.push(new Group(this.recParse(elem)));
+        results.push(new Group(this.parse(elem)));
       } else {
 
         // Otherwise it must be a shape element we have a class for.
@@ -299,6 +228,22 @@ let io = {
     })();
   },
 
+  createSVGElement(type) {
+    return document.createElementNS(consts.svgNamespace, type);
+  },
+
+  itemToElement(item) {
+    if (item instanceof Path) {
+      let elem = this.createSVGElement('path');
+      for (let key in item.data) {
+        item.commitData();
+        elem.setAttribute(key, item.data[key]);
+      }
+      return elem;
+    } else {
+      console.warn('Cannot transform to element:', item);
+    }
+  },
 
   makeFile() {
     this.prepareForExport();
@@ -327,49 +272,12 @@ ${main}\
 `;
   },
 
-
   makeBase64() {
     return btoa(this.makeFile());
   },
 
-
   makeBase64URI() {
     return `data:image/svg+xml;charset=utf-8;base64,${this.makeBase64()}`;
-  },
-
-
-  makePNGURI(elements, maxDimen) {
-    let bounds;
-    if (elements == null) { ({ elements } = ui); }
-    if (maxDimen == null) { maxDimen = undefined; }
-    let sandbox = dom.pngSandbox;
-    let context = sandbox.getContext("2d");
-
-    if (elements.length) {
-      bounds = this.getBounds(elements);
-    } else {
-      bounds = this.getBounds(dom.main);
-    }
-
-    sandbox.setAttribute("width", bounds.width);
-    sandbox.setAttribute("height", bounds.height);
-
-    if (maxDimen != null) {
-      let s = Math.max(context.canvas.width, context.canvas.height) / maxDimen;
-      context.canvas.width /= s;
-      context.canvas.height /= s;
-      context.scale(1 / s, 1 / s);
-    }
-
-    if (typeof elements === "string") {
-      elements = this.parse(elements, false);
-    }
-
-    for (let elem of Array.from(elements)) {
-      elem.drawToCanvas(context);
-    }
-
-    return sandbox.toDataURL("png");
   }
 };
 

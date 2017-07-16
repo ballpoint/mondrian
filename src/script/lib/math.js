@@ -30,5 +30,9 @@ export default {
 
   radiansToDegrees(rad) {
     return rad * (180 / Math.PI);
+  },
+
+  fmtFloat(n, prec) {
+    return n.toFixed(prec).replace(/\.?0+$/, '');
   }
 }

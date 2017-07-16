@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400">
+<circle stroke="rgba(0, 0, 0, 1)" fill="rgba(204, 204, 204, 1)" stroke-width="1" cx="120" cy="100" r="50"/>
+<circle stroke="rgba(0, 0, 0, 1)" fill="rgba(204, 204, 204, 1)" stroke-width="1" cx="200" cy="200" r="100"/>
+</svg>
+

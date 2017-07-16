@@ -6,6 +6,8 @@ import LineSegment from 'geometry/line-segment';
 import CubicBezier from 'geometry/cubic-bezier-line-segment';
 import PointsList from 'geometry/points-list'
 
+const XN_TOLERANCE = 0.001;
+
 export class Edge {
   constructor(origin, destination, twin) {
     this.origin = origin;
@@ -64,6 +66,7 @@ export class Edge {
         finalDestination = PathPoint.fromPosns(splits[1].b);
       }
 
+
       // Keep the rest for the next split
       ls = splits[1];
 
@@ -74,6 +77,7 @@ export class Edge {
       prev = edge;
     }
 
+
     // Add final edge
     let lastEdge = edges.last();
     let edge = new Edge(lastEdge.destination, finalDestination);
@@ -81,6 +85,8 @@ export class Edge {
     edge.prev = prev;
     edge.next = this.next;
     edges.push(edge);
+
+    debugger;
 
     // Link up twins
     for (let edge of edges) {
@@ -169,26 +175,22 @@ export class EdgeSet {
     for (let i = 0; i < this.edges.length; i ++) {
       let edge = this.edges[i];
 
-      let otherEdges = os.edges.slice(0);
-
-      for (let ii = 0; ii < otherEdges.length; ii ++) {
+      for (let ii = 0; ii < os.edges.length; ii ++) {
         let other = os.edges[ii];
         if (i > 1000 || ii > 1000) {
-          debugger;
           break;
         }
         let xns = edge.intersections(other);
 
         if (xns instanceof Array) {
 
-          // TODO figure out if we need to do anything special here, when
-          // the intersection is actually just a shared point
           xns = xns.filter((xn) => {
+            // TODO constantize that shit
             return !(
-              xn.equal(edge.origin) ||
-              xn.equal(edge.destination) ||
-              xn.equal(other.origin) ||
-              xn.equal(other.destination)
+              xn.within(edge.origin, XN_TOLERANCE) ||
+              xn.within(edge.destination, XN_TOLERANCE) ||
+              xn.within(other.origin, XN_TOLERANCE) ||
+              xn.within(other.destination, XN_TOLERANCE)
             );
             console.log('omitting further split; point is incident');
           });
@@ -260,11 +262,18 @@ function doBoolean(a, b, op) {
     // TODO debug from here next time... double intersection
     // need to figure out consistent way to handle this
     if (wasIntersection(edge.origin) && wasIntersection(edge.destination)) {
+      let midpt = edge.lineSegment.posnAt(0.5);
       switch (op) {
         case 'unite':
-          return false;
+          return !shapes.contains(other, midpt);
         case 'subtract':
-          return owner === a;
+          if (owner === a) {
+            return shapes.contains(b, midpt);
+          } else {
+            return !shapes.contains(a, midpt);
+          }
+        case 'intersect':
+          return shapes.contains(other, midpt);
       }
     }
 
@@ -296,6 +305,8 @@ function doBoolean(a, b, op) {
     }
   }
 
+  console.log('total edges', (edgesToUse.length/2) + edgesToOmit.length);
+
   console.log(edgesToUse, 'to use', edgesToUse.length/2);
   for (let edge of edgesToUse) {
     console.log(edge.toString());
@@ -318,13 +329,21 @@ function doBoolean(a, b, op) {
   let iters = edgesToUse.length/2;
 
   for (let i = iters; i > 0; i--) {
+    let seg = pl.lastSegment;
+
     // Push current destination and go on to find the next
-    if (pl.first.equal(cursor.destination) && edgesUsed.indexOf(cursor.next) > -1) {
+    if (seg.length > 0 && seg.first.equal(cursor.destination) && edgesUsed.indexOf(cursor.next) > -1) {
       console.log('closing to', cursor.destination.toString());
       pl.closeSegment();
     } else {
-      pl.push(cursor.destination);
+      seg.push(cursor.destination);
       console.log('push', cursor.destination.toString(), '('+cursor.toString()+')');
+
+      // Set the last point's sHandle
+      if (seg.length > 1) {
+        let prevPoint = seg.points[seg.length-2];
+        prevPoint.setSHandle(cursor.origin.sHandle);
+      }
     }
 
     edgesToUse = edgesToUse.remove(cursor);
@@ -338,13 +357,7 @@ function doBoolean(a, b, op) {
 
     if (edgesToUse.indexOf(cursor.next) > -1) {
       // If cursor.next or its twin is an edge we want to use, just use it
-      console.log('using next');
       cursor = cursor.next;
-      /*
-    } else if (edgesToUse.indexOf(cursor.next.twin) > -1) {
-      console.log('using next twin');
-      cursor = cursor.next.twin;
-      */
     } else {
       // Otherwise, we are at an intersection and must seek out
       // which common edge we want instead (going clockwise)

@@ -85,7 +85,7 @@ export default class Posn {
   }
 
 
-  toString() {
+  toString(prec=8) {
     return `${this.x},${this.y}`;
   }
 
@@ -173,7 +173,7 @@ export default class Posn {
 
 
   equal(p) {
-    return (this.x === p.x) && (this.y === p.y);
+    return this.x === p.x && this.y === p.y;
   }
 
   min(p) {

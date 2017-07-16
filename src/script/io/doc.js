@@ -35,6 +35,7 @@ export default class Doc {
     let children = io.parse(doc.querySelector('svg'));
 
     let { width, height, transform } = this.parseDimensions(root);
+    console.log(width, height);
 
     // Apply viewbox transformation
     if (transform) {
@@ -102,6 +103,9 @@ export default class Doc {
       }
     }
 
+    if (width === undefined || isNaN(width)) width = 1000;
+    if (height === undefined || isNaN(height)) height = 1000;
+
     return { width, height, transform }
   }
 
@@ -127,8 +131,27 @@ export default class Doc {
     return this.layers[i];
   }
 
+  toDocument() {
+    let doc = io.createSVGElement('svg');
+
+    doc.setAttribute('width', this.width);
+    doc.setAttribute('height', this.height);
+
+    for (let item of this.elements) {
+      doc.appendChild(io.itemToElement(item));
+    }
+
+    return doc;
+  }
+
   toSVG() {
-    // TODO
+    let doc = this.toDocument();
+
+    let str = new XMLSerializer().serializeToString(doc);
+    // Make better whitespace management happen later
+    str = str.replace(/>/gi, ">\n");
+    
+    return str;
   }
 
   // Constructor helpers

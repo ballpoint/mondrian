@@ -248,6 +248,9 @@ export default class Editor extends EventEmitter {
   }
 
   setZoom(zl, anchor=null) {
+
+    zl = Math.min(100, Math.max(0.01, zl));
+
     this.state.zoomLevel = zl;
 
     let anchorBefore;

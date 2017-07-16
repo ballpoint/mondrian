@@ -49,6 +49,11 @@ export default class Path extends Item {
   static ellipse(data) {
     let { cx, cy, rx, ry } = data;
 
+    cx = parseFloat(cx);
+    cy = parseFloat(cy);
+    rx = parseFloat(rx);
+    ry = parseFloat(ry);
+
     let t = new Posn(cx, cy - ry);
     let r = new Posn(cx + rx, cy);
     let b = new Posn(cx, cy + ry);
