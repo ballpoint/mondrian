@@ -51,7 +51,8 @@ export default {
     let deg = 10;
 
     function getRay() {
-      let posn2 = posn.clone().nudge(bounds.width*10, 0)
+      let dist = posn.distanceFrom(bounds.center());
+      let posn2 = posn.clone().nudge(dist*100, 0)
       if (deg !== 0) posn2.rotate(deg, posn);
       return new LineSegment(posn, posn2);
     }
