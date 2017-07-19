@@ -35,7 +35,6 @@ export default class Doc {
     let children = io.parse(doc.querySelector('svg'));
 
     let { width, height, transform } = this.parseDimensions(root);
-    console.log(width, height);
 
     // Apply viewbox transformation
     if (transform) {

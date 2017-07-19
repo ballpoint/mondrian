@@ -23,12 +23,14 @@ const testFiles = {
   oog,
 }
 
+
 let main = document.querySelector('main');
 
 let i = 0;
 let filter;
 if (location.hash) {
   filter = parseInt(location.hash.replace('#',''), 10);
+  window.LOGLEVEL=4;
 }
 
 function appendDoc(section, doc, label) {
@@ -88,9 +90,13 @@ function boolDoc(doc, op) {
 }
 
 for (let key in testFiles) {
-  if (filter !== undefined && filter - i > 4) {
-    i += 4;
-    continue;
+  if (filter !== undefined) {
+    if (filter - i > 4) {
+      i += 4;
+      continue;
+    } else if (i > filter) {
+      break;
+    }
   }
 
   let file = testFiles[key];
@@ -108,21 +114,21 @@ for (let key in testFiles) {
   // Draw united
   if (filter === undefined || i === filter) {
     let united = boolDoc(doc, 'unite');
-    appendDoc(section, united.doc, 'unite: ' + united.time.toFixed(2) + 'ms');
+    appendDoc(section, united.doc, key + ' unite: ' + united.time.toFixed(2) + 'ms');
   }
   i++;
 
   // Draw united
   if (filter === undefined || i === filter) {
     let subtracted = boolDoc(doc, 'subtract');
-    appendDoc(section, subtracted.doc, 'subtract: ' + subtracted.time.toFixed(2) + 'ms');
+    appendDoc(section, subtracted.doc, key + ' subtract: ' + subtracted.time.toFixed(2) + 'ms');
   }
   i++;
 
   // Draw intersected
   if (filter === undefined || i === filter) {
     let intersected = boolDoc(doc, 'intersect');
-    appendDoc(section, intersected.doc, 'subtract: ' + intersected.time.toFixed(2) + 'ms');
+    appendDoc(section, intersected.doc, key + ' subtract: ' + intersected.time.toFixed(2) + 'ms');
   }
   i++;
 }

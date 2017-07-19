@@ -111,7 +111,7 @@ let io = {
         result = Path.polygon(data);
         break;
       default:
-        console.warn('TODO: handle ' + type, elem);
+        // TODO handle these
         return null;
         break;
     }

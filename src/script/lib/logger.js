@@ -1,12 +1,12 @@
 export default {
-  info(msg) {
+  info() {
     if (window.LOGLEVEL >= 2) {
-      console.info(msg);
+      console.info(...arguments);
     }
   },
-  verbose(msg) {
+  verbose() {
     if (window.LOGLEVEL >= 3) {
-      console.info(msg);
+      console.info(...arguments);
     }
   }
 }

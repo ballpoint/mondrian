@@ -34,14 +34,11 @@ export class Edge {
   }
 
   splitOn(xns) {
-    let xIncr = this.origin.x < this.destination.x;
-
     xns.sort((a, b) => {
-      if (xIncr) {
-        return a.x - b.x;
-      } else {
-        return b.x - a.x;
-      }
+      let pa = this.lineSegment.findPercentageOfPoint(a);
+      let pb = this.lineSegment.findPercentageOfPoint(b);
+      console.log(a, pa, b, pb);
+      return pa - pb;
     });
 
     let ls = this.lineSegment;
@@ -157,10 +154,13 @@ export class EdgeSet {
   }
 
   replace(remove, replacements) {
-    logger.verbose('replacing', remove.toString(), 'with', replacements[0].toString(), ';\n', 'pushing', replacements[1].toString());
+    logger.verbose('replacing', remove.toString(), 'with', replacements[0].toString(), '\n', 'pushing', replacements.slice(1).join('; '));
     let i = this.edges.indexOf(remove);
     this.edges[i] = replacements[0];
-    this.edges.push(replacements[1]);
+
+    for (let i = 1; i < replacements.length; i++) {
+      this.edges.push(replacements[i]);
+    }
     return replacements[0];
   }
 
@@ -201,6 +201,7 @@ export class EdgeSet {
             //logger.verbose(xns.join(' '));
 
             logger.verbose('split', xns.join(' '), '|',  edge.toString(), '|',  other.toString());
+            debugger;
 
             // Fix this set
             edge = this.replace(edge, edge.splitOn(xns));
@@ -392,6 +393,7 @@ function doBoolean(a, b, op) {
       } else if (cursorOpts.length == 0) {
         // The current segment is closed and we need to pick an edge that's remaining
         // to continue in a new segment.
+        debugger;
         logger.verbose('closing and moving on');
         pl.closeSegment();
 
