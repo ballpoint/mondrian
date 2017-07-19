@@ -1,4 +1,4 @@
 <svg id="main" width="300" height="300" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:mondrian="http://mondrian.io/xml" viewbox="0 0 300 300" enable-background="new 0 0 800 470.59" style="width: 800px; height: 470.59px; transform: scale(1);">
-<rect opacity="1" fill="#a5bfcc" fill-opacity="1" stroke="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="4" stroke-dasharray="none" stroke-opacity="1" id="rect3491" width="100" height="280" x="100" y="10" />
-<path opacity="1" fill="#3e5560" fill-opacity="1" stroke="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="4" stroke-dasharray="none" stroke-opacity="1" id="rect3491" d="M10,100 L220,100 L220,120 L10,120z M10,200 L220,200 L220,250 L10,250z" />
+<rect opacity="1" fill="#a5bfcc" stroke-width="1" stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="4" stroke-dasharray="none" stroke-opacity="1" id="rect3491" width="100" height="280" x="100" y="10" stroke="#000000" />
+<path opacity="1" fill="#ddad9b" stroke-width="1" stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="4" stroke-dasharray="none" stroke-opacity="1" id="rect3491" d="M10,100 L220,100 L220,120 L10,120z M10,200 L220,200 L220,250 L10,250z" stroke="#000000" />
 </svg>

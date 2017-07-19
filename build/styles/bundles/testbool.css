@@ -1,3 +1,7 @@
+body {
+  font-family: sans-serif;
+  overflow-x: hidden; }
+
 section {
   padding: 10px;
   width: 100%;
@@ -5,7 +9,11 @@ section {
   display: flex; }
   section .doc {
     border: 1px solid #ccc;
-    margin-right: 10px; }
+    margin-right: 10px;
+    margin-bottom: 20px; }
+    section .doc label {
+      color: #666;
+      font-size: 12px; }
     section .doc .canvas-container {
       width: 100%;
       height: 100%; }

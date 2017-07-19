@@ -143,11 +143,6 @@ export default class PointsList {
 
   closeSegment() {
     if (this.lastSegment && !this.lastSegment.empty) {
-
-      if (this.lastSegment.points.length === 0) {
-        debugger;
-      }
-      console.log('closing', this.lastSegment.points);
       this.lastSegment.close();
       this.pushSegment(new PointsSegment([], this));
     }
