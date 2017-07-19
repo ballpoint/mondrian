@@ -158,8 +158,8 @@ export class EdgeSet {
     let i = this.edges.indexOf(remove);
     this.edges[i] = replacements[0];
 
-    for (let i = 1; i < replacements.length; i++) {
-      this.edges.push(replacements[i]);
+    for (let rep of replacements.slice(1)) {
+      this.edges.push(rep);
     }
     return replacements[0];
   }
