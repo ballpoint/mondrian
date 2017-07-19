@@ -14,9 +14,16 @@ section {
     margin-right: 10px;
     margin-bottom: 20px;
 
-    label {
-      color: #666;
-      font-size: 12px;
+    a {
+      color: 000;
+      font-size: 14px;
+      text-decoration: none;
+      position: relative;
+      top: 4px;
+
+      &:hover {
+        text-decoration: underline;
+      }
     }
 
     .canvas-container {

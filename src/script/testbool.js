@@ -9,21 +9,40 @@ import bool from 'lib/bool';
 
 import rect1 from 'booltest/rect1.svg';
 import crosshatch from 'booltest/crosshatch.svg';
+import circles1 from 'booltest/circles1.svg';
+import circles2 from 'booltest/circles2.svg';
+import hazmat from 'booltest/hazmat.svg';
+import oog from 'booltest/oog.svg';
 
 const testFiles = {
-  'rect1': rect1,
-  'crosshatch': crosshatch,
+  rect1,
+  crosshatch,
+  circles1,
+  circles2,
+  hazmat,
+  oog,
 }
 
 let main = document.querySelector('main');
 
-function drawToCanvas(section, doc, label) {
+let i = 0;
+let filter;
+if (location.hash) {
+  filter = parseInt(location.hash.replace('#',''), 10);
+}
+
+function appendDoc(section, doc, label) {
   let w = doc.width;
   let h = doc.height;
   let container = document.createElement('div');
   container.className = 'doc'
   container.style.width = w+'px';
   container.style.height = h+'px';
+
+  let labelElem = document.createElement('a');
+  labelElem.innerHTML = label;
+  labelElem.href = '#'+i
+  labelElem.target = 'solo';
 
   section.appendChild(container);
   let cnv = new Canvas(container);
@@ -35,14 +54,11 @@ function drawToCanvas(section, doc, label) {
     1
   );
 
-  let labelElem = document.createElement('label');
-  labelElem.innerHTML = label;
   container.appendChild(labelElem);
 
   cnv.createLayer('main', (layer, context) => {
     doc.drawToCanvas(layer, context, proj);
   });
-
 
   cnv.refreshAll();
 
@@ -79,17 +95,29 @@ for (let key in testFiles) {
   main.appendChild(section);
 
   // Draw original
-  drawToCanvas(section, doc, key);
+  if (filter === undefined || i === filter) {
+    appendDoc(section, doc, key);
+  }
+  i++;
 
   // Draw united
-  let united = boolDoc(doc, 'unite');
-  drawToCanvas(section, united.doc, 'unite: ' + united.time.toFixed(2) + 'ms');
+  if (filter === undefined || i === filter) {
+    let united = boolDoc(doc, 'unite');
+    appendDoc(section, united.doc, 'unite: ' + united.time.toFixed(2) + 'ms');
+  }
+  i++;
 
   // Draw united
-  let subtracted = boolDoc(doc, 'subtract');
-  drawToCanvas(section, subtracted.doc, 'unite: ' + subtracted.time.toFixed(2) + 'ms');
+  if (filter === undefined || i === filter) {
+    let subtracted = boolDoc(doc, 'subtract');
+    appendDoc(section, subtracted.doc, 'subtract: ' + subtracted.time.toFixed(2) + 'ms');
+  }
+  i++;
 
   // Draw intersected
-  let intersected = boolDoc(doc, 'intersect');
-  drawToCanvas(section, intersected.doc, 'unite: ' + intersected.time.toFixed(2) + 'ms');
+  if (filter === undefined || i === filter) {
+    let intersected = boolDoc(doc, 'intersect');
+    appendDoc(section, intersected.doc, 'subtract: ' + intersected.time.toFixed(2) + 'ms');
+  }
+  i++;
 }
