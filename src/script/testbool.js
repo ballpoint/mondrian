@@ -88,6 +88,11 @@ function boolDoc(doc, op) {
 }
 
 for (let key in testFiles) {
+  if (filter !== undefined && filter - i > 4) {
+    i += 4;
+    continue;
+  }
+
   let file = testFiles[key];
   let doc = Doc.fromSVG(file);  
 
