@@ -657,7 +657,6 @@ export default class Editor extends EventEmitter {
 
       this.perform(cleanUpAction);
     }
-
   }
 
   undo() {

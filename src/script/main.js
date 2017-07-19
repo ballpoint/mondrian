@@ -5,14 +5,15 @@ import abq from 'abq.svg';
 import sbux from 'sbux.svg';
 import sbux2 from 'sbux2.svg';
 import nyt from 'nyt.svg';
-import bool from 'bool3.svg';
+import bool from 'bool4.svg';
 import xn from 'xn.svg';
 import google from 'google.svg';
+import pioneer from 'Pioneer_plaque.svg';
 import Editor from 'ui/editor';
 import Utils from 'ui/components/utils/Utils';
 import Menus from 'ui/components/menus/Menus';
 
-let doc = Doc.fromSVG(bool);
+let doc = Doc.fromSVG(google);
 
 let editor = new Editor('#app-render');
 

@@ -1,13 +1,44 @@
 @import "~vars.scss";
+@import "~mixins.scss";
 
 .app-menus-row {
+  z-index: 100;
   display: flex;
 
   .app-menu-button {
+    @include no-select;
     cursor: default;
+    position: relative;
 
     &:hover {
       color: $blue;
+    }
+
+    &:active, &.active {
+      color: $blue;
+    }
+  }
+
+  .app-menu-body {
+    position: absolute;
+    background: white;
+    min-width: 200px;
+
+    .app-menu-item {
+      cursor: default;
+      padding: 5px 10px;
+
+      + .app-menu-item {
+        border-top: 1px solid $fg-grey;
+      }
+
+      &.disabled {
+        color: $fg-grey;
+      }
+
+      &:hover:not(.disabled) {
+        color: $blue;
+      }
     }
   }
 }

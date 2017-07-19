@@ -1,4 +1,5 @@
 import 'util/prototypes';
+import logger from 'lib/logger';
 import Path from 'geometry/path';
 import PathPoint from 'geometry/path-point';
 import shapes from 'lab/shapes';
@@ -156,7 +157,7 @@ export class EdgeSet {
   }
 
   replace(remove, replacements) {
-    console.log('replacing', remove.toString(), 'with', replacements[0].toString(), ';\n', 'pushing', replacements[1].toString());
+    logger.verbose('replacing', remove.toString(), 'with', replacements[0].toString(), ';\n', 'pushing', replacements[1].toString());
     let i = this.edges.indexOf(remove);
     this.edges[i] = replacements[0];
     this.edges.push(replacements[1]);
@@ -190,16 +191,16 @@ export class EdgeSet {
               xn.within(other.origin, XN_TOLERANCE) ||
               xn.within(other.destination, XN_TOLERANCE)
             );
-            console.log('omitting further split; point is incident');
+            logger.verbose('omitting further split; point is incident');
           });
 
           if (xns.length > 0) {
 
-            //console.log(edge.toString())
-            //console.log(other.toString());
-            //console.log(xns.join(' '));
+            //logger.verbose(edge.toString())
+            //logger.verbose(other.toString());
+            //logger.verbose(xns.join(' '));
 
-            console.log('split', xns.join(' '), '|',  edge.toString(), '|',  other.toString());
+            logger.verbose('split', xns.join(' '), '|',  edge.toString(), '|',  other.toString());
 
             // Fix this set
             edge = this.replace(edge, edge.splitOn(xns));
@@ -218,7 +219,7 @@ export class EdgeSet {
 };
 
 function doBoolean(a, b, op) {
-  console.log('a', a, 'b', b);
+  logger.verbose('a', a, 'b', b);
 
   let aes = EdgeSet.fromPointsList(a);
   let bes = EdgeSet.fromPointsList(b);
@@ -226,7 +227,7 @@ function doBoolean(a, b, op) {
   // Resolve intersections
   let xns = aes.intersect(bes);
 
-  console.log('xns', xns);
+  logger.verbose('xns', xns);
 
   function wasIntersection(pt) {
     for (let xn of xns) {
@@ -303,15 +304,15 @@ function doBoolean(a, b, op) {
     }
   }
 
-  console.log('total edges', (edgesToUse.length/2) + edgesToOmit.length);
+  logger.verbose('total edges', (edgesToUse.length/2) + edgesToOmit.length);
 
-  console.log(edgesToUse, 'to use', edgesToUse.length/2);
+  logger.verbose(edgesToUse, 'to use', edgesToUse.length/2);
   for (let edge of edgesToUse) {
-    console.log(edge.toString());
+    logger.verbose(edge.toString());
   }
-  console.log(edgesToOmit, 'to omit', edgesToOmit.length);
+  logger.verbose(edgesToOmit, 'to omit', edgesToOmit.length);
   for (let edge of edgesToOmit) {
-    console.log(edge.toString());
+    logger.verbose(edge.toString());
   }
 
   if (edgesToUse.length === 0) {
@@ -323,7 +324,7 @@ function doBoolean(a, b, op) {
   let cursor = edgesToUse[0];
   let prevEdge;
   pl.push(cursor.origin);
-  console.log('start at', cursor.origin.toString());
+  logger.verbose('start at', cursor.origin.toString());
 
   let iters = edgesToUse.length/2;
 
@@ -349,7 +350,7 @@ function doBoolean(a, b, op) {
 
     } else {
       seg.push(cursor.destination);
-      console.log('push', cursor.destination.toString(), '('+cursor.toString()+')');
+      logger.verbose('push', cursor.destination.toString(), '('+cursor.toString()+')');
 
       // Set the last point's sHandle
       if (seg.length > 1) {
@@ -386,18 +387,18 @@ function doBoolean(a, b, op) {
       }
 
       if (cursorOpts.length === 1) {
-        console.log('using only cursorOpts');
+        logger.verbose('using only cursorOpts');
         cursor = cursorOpts[0];
       } else if (cursorOpts.length == 0) {
         // The current segment is closed and we need to pick an edge that's remaining
         // to continue in a new segment.
-        console.log('closing and moving on');
+        logger.verbose('closing and moving on');
         pl.closeSegment();
 
         cursor = edgesToUse[0];
       } else {
         // TODO handle this case!
-        console.log('opts not 1 with edges left', cursor);
+        logger.verbose('opts not 1 with edges left', cursor);
         debugger;
         break;
       }
@@ -410,7 +411,7 @@ function doBoolean(a, b, op) {
 };
 
 function doQueue(queue, op) {
-  console.log(queue, op);
+  logger.verbose(queue, op);
   let result = queue[0];
   queue = queue.slice(1);
 

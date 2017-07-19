@@ -23,11 +23,11 @@ export default class CursorTracking extends EventEmitter {
 
     this._clientBounds = this.root.getBoundingClientRect();
 
-    document.onclick = this._click.bind(this);
-    document.onmousedown = this._mousedown.bind(this);
-    document.onmouseup = this._mouseup.bind(this);
-    document.onmousemove = this._mousemove.bind(this);
-    document.onmouseover = this._mouseover.bind(this);
+    document.addEventListener('click', this._click.bind(this));
+    document.addEventListener('mousedown', this._mousedown.bind(this));
+    document.addEventListener('mouseup', this._mouseup.bind(this));
+    document.addEventListener('mousemove', this._mousemove.bind(this));
+    document.addEventListener('mouseover', this._mouseover.bind(this));
     document.addEventListener('mousewheel', this._scroll.bind(this));
   }
 

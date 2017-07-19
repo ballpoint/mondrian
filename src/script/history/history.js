@@ -43,13 +43,21 @@ export default class DocHistory {
     this.head = action;
   }
 
+  canUndo() {
+    return this.head.hasPrev();
+  }
+
   undo(editor) {
-    if (this.head.hasPrev) {
+    if (this.head.hasPrev()) {
       this.head.undo(editor);
       if (this.head.prev) {
         this.setHead(this.head.prev);
       }
     }
+  }
+
+  canRedo() {
+    return !!this.head.newestSucc;
   }
 
   redo(editor) {
