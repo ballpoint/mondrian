@@ -423,14 +423,28 @@ function doQueue(queue, op) {
   return result;
 }
 
+function doElements(elements, op) {
+  let queue = elements.map((elem) => { return elem.points });
+
+  let resultPoints = doQueue(queue, op);
+
+  let result = new Path({
+    d: resultPoints,
+    stroke: elements[0].data.stroke,
+    fill:   elements[0].data.fill
+  });
+
+  return result;
+}
+
 export default {
   unite(elems) { 
-    return doQueue(elems, 'unite');
+    return doElements(elems, 'unite');
   },
   intersect(elems) { 
-    return doQueue(elems, 'intersect');
+    return doElements(elems, 'intersect');
   },
   subtract(elems) { 
-    return doQueue(elems, 'subtract');
+    return doElements(elems, 'subtract');
   },
 };

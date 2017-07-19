@@ -5,17 +5,7 @@ import Color from 'ui/color';
 
 let BooleanUtil = React.createClass({
   do(op) {
-    let pls = this.props.editor.state.selection.slice(0).map((elem) => {
-      return elem.points;
-    });
-
-    let resultPoints = bool[op](pls);
-
-    let result = new Path({
-      d: resultPoints,
-      stroke: new Color('000000'),
-      fill: new Color('CCCCCC')
-    });
+    let result = bool[op](this.props.editor.state.selection.slice(0));
 
     this.props.editor.deleteSelection();
     this.props.editor.insertElements([result]);

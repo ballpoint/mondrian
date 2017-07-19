@@ -15,7 +15,8 @@ import Menus from 'ui/components/menus/Menus';
 
 let doc = Doc.fromSVG(google);
 
-let editor = new Editor('#app-render');
+let root = document.getElementById('app-render');
+let editor = new Editor(root);
 
 ReactDOM.render(
   React.createElement(Utils, { editor }),

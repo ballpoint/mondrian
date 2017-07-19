@@ -289,7 +289,6 @@ export default class PointsSegment {
       } else {
         this.drawPointToCanvas(point, prec, layer, projection);
       }
-
     }
 
     if (this.closed) {

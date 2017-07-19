@@ -22,7 +22,8 @@ module.exports = {
   entry: {
     'bundles/app':    'main.js',
     'bundles/vendor': 'vendor.js',
-    'bundles/test':   'test.js'
+    'bundles/test':   'test.js',
+    'bundles/testbool':   'testbool.js'
   },
 
   output: {
@@ -32,7 +33,7 @@ module.exports = {
 
   plugins: [
     new webpack.SourceMapDevToolPlugin({}),
-    new ExtractTextPlugin('styles.css')
+    new ExtractTextPlugin('styles/[name].css')
   ],
 
   module: {

@@ -68,6 +68,10 @@ export default class Doc {
     });
   }
 
+  clone() {
+    return Doc.fromSVG(this.toSVG());
+  }
+
   static parseDimensions(root) {
     let width, height, transform;
 
@@ -240,5 +244,11 @@ export default class Doc {
 
   insert(layer, i) {
     this.layers = this.layers.insertAt(layer, i);
+  }
+
+  drawToCanvas(layer, context, projection) {
+    for (let elem of this.elements) {
+      elem.drawToCanvas(layer, context, projection);
+    }
   }
 }

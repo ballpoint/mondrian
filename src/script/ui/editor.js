@@ -38,18 +38,15 @@ import DocumentElemsUIElement from 'ui/editor/doc_elems';
 
 
 export default class Editor extends EventEmitter {
-  constructor(rootSelector) {
+  constructor(root) {
     super();
 
     window.$e = this; // DEBUGGING
 
-    let root = document.querySelector(rootSelector);
     if (root) {
       this.root = root;
       this.initState();
       this.initCanvas();
-    } else {
-      throw new Error('root not found: ' + rootSelector);
     }
   }
 
@@ -487,9 +484,7 @@ export default class Editor extends EventEmitter {
 
   refreshDrawing(layer, context) {
     if (this.doc) {
-      for (let elem of this.doc.elements) {
-        elem.drawToCanvas(layer, context, this.projection);
-      }
+      this.doc.drawToCanvas(layer, context, this.projection);
     }
   }
 
