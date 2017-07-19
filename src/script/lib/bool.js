@@ -37,7 +37,6 @@ export class Edge {
     xns.sort((a, b) => {
       let pa = this.lineSegment.findPercentageOfPoint(a);
       let pb = this.lineSegment.findPercentageOfPoint(b);
-      console.log(a, pa, b, pb);
       return pa - pb;
     });
 
@@ -94,7 +93,7 @@ export class Edge {
   }
 
   toString() {
-    return this.origin.toString() + ' -> ' + this.destination.toString();
+    return this.origin.toShortString() + ' -> ' + this.destination.toShortString();
   }
 }
 
@@ -200,8 +199,7 @@ export class EdgeSet {
             //logger.verbose(other.toString());
             //logger.verbose(xns.join(' '));
 
-            logger.verbose('split', xns.join(' '), '|',  edge.toString(), '|',  other.toString());
-            debugger;
+            logger.verbose('split', xns.map((p) => { return p.toShortString() }).join(' '), '|',  edge.toString(), '|',  other.toString());
 
             // Fix this set
             edge = this.replace(edge, edge.splitOn(xns));
@@ -259,10 +257,12 @@ function doBoolean(a, b, op) {
   }
 
   function includeEdge(edge, owner, other) {
+    if (edge.toString() === '50,80 -> 20,50') debugger;
     // TODO debug from here next time... double intersection
     // need to figure out consistent way to handle this
     if (wasIntersection(edge.origin) && wasIntersection(edge.destination)) {
       let midpt = edge.lineSegment.posnAt(0.5);
+      if (midpt.x === 150) debugger;
       switch (op) {
         case 'unite':
           return !shapes.contains(other, midpt);
@@ -289,6 +289,8 @@ function doBoolean(a, b, op) {
   let edgesUsed = [];
   let edgesToOmit = [];
   for (let edge of aes.edges) {
+    if (edge.destination.x === 192.48023402857382) debugger;
+
     if (includeEdge(edge, a, b)) {
       edgesToUse.push(edge);
       edgesToUse.push(edge.twin);
@@ -297,6 +299,8 @@ function doBoolean(a, b, op) {
     }
   }
   for (let edge of bes.edges) {
+    if (edge.destination.x === 192.48023402857382) debugger;
+
     if (includeEdge(edge, b, a)) {
       edgesToUse.push(edge);
       edgesToUse.push(edge.twin);
@@ -325,7 +329,8 @@ function doBoolean(a, b, op) {
   let cursor = edgesToUse[0];
   let prevEdge;
   pl.push(cursor.origin);
-  logger.verbose('start at', cursor.origin.toString());
+  logger.verbose('-------------');
+  logger.verbose('start at', cursor.origin.toShortString());
 
   let iters = edgesToUse.length/2;
 
@@ -351,7 +356,7 @@ function doBoolean(a, b, op) {
 
     } else {
       seg.push(cursor.destination);
-      logger.verbose('push', cursor.destination.toString(), '('+cursor.toString()+')');
+      logger.verbose('push', cursor.destination.toShortString(), '('+cursor.toString()+')');
 
       // Set the last point's sHandle
       if (seg.length > 1) {
@@ -393,7 +398,6 @@ function doBoolean(a, b, op) {
       } else if (cursorOpts.length == 0) {
         // The current segment is closed and we need to pick an edge that's remaining
         // to continue in a new segment.
-        debugger;
         logger.verbose('closing and moving on');
         pl.closeSegment();
 

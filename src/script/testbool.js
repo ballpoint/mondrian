@@ -44,7 +44,7 @@ function appendDoc(section, doc, label) {
   let labelElem = document.createElement('a');
   labelElem.innerHTML = label;
   labelElem.href = '#'+i
-  labelElem.target = 'solo';
+  labelElem.target = '_blank';
 
   section.appendChild(container);
   let cnv = new Canvas(container);
@@ -128,7 +128,7 @@ for (let key in testFiles) {
   // Draw intersected
   if (filter === undefined || i === filter) {
     let intersected = boolDoc(doc, 'intersect');
-    appendDoc(section, intersected.doc, key + ' subtract: ' + intersected.time.toFixed(2) + 'ms');
+    appendDoc(section, intersected.doc, key + ' intersect: ' + intersected.time.toFixed(2) + 'ms');
   }
   i++;
 }

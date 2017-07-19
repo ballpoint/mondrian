@@ -228,7 +228,8 @@ export default class PathPoint extends Posn {
     if (!prec) {
       return null;
     }
-    if (this.hasHandles() || prec.hasHandles()) {
+
+    if (this.hasPHandle() || prec.hasSHandle()) {
       return CubicBezier.fromPathPoint(this, prec);
     } else {
       return LineSegment.fromPathPoint(this, prec);
@@ -260,7 +261,15 @@ export default class PathPoint extends Posn {
   }
 
   hasHandles() {
-    return this.pHandle || this.sHandle;
+    return !!(this.pHandle || this.sHandle);
+  }
+
+  hasSHandle() {
+    return this.sHandle instanceof Posn;
+  }
+
+  hasPHandle() {
+    return this.pHandle instanceof Posn;
   }
 
   reflectPHandleToSHandle() {
@@ -294,18 +303,21 @@ export default class PathPoint extends Posn {
     super.nudge(xd, yd);
     if (this.pHandle) this.pHandle.nudge(xd, yd);
     if (this.sHandle) this.sHandle.nudge(xd, yd);
+    return this;
   }
 
   scale(xf, yf, origin) {
     super.scale(xf, yf, origin);
     if (this.pHandle) this.pHandle.scale(xf, yf, origin);
     if (this.sHandle) this.sHandle.scale(xf, yf, origin);
+    return this;
   }
 
   rotate(a, origin) {
     super.rotate(a, origin);
     if (this.pHandle) this.pHandle.rotate(a, origin);
     if (this.sHandle) this.sHandle.rotate(a, origin);
+    return this;
   }
 
   nudgeHandle(which, xd, yd) {

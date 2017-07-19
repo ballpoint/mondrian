@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import Color from 'ui/color';
 import Bounds from 'geometry/bounds';
 import Range from 'geometry/range';

@@ -4,3 +4,4 @@ import 'test/line-segment';
 import 'test/cubic-bezier';
 import 'test/index';
 import 'test/bool';
+import 'test/intersections';

@@ -11,12 +11,16 @@ export default {
       return posn.distanceFrom(shape.center) <= shape.radius;
     }
 
+    let bounds;
+
     // Cheap check up front
     if (!(shape instanceof Bounds)) {
-      let bounds = shape.bounds();
+      bounds = shape.bounds();
       if (!this.contains(bounds, posn)) {
         return false;
       }
+    } else {
+      bounds = shape;
     }
 
 
@@ -43,21 +47,68 @@ export default {
     //  etc.
 
     let all = [];
-    let ray = new LineSegment(posn, {
-      x: posn.x + 1000000000, y: posn.y
-    });
-    
+
+    let deg = 10;
+
+    function getRay() {
+      let posn2 = posn.clone().nudge(bounds.width*10, 0)
+      if (deg !== 0) posn2.rotate(deg, posn);
+      return new LineSegment(posn, posn2);
+    }
+
     let lss = shape.lineSegments();
-    if (lss) {
-      for (let ls of lss) {
-        let intersections = this.intersections(ray, ls);
-        if (intersections instanceof Posn) {
-          all.push(intersections);
-        } else if (intersections instanceof Array) {
-          all = all.concat(intersections.filter((x) => {
-            return x instanceof Posn
-          }));
+
+    function isIncident(posn, ls) {
+      if (ls instanceof LineSegment) {
+        return (posn.equal(ls.a) || posn.equal(ls.b));
+      } else if (ls instanceof CubicBezier) {
+        return (posn.equal(ls.p1) || posn.equal(ls.p4));
+      }
+    }
+
+
+    mainLoop:
+    while (true) {
+      let ray = getRay();
+      all = [];
+
+      if (lss) {
+        lssLoop:
+        for (let ls of lss) {
+
+          let found = [];
+
+          let xns = this.intersections(ray, ls);
+          if (xns instanceof Posn) {
+            found.push(xns);
+          } else if (xns instanceof Array) {
+            found = xns;
+          }
+
+          if (found.length > 0 && posn.x === 20) debugger;
+
+          xnLoop:
+          for (let xn of found) {
+            if (!xn instanceof Posn) {
+              continue xnLoop; // wtf
+            }
+
+            // Check for intersection being incident with either the
+            // segment's start or end points. If so, rotate and try with new ray.
+            if (isIncident(xn, ls)) {
+              // INVALID; rotate and try again
+              deg += 10;
+              continue mainLoop;
+            } else {
+              all.push(xn);
+            }
+          }
         }
+
+        break mainLoop;
+      } else {
+        console.error('Cannot perform shapes.contains; no lineSegments');
+        return false;
       }
     }
 

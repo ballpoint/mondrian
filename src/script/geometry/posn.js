@@ -85,8 +85,12 @@ export default class Posn {
   }
 
 
-  toString(prec=8) {
+  toString() {
     return `${this.x},${this.y}`;
+  }
+
+  toShortString() {
+    return `${math.fmtFloat(this.x, 4)},${math.fmtFloat(this.y, 4)}`;
   }
 
   toJSON() {
