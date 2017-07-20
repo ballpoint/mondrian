@@ -41,6 +41,10 @@ function appendDoc(section, doc, label) {
   container.style.width = w+'px';
   container.style.height = h+'px';
 
+  container.onclick = function() {
+    window.open('data:image/svg+xml;utf8,'+doc.toSVG(), '_blank');
+  }
+
   let labelElem = document.createElement('a');
   labelElem.innerHTML = label;
   labelElem.href = '#'+i

@@ -257,12 +257,10 @@ function doBoolean(a, b, op) {
   }
 
   function includeEdge(edge, owner, other) {
-    if (edge.toString() === '50,80 -> 20,50') debugger;
     // TODO debug from here next time... double intersection
     // need to figure out consistent way to handle this
     if (wasIntersection(edge.origin) && wasIntersection(edge.destination)) {
       let midpt = edge.lineSegment.posnAt(0.5);
-      if (midpt.x === 150) debugger;
       switch (op) {
         case 'unite':
           return !shapes.contains(other, midpt);
@@ -289,8 +287,6 @@ function doBoolean(a, b, op) {
   let edgesUsed = [];
   let edgesToOmit = [];
   for (let edge of aes.edges) {
-    if (edge.destination.x === 192.48023402857382) debugger;
-
     if (includeEdge(edge, a, b)) {
       edgesToUse.push(edge);
       edgesToUse.push(edge.twin);
@@ -299,8 +295,6 @@ function doBoolean(a, b, op) {
     }
   }
   for (let edge of bes.edges) {
-    if (edge.destination.x === 192.48023402857382) debugger;
-
     if (includeEdge(edge, b, a)) {
       edgesToUse.push(edge);
       edgesToUse.push(edge.twin);
@@ -348,12 +342,10 @@ function doBoolean(a, b, op) {
         }
 
         let firstPoint = seg.first;
-        if (cursor.destination)
         if (cursor.destination.pHandle) {
           firstPoint.setPHandle(cursor.destination.pHandle);
         }
       }
-
     } else {
       seg.push(cursor.destination);
       logger.verbose('push', cursor.destination.toShortString(), '('+cursor.toString()+')');
