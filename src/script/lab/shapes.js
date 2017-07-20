@@ -86,8 +86,6 @@ export default {
             found = xns;
           }
 
-          if (found.length > 0 && posn.x === 20) debugger;
-
           xnLoop:
           for (let xn of found) {
             if (!xn instanceof Posn) {

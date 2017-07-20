@@ -12,6 +12,7 @@ import crosshatch from 'booltest/crosshatch.svg';
 import circles1 from 'booltest/circles1.svg';
 import circles2 from 'booltest/circles2.svg';
 import hazmat from 'booltest/hazmat.svg';
+import zia from 'booltest/zia.svg';
 import oog from 'booltest/oog.svg';
 
 const testFiles = {
@@ -20,6 +21,7 @@ const testFiles = {
   circles1,
   circles2,
   hazmat,
+  zia,
   oog,
 }
 
@@ -109,6 +111,8 @@ for (let key in testFiles) {
 
   let file = testFiles[key];
   let doc = Doc.fromSVG(file);  
+
+  if (doc.elements.length === 0) debugger;
 
   let section = document.createElement('section');
   main.appendChild(section);

@@ -18,7 +18,10 @@ let io = {
         let inside = this.parse(elem);
         results = results.concat(inside);
 
-      // <g> group tags... drill down.
+      } else if (elem.nodeName === '#text') {
+        // This is like whitespace and shit
+        continue;
+        // <g> group tags... drill down.
       } else if (elem.nodeName === "g") {
         results.push(new Group(this.parse(elem)));
       } else {
@@ -26,7 +29,9 @@ let io = {
         // Otherwise it must be a shape element we have a class for.
         let parsed = this.parseElement(elem);
 
-        if (parsed === false) {
+        if (parsed === null) {
+          console.log(elem);
+          debugger;
           continue;
         }
 

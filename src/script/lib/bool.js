@@ -433,6 +433,10 @@ function doElements(elements, op) {
 
   let resultPoints = doQueue(queue, op);
 
+  if (elements.length === 0) {
+    return null;
+  }
+
   let result = new Path({
     d: resultPoints,
     stroke: elements[0].data.stroke,

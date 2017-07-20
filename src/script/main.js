@@ -16,7 +16,7 @@ import Editor from 'ui/editor';
 import Utils from 'ui/components/utils/Utils';
 import Menus from 'ui/components/menus/Menus';
 
-let doc = Doc.fromSVG(google);
+let doc = Doc.fromSVG(abq);
 
 let root = document.getElementById('app-render');
 let editor = new Editor(root);
