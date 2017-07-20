@@ -41,10 +41,6 @@ function appendDoc(section, doc, label) {
   container.style.width = w+'px';
   container.style.height = h+'px';
 
-  container.onclick = function() {
-    window.open('data:image/svg+xml;utf8,'+doc.toSVG(), '_blank');
-  }
-
   let labelElem = document.createElement('a');
   labelElem.innerHTML = label;
   labelElem.href = '#'+i
@@ -61,6 +57,14 @@ function appendDoc(section, doc, label) {
   );
 
   container.appendChild(labelElem);
+
+  let sourceElem = document.createElement('a');
+  sourceElem.innerHTML = '[source]';
+  sourceElem.target = '_blank';
+  sourceElem.href = 'data:image/svg+xml;utf8,'+doc.toSVG();
+  sourceElem.style.marginLeft = '10px';
+
+  container.appendChild(sourceElem);
 
   cnv.createLayer('main', (layer, context) => {
     doc.drawToCanvas(layer, context, proj);

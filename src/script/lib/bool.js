@@ -339,11 +339,15 @@ function doBoolean(a, b, op) {
         let lastPoint = seg.last;
         if (cursor.origin.sHandle) {
           lastPoint.setSHandle(cursor.origin.sHandle);
+        } else {
+          lastPoint.unsetHandle('sHandle');
         }
 
         let firstPoint = seg.first;
         if (cursor.destination.pHandle) {
           firstPoint.setPHandle(cursor.destination.pHandle);
+        } else {
+          firstPoint.unsetHandle('pHandle');
         }
       }
     } else {
@@ -355,6 +359,8 @@ function doBoolean(a, b, op) {
         let prevPoint = seg.points[seg.length-2];
         if (cursor.origin.sHandle) {
           prevPoint.setSHandle(cursor.origin.sHandle);
+        } else {
+          prevPoint.unsetHandle('sHandle');
         }
       }
     }
@@ -394,8 +400,9 @@ function doBoolean(a, b, op) {
         pl.closeSegment();
 
         cursor = edgesToUse[0];
+        pl.push(cursor.origin);
       } else {
-        // TODO handle this case!
+        // TODO handle this case! I think we need to move clockwise.
         logger.verbose('opts not 1 with edges left', cursor);
         debugger;
         break;
