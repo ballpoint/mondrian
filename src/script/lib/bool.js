@@ -63,8 +63,13 @@ export class Edge {
     let origin = this.origin;
     let splits;
     let finalDestination;
+    let lastXn = origin;
 
     for (let xn of xns) {
+      if (xn.distanceFrom(lastXn) <= XN_TOLERANCE) {
+        continue;
+      }
+
       splits = ls.splitAt(xn);
 
       let dest;
@@ -87,8 +92,8 @@ export class Edge {
       prev.next = edge;
       edges.push(edge);
       prev = edge;
+      lastXn = xn;
     }
-
 
     // Add final edge
     let lastEdge = edges.last();
@@ -209,6 +214,8 @@ export class EdgeSet {
         } else {
           // Otherwise, look for intersections
           let xns = edge.intersections(other);
+
+          //console.log(i, ii, xns);
 
           if (xns instanceof Array && xns.length > 0) {
 
@@ -362,13 +369,17 @@ function doBoolean(a, b, op) {
   logger.verbose('total edges', (edgesToUse.length/2) + edgesToOmit.length);
 
   logger.verbose(edgesToUse, 'to use', edgesToUse.length/2);
+  /*
   for (let edge of edgesToUse) {
     logger.verbose(edge.toString());
   }
+  */
   logger.verbose(edgesToOmit, 'to omit', edgesToOmit.length);
+  /*
   for (let edge of edgesToOmit) {
     logger.verbose(edge.toString());
   }
+  */
 
   if (edgesToUse.length === 0) {
     console.warn('Empty boolean result');

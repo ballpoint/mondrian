@@ -20,6 +20,7 @@ import zia from 'booltest/zia.svg';
 import oog from 'booltest/oog.svg';
 import overlapcircle from 'booltest/overlapcircle.svg';
 import overlapcircle_rotate from 'booltest/overlapcircle_rotate.svg';
+import overlapcircle_rotate2 from 'booltest/overlapcircle_rotate2.svg';
 
 const testFiles = {
   rect1,
@@ -32,6 +33,7 @@ const testFiles = {
   circles2,
   overlapcircle,
   overlapcircle_rotate,
+  overlapcircle_rotate2,
   hazmat,
   zia,
   oog,
