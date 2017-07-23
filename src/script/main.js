@@ -10,13 +10,13 @@ import nyt from 'nyt.svg';
 import xn from 'xn.svg';
 import google from 'google.svg';
 import pioneer from 'Pioneer_plaque.svg';
-import bool from 'bool6.svg';
+import bool from 'booltest/overlapcircle.svg';
 
 import Editor from 'ui/editor';
 import Utils from 'ui/components/utils/Utils';
 import Menus from 'ui/components/menus/Menus';
 
-let doc = Doc.fromSVG(abq);
+let doc = Doc.fromSVG(bool);
 
 let root = document.getElementById('app-render');
 let editor = new Editor(root);

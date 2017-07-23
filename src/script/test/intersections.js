@@ -4,7 +4,6 @@ import Path from 'geometry/path';
 import shapes from 'lab/shapes';
 import assert from 'assert';
 
-
 describe("shapes.contains", function() {
   it('shape contains 1', (done) => {
 
@@ -30,33 +29,55 @@ describe("shapes.contains", function() {
 
     done();
   });
-
-  /*
-  it('this is basically just notes lol', (done) => {
-    let ls1 = new LineSegment(
-      new Posn(192.48023402857382, 148.4820011345568), 
-      new Posn(1000000192.480234,  148.4820011345568)
-    );
-    let ls2 = new LineSegment(
-      new Posn(192.48023402857382, 148.4820011345567), 
-      new Posn(1000000192.480234,  148.4820011345567)
-      //                                           ^ this is the only digit that's different
-    );
-    let lsMain = new LineSegment(
-      new Posn(204.48023402857382, 16.4520466179392), 
-      new Posn(204.48023402857382, 222.48421325064942)
-    );
-
-    let xn1 = shapes.intersections(lsMain, ls1);
-    let xn2 = shapes.intersections(lsMain, ls2);
-
-    console.log(xn1, xn2);
-    // THIS IS INSANE FLOATING POINT STUFF LOL
-    //assert.equal(xn1.length, 0);
-    //assert.equal(xn2.length, 1);
-  });
-  */
 });
 
 
+describe("incident contains", function() {
+  it('shape contains 1', (done) => {
 
+    let circle = Path.ellipse({
+      cx: 0,
+      cy: 0,
+      rx: 10,
+      ry: 10
+    });
+
+    let circle2 = Path.ellipse({
+      cx: 0,
+      cy: 0,
+      rx: 10,
+      ry: 10
+    });
+
+    circle2.rotate(10);
+
+    let rect = Path.rectangle({
+      x: -10,
+      y: -10,
+      width: 20,
+      height: 20,
+    });
+
+    let b1 = shapes.contains(circle, new Posn(0, 10));
+    let b2 = shapes.contains(circle, new Posn(0, -10));
+    let b3 = shapes.contains(circle, new Posn(-10, 0));
+    let b4 = shapes.contains(circle, new Posn(10, 0));
+
+    let b5 = shapes.contains(rect, new Posn(10, 10));
+    let b6 = shapes.contains(rect, new Posn(-10, 10));
+    let b7 = shapes.contains(rect, new Posn(-10, -10));
+    let b8 = shapes.contains(rect, new Posn(10, -10));
+
+    console.log(b1, b2, b3, b4, b5, b6, b7, b8);
+
+    console.log(
+      shapes.contains(circle, circle2.points.all()[0]),
+      shapes.contains(circle, circle2.points.all()[1]),
+      shapes.contains(circle, circle2.points.all()[2]),
+      shapes.contains(circle, circle2.points.all()[3]),
+    );
+
+
+    done();
+  });
+});

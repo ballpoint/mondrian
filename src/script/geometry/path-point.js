@@ -23,6 +23,21 @@ export default class PathPoint extends Posn {
     return PathPoint.fromPosns(this, this.pHandle, this.sHandle);
   }
 
+  fullEqual(other) {
+    if (!super.equal(other)) return false;
+    if (this.hasPHandle() && other.hasPHandle()) {
+      if (!this.pHandle.equal(other.pHandle)) return false;
+    } else if (this.hasPHandle() !== other.hasPHandle()) {
+      return false;
+    }
+    if (this.hasSHandle() && other.hasSHandle()) {
+      if (!this.sHandle.equal(other.sHandle)) return false;
+    } else if (this.hasSHandle() !== other.hasSHandle()) {
+      return false;
+    }
+    return true;
+  }
+
   static fromPosns(p, pHandle, sHandle) {
     let x, y, pX, pY, sX, sY;
     if (p) {

@@ -4,11 +4,30 @@ import Bounds from 'geometry/bounds';
 import Circle from 'geometry/circle';
 import CubicBezier from 'geometry/cubic-bezier-line-segment';
 
+export const OUTSIDE  = Symbol('OUTSIDE');
+export const INCIDENT = Symbol('INCIDENT');
+export const INSIDE   = Symbol('INSIDE');
+
 export default {
 
   contains(shape, posn) {
+    let result = this.relationship(shape, posn);
+    return result === INSIDE;
+  },
+
+  relationship(shape, posn, check) {
+    // rayCheck returns either INCIDENT or a list or a bool
+
     if (shape instanceof Circle) {
-      return posn.distanceFrom(shape.center) <= shape.radius;
+      let d = posn.distanceFrom(shape.center);
+      
+      if (d === shape.radius) {
+        return INCIDENT;
+      } else if (d < shape.radius) {
+        return INSIDE;
+      } else {
+        return OUTSIDE;
+      }
     }
 
     let bounds;
@@ -17,7 +36,7 @@ export default {
     if (!(shape instanceof Bounds)) {
       bounds = shape.bounds();
       if (!this.contains(bounds, posn)) {
-        return false;
+        return OUTSIDE;
       }
     } else {
       bounds = shape;
@@ -67,7 +86,6 @@ export default {
       }
     }
 
-
     mainLoop:
     while (true) {
       let ray = getRay();
@@ -77,6 +95,11 @@ export default {
         lssLoop:
         for (let ls of lss) {
 
+          if (isIncident(posn, ls)) {
+            // Posn incident with end points of line segment; we consider this contained
+            return INCIDENT;
+          }
+
           let found = [];
 
           let xns = this.intersections(ray, ls);
@@ -84,6 +107,11 @@ export default {
             found.push(xns);
           } else if (xns instanceof Array) {
             found = xns;
+          }
+
+          if (found.length === 1 && found[0].equal(posn)) {
+            // Posn is incident
+            return INCIDENT;
           }
 
           xnLoop:
@@ -95,8 +123,19 @@ export default {
             // Check for intersection being incident with either the
             // segment's start or end points. If so, rotate and try with new ray.
             if (isIncident(xn, ls)) {
-              // INVALID; rotate and try again
+              if (xn.equal(posn)) {
+                // Given posn is incident with shape outline. We consider this to be contained.
+                return INCIDENT;
+              }
+
+              // If the intersection is incident, and it's NOT the given posn,
+              // we rotate and try again.
               deg += 10;
+              if (deg >= 370) {
+                console.log(deg, xn);
+                debugger;
+                break mainLoop;
+              }
               continue mainLoop;
             } else {
               all.push(xn);
@@ -107,11 +146,15 @@ export default {
         break mainLoop;
       } else {
         console.error('Cannot perform shapes.contains; no lineSegments');
-        return false;
+        return OUTSIDE;
       }
     }
 
-    return all.length % 2 === 1;
+    if (all.length % 2 === 1) {
+      return INSIDE;
+    } else {
+      return OUTSIDE;
+    }
   },
 
   overlap(a, b) {

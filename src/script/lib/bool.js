@@ -3,6 +3,7 @@ import logger from 'lib/logger';
 import Path from 'geometry/path';
 import PathPoint from 'geometry/path-point';
 import shapes from 'lab/shapes';
+import { OUTSIDE, INCIDENT, INSIDE } from 'lab/shapes';
 import LineSegment from 'geometry/line-segment';
 import CubicBezier from 'geometry/cubic-bezier-line-segment';
 import PointsList from 'geometry/points-list'
@@ -24,6 +25,10 @@ export class Edge {
     try {
     return this.destination.toLineSegment(this.origin);
     } catch(e) { debugger; }
+  }
+
+  equal(other) {
+    return this.origin.fullEqual(other.origin) && this.destination.fullEqual(other.destination);
   }
 
   intersections(other) {
@@ -163,6 +168,13 @@ export class EdgeSet {
     return replacements[0];
   }
 
+  remove(edge) {
+    let i = this.edges.indexOf(edge);
+    if (i > -1) {
+      this.edges = this.edges.removeIndex(i);
+    }
+  }
+
   get twins() {
     return this.edges.map((edge) => { return edge.twin });
   }
@@ -175,39 +187,41 @@ export class EdgeSet {
 
       for (let ii = 0; ii < os.edges.length; ii ++) {
         let other = os.edges[ii];
-        if (i > 1000 || ii > 1000) {
-          break;
-        }
-        let xns = edge.intersections(other);
 
-        if (xns instanceof Array) {
+        if (edge.equal(other)) {
+          // In the event of two identical edges, we only keep one
+          os.remove(other);
+        } else {
+          let xns = edge.intersections(other);
 
-          xns = xns.filter((xn) => {
-            // TODO constantize that shit
-            return !(
-              xn.within(edge.origin, XN_TOLERANCE) ||
-              xn.within(edge.destination, XN_TOLERANCE) ||
-              xn.within(other.origin, XN_TOLERANCE) ||
-              xn.within(other.destination, XN_TOLERANCE)
-            );
-            logger.verbose('omitting further split; point is incident');
-          });
+          if (xns instanceof Array) {
 
-          if (xns.length > 0) {
+            xns = xns.filter((xn) => {
+              return !(
+                xn.within(edge.origin, XN_TOLERANCE) ||
+                xn.within(edge.destination, XN_TOLERANCE) ||
+                xn.within(other.origin, XN_TOLERANCE) ||
+                xn.within(other.destination, XN_TOLERANCE)
+              );
+              logger.verbose('omitting further split; point is incident');
+            });
 
-            //logger.verbose(edge.toString())
-            //logger.verbose(other.toString());
-            //logger.verbose(xns.join(' '));
+            if (xns.length > 0) {
 
-            logger.verbose('split', xns.map((p) => { return p.toShortString() }).join(' '), '|',  edge.toString(), '|',  other.toString());
+              //logger.verbose(edge.toString())
+              //logger.verbose(other.toString());
+              //logger.verbose(xns.join(' '));
 
-            // Fix this set
-            edge = this.replace(edge, edge.splitOn(xns));
+              logger.verbose('split', xns.map((p) => { return p.toShortString() }).join(' '), '|',  edge.toString(), '|',  other.toString());
 
-            // Fix the other set
-            os.replace(other, other.splitOn(xns));
+              // Fix this set
+              edge = this.replace(edge, edge.splitOn(xns));
 
-            xnsAll = xnsAll.concat(xns);
+              // Fix the other set
+              os.replace(other, other.splitOn(xns));
+
+              xnsAll = xnsAll.concat(xns);
+            }
           }
         }
       }
@@ -239,26 +253,30 @@ function doBoolean(a, b, op) {
     // We always keep intersection points
     if (wasIntersection(pt)) return true;
 
+    let rel;
+
     switch (op) {
       case 'unite':
         // In the case of union, we only keep points not inside
         // the other shape.
-        return !shapes.contains(other, pt);
+        rel = shapes.relationship(other, pt);
+        return rel != INSIDE;
       case 'intersect':
-        return shapes.contains(other, pt);
+        rel = shapes.relationship(other, pt);
+        return rel == INSIDE || rel == INCIDENT;
       case 'subtract':
         switch (owner) {
           case a:
-            return shapes.contains(b, pt);
+            rel = shapes.relationship(b, pt);
+            return rel == INSIDE;
           case b:
-            return !shapes.contains(a, pt);
+            rel = shapes.relationship(a, pt);
+            return rel == OUTSIDE;
         }
     }
   }
 
   function includeEdge(edge, owner, other) {
-    // TODO debug from here next time... double intersection
-    // need to figure out consistent way to handle this
     if (wasIntersection(edge.origin) && wasIntersection(edge.destination)) {
       let midpt = edge.lineSegment.posnAt(0.5);
       switch (op) {
@@ -274,6 +292,16 @@ function doBoolean(a, b, op) {
           return shapes.contains(other, midpt);
       }
     }
+
+
+    /*
+    console.log(
+      edge.origin,
+      includePoint(edge.origin, owner, other),
+      edge.destination,
+      includePoint(edge.destination, owner, other)
+    )
+    */
 
     return (
       includePoint(edge.origin, owner, other) &&

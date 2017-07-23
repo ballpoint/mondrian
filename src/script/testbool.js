@@ -14,12 +14,16 @@ import circles2 from 'booltest/circles2.svg';
 import hazmat from 'booltest/hazmat.svg';
 import zia from 'booltest/zia.svg';
 import oog from 'booltest/oog.svg';
+import overlapcircle from 'booltest/overlapcircle.svg';
+import overlapcircle_rotate from 'booltest/overlapcircle_rotate.svg';
 
 const testFiles = {
   rect1,
   crosshatch,
   circles1,
   circles2,
+  overlapcircle,
+  overlapcircle_rotate,
   hazmat,
   zia,
   oog,
