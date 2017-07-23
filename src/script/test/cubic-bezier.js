@@ -13,17 +13,17 @@ describe("CubicBezier", function() {
       new Posn(10, 10),
     );
 
-    assertUtil.within(0.1, cb.findPercentageOfPoint(new Posn(1, 10)), 0.001);
-    assertUtil.within(0.2, cb.findPercentageOfPoint(new Posn(2, 10)), 0.001);
-    assertUtil.within(0.4, cb.findPercentageOfPoint(new Posn(4, 10)), 0.001);
-    assertUtil.within(0.5, cb.findPercentageOfPoint(new Posn(5, 10)), 0.001);
-    assertUtil.within(0.52, cb.findPercentageOfPoint(new Posn(5.2, 10)), 0.001);
-    assertUtil.within(0.87, cb.findPercentageOfPoint(new Posn(8.7, 10)), 0.001);
+    assertUtil.within(0.1, cb.findPercentageOfPosn(new Posn(1, 10)), 0.001);
+    assertUtil.within(0.2, cb.findPercentageOfPosn(new Posn(2, 10)), 0.001);
+    assertUtil.within(0.4, cb.findPercentageOfPosn(new Posn(4, 10)), 0.001);
+    assertUtil.within(0.5, cb.findPercentageOfPosn(new Posn(5, 10)), 0.001);
+    assertUtil.within(0.52, cb.findPercentageOfPosn(new Posn(5.2, 10)), 0.001);
+    assertUtil.within(0.87, cb.findPercentageOfPosn(new Posn(8.7, 10)), 0.001);
 
     done();
   });
 
-  it('splitAt findPercentageOfPoint round trip', (done) => {
+  it('splitAt findPercentageOfPosn round trip', (done) => {
     let cb = new CubicBezier(
       new Posn(0, 10),
       new Posn(2, 2),
@@ -34,7 +34,7 @@ describe("CubicBezier", function() {
     for (let perc of [0.1, 0.329, 0.5, 0.8]) {
       let split = cb.splitAt(perc);
       let posn = split[0].p4;
-      let calculatedPerc = cb.findPercentageOfPoint(posn);
+      let calculatedPerc = cb.findPercentageOfPosn(posn);
       assertUtil.within(perc, calculatedPerc, 0.001);
     }
 

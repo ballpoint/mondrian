@@ -156,12 +156,13 @@ export default {
     if (all.length % 2 === 1) {
 
       if (all.length === 1) {
-        // If there is only one intersection and it's within some margin of error of the givne
+        // If there is only one intersection and it's within some margin of error of the given
         // posn, we consider it to be incident.
         let d = all[0].distanceFrom(posn);
         if (d < 0.002) {
           return INCIDENT;
         } else {
+          console.log(d);
           return INSIDE;
         }
       } else {

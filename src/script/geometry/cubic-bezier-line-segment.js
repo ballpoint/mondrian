@@ -2,6 +2,10 @@ import Range from 'geometry/range'
 import Posn from 'geometry/posn'
 import Bounds from 'geometry/bounds'
 
+const EPSILON = 1e-12;
+
+const CURVETIME_EPSILON = 1e-8;
+
 /*
   Internal representation of a cubic bezier line segment
 
@@ -122,6 +126,16 @@ export default class CubicBezier {
 
   ends() {
     return [this.p1, this.p4];
+  }
+
+  nearestPercTo(posn) {
+    let nearestPerc;
+    let nearestDist = Infinity;
+
+    for (let i = 0; i < 100; i++) {
+      let p = this.posnAt(1/i)
+
+    }
   }
 
   posnAt(perc) {
@@ -251,41 +265,35 @@ export default class CubicBezier {
 
     } else if (t instanceof Posn) {
       // Given a single Posn, find its percentage and then split the line on it.
-      return this.splitAt(this.findPercentageOfPoint(t), t);
+      return this.splitAt(this.findPercentageOfPosn(t), t);
     }
   }
 
-  findPercentageOfPoint(posn, HIGH_RES_STEP=0.001) {
-    let closestPercLowRes;
-    let closestDLowRes;
-    const LOW_RES_STEP = 0.02;
+  findPercentageOfPosn(posn) {
+    let count = 100;
+    let minDist = Infinity;
+    let minPerc = 0;
 
-    // Do two passes: one low res and one high res
-    for (let perc = 0; perc < 1; perc += LOW_RES_STEP) {
-      let split = this.splitAt(perc);
-      let d = posn.distanceFrom(split[0].p4);
-      if (!closestDLowRes || d < closestDLowRes) {
-        closestPercLowRes = perc;
-        closestDLowRes = d;
-      }
+    let refine = (t) => {
+        if (t >= 0 && t <= 1) {
+            var dist = posn.distanceFrom(this.posnAt(t), true);
+            if (dist < minDist) {
+                minDist = dist;
+                minPerc = t;
+                return true;
+            }
+        }
     }
 
-    let closestPerc = closestPercLowRes;
-    let closestD = closestDLowRes;
+    for (var i = 0; i <= count; i++) refine(i / count);
 
-    let startPerc = Math.max(0, closestPercLowRes-LOW_RES_STEP-HIGH_RES_STEP);
-    let stopPerc = Math.min(1, closestPercLowRes+LOW_RES_STEP+HIGH_RES_STEP);
-
-    for (let perc = startPerc; perc < stopPerc; perc += HIGH_RES_STEP) {
-      let split = this.splitAt(perc);
-      let d = posn.distanceFrom(split[0].p4);
-      if (d < closestD) {
-        closestPerc = perc;
-        closestD = d;
-      }
+    // Now iteratively refine solution until we reach desired precision.
+    var step = 1 / (count * 2);
+    while (step > CURVETIME_EPSILON) {
+        if (!refine(minPerc - step) && !refine(minPerc + step))
+            step /= 2;
     }
-
-    return closestPerc;
+    return minPerc;
   }
 
   /*

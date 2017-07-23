@@ -203,7 +203,7 @@ export default class LineSegment {
   }
 
 
-  findPercentageOfPoint(p) {
+  findPercentageOfPosn(p) {
     // I/P: A single Posn
     // O/P: A floating point value
 

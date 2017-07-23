@@ -51,8 +51,8 @@ export class Edge {
     }
 
     xns.sort((a, b) => {
-      let pa = this.lineSegment.findPercentageOfPoint(a);
-      let pb = this.lineSegment.findPercentageOfPoint(b);
+      let pa = this.lineSegment.findPercentageOfPosn(a);
+      let pb = this.lineSegment.findPercentageOfPosn(b);
       return pa - pb;
     });
 
@@ -313,7 +313,7 @@ function doBoolean(a, b, op) {
       switch (op) {
         case 'unite':
           rel = shapes.relationship(other, midpt);
-          return rel == OUTSIDE;
+          return rel != INSIDE;
         case 'subtract':
           if (owner === a) {
             rel = shapes.relationship(b, midpt);
@@ -324,7 +324,7 @@ function doBoolean(a, b, op) {
           }
         case 'intersect':
           rel = shapes.relationship(other, midpt);
-          return rel == INSIDE;
+          return rel != OUTSIDE;
       }
     }
 
@@ -350,6 +350,10 @@ function doBoolean(a, b, op) {
   let edgesUsed = [];
   let edgesToOmit = [];
   for (let edge of aes.edges) {
+    let ie = includeEdge(edge, a, b);
+    if (ie === false) {
+      debugger;
+    }
     if (includeEdge(edge, a, b)) {
       edgesToUse.push(edge);
       edgesToUse.push(edge.twin);

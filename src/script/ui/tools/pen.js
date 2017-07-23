@@ -56,7 +56,7 @@ export default class Pen extends Tool {
 
         // If posn is within the bounds of this line, we check the line for nearest point
         //
-        // This is very similar to CubicBezier#findPercentageOfPoint TODO maybe reduce this logic somehow?
+        // This is very similar to CubicBezier#findPercentageOfPosn TODO maybe reduce this logic somehow?
         // The difference is this uses screen space to determine precision.
         let lastSplitPosn;
         if (shapes.contains(lsbounds, p)) {

@@ -12,6 +12,7 @@ import rect2 from 'booltest/rect2.svg';
 import rect3 from 'booltest/rect3.svg';
 import rect4 from 'booltest/rect4.svg';
 import rect5 from 'booltest/rect5.svg';
+import rect6 from 'booltest/rect6.svg';
 import crosshatch from 'booltest/crosshatch.svg';
 import circles1 from 'booltest/circles1.svg';
 import circles2 from 'booltest/circles2.svg';
@@ -28,6 +29,7 @@ const testFiles = {
   rect3,
   rect4,
   rect5,
+  rect6,
   crosshatch,
   circles1,
   circles2,
