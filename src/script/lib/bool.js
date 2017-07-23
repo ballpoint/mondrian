@@ -79,7 +79,6 @@ export class Edge {
         finalDestination = PathPoint.fromPosns(splits[1].b);
       }
 
-
       // Keep the rest for the next split
       ls = splits[1];
 
@@ -208,37 +207,14 @@ export class EdgeSet {
           let xns = edge.intersections(other);
 
           if (xns instanceof Array) {
-
-            /*
-            xns = xns.filter((xn) => {
-              if (
-                xn.within(edge.origin, XN_TOLERANCE) ||
-                xn.within(edge.destination, XN_TOLERANCE) ||
-                xn.within(other.origin, XN_TOLERANCE) ||
-                xn.within(other.destination, XN_TOLERANCE)
-              ) {
-                logger.verbose('omitting further split; point is incident');
-                return false;
-              } else {
-                return true;
-              }
-            });
-            */
-
             if (xns.length > 0) {
-              //console.log(xns);
-
-              //logger.verbose(edge.toString())
-              //logger.verbose(other.toString());
-              //logger.verbose(xns.join(' '));
-
               logger.verbose('split', xns.map((p) => { return p.toShortString() }).join(' '), '|',  edge.toString(), '|',  other.toString());
 
-                // Fix this set
-                edge = this.replace(edge, edge.splitOn(xns));
+              // Fix this set
+              edge = this.replace(edge, edge.splitOn(xns));
 
-                // Fix the other set
-                os.replace(other, other.splitOn(xns));
+              // Fix the other set
+              os.replace(other, other.splitOn(xns));
 
               xnsAll = xnsAll.concat(xns);
             }
