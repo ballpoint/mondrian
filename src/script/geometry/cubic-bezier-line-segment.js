@@ -296,6 +296,15 @@ export default class CubicBezier {
     return minPerc;
   }
 
+  closestPosn(posn) {
+    let perc = this.findPercentageOfPosn(posn);
+    return this.posnAt(perc);
+  }
+
+  isIncident(posn) {
+    return this.closestPosn(posn).within(posn, 0.001);
+  }
+
   /*
 
     Intersection methods

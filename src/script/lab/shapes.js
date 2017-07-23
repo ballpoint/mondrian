@@ -83,11 +83,11 @@ export default {
 
     let lss = shape.lineSegments();
 
-    function isIncident(posn, ls) {
+    function isStartOrEndPoint(posn, ls) {
       if (ls instanceof LineSegment) {
         return (posn.equal(ls.a) || posn.equal(ls.b));
       } else if (ls instanceof CubicBezier) {
-        return (posn.equal(ls.p1) || posn.equal(ls.p4));
+        return (posn.equal(ls.p1) || posn.equal(ls.p4))// || ls.isIncident(posn));
       }
     }
 
@@ -100,7 +100,7 @@ export default {
         lssLoop:
         for (let ls of lss) {
 
-          if (isIncident(posn, ls)) {
+          if (ls.isIncident(posn)) {
             // Posn incident with end points of line segment; we consider this contained
             return INCIDENT;
           }
@@ -127,7 +127,7 @@ export default {
 
             // Check for intersection being incident with either the
             // segment's start or end points. If so, rotate and try with new ray.
-            if (isIncident(xn, ls)) {
+            if (isStartOrEndPoint(xn, ls)) {
               if (xn.equal(posn)) {
                 // Given posn is incident with shape outline. We consider this to be contained.
                 return INCIDENT;
@@ -162,7 +162,6 @@ export default {
         if (d < 0.002) {
           return INCIDENT;
         } else {
-          console.log(d);
           return INSIDE;
         }
       } else {

@@ -202,6 +202,9 @@ export default class LineSegment {
     return new Posn(this.a.x + ((this.b.x - this.a.x) * p), this.a.y + ((this.b.y - this.a.y) * p));
   }
 
+  isIncident(p) {
+    return this.closestPosn(p).within(p, 0.001);
+  }
 
   findPercentageOfPosn(p) {
     // I/P: A single Posn
@@ -209,6 +212,10 @@ export default class LineSegment {
 
     let distanceA = p.distanceFrom(this.a);
     return distanceA / (distanceA + p.distanceFrom(this.b));
+  }
+
+  closestPosn(p) {
+    return this.posnAt(this.findPercentageOfPosn(p));
   }
 
   splitAt(p, forced) {

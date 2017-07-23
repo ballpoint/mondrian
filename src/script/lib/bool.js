@@ -218,7 +218,6 @@ export class EdgeSet {
           //console.log(i, ii, xns);
 
           if (xns instanceof Array && xns.length > 0) {
-
             if (xnsSelf[i] === undefined) {
               xnsSelf[i] = xns;
             } else {
@@ -328,16 +327,6 @@ function doBoolean(a, b, op) {
       }
     }
 
-
-    /*
-    console.log(
-      edge.origin,
-      includePoint(edge.origin, owner, other),
-      edge.destination,
-      includePoint(edge.destination, owner, other)
-    )
-    */
-
     return (
       includePoint(edge.origin, owner, other) &&
       includePoint(edge.destination, owner, other)
@@ -350,10 +339,16 @@ function doBoolean(a, b, op) {
   let edgesUsed = [];
   let edgesToOmit = [];
   for (let edge of aes.edges) {
+    /*
     let ie = includeEdge(edge, a, b);
     if (ie === false) {
-      debugger;
+      console.log('NOT INCLUDED', edge.toString());
+      for (let ls of b.lineSegments()) {
+        let midpt = edge.lineSegment.posnAt(0.5);
+        console.log(ls.closestPosn(midpt).distanceFrom(midpt));
+      }
     }
+    */
     if (includeEdge(edge, a, b)) {
       edgesToUse.push(edge);
       edgesToUse.push(edge.twin);
