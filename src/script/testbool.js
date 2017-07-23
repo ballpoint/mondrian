@@ -8,6 +8,10 @@ import Canvas from 'ui/canvas';
 import bool from 'lib/bool';
 
 import rect1 from 'booltest/rect1.svg';
+import rect2 from 'booltest/rect2.svg';
+import rect3 from 'booltest/rect3.svg';
+import rect4 from 'booltest/rect4.svg';
+import rect5 from 'booltest/rect5.svg';
 import crosshatch from 'booltest/crosshatch.svg';
 import circles1 from 'booltest/circles1.svg';
 import circles2 from 'booltest/circles2.svg';
@@ -19,6 +23,10 @@ import overlapcircle_rotate from 'booltest/overlapcircle_rotate.svg';
 
 const testFiles = {
   rect1,
+  rect2,
+  rect3,
+  rect4,
+  rect5,
   crosshatch,
   circles1,
   circles2,

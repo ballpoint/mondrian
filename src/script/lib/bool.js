@@ -32,13 +32,24 @@ export class Edge {
   }
 
   intersections(other) {
+
     let lsa = this.lineSegment;
     let lsb = other.lineSegment;
+
+    //console.log(this.toString(), other.toString(), shapes.intersections(lsa, lsb));
 
     return shapes.intersections(lsa, lsb);
   }
 
   splitOn(xns) {
+    xns = xns.filter((xn) => {
+      return !(xn.within(this.origin, XN_TOLERANCE) || xn.within(this.destination, XN_TOLERANCE));
+    });
+
+    if (xns.length === 0) {
+      return [this];
+    }
+
     xns.sort((a, b) => {
       let pa = this.lineSegment.findPercentageOfPoint(a);
       let pb = this.lineSegment.findPercentageOfPoint(b);
@@ -158,6 +169,8 @@ export class EdgeSet {
   }
 
   replace(remove, replacements) {
+    if (replacements.length === 1 && replacements[0] === remove) return remove; // no work to do!
+
     logger.verbose('replacing', remove.toString(), 'with', replacements[0].toString(), '\n', 'pushing', replacements.slice(1).join('; '));
     let i = this.edges.indexOf(remove);
     this.edges[i] = replacements[0];
@@ -196,17 +209,24 @@ export class EdgeSet {
 
           if (xns instanceof Array) {
 
+            /*
             xns = xns.filter((xn) => {
-              return !(
+              if (
                 xn.within(edge.origin, XN_TOLERANCE) ||
                 xn.within(edge.destination, XN_TOLERANCE) ||
                 xn.within(other.origin, XN_TOLERANCE) ||
                 xn.within(other.destination, XN_TOLERANCE)
-              );
-              logger.verbose('omitting further split; point is incident');
+              ) {
+                logger.verbose('omitting further split; point is incident');
+                return false;
+              } else {
+                return true;
+              }
             });
+            */
 
             if (xns.length > 0) {
+              //console.log(xns);
 
               //logger.verbose(edge.toString())
               //logger.verbose(other.toString());
@@ -214,11 +234,11 @@ export class EdgeSet {
 
               logger.verbose('split', xns.map((p) => { return p.toShortString() }).join(' '), '|',  edge.toString(), '|',  other.toString());
 
-              // Fix this set
-              edge = this.replace(edge, edge.splitOn(xns));
+                // Fix this set
+                edge = this.replace(edge, edge.splitOn(xns));
 
-              // Fix the other set
-              os.replace(other, other.splitOn(xns));
+                // Fix the other set
+                os.replace(other, other.splitOn(xns));
 
               xnsAll = xnsAll.concat(xns);
             }
@@ -242,7 +262,9 @@ function doBoolean(a, b, op) {
 
   logger.verbose('xns', xns);
 
-  function wasIntersection(pt) {
+  function wasIntersection(pt, other) {
+    //let rel = shapes.relationship(other, pt);
+    //return rel == INCIDENT;
     for (let xn of xns) {
       if (xn.equal(pt)) return true;
     }
@@ -251,7 +273,7 @@ function doBoolean(a, b, op) {
 
   function includePoint(pt, owner, other) {
     // We always keep intersection points
-    if (wasIntersection(pt)) return true;
+    if (wasIntersection(pt, other)) return true;
 
     let rel;
 
@@ -277,19 +299,24 @@ function doBoolean(a, b, op) {
   }
 
   function includeEdge(edge, owner, other) {
-    if (wasIntersection(edge.origin) && wasIntersection(edge.destination)) {
+    if (wasIntersection(edge.origin, other) && wasIntersection(edge.destination, other)) {
       let midpt = edge.lineSegment.posnAt(0.5);
+      let rel;
       switch (op) {
         case 'unite':
-          return !shapes.contains(other, midpt);
+          rel = shapes.relationship(other, midpt);
+          return rel == OUTSIDE;
         case 'subtract':
           if (owner === a) {
-            return shapes.contains(b, midpt);
+            rel = shapes.relationship(b, midpt);
+            return rel == INSIDE;
           } else {
-            return !shapes.contains(a, midpt);
+            rel = shapes.relationship(a, midpt);
+            return rel == OUTSIDE;
           }
         case 'intersect':
-          return shapes.contains(other, midpt);
+          rel = shapes.relationship(other, midpt);
+          return rel == INSIDE;
       }
     }
 
@@ -393,8 +420,9 @@ function doBoolean(a, b, op) {
       }
     }
 
-    edgesToUse = edgesToUse.remove(cursor);
-    edgesToUse = edgesToUse.remove(cursor.twin);
+    edgesToUse = edgesToUse.filter((edge) => {
+      return !edge.equal(cursor) && !edge.equal(cursor.twin);
+    });
 
     edgesUsed.push(cursor);
     prevEdge = cursor;
@@ -432,6 +460,7 @@ function doBoolean(a, b, op) {
       } else {
         // TODO handle this case! I think we need to move clockwise.
         logger.verbose('opts not 1 with edges left', cursor);
+        console.log(cursorOpts.join('\n'));
         debugger;
         break;
       }

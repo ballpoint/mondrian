@@ -35,7 +35,8 @@ export default {
     // Cheap check up front
     if (!(shape instanceof Bounds)) {
       bounds = shape.bounds();
-      if (!this.contains(bounds, posn)) {
+      let boundsRel = this.relationship(bounds, posn);
+      if (boundsRel === OUTSIDE) {
         return OUTSIDE;
       }
     } else {
@@ -70,7 +71,11 @@ export default {
     let deg = 10;
 
     function getRay() {
-      let dist = posn.distanceFrom(bounds.center());
+      let dist = Math.max(
+        posn.distanceFrom(bounds.center()),
+        bounds.width,
+        bounds.height,
+      )
       let posn2 = posn.clone().nudge(dist*100, 0)
       if (deg !== 0) posn2.rotate(deg, posn);
       return new LineSegment(posn, posn2);
@@ -132,8 +137,6 @@ export default {
               // we rotate and try again.
               deg += 10;
               if (deg >= 370) {
-                console.log(deg, xn);
-                debugger;
                 break mainLoop;
               }
               continue mainLoop;
@@ -151,7 +154,19 @@ export default {
     }
 
     if (all.length % 2 === 1) {
-      return INSIDE;
+
+      if (all.length === 1) {
+        // If there is only one intersection and it's within some margin of error of the givne
+        // posn, we consider it to be incident.
+        let d = all[0].distanceFrom(posn);
+        if (d < 0.002) {
+          return INCIDENT;
+        } else {
+          return INSIDE;
+        }
+      } else {
+        return INSIDE;
+      }
     } else {
       return OUTSIDE;
     }

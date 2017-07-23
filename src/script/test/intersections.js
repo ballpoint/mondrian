@@ -1,8 +1,21 @@
 import LineSegment from 'geometry/line-segment';
 import Posn from 'geometry/posn';
+import Bounds from 'geometry/bounds';
 import Path from 'geometry/path';
 import shapes from 'lab/shapes';
+import { OUTSIDE, INCIDENT, INSIDE } from 'lab/shapes';
 import assert from 'assert';
+import chai from 'chai';
+
+describe("shapes.contains", function() {
+  it('bounds', (done) => {
+    let b = new Bounds(0, 0, 100, 100);
+    let p = new Posn(50, 50);
+    chai.assert.isTrue(shapes.contains(b, p));
+
+    done();
+  });
+});
 
 describe("shapes.contains", function() {
   it('shape contains 1', (done) => {
@@ -32,7 +45,7 @@ describe("shapes.contains", function() {
 });
 
 
-describe("incident contains", function() {
+describe("incident", function() {
   it('shape contains 1', (done) => {
 
     let circle = Path.ellipse({
@@ -58,25 +71,22 @@ describe("incident contains", function() {
       height: 20,
     });
 
-    let b1 = shapes.contains(circle, new Posn(0, 10));
-    let b2 = shapes.contains(circle, new Posn(0, -10));
-    let b3 = shapes.contains(circle, new Posn(-10, 0));
-    let b4 = shapes.contains(circle, new Posn(10, 0));
+    chai.assert.equal(INCIDENT, shapes.relationship(circle, new Posn(0, 10)));
+    chai.assert.equal(INCIDENT, shapes.relationship(circle, new Posn(0, -10)));
+    chai.assert.equal(INCIDENT, shapes.relationship(circle, new Posn(-10, 0)));
+    chai.assert.equal(INCIDENT, shapes.relationship(circle, new Posn(10, 0)));
 
-    let b5 = shapes.contains(rect, new Posn(10, 10));
-    let b6 = shapes.contains(rect, new Posn(-10, 10));
-    let b7 = shapes.contains(rect, new Posn(-10, -10));
-    let b8 = shapes.contains(rect, new Posn(10, -10));
+    chai.assert.equal(INCIDENT, shapes.relationship(rect, new Posn(10, 10)));
+    chai.assert.equal(INCIDENT, shapes.relationship(rect, new Posn(-10, 10)));
+    chai.assert.equal(INCIDENT, shapes.relationship(rect, new Posn(-10, -10)));
+    chai.assert.equal(INCIDENT, shapes.relationship(rect, new Posn(10, -10)));
 
-    console.log(b1, b2, b3, b4, b5, b6, b7, b8);
-
-    console.log(
-      shapes.contains(circle, circle2.points.all()[0]),
-      shapes.contains(circle, circle2.points.all()[1]),
-      shapes.contains(circle, circle2.points.all()[2]),
-      shapes.contains(circle, circle2.points.all()[3]),
-    );
-
+    chai.assert.equal(INCIDENT, shapes.relationship(circle, circle2.points.all()[0]));
+    debugger;
+    chai.assert.equal(INCIDENT, shapes.relationship(circle, circle2.points.all()[1]));
+    debugger;
+    chai.assert.equal(INCIDENT, shapes.relationship(circle, circle2.points.all()[2]));
+    chai.assert.equal(INCIDENT, shapes.relationship(circle, circle2.points.all()[3]));
 
     done();
   });
