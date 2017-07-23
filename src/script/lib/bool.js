@@ -194,6 +194,9 @@ export class EdgeSet {
   intersect(os) {
     let xnsAll = [];
 
+    let xnsSelf = {};
+    let xnsOther = {};
+
     for (let i = 0; i < this.edges.length; i ++) {
       let edge = this.edges[i];
 
@@ -204,22 +207,44 @@ export class EdgeSet {
           // In the event of two identical edges, we only keep one
           os.remove(other);
         } else {
+          // Otherwise, look for intersections
           let xns = edge.intersections(other);
 
-          if (xns instanceof Array) {
-            if (xns.length > 0) {
-              logger.verbose('split', xns.map((p) => { return p.toShortString() }).join(' '), '|',  edge.toString(), '|',  other.toString());
+          if (xns instanceof Array && xns.length > 0) {
 
-              // Fix this set
-              edge = this.replace(edge, edge.splitOn(xns));
-
-              // Fix the other set
-              os.replace(other, other.splitOn(xns));
-
-              xnsAll = xnsAll.concat(xns);
+            if (xnsSelf[i] === undefined) {
+              xnsSelf[i] = xns;
+            } else {
+              xnsSelf[i] = xnsSelf[i].concat(xns);
             }
+
+            if (xnsOther[ii] === undefined) {
+              xnsOther[ii] = xns;
+            } else {
+              xnsOther[ii] = xnsOther[ii].concat(xns);
+            }
+
+            xnsAll = xnsAll.concat(xns);
           }
         }
+      }
+    }
+
+    for (let i = 0; i < this.edges.length; i ++) {
+      let edge = this.edges[i];
+
+      let edgeXns = xnsSelf[i];
+      if (edgeXns) {
+        this.replace(edge, edge.splitOn(edgeXns));
+      }
+    }
+
+    for (let i = 0; i < os.edges.length; i ++) {
+      let edge = os.edges[i];
+
+      let edgeXns = xnsOther[i];
+      if (edgeXns) {
+        os.replace(edge, edge.splitOn(edgeXns));
       }
     }
 
