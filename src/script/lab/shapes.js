@@ -16,7 +16,7 @@ export default {
   },
 
   relationship(shape, posn, check) {
-    // rayCheck returns either INCIDENT or a list or a bool
+    // returns either OUTSIDE, INCIDENT, or INSIDE
 
     if (shape instanceof Circle) {
       let d = posn.distanceFrom(shape.center);
