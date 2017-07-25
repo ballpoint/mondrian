@@ -156,7 +156,15 @@ export default class Doc {
     // Make better whitespace management happen later
     str = str.replace(/>/gi, ">\n");
     
-    return str;
+    return '<!-- Made in Mondrian.io -->\n'+str;
+  }
+
+  toBase64() {
+    return btoa(this.toSVG());
+  }
+
+  toBase64URI() {
+    return `data:image/svg+xml;charset=utf-8;base64,${this.toBase64URI()}`;
   }
 
   // Constructor helpers

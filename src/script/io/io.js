@@ -1,5 +1,6 @@
 import consts from 'consts';
 import Bounds from 'geometry/bounds';
+import Posn from 'geometry/posn';
 import Path from 'geometry/path';
 import Text from 'geometry/text';
 import Item from 'geometry/item';
@@ -10,33 +11,43 @@ let io = {
 
   parse(container) {
     let results = [];
-    for (let elem of container.childNodes) {
+    for (let node of container.childNodes) {
 
       // <defs> symbols... for now we don't do much with this.
-      if (elem.nodeName === "defs") {
+      if (node.nodeName === "defs") {
         continue;
-        let inside = this.parse(elem);
+        let inside = this.parse(node);
         results = results.concat(inside);
 
-      } else if (elem.nodeName === '#text') {
+      } else if (node.nodeName === '#text') {
         // This is like whitespace and shit
         continue;
         // <g> group tags... drill down.
-      } else if (elem.nodeName === "g") {
-        results.push(new Group(this.parse(elem)));
+      } else if (node.nodeName === "g") {
+        let group = new Group(this.parse(node));
+        this.applyTransform(node, group);
+        this.applyStyles(node, group);
+
+        // Don't keep groups with one item inside
+        if (group.children.length === 1) {
+          results.push(group.children[0]);
+        } else {
+          results.push(group);
+        }
       } else {
 
-        // Otherwise it must be a shape element we have a class for.
-        let parsed = this.parseElement(elem);
+        // Otherwise it must be a shape node we have a class for.
+        let parsed = this.parseElement(node);
 
         if (parsed === null) {
-          console.log(elem);
-          debugger;
+          console.log(node, 'not handled');
           continue;
         }
 
         // Any geometric shapes
         if (parsed instanceof Item) {
+          this.applyTransform(node, parsed);
+          this.applyStyles(node, parsed);
           results.push(parsed);
 
         // <use> tag
@@ -73,18 +84,97 @@ let io = {
     }
   },
 
+  applyTransform(node, elem) {
+    let transform = node.getAttribute('transform');
+    if (!transform) return;
 
-  parseElement(elem) {
-    let attrs = elem.attributes;
+    //elem.carryOutTransformations(transform);
 
-    let transform = null;
-    for (let key of Object.keys(attrs || {})) {
-      let attr = attrs[key];
-      if (attr.name === "transform") {
-        transform = attr.value;
+    let items = transform.match(/[a-z]+\([^\)]*\)/gi);
+    console.log(items);
+    for (let item of items) {
+      let action = item.match(/^[a-z]+/gi);
+      let args = item.match(/\(.*\)$/)
+
+      if (action && args) {
+        action = action[0].strip();
+        args = args[0].replace(/[\(\)]/g, '').split(/[,\s]+/).map((s) => { return s.strip() });
+      } else {
+        console.warn('Failed to parse transform', item);
+      }
+
+      let x, y, deg, origin;
+
+      switch (action) {
+        case 'translate':
+          x = parseFloat(args[0]);
+          y = parseFloat(args[1]);
+
+          elem.nudge(x, y);
+          break;
+        case 'scale':
+          x = parseFloat(args[0]);
+          if (args.length >= 2) {
+            y = parseFloat(args[1]);
+          }
+          elem.nudge(x, y, new Posn(0,0));
+          break;
+        case 'rotate':
+          x = 0;
+          y = 0;
+          deg = parseFloat(args[0]);
+          if (args.length >= 3) {
+            x = parseFloat(args[1]);
+            y = parseFloat(args[2]);
+          }
+          origin = new Posn(x,y);
+          elem.rotate(deg, origin);
+          break;
+        case 'matrix':
+          if (args.length === 6) {
+            let a,b,c,d,e,f;
+            a = parseFloat(args[0]);
+            b = parseFloat(args[1]);
+            c = parseFloat(args[2]);
+            d = parseFloat(args[3]);
+            e = parseFloat(args[4]);
+            f = parseFloat(args[5]);
+            elem.matrix(a,b,c,e,d,f);
+          }
+          break;
       }
     }
+  },
 
+  applyStyles(node, elem) {
+    let styles = node.getAttribute('style');
+    if (!styles) return;
+
+    let blacklist = ["display", "transform"];
+
+    styles = styles.split(";");
+    for (let style of Array.from(styles)) {
+      style = style.split(":");
+      let key = style[0].strip();
+      let val = style[1].strip();
+
+      if (blacklist.has(key)) continue;
+
+      switch (key) {
+        case 'fill':
+          elem.setFill(val);
+          break;
+        case 'stroke':
+          elem.setStroke(val);
+          break;
+        default:
+          console.warn('TODO handle style', key, val);
+          break;
+      }
+    }
+  },
+
+  parseElement(elem) {
     let data = this.makeData(elem);
     let type = elem.nodeName.toLowerCase();
     let result;
@@ -122,17 +212,12 @@ let io = {
     }
 
     if (result) {
-      if (transform && (type !== "text")) {
-        result.carryOutTransformations(transform);
-        delete result.data.transform;
-      }
-
       return result;
     }
   },
 
   makeData(elem) {
-    let blacklist = ["inkscape", "sodipodi", "uuid"];
+    let blacklist = ["inkscape", "sodipodi", "uuid", 'transform', 'style'];
 
     let blacklistCheck = function(key) {
       for (let x of Array.from(blacklist)) {
@@ -152,12 +237,7 @@ let io = {
       val = val.value;
       if (key === "") { continue; }
 
-      // Don't keep style attributes. Carry them out.
-      // style should only be used for temporary transformations,
-      // not permanent ones.
-      if ((key === "style") && (elem.nodeName !== "text")) {
-        data = this.applyStyles(data, val);
-      } else if ((val != null) && blacklistCheck(key)) {
+      if ((val != null) && blacklistCheck(key)) {
         if (/^\d+$/.test(val)) {
           val = parseFloat(val);
         }
@@ -165,71 +245,9 @@ let io = {
       }
     }
 
-
-    /*
-    if (data.id === undefined) {
-      data.id = UUIDV4(); 
-    }
-    */
-
-    // By now any transform attrs should be permanent
     //elem.removeAttribute("transform")
 
     return data;
-  },
-
-  applyStyles(data, styles) {
-    let blacklist = ["display", "transform"];
-    styles = styles.split(";");
-    for (let style of Array.from(styles)) {
-      style = style.split(":");
-      let key = style[0];
-      let val = style[1];
-      if (blacklist.has(key)) { continue; }
-      data[key] = val;
-    }
-    return data;
-  },
-
-
-  parseAndAppend(input, makeNew) {
-    let parsed = this.parse(input, makeNew);
-    parsed.map(elem => elem.appendTo('#main'));
-    ui.refreshAfterZoom();
-    return parsed;
-  },
-
-
-  prepareForExport() {
-    return (() => {
-      let result = [];
-      for (let elem of Array.from(ui.elements)) {
-        if (elem.type === "path") {
-          if (elem.virgin != null) {
-            elem.virginMode();
-          }
-        }
-        result.push((typeof elem.cleanUpPoints === 'function' ? elem.cleanUpPoints() : undefined));
-      }
-      return result;
-    })();
-  },
-
-
-  cleanUpAfterExport() {
-    return (() => {
-      let result = [];
-      for (let elem of Array.from(ui.elements)) {
-        let item;
-        if (elem.type === "path") {
-          if (elem.virgin != null) {
-            item = elem.editMode();
-          }
-        }
-        result.push(item);
-      }
-      return result;
-    })();
   },
 
   createSVGElement(type) {
@@ -247,41 +265,6 @@ let io = {
     } else {
       console.warn('Cannot transform to element:', item);
     }
-  },
-
-  makeFile() {
-    this.prepareForExport();
-
-    // Get the file
-    let main = new XMLSerializer().serializeToString(dom.main);
-
-    this.cleanUpAfterExport();
-
-    // Newlines! This is hacky.
-    // Make better whitespace management happen later
-    main = main.replace(/>/gi, ">\n");
-
-    // Attributes to never export, for internal use at runtime only
-    let blacklist = ["uuid"];
-
-    for (let attr of Array.from(blacklist)) {
-      main = main.replace(new RegExp(attr + '\\=\\"\[\\d\\w\]*\\"', 'gi'), '');
-    }
-
-    // Return the file with a comment in the beginning
-    // linking to Mondy
-    return `\
-<!-- Made in Mondrian.io -->
-${main}\
-`;
-  },
-
-  makeBase64() {
-    return btoa(this.makeFile());
-  },
-
-  makeBase64URI() {
-    return `data:image/svg+xml;charset=utf-8;base64,${this.makeBase64()}`;
   }
 };
 

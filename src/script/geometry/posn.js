@@ -222,6 +222,11 @@ export default class Posn {
     return this;
   }
 
+  matrix(a,b,c,d,e,f) {
+    this.x = a * this.x + c * this.y + e;
+    this.y = b * this.x + d * this.y + f;
+  }
+
   sharp() {
     return new Posn(
       math.sharpen(this.x),

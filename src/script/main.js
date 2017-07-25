@@ -11,6 +11,8 @@ import xn from 'xn.svg';
 import google from 'google.svg';
 import pioneer from 'Pioneer_plaque.svg';
 import bool from 'booltest/overlapcircle.svg';
+import tesla from 'Tesla_Motors.svg';
+import nikon from 'Nikon_Logo.svg';
 
 import Editor from 'ui/editor';
 import Utils from 'ui/components/utils/Utils';
@@ -29,8 +31,6 @@ ReactDOM.render(
   document.getElementById('app-menus')
 );
 
-let doc = Doc.fromSVG(pioneer);
+let doc = Doc.fromSVG(nikon);
 
 editor.load(doc);
-
-console.log(doc);

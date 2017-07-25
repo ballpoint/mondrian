@@ -48,4 +48,9 @@ Number.prototype.within = function(tolerance, other) {
   return (d < tolerance) && (d > -tolerance);
 };
 
+String.prototype.strip = function() {
+  return this.replace(/^\s*/, '').replace(/\s*$/, '');
+}
+
+
 Math.KAPPA = 0.5522847498307936;

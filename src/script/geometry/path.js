@@ -173,16 +173,11 @@ export default class Path extends Item {
     }
   }
 
-
   nudge(x, y) {
-    // Nudge
     this.points.map(p => p.nudge(x, y));
 
-    // Nudge the cached bounds and line segments if they're there
-    // to keep track of those.
     this.nudgeCachedObjects(x, y);
   }
-
 
   rotate(a, origin=this.center()) {
     // Add to the transform angle we're keeping track of.
@@ -198,6 +193,10 @@ export default class Path extends Item {
     this.points.map(p => p.rotate(a, origin));
 
     this.clearCachedObjects();
+  }
+
+  matrix(a,b,c,d,e,f) {
+    this.points.map(p => p.matrix(a,b,c,e,d,f));
   }
 
   getPoints() {

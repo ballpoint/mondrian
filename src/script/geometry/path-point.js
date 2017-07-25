@@ -330,6 +330,14 @@ export default class PathPoint extends Posn {
     return this;
   }
 
+
+  matrix(a,b,c,d,e,f) {
+    super.matrix(a,b,c,d,e,f);
+    if (this.pHandle) this.pHandle.matrix(a,b,c,d,e,f);
+    if (this.sHandle) this.sHandle.matrix(a,b,c,d,e,f);
+    return this;
+  }
+
   rotate(a, origin) {
     super.rotate(a, origin);
     if (this.pHandle) this.pHandle.rotate(a, origin);

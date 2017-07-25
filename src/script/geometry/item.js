@@ -131,46 +131,6 @@ export default class Item {
     }
   }
 
-  carryOutTransformations(transform, center) {
-    let key, val;
-    if (transform == null) { ({ transform } = this.data); }
-    if (center == null) { center = new Posn(0, 0); }
-    /*
-      We do things this way because fuck the transform attribute.
-
-      Basically, when we commit shapes for the first time from some other file,
-      if they have a transform attribute we effectively just alter the data
-      that makes those shapes up so that they still look the same, but they no longer
-      have a transform attr.
-    */
-
-    let attrs = transform.replace(", ", ",").split(" ").reverse();
-
-    return Array.from(attrs).map((attr) =>
-      ((key = __guard__(attr.match(/[a-z]+/gi), x1 => x1[0])),
-      (val = __guard__(attr.match(/\([\-\d\,\.]*\)/gi), x2 => x2[0].replace(/[\(\)]/gi, ""))),
-
-      (() => { switch (key) {
-        case "scale":
-          // A scale is a scale, but we also scale the stroke-width
-          let factor = parseFloat(val);
-          this.scale(factor, factor, center);
-          return this.data["stroke-width"] *= factor;
-
-        case "translate":
-          // A translate is simply a nudge
-          val = val.split(",");
-          let x = parseFloat(val[0]);
-          let y = (val[1] != null) ? parseFloat(val[1]) : 0;
-          return this.nudge(x, -y);
-
-        case "rotate":
-          // Duh
-          this.rotate(parseFloat(val), center);
-          return this.metadata.angle = 0;
-      } })()));
-  }
-
   setFill(val) {
     return this.data.fill = new Color(val);
   }

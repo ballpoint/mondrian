@@ -56,6 +56,12 @@ export default class Group {
 
   rotate() { this.propagate('rotate', arguments); }
 
+  matrix() { this.propagate('matrix', arguments); }
+
+  setFill() { this.propagate('setFill', arguments); }
+
+  setStroke() { this.propagate('setStroke', arguments); }
+
   propagate(method, args) {
     for (let child of this.children) {
       child[method](...args);
