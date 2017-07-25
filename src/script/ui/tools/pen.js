@@ -45,78 +45,25 @@ export default class Pen extends Tool {
       }
     }
 
-
     for (let elem of elemsToScan) {
       let points = elem.getPoints();
       for (let pt of points) {
         let ls = pt.toLineSegment();
-        let lsbounds = this.editor.projection.bounds(ls.bounds()).padded(PEN_POINT_THRESHOLD);
 
-        let closestPosnLocally, closestDLocally, closestPercLocally;
+        let closestPosn = ls.closestPosn(posn);
+        let d = closestPosn.distanceFrom(posn);
 
-        // If posn is within the bounds of this line, we check the line for nearest point
-        //
-        // This is very similar to CubicBezier#findPercentageOfPosn TODO maybe reduce this logic somehow?
-        // The difference is this uses screen space to determine precision.
-        let lastSplitPosn;
-        if (shapes.contains(lsbounds, p)) {
-          //console.time('checkLS');
-          let avgDistanceBetween = 0;
-
-          for (let splitPerc = 0; splitPerc < 1; splitPerc += PEN_SCAN_PRECISION) {
-            let splitPosn = ls.posnAt(splitPerc);
-            let d = splitPosn.distanceFrom(posn);
-
-            if (closestDLocally === undefined || d < closestDLocally) {
-              closestPosnLocally = splitPosn;
-              closestDLocally = d;
-              closestPercLocally = splitPerc;
-            }
-
-            if (lastSplitPosn) {
-              let d = this.editor.projection.z(splitPosn.distanceFrom(lastSplitPosn));
-              avgDistanceBetween += d;
-            }
-            lastSplitPosn = splitPosn;
+        if (!this.closest || d < this.closest.d) {
+          this.closest = {
+            posn: closestPosn,
+            pathPoint: pt,
+            d: d,
+            splits: ls.splitAt(closestPosn),
+            bounds: ls.bounds(),
           }
-
-          // Determine how small our step has to be when iterating
-          // to find the nearest point.
-          avgDistanceBetween /= 10.0;
-
-          // If a PEN_SCAN_PRECISION jump yielded an average of avgDistanceBetween pixels and we want to be
-          // within 2 pixels, we simply divide.
-          let precision = PEN_SCAN_PRECISION
-          if (avgDistanceBetween > 2) {
-            precision /= (avgDistanceBetween / 2);
-          }
-
-          if (closestPercLocally !== undefined) {
-            let splitStart = Math.max(0, closestPercLocally - PEN_SCAN_PRECISION);
-            let splitEnd =   Math.min(1, closestPercLocally + PEN_SCAN_PRECISION);
-            for (let splitPerc = splitStart; splitPerc < splitEnd; splitPerc += precision) {
-              let splitPosn = ls.posnAt(splitPerc);
-              let d = splitPosn.distanceFrom(posn);
-
-              if (this.editor.projection.z(d) <= PEN_POINT_THRESHOLD) {
-                if (!this.closest || d < this.closest.d) {
-                  this.closest = {
-                    posn: splitPosn,
-                    pathPoint: pt,
-                    d: d,
-                    perc: splitPerc,
-                    splits: ls.splitAt(splitPerc),
-                    bounds: ls.bounds(),
-                  }
-                }
-              }
-            }
-          }
-          //console.timeEnd('checkLS');
         }
       }
     }
-
   }
 
   handleMousedown(e, posn) {

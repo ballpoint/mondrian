@@ -125,7 +125,6 @@ let io = {
       if (transform && (type !== "text")) {
         result.carryOutTransformations(transform);
         delete result.data.transform;
-        result.commit();
       }
 
       return result;

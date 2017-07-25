@@ -2,6 +2,7 @@ import { insideOf } from 'lib/dom';
 import MenuButton from 'ui/components/menus/MenuButton';
 import FileMenu from 'ui/components/menus/FileMenu';
 import EditMenu from 'ui/components/menus/EditMenu';
+import ViewMenu from 'ui/components/menus/ViewMenu';
 import HistoryMenu from 'ui/components/menus/HistoryMenu';
 import "menus.scss";
 
@@ -16,7 +17,7 @@ const menus = [
   },
   {
     name: 'View',
-    render: FileMenu
+    render: ViewMenu
   },
   {
     name: 'Help',

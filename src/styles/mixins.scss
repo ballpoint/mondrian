@@ -4,3 +4,12 @@
       -ms-user-select: none;
           user-select: none;
 }
+
+
+@mixin card-shadow-medium {
+  box-shadow: 0 10px 20px rgba(0,0,0,0.07), 0 6px 6px rgba(0,0,0,0.07);
+}
+
+@mixin card-shadow-small {
+  box-shadow: 0 5px 12px rgba(0,0,0,0.05), 0 4px 4px rgba(0,0,0,0.03);
+}

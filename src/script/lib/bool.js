@@ -31,6 +31,35 @@ export class Edge {
     return this.origin.fullEqual(other.origin) && this.destination.fullEqual(other.destination);
   }
 
+  incident(other) {
+    let sls = this.lineSegment;
+    let ols = other.lineSegment;
+
+    let incidentEndpointOwn;
+    let incidentEndpointOther;
+
+    if (sls.isIncident(other.origin)) {
+      incidentEndpointOther = other.origin;
+    } else if (sls.isIncident(other.destination)) {
+      incidentEndpointOther = other.destination;
+    }
+
+    if (!incidentEndpointOther) return false;
+
+    if (ols.isIncident(this.origin)) {
+      incidentEndpointOwn = this.origin;
+    } else if (ols.isIncident(this.destination)) {
+      incidentEndpointOwn = this.destination;
+    }
+
+    if (!incidentEndpointOwn) return false;
+
+    return {
+      own: incidentEndpointOwn,
+      other: incidentEndpointOther,
+    };
+  }
+
   intersections(other) {
 
     let lsa = this.lineSegment;
@@ -208,7 +237,9 @@ export class EdgeSet {
       for (let ii = 0; ii < os.edges.length; ii ++) {
         let other = os.edges[ii];
 
-        if (edge.equal(other)) {
+        let isEqual = edge.equal(other);
+
+        if (isEqual) {
           // In the event of two identical edges, we only keep one
           os.remove(other);
         } else {
@@ -399,6 +430,7 @@ function doBoolean(a, b, op) {
 
     // Push current destination and go on to find the next
     if (seg.length > 0 && seg.first.equal(cursor.destination) && edgesUsed.indexOf(cursor.next) > -1) {
+      seg.push(cursor.destination);
       pl.closeSegment();
 
       if (seg.length > 1) {

@@ -138,20 +138,22 @@ export default class PathPoint extends Posn {
             // Never represent points as relative internally
             if (relative) {
               for (let si = 0; si < set.length; si++) {
-                let compareVal;
+                let compareVal = 0;
 
-                switch (key) {
-                  case 'vertiTo':
-                    compareVal = prec.y;
-                    break;
-                  default:
-                    if (si % 2 === 0) {
-                      // x value
-                      compareVal = prec.x;
-                    } else {
-                      // y value
+                if (prec) {
+                  switch (key) {
+                    case 'vertiTo':
                       compareVal = prec.y;
-                    }
+                      break;
+                    default:
+                      if (si % 2 === 0) {
+                        // x value
+                        compareVal = prec.x;
+                      } else {
+                        // y value
+                        compareVal = prec.y;
+                      }
+                  }
                 }
 
                 set[si] += compareVal;

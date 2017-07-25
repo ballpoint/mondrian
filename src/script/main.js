@@ -16,8 +16,6 @@ import Editor from 'ui/editor';
 import Utils from 'ui/components/utils/Utils';
 import Menus from 'ui/components/menus/Menus';
 
-let doc = Doc.fromSVG(google);
-
 let root = document.getElementById('app-render');
 let editor = new Editor(root);
 
@@ -30,6 +28,8 @@ ReactDOM.render(
   React.createElement(Menus, { editor }),
   document.getElementById('app-menus')
 );
+
+let doc = Doc.fromSVG(pioneer);
 
 editor.load(doc);
 

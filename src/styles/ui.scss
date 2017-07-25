@@ -26,9 +26,9 @@ body#app {
       padding: 20px 10px;
       width: $app-toolbar-width;
       height: $app-header-height;
-      background-color: $bg-grey;
-      border-right: 1px solid $fg-grey;
-      border-bottom: 1px solid $fg-grey;
+      background-color: $blue-grey;
+      border-right: 1px solid darken($blue-grey,  20%);
+      border-bottom: 1px solid darken($blue-grey, 20%);
 
       rect.logo-bg {
         fill: #212121;
@@ -85,7 +85,7 @@ body#app {
   }
 
   footer#app-footer {
-    height: 20px;
+    height: 30px;
     flex-grow: 0;
     flex-shrink: 0;
     border-top: 1px solid $fg-grey;

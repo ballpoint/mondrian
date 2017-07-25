@@ -12,7 +12,7 @@ let BooleanUtil = React.createClass({
   },
   render() {
     return (
-      <Util title="Transform">
+      <Util title="Boolean">
         <div>
           <div><a href="#" onClick={() => {this.do('unite')}}>Unite</a></div>
           <div><a href="#" onClick={() => {this.do('subtract')}}>Subtract</a></div>

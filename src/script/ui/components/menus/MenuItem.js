@@ -7,11 +7,12 @@ let MenuItem = React.createClass({
       <div
         className={classnames({
           "app-menu-item": true,
-          "disabled": this.props.disabled
+          "disabled": this.props.disabled,
+          [this.props.className]: true
         })}
         onClick={this.props.action}
       >
-        {this.props.label}
+        {this.props.label || this.props.children}
       </div>
     );
   }

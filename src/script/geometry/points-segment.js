@@ -157,6 +157,7 @@ export default class PointsSegment {
         }
         // Remove last redundant point
         this.points = this.points.slice(0, this.points.length-1);
+        this.closed = true;
       }
 
       firstPoint = this.points[0];
@@ -165,8 +166,6 @@ export default class PointsSegment {
 
     firstPoint.prec = lastPoint;
     lastPoint.succ = firstPoint;
-
-    this.closed = true;
   }
 
   get empty() {

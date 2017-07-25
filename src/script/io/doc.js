@@ -29,6 +29,8 @@ export default class Doc {
   static fromSVG(str) {
     let doc = new DOMParser().parseFromString(str, MIMETYPE);
 
+    console.log(doc);
+
     // TODO check how this works in firefox etc. this is for chrome.
     let parserError = doc.querySelector('parsererror');
     if (parserError) {
@@ -36,13 +38,13 @@ export default class Doc {
       throw new Error(errorDiv.innerHTML);
     }
 
+    // Parse SVG document
     let root = doc.querySelector('svg');
     if (!root) {
       throw new Error('No svg node in given doc');
     }
     let children = io.parse(doc.querySelector('svg'));
-
-
+    console.log(children);
 
 
     let { width, height, transform } = this.parseDimensions(root);

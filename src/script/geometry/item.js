@@ -14,14 +14,12 @@ import UUIDV4 from 'uuid/v4';
 */
 
 export default class Item {
-  static initClass() {
-    this.prototype.points = [];
-    this.prototype.transform = {};
-    this.prototype.boundsCached = null;
-  }
-
   constructor(data={}) {
     this.data = data;
+
+    this.points = [];
+    this.transform = {};
+    this.boundsCached = null;
 
     if (data.id) {
       this.id = data.id;
@@ -234,18 +232,8 @@ export default class Item {
     return this;
   }
 
-
-
   lineSegments() {}
-
-  fingerprint() {
-  }
 }
-
-
-Item.initClass();
-
-
 
 function __guard__(value, transform) {
   return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;

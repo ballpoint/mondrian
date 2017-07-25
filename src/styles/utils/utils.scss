@@ -1,4 +1,5 @@
 @import '~vars.scss';
+@import "~mixins.scss";
 
 $util-grey: darken($bg-grey, 13%);
 
@@ -14,23 +15,23 @@ $util-grey: darken($bg-grey, 13%);
 .util-window {
   margin: 5px;
   pointer-events: auto;
+  @include card-shadow-small;
 
   .util-header {
-    padding: 5px;
-    font-size: 12px;
-    background-color: darken($bg-grey, 10%);
-    border-top: 1px solid $fg-grey;
+    padding: 3px;
+    font-size: 14px;
+
+    background-color: $blue-grey;
+
+    //background: -webkit-linear-gradient(to top, #c7cdd5, #adb4bd);
+    //background: -moz-linear-gradient(to top, #c7cdd5, #adb4bd);
+    //background: linear-gradient(to top, #c7cdd5, #adb4bd);
     border-bottom: 1px solid $fg-grey;
-    border-left: 1px solid $fg-grey;
-    border-right: 1px solid $fg-grey;
   }
 
   .util-body {
     background: white;
     font-size: 14px;
-    border-bottom: 1px solid $fg-grey;
-    border-left: 1px solid $fg-grey;
-    border-right: 1px solid $fg-grey;
   }
 }
 

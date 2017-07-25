@@ -6,10 +6,6 @@ import Bounds from 'geometry/bounds';
 //  PointsList
 
 export default class PointsList {
-  static initClass() {
-    this.prototype.closed = false;
-  }
-
   constructor(segments=[], path) {
     this.segments = segments;
 
@@ -162,11 +158,6 @@ export default class PointsList {
     return this.segmentContaining(n).i(n);
   }
 
-  close() {
-    this.closed = true;
-    return this;
-  }
-
   join(x) {
     return this.all().join(x);
   }
@@ -270,5 +261,3 @@ export default class PointsList {
     return this.segments.map((s) => { return s.toSVGString() }).join(' ');
   }
 }
-PointsList.initClass();
-
