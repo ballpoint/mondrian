@@ -295,6 +295,7 @@ export default class Editor extends EventEmitter {
   }
 
   setSelection(items) {
+    let oldSelection = this.state.selection;
     let flatItems = this.flattenGroupItems(items);
     this.state.selection = flatItems;
 
@@ -304,29 +305,38 @@ export default class Editor extends EventEmitter {
       this.state.selectionType = 'ELEMENTS';
     }
 
-    // DEBUG
-    window.$s = items;
+    window.$s = items; // DEBUG
 
     this.calculateSelectionBounds();
 
-    this.canvas.refreshAll();
-    this.trigger('change');
-    this.trigger('change:selection');
-  }
-
-  setHovering(items) {
-    let flatItems = this.flattenGroupItems(items);
-    this.state.hovering = flatItems;
-
-    if (flatItems[0] instanceof PathPoint) {
-      this.state.hoveringType = 'POINTS';
-    } else {
-      this.state.hoveringType = 'ELEMENTS';
+    if (!oldSelection.sameMembers(this.state.selection)) {
+      this.trigger('change');
+      this.trigger('change:selection');
     }
 
     this.canvas.refreshAll();
-    this.trigger('change');
-    this.trigger('change:hovering');
+  }
+
+  setHovering(items) {
+    let oldHovering = this.state.hovering;
+
+    let flatItems = this.flattenGroupItems(items);
+    this.state.hovering = flatItems;
+
+    if (this.state.hovering.length > 0) {
+      if (flatItems[0] instanceof PathPoint) {
+        this.state.hoveringType = 'POINTS';
+      } else {
+        this.state.hoveringType = 'ELEMENTS';
+      }
+    }
+
+    if (!oldHovering.sameMembers(this.state.hovering)) {
+      this.trigger('change');
+      this.trigger('change:hovering');
+    }
+
+    this.canvas.refreshAll();
   }
 
   isSelected(item) {
@@ -348,8 +358,12 @@ export default class Editor extends EventEmitter {
     this.state.layer = layer;
 
     this.canvas.refreshAll();
-    this.trigger('change');
-    this.trigger('change:layer');
+
+    // defer
+    setTimeout(() => {
+      this.trigger('change');
+      this.trigger('change:layer');
+    },1);
   }
 
   selectTool(tool) {

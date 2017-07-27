@@ -226,7 +226,7 @@ export default class PathPoint extends Posn {
           // We got a weird amount of points. Dunno what to do with that.
           // TODO maybe I should actually rethink this later to be more robust: like, parse what I can and
           // ignore the rest. Idk if that would be irresponsible.
-          throw new Error(`Wrong amount of coordinates: ${string}. Expected ${elen} and got ${clen}.`);
+          console.error(`Wrong amount of coordinates: ${string}. Expected ${elen} and got ${clen}.`);
         }
 
         // Don't keep looking

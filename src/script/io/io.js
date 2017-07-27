@@ -13,16 +13,14 @@ let io = {
     let results = [];
     for (let node of container.childNodes) {
 
-      // <defs> symbols... for now we don't do much with this.
       if (node.nodeName === "defs") {
+        // <defs> symbols... for now we don't do much with this.
         continue;
-        let inside = this.parse(node);
-        results = results.concat(inside);
 
       } else if (node.nodeName === '#text') {
         // This is like whitespace and shit
         continue;
-        // <g> group tags... drill down.
+
       } else if (node.nodeName === "g") {
         let group = new Group(this.parse(node));
         this.applyTransform(node, group);
@@ -40,7 +38,7 @@ let io = {
         let parsed = this.parseElement(node);
 
         if (parsed === null) {
-          console.log(node, 'not handled');
+          //console.log(node, 'not handled');
           continue;
         }
 
@@ -58,40 +56,14 @@ let io = {
       }
     }
 
-    let monsvgs = results.filter(e => e instanceof Item);
-
     return results;
-  },
-
-
-  findSVGRoot(input) {
-    if (input instanceof Array) {
-      return input[0].$rep.closest("svg");
-    } else if (input instanceof $) {
-      input = input.filter('svg');
-      if (input.is("svg")) {
-        return input;
-      } else {
-        let $svg = input.find("svg");
-        if ($svg.length === 0) {
-          throw new Error("io: No svg node found.");
-        } else {
-          return $svg[0];
-        }
-      }
-    } else {
-      return this.findSVGRoot($(input));
-    }
   },
 
   applyTransform(node, elem) {
     let transform = node.getAttribute('transform');
     if (!transform) return;
 
-    //elem.carryOutTransformations(transform);
-
     let items = transform.match(/[a-z]+\([^\)]*\)/gi);
-    console.log(items);
     for (let item of items) {
       let action = item.match(/^[a-z]+/gi);
       let args = item.match(/\(.*\)$/)
@@ -154,6 +126,8 @@ let io = {
 
     styles = styles.split(";");
     for (let style of Array.from(styles)) {
+      if (style.strip() === '') continue;
+
       style = style.split(":");
       let key = style[0].strip();
       let val = style[1].strip();
@@ -167,9 +141,30 @@ let io = {
         case 'stroke':
           elem.setStroke(val);
           break;
+        case 'stroke-width':
+          elem.setStrokeWidth(val);
+          break;
         default:
           console.warn('TODO handle style', key, val);
           break;
+      }
+    }
+  },
+
+  applyRootAttrs(root, elems) {
+    let keys = ['fill', 'stroke'];
+
+    for (let key of keys) {
+      let val = root.getAttribute(key);
+      if (val) {
+        switch (key) {
+          case 'fill':
+            for (let elem of elems) elem.setFill(val);
+            break;
+          case 'stroke':
+            for (let elem of elems) elem.setStroke(val);
+            break;
+        }
       }
     }
   },

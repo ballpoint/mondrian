@@ -44,10 +44,10 @@ export default class Doc {
       throw new Error('No svg node in given doc');
     }
     let children = io.parse(doc.querySelector('svg'));
-    console.log(children);
-
 
     let { width, height, transform } = this.parseDimensions(root);
+
+    io.applyRootAttrs(root, children);
 
     // Apply viewbox transformation
     if (transform) {

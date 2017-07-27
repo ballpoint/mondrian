@@ -52,5 +52,15 @@ String.prototype.strip = function() {
   return this.replace(/^\s*/, '').replace(/\s*$/, '');
 }
 
+Array.prototype.sameMembers = function(other) {
+  if (this.length !== other.length) return false;
+
+  for (let i = 0; i < this.length; i++) {
+    let mem = this[i];
+    if (other.indexOf(mem) === -1) return false;
+  }
+  return true;
+}
+
 
 Math.KAPPA = 0.5522847498307936;

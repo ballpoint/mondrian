@@ -163,12 +163,22 @@ export default class Item {
 
     if (this.data.stroke) {
       context.strokeStyle = this.data.stroke.toRGBString();
-      let lw = parseFloat(this.data['stroke-width']);
-      if (lw === undefined) lw = 1;
+      let lw = 1;
+      if (this.data['stroke-width'] !== undefined) {
+        lw = parseFloat(this.data['stroke-width']);
+      }
 
-      context.lineWidth = projection.z(lw);
+      if (lw !== 0) {
+        context.lineWidth = projection.z(lw);
+        context.stroke();
+      }
+    }
 
-      context.stroke();
+    if (!this.data.fill && !this.data.stroke) {
+      // Default behavior for elements with neither a fill nor stroke set is to just
+      // fill them with black.
+      context.fillStyle = '#000000';
+      context.fill();
     }
   }
 

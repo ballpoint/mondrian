@@ -62,6 +62,8 @@ export default class Group {
 
   setStroke() { this.propagate('setStroke', arguments); }
 
+  setStrokeWidth() { this.propagate('setStrokeWidth', arguments); }
+
   propagate(method, args) {
     for (let child of this.children) {
       child[method](...args);

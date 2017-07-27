@@ -4,6 +4,7 @@ import Doc from 'io/doc';
 
 // Test files
 import abq from 'abq.svg';
+import cmg from 'cmg.svg';
 import sbux from 'sbux.svg';
 import sbux2 from 'sbux2.svg';
 import nyt from 'nyt.svg';
@@ -31,6 +32,6 @@ ReactDOM.render(
   document.getElementById('app-menus')
 );
 
-let doc = Doc.fromSVG(nikon);
+let doc = Doc.fromSVG(cmg);
 
 editor.load(doc);
