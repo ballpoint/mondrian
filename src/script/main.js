@@ -32,6 +32,6 @@ ReactDOM.render(
   document.getElementById('app-menus')
 );
 
-let doc = Doc.fromSVG(cmg);
+let doc = Doc.fromSVG(pioneer);
 
 editor.load(doc);

@@ -100,7 +100,7 @@ export default {
         lssLoop:
         for (let ls of lss) {
 
-          if (ls.isIncident(posn)) {
+          if (isStartOrEndPoint(posn, ls)) {
             // Posn incident with end points of line segment; we consider this contained
             return INCIDENT;
           }

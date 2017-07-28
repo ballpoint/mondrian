@@ -1,6 +1,7 @@
 import shapes from 'lab/shapes';
 import Tool from 'ui/tools/tool';
 import Bounds from 'geometry/bounds';
+import Circle from 'geometry/circle';
 
 export default class Cursor extends Tool {
   constructor(editor) {
@@ -8,6 +9,8 @@ export default class Cursor extends Tool {
 
     this.dragSelectStart = null;
     this.dragSelectEnd = null;
+
+    this.skipClick = 0;
   }
 
   get id() {
@@ -16,31 +19,58 @@ export default class Cursor extends Tool {
 
   handleMousemove(e, posn) {
     if (this.editor.cursor.dragging) return;
-
     if (this.dragSelectStart) return;
-
     if (!this.editor.doc) return;
+
+    let z3 = this.editor.projection.zInvert(3);
+    let posnPadded = Bounds.centeredOnPosn(posn, z3, z3);
 
     let elems = this.editor.doc.elements.slice(0).reverse();
 
+    this.skipClick = 0;
+    this.hovering = [];
+
+    // TODO use bsearch tree here 8)
     for (let element of elems) {
       if (shapes.contains(element, posn)) {
-        this.editor.setHovering([element]);
-        return;
+        this.hovering.push(element);
+      } else if (shapes.overlap(element, posnPadded)) {
+        this.hovering.push(element);
       }
     }
 
-    this.editor.setHovering([]);
+    if (this.hovering.length > 0) {
+      this.editor.setHovering([this.hovering[0]]);
+    } else {
+      this.editor.setHovering([]);
+    }
   }
 
   handleMousedown(e, posn) {
-    if (this.editor.state.hovering.length === 1 && this.editor.isSelected(this.editor.state.hovering[0])) {
-      return;
+    let selected;
+
+    if (this.hovering.length > 0) {
+      let skipClick = this.skipClick % this.hovering.length;
+
+      if (this.hovering.length > skipClick) {
+        selected = this.hovering[skipClick];
+      } else {
+        selected = this.hovering.last();
+      }
     }
-    this.editor.setSelection(this.editor.state.hovering);
+
+    if (selected) {
+      if (!this.editor.isSelected(selected)) {
+        this.editor.setSelection([selected]);
+
+      }
+    } else {
+      this.editor.setSelection([]);
+    }
   }
 
   handleClick(e, posn) {
+    this.skipClick ++;
   }
 
   handleDragStart(e, posn, lastPosn) {
