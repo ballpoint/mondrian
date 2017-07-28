@@ -9,6 +9,7 @@ export default class Cursor extends Tool {
 
     this.dragSelectStart = null;
     this.dragSelectEnd = null;
+    this.hovering = [];
 
     this.skipClick = 0;
   }

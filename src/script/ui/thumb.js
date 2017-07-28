@@ -12,7 +12,8 @@ export default class Thumb {
     let fb = bounds.fitToDimension(THUMBNAIL_DIMEN);
     let x = scaleLinear().domain([bounds.x, bounds.width+bounds.x]).range([0, fb.width]);
     let y = scaleLinear().domain([bounds.y, bounds.height+bounds.y]).range([0, fb.height]);
-    this.projection = new Projection(x, y, 1);
+    let z = fb.width / bounds.width;
+    this.projection = new Projection(x, y, z);
     this.layer = this.canvas.createLayer('main');
     this.canvas.setDimensions(fb.width, fb.height);
   }

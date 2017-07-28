@@ -36,6 +36,8 @@ import TransformerUIElement from 'ui/editor/transformer';
 import DocumentPointsUIElement from 'ui/editor/doc_pts';
 import DocumentElemsUIElement from 'ui/editor/doc_elems';
 
+const UTILS_WIDTH = 350;
+
 
 export default class Editor extends EventEmitter {
   constructor(root) {
@@ -58,6 +60,7 @@ export default class Editor extends EventEmitter {
     window.h = this.history;
 
     this.setPosition(doc.center());
+    this.fitToScreen();
     this.setCurrentLayer(doc.layers[0]);
 
     this.canvas.refreshAll();
@@ -168,6 +171,12 @@ export default class Editor extends EventEmitter {
       this.setPosition(center);
       this.setZoom(1);
     });
+    hotkeys.on('down', '0', () => {
+      this.fitToScreen();
+    });
+
+
+
     hotkeys.on('down', '+', () => { this.zoomIn(); });
     hotkeys.on('down', '-', () => { this.zoomOut(); });
 
@@ -269,6 +278,18 @@ export default class Editor extends EventEmitter {
 
     this.canvas.refreshAll();
     this.cacheState();
+  }
+
+  fitToScreen() {
+    const padding = 20;
+    let vb = this.viewportBounds().padded(-padding);
+    let fb = this.doc.bounds.fitTo(vb);
+
+    let z = fb.width / this.doc.bounds.width;
+
+    let center = this.doc.bounds.center();
+    this.setPosition(center);
+    this.setZoom(z);
   }
 
   clearSelection() {
@@ -510,7 +531,10 @@ export default class Editor extends EventEmitter {
     offsetTop += ((this.doc.height/2)-this.state.position.y)*this.state.zoomLevel;
 
     // Account for windows on right side
-    offsetLeft -= 200;
+    offsetLeft -= UTILS_WIDTH/2;
+    // Rulers
+    offsetTop += 20/2;
+    offsetLeft += 20/2;
 
     let x = scaleLinear()
       .domain([0, this.doc.width])
@@ -531,6 +555,16 @@ export default class Editor extends EventEmitter {
 
   screenBounds() {
     return this.projection.bounds(new Bounds(0,0,this.doc.width,this.doc.height));
+  }
+
+  viewportBounds() {
+    let b = this.canvas.bounds();
+    // Account for ruler
+    b.moveEdge('l', 20);
+    b.moveEdge('t', 20);
+    // Account for utils
+    b.moveEdge('r', -UTILS_WIDTH);
+    return b;
   }
 
   refreshBackground(layer, context) {

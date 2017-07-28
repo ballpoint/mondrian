@@ -1,4 +1,5 @@
 import Posn from 'geometry/posn';
+import Bounds from 'geometry/bounds';
 import EventEmitter from 'lib/events';
 import Layer from 'ui/layer';
 
@@ -60,6 +61,10 @@ export default class Canvas extends EventEmitter {
 
   center() {
     return new Posn(this.width/2, this.height/2);
+  }
+
+  bounds() {
+    return new Bounds(0, 0, this.width, this.height);
   }
 
   refreshAll() {
