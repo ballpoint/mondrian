@@ -32,6 +32,7 @@
       cursor: default;
       padding: 5px 10px;
       position: relative;
+      display: flex;
 
       + .app-menu-item {
         border-top: 1px solid $fg-grey;
@@ -41,8 +42,26 @@
         color: $fg-grey;
       }
 
-      &:hover:not(.disabled) {
-        color: $blue;
+      &:not(.disabled) {
+        &:hover {
+          .app-menu-item__label {
+            color: $blue;
+          }
+        }
+
+        &:active {
+          background-color: $bg-grey;
+        }
+      }
+
+      .app-menu-item__label {
+        @include no-select;
+        flex-grow: 1;
+      }
+      .app-menu-item__hotkey {
+        @include no-select;
+        color: $fg-grey;
+        flex-grow: 0;
       }
     }
   }

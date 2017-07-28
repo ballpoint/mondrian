@@ -13,26 +13,31 @@ let EditMenu = React.createClass({
           label="Undo"
           disabled={!history.canUndo()}
           action={editor.undo.bind(editor)}
+          hotkey="Ctrl-Z"
         />
         <MenuItem
           label="Redo"
           disabled={!history.canRedo()}
           action={editor.redo.bind(editor)}
+          hotkey="Shift-Ctrl-Z"
         />
         <MenuItem
           label="Cut"
           disabled={!selectionExists}
           action={editor.copy.bind(editor)}
+          hotkey="Ctrl-X"
         />
         <MenuItem
           label="Copy"
           disabled={!selectionExists}
           action={editor.copy.bind(editor)}
+          hotkey="Ctrl-C"
         />
         <MenuItem
           label="Paste"
           disabled={!selectionExists}
           action={editor.paste.bind(editor)}
+          hotkey="Ctrl-V"
         />
       </MenuBody>
     );

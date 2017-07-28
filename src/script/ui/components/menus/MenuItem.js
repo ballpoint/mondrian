@@ -12,7 +12,17 @@ let MenuItem = React.createClass({
         })}
         onClick={this.props.action}
       >
-        {this.props.label || this.props.children}
+        <div className="app-menu-item__label">
+          {this.props.label || this.props.children}
+        </div>
+
+        { 
+          this.props.hotkey ? (
+            <div className="app-menu-item__hotkey">
+              {this.props.hotkey}
+            </div>
+          ) : null
+        }
       </div>
     );
   }

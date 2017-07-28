@@ -18,10 +18,6 @@ const menus = [
   {
     name: 'View',
     render: ViewMenu
-  },
-  {
-    name: 'Help',
-    render: FileMenu
   }
 ]
 

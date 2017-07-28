@@ -274,13 +274,29 @@ html {
     .app-menus-row .app-menu-body .app-menu-item {
       cursor: default;
       padding: 5px 10px;
-      position: relative; }
+      position: relative;
+      display: flex; }
       .app-menus-row .app-menu-body .app-menu-item + .app-menu-item {
         border-top: 1px solid #b2b2b2; }
       .app-menus-row .app-menu-body .app-menu-item.disabled {
         color: #b2b2b2; }
-      .app-menus-row .app-menu-body .app-menu-item:hover:not(.disabled) {
+      .app-menus-row .app-menu-body .app-menu-item:not(.disabled):hover .app-menu-item__label {
         color: #0072d1; }
+      .app-menus-row .app-menu-body .app-menu-item:not(.disabled):active {
+        background-color: #f2f2f2; }
+      .app-menus-row .app-menu-body .app-menu-item .app-menu-item__label {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        flex-grow: 1; }
+      .app-menus-row .app-menu-body .app-menu-item .app-menu-item__hotkey {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        color: #b2b2b2;
+        flex-grow: 0; }
 .menu-item--file-input input[type="file"] {
   opacity: 0;
   position: absolute;
