@@ -392,6 +392,10 @@ export default class PathPoint extends Posn {
     }
   }
 
+  formatCoord(n) {
+    return n.toFixed(8);
+  }
+
   toSVGString() {
     let p1;
     let p2;
@@ -405,11 +409,11 @@ export default class PathPoint extends Posn {
     if (p1 || p2) {
       if (!p1) p1 = this.prec;
       if (!p2) p2 = this;
-      return `C${p1.x},${p1.y} ${p2.x},${p2.y} ${this.x},${this.y}`;
+      return `C${p1.x.toFixed(8)},${p1.y.toFixed(8)} ${p2.x.toFixed(8)},${p2.y.toFixed(8)} ${this.x.toFixed(8)},${this.y.toFixed(8)}`;
       // CurveTo
     } else {
       // LineTo
-      return `L${this.x},${this.y}`;
+      return `L${this.x.toFixed(8)},${this.y.toFixed(8)}`;
     }
   }
 }

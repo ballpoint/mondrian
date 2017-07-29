@@ -24,7 +24,7 @@ let EditMenu = React.createClass({
         <MenuItem
           label="Cut"
           disabled={!selectionExists}
-          action={editor.copy.bind(editor)}
+          action={editor.cut.bind(editor)}
           hotkey="Ctrl-X"
         />
         <MenuItem
@@ -35,7 +35,7 @@ let EditMenu = React.createClass({
         />
         <MenuItem
           label="Paste"
-          disabled={!selectionExists}
+          disabled={!editor.state.clipboard}
           action={editor.paste.bind(editor)}
           hotkey="Ctrl-V"
         />

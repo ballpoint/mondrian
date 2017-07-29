@@ -716,14 +716,22 @@ export default class Editor extends EventEmitter {
     this.trigger('change');
   }
 
+  cut(e) {
+    this.state.clipboard = this.state.selection.map((e) => { return e.clone() });
+    this.deleteSelection();
+    this.trigger('change');
+  }
+
   copy(e) {
     this.state.clipboard = this.state.selection.map((e) => { return e.clone() });
+    this.trigger('change');
   }
 
   paste(e) {
     if (this.state.clipboard) {
       this.insertElements(this.state.clipboard);
     }
+    this.trigger('change');
   }
 
   refreshTool(layer, context) {
