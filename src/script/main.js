@@ -17,6 +17,9 @@ import nikon from 'Nikon_Logo.svg';
 
 import Editor from 'ui/editor';
 import Utils from 'ui/components/utils/Utils';
+import Tools from 'ui/components/tools/Tools';
+import Toolbar from 'ui/components/toolbar/Toolbar';
+import Title from 'ui/components/title/Title';
 import Menus from 'ui/components/menus/Menus';
 
 let root = document.getElementById('app-render');
@@ -32,6 +35,20 @@ ReactDOM.render(
   document.getElementById('app-menus')
 );
 
-let doc = Doc.fromSVG(pioneer);
+ReactDOM.render(
+  React.createElement(Tools, { editor }),
+  document.getElementById('app-tools')
+);
 
+ReactDOM.render(
+  React.createElement(Title, { editor }),
+  document.getElementById('app-title')
+);
+
+ReactDOM.render(
+  React.createElement(Toolbar, { editor }),
+  document.getElementById('app-toolbar')
+);
+
+let doc = Doc.fromSVG(tesla, 'tesla.svg');
 editor.load(doc);

@@ -25,11 +25,7 @@ import DocHistory from 'history/history';
 import * as actions from 'history/actions/actions';
 import HistoryFrame from 'history/Frame';
 
-import Cursor from 'ui/tools/cursor';
-import SubCursor from 'ui/tools/subcursor';
-import Zoom from 'ui/tools/zoom';
-import Pen from 'ui/tools/pen';
-import Paw from 'ui/tools/paw';
+import * as tools from 'ui/tools/tools';
 
 import RulersUIElement from 'ui/editor/rulers';
 import TransformerUIElement from 'ui/editor/transformer';
@@ -64,6 +60,8 @@ export default class Editor extends EventEmitter {
     this.setCurrentLayer(doc.layers[0]);
 
     this.canvas.refreshAll();
+
+    this.trigger('change:doc');
   }
 
   initCanvas() {
@@ -154,11 +152,11 @@ export default class Editor extends EventEmitter {
     hotkeys.on('down', 'shift-upArrow', () => { this.nudgeSelected(0, -10); });
     hotkeys.on('down', 'shift-leftArrow', () => { this.nudgeSelected(-10, 0); });
 
-    hotkeys.on('down', 'V', () => { this.selectTool(new Cursor(this)); });
-    hotkeys.on('down', 'A', () => { this.selectTool(new SubCursor(this)); });
-    hotkeys.on('down', 'Z', () => { this.selectTool(new Zoom(this)); });
-    hotkeys.on('down', 'P', () => { this.selectTool(new Pen(this)); });
-    hotkeys.on('down', 'space', () => { this.selectTool(new Paw(this)); });
+    hotkeys.on('down', 'V', () => { this.selectTool(new tools.Cursor(this)); });
+    hotkeys.on('down', 'A', () => { this.selectTool(new tools.SubCursor(this)); });
+    hotkeys.on('down', 'Z', () => { this.selectTool(new tools.Zoom(this)); });
+    hotkeys.on('down', 'P', () => { this.selectTool(new tools.Pen(this)); });
+    hotkeys.on('down', 'space', () => { this.selectTool(new tools.Paw(this)); });
     hotkeys.on('up', 'space', () => { this.selectTool(this.state.lastTool); });
 
     hotkeys.on('down', 'ctrl-A', (e) => {
@@ -211,7 +209,7 @@ export default class Editor extends EventEmitter {
         selection: [],
         hovering:  [],
         scope: new Index([0]),
-        tool: new Cursor(this)
+        tool: new tools.Cursor(this)
       }
     } else {
       this.state = {
@@ -219,7 +217,7 @@ export default class Editor extends EventEmitter {
         selection: [],
         hovering:  [],
         scope: new Index([0]),
-        tool: new Cursor(this)
+        tool: new tools.Cursor(this)
       };
 
     }
@@ -393,6 +391,8 @@ export default class Editor extends EventEmitter {
     }
     this.state.tool = tool;
     this.canvas.refreshAll();
+
+    this.trigger('change:tool');
   }
 
   deleteSelection() {

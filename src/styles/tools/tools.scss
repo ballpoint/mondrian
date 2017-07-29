@@ -1,0 +1,28 @@
+@import '~vars.scss';
+@import "~mixins.scss";
+
+#app-tools {
+  width: $app-toolbar-width;
+  border-right: 1px solid $fg-grey;
+  font-size: 14px;
+
+  .app-tool {
+    width: 100%;
+    padding: 10px;
+    border-bottom: 1px solid $mg-grey;
+    cursor: default;
+
+    &.selected {
+      color: $blue;
+    }
+
+    &:hover {
+      color: $blue;
+    }
+    &:active {
+      background-color: $bg-grey;
+    }
+  }
+}
+
+

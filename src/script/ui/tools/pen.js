@@ -53,7 +53,7 @@ export default class Pen extends Tool {
         let closestPosn = ls.closestPosn(posn);
         let d = closestPosn.distanceFrom(posn);
 
-        if (!this.closest || d < this.closest.d) {
+        if (d < PEN_POINT_THRESHOLD && (!this.closest || d < this.closest.d)) {
           this.closest = {
             posn: closestPosn,
             pathPoint: pt,

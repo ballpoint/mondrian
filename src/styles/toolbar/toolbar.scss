@@ -1,0 +1,36 @@
+@import "~vars.scss";
+@import "~mixins.scss";
+
+#app-toolbar {
+  flex-grow: 0;
+  height: $toolbar-dimen;
+  font-size: 14px;
+  border-top: 1px solid $mg-grey;
+  overflow: hidden;
+  padding-bottom: 1px;
+
+  .toolbar-group {
+    display: flex;
+
+    .toolbar-button {
+      width: $toolbar-dimen;
+      height: 100%;
+      @include no-select;
+      cursor: default;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        color: $blue;
+      }
+    }
+
+    + .toolbar-group {
+      margin-left: 5px;
+      padding-left: 5px;
+      border-left: 1px solid $mg-grey;
+    }
+  }
+}

@@ -23,7 +23,7 @@ body#app {
 
     #logo {
       display: block;
-      padding: 20px 10px;
+      padding: 14px 10px;
       width: $app-toolbar-width;
       height: $app-header-height;
       background-color: $blue-grey;
@@ -44,17 +44,6 @@ body#app {
       display: flex;
       flex-direction: column;
       height: $app-header-height;
-
-      #app-tbd {
-        flex-grow: 1;
-      }
-      #app-menus {
-        flex-grow: 0;
-        display: flex;
-        .app-menu-button {
-          padding: 5px 10px;
-        }
-      }
     }
     #app-account {
       flex-grow: 0;
@@ -66,29 +55,11 @@ body#app {
     display: flex;
     height: 100%;
 
-    #app-tools {
-      width: $app-toolbar-width;
-      border-right: 1px solid $fg-grey;
-
-      .app-tool {
-        width: 100%;
-        padding: 10px;
-        border-bottom: 1px solid $fg-grey;
-      }
-    }
-
     #app-render {
       position: relative;
       flex-grow: 1;
       height: 100%;
     }
-  }
-
-  footer#app-footer {
-    height: 30px;
-    flex-grow: 0;
-    flex-shrink: 0;
-    border-top: 1px solid $fg-grey;
   }
 }
 

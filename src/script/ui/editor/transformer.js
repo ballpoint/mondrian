@@ -215,11 +215,11 @@ export default class TransformerUIElement extends UIElement {
     let ctrlBounds = Bounds.centeredOnPosn(origin.sharp(), CTRL_PT_DIMEN, CTRL_PT_DIMEN);
 
     let ctrlOpts = {
-      stroke: 'blue'
+      stroke: consts.blue
     };
 
     if (this.editor.cursorHandler.isActive(id)) {
-      ctrlOpts.fill = 'blue';
+      ctrlOpts.fill = consts.blue;
     }
 
     let { angle } = this.editor.state.selectionBounds;

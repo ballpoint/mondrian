@@ -12,11 +12,13 @@ let FileMenu = React.createClass({
     let files = e.target.files;
     if (files) {
       let reader = new FileReader();
+      let fn = files[0].name;
+      console.log(files);
 
       reader.onload = (e) => {
         let text = e.target.result;
 
-        let doc = Doc.fromSVG(text);
+        let doc = Doc.fromSVG(text, fn);
 
         this.props.editor.load(doc);
       }

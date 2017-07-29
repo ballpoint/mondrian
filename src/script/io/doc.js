@@ -20,13 +20,14 @@ export default class Doc {
     this.layers = attrs.layers;
     this.width = attrs.width;
     this.height = attrs.height;
+    this.name = attrs.name;
 
     this.bounds = new Bounds(0, 0, this.width, this.height);
 
     this.cacheIndexes(this);
   }
 
-  static fromSVG(str) {
+  static fromSVG(str, name) {
     let doc = new DOMParser().parseFromString(str, MIMETYPE);
 
     console.log(doc);
@@ -66,6 +67,7 @@ export default class Doc {
       layers: [layer],
       width,
       height,
+      name,
     });
   }
 

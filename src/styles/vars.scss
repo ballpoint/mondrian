@@ -1,10 +1,14 @@
-$bg-grey: #f2f2f2;
 $fg-grey: #b2b2b2;
+$mg-grey: lighten($fg-grey, 20%);
+$bg-grey: #f2f2f2;
 $blue:    #0072d1;
 $paleblue: mix(white, $blue, 80%);
 $midblue: mix(white, $blue, 40%);
 
 $blue-grey: #bbc4c9;
 
-$app-header-height: 81px;
+
+$toolbar-dimen: 36px;
+
+$app-header-height: 118px;
 $app-toolbar-width: 60px;

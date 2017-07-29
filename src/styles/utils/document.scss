@@ -4,14 +4,14 @@
   user-select: none;
 
   &:not(.doc-util__item--layer) {
-    border-top: 1px solid #ccc;
-    border-left: 5px solid #ccc;
+    border-top: 1px solid $blue-grey;
+    border-left: 5px solid $blue-grey;
   }
 
 
   .doc-util__item__bar {
     padding: 4px;
-    border-top: 1px solid #ccc;
+    border-top: 1px solid $blue-grey;
     cursor: default;
 
     display: flex;
@@ -38,7 +38,7 @@
         max-width: 20px;
         max-height: 20px;
         padding: 2px;
-        border: 1px solid #ccc;
+        border: 1px solid $blue-grey;
       }
     }
 
@@ -61,7 +61,7 @@
     padding-bottom: 3px;
 
     .doc-util__item:last-child {
-      border-bottom: 1px solid #ccc;
+      border-bottom: 1px solid $blue-grey;
     }
 
     &.doc-util__item__children--hidden {

@@ -7,4 +7,12 @@
     top: 0;
     left: 0;
   }
+
+  $cursor-list: ew-resize ns-resize nesw-resize nwse-resize;
+
+  @each $cursor in $cursor-list {
+    &[cursor="#{$cursor}"] {
+      cursor: $cursor;
+    }
+  }
 }
