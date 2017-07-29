@@ -5,20 +5,28 @@
     position: absolute;
     top: 0;
     left: 0; }
-  .canvas-container[cursor="ew-resize"] {
-    cursor: ew-resize; }
-  .canvas-container[cursor="ns-resize"] {
-    cursor: ns-resize; }
-  .canvas-container[cursor="nesw-resize"] {
-    cursor: nesw-resize; }
-  .canvas-container[cursor="nwse-resize"] {
-    cursor: nwse-resize; }
 
 body#app {
   margin: 0;
   overflow: hidden;
   display: flex;
   height: 100%; }
+  body#app[cursor="ne-resize"] {
+    cursor: ne-resize; }
+  body#app[cursor="nw-resize"] {
+    cursor: nw-resize; }
+  body#app[cursor="se-resize"] {
+    cursor: se-resize; }
+  body#app[cursor="sw-resize"] {
+    cursor: sw-resize; }
+  body#app[cursor="ew-resize"] {
+    cursor: ew-resize; }
+  body#app[cursor="ns-resize"] {
+    cursor: ns-resize; }
+  body#app[cursor="nesw-resize"] {
+    cursor: nesw-resize; }
+  body#app[cursor="nwse-resize"] {
+    cursor: nwse-resize; }
 
 #app-main {
   flex-grow: 1;
@@ -264,7 +272,8 @@ html {
   overflow: hidden;
   padding-bottom: 1px; }
   #app-toolbar .toolbar-group {
-    display: flex; }
+    display: flex;
+    border-right: 1px solid #e5e5e5; }
     #app-toolbar .toolbar-group .toolbar-button {
       width: 36px;
       height: 100%;
@@ -273,15 +282,13 @@ html {
       -ms-user-select: none;
       user-select: none;
       cursor: default;
+      padding-left: 5px;
+      padding-right: 5px;
       display: flex;
       align-items: center;
       justify-content: center; }
       #app-toolbar .toolbar-group .toolbar-button:hover {
         color: #0072d1; }
-    #app-toolbar .toolbar-group + .toolbar-group {
-      margin-left: 5px;
-      padding-left: 5px;
-      border-left: 1px solid #e5e5e5; }
 #app-title {
   flex-grow: 1; }
   #app-title h2 {

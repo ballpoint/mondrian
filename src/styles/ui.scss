@@ -5,6 +5,14 @@ body#app {
 
   display: flex;
   height: 100%;
+
+  $cursor-list: ne-resize nw-resize se-resize sw-resize ew-resize ns-resize nesw-resize nwse-resize;
+
+  @each $cursor in $cursor-list {
+    &[cursor="#{$cursor}"] {
+      cursor: $cursor;
+    }
+  }
 }
 
 #app-main {

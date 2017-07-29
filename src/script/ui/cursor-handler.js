@@ -2,6 +2,8 @@ import shapes from 'lab/shapes';
 import EventEmitter from 'lib/events';
 import Posn from 'geometry/posn';
 
+const body = document.querySelector('body');
+
 export default class CursorHandler extends EventEmitter {
   constructor(cursor) {
     super();
@@ -73,11 +75,25 @@ export default class CursorHandler extends EventEmitter {
     for (let elem of this.elements) {
       if (elem.shape && shapes.contains(elem.shape, posn)) {
         this.active = elem;
+        this.updateCursor();
         return true;
       }
     }
     delete this.active;
+    this.updateCursor();
     return false;
+  }
+
+  updateCursor() {
+    if (this.active) {
+      if (this.active.opts.cursor) {
+        body.setAttribute('cursor', this.active.opts.cursor);
+      } else {
+        body.removeAttribute('cursor');
+      }
+    } else {
+      body.removeAttribute('cursor');
+    }
   }
 
   isActive(id) {

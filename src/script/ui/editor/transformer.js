@@ -226,6 +226,17 @@ export default class TransformerUIElement extends UIElement {
     ctrlBounds.angle = angle;
     layer.drawRect(ctrlBounds, ctrlOpts);
 
+    let cursor = {
+      't': 'ns-resize',
+      'b': 'ns-resize',
+      'l': 'ew-resize',
+      'r': 'ew-resize',
+      'tl': 'nwse-resize',
+      'br': 'nwse-resize',
+      'bl': 'nesw-resize',
+      'tr': 'nesw-resize'
+    }[which];
+
     let elem = new Element(id, ctrlBounds, {
       'mousedown': (e, posn) => {
         e.stopPropagation();
@@ -319,17 +330,26 @@ export default class TransformerUIElement extends UIElement {
       'drag:stop': (e, posn, startPosn) => {
         e.stopPropagation();
       }
+    }, {
+      cursor
     })
 
     this.editor.cursorHandler.registerElement(elem)
   }
 
-  registerRotationPoint(id, layer, posn) {
-    id = 'transformer:rotate:'+id;
+  registerRotationPoint(which, layer, posn) {
+    let id = 'transformer:rotate:'+which;
     let ctrlBounds = Bounds.centeredOnPosn(posn.sharp(), CTRL_PT_DIMEN, CTRL_PT_DIMEN);
     let ctrlPt = new Circle(posn, 10);
 
-    //layer.drawCircle(posn, 10, { stroke: 'red' });
+    /*
+    let cursor = {
+      tl: 'ne-resize',
+      tr: 'se-resize',
+      bl: 'nw-resize',
+      br: 'sw-resize',
+    }[which];
+    */
 
     let elem = new Element(id, ctrlPt, {
       'mousedown': function (e, posn) {
