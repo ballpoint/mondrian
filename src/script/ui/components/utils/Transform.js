@@ -1,5 +1,6 @@
 import classnames from 'classnames';
 import Thumb from 'ui/thumb';
+import Layer from 'ui/layer';
 import 'utils/selection.scss';
 import Util from 'ui/components/utils/Util';
 import TextInput from 'ui/components/utils/TextInput';
@@ -51,6 +52,15 @@ let TransformUtil = React.createClass({
     this._clearCachedThumbnailDebounced = _.debounce(() => {
       this.setState({ cachedThumbnail: null });
     }, 250);
+  },
+
+  componentDidUpdate() {
+    let thumb = this.getThumbnail();
+    let canvas = ReactDOM.findDOMNode(this.refs.thumbnail);
+
+    if (canvas) {
+      thumb.drawTo(new Layer('thumb', canvas));
+    }
   },
 
   componentWillReceiveProps(prevState) {
@@ -110,7 +120,10 @@ let TransformUtil = React.createClass({
   getThumbnail() {
     if (this.state.cachedThumbnail) return this.state.cachedThumbnail;
 
-    this.state.cachedThumbnail = Thumb.fromElements(this.props.editor.state.selection);
+    this.state.cachedThumbnail = new Thumb(this.props.editor.state.selection, {
+      maxWidth: 140,
+      maxHeight: 100
+    });
     return this.state.cachedThumbnail;
   },
 
@@ -162,7 +175,7 @@ let TransformUtil = React.createClass({
         return (
           <div className="sel-util__thumb">
             <div className="sel-util__thumb__img">
-              <img src={thumb.url} />
+              <canvas ref="thumbnail" />
               <div className="sel-util__thumb__height-bracket"></div>
               <div className="sel-util__thumb__width-bracket"></div>
 

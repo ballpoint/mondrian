@@ -6,41 +6,29 @@ import Canvas from 'ui/canvas';
 const THUMBNAIL_DIMEN = 300;
 
 export default class Thumb {
-  constructor(bounds) {
-    this.canvas = new Canvas();    
-    this.bounds = bounds;
-    let fb = bounds.fitToDimension(THUMBNAIL_DIMEN);
+  constructor(elems, opts={}) {
+    this.elems = elems;
+    this.opts = opts;
+  }
+
+  drawTo(layer) {
+    let boundsList = [];
+    for (let elem of this.elems) {
+      boundsList.push(elem.bounds());
+    }
+    let bounds = Bounds.fromBounds(boundsList);
+    let maxWidth = this.opts.maxWidth || 100;
+    let maxHeight = this.opts.maxHeight || 100;
+    let fb = bounds.fitToDimensions(maxWidth, maxHeight);
+    layer.setDimensions(fb.width, fb.height);
     let x = scaleLinear().domain([bounds.x, bounds.width+bounds.x]).range([0, fb.width]);
     let y = scaleLinear().domain([bounds.y, bounds.height+bounds.y]).range([0, fb.height]);
     let z = fb.width / bounds.width;
     this.projection = new Projection(x, y, z);
-    this.layer = this.canvas.createLayer('main');
-    this.canvas.setDimensions(fb.width, fb.height);
-  }
 
-  draw(elem) {
-    elem.drawToCanvas(this.layer, this.layer.context, this.projection);
-  }
-
-  static fromElements(elems) {
-    let boundsList = [];
-    for (let elem of elems) {
-      boundsList.push(elem.bounds());
+    for (let elem of this.elems) {
+      elem.drawToCanvas(layer, layer.context, this.projection);
     }
-    let bounds = Bounds.fromBounds(boundsList);
-    let thumb = new Thumb(bounds);
-
-    for (let elem of elems) {
-      thumb.draw(elem);
-    }
-
-    thumb.cache();
-    return thumb;
-
-  }
-
-  cache() {
-    this.url = this.layer.url;
   }
 }
 

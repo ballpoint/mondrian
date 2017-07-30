@@ -151,7 +151,7 @@ export default class Item {
 
     // Generate thumbnail
     let bounds = this.bounds();
-    let thumb = Thumb.fromElements([this]);
+    let thumb = new Thumb([this]);
     this.thumbnailCached = thumb;
     return thumb;
   }

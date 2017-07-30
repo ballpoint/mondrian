@@ -128,7 +128,7 @@ html {
           position: relative;
           flex: 0;
           border: 1px solid #ccc; }
-          .sel-util .sel-util__main .sel-util__top .sel-util__thumb .sel-util__thumb__img img {
+          .sel-util .sel-util__main .sel-util__top .sel-util__thumb .sel-util__thumb__img canvas {
             align-self: center;
             max-width: 140px;
             max-height: 100px; }

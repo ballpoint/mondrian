@@ -4,10 +4,10 @@ import CubicBezier from 'geometry/cubic-bezier-line-segment';
 import math from 'lib/math';
 
 export default class Layer {
-  constructor(id) {
+  constructor(id, node=document.createElement('canvas')) {
     this.id = id;
 
-    this.node = document.createElement('canvas');
+    this.node = node;
 
     this.context = this.node.getContext('2d');
 
