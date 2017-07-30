@@ -589,11 +589,7 @@ export default class Editor extends EventEmitter {
     });
 
     this.perform(action);
-
     this.calculateSelectionBounds();
-    this.canvas.refreshAll();
-
-    this.trigger('change');
   }
 
   nudgeHandle(index, handle, xd, yd) {
@@ -606,11 +602,7 @@ export default class Editor extends EventEmitter {
     });
 
     this.perform(action);
-
     this.calculateSelectionBounds();
-    this.canvas.refreshAll();
-
-    this.trigger('change');
   }
 
   scaleSelected(x, y, origin) {
@@ -624,11 +616,7 @@ export default class Editor extends EventEmitter {
     });
 
     this.perform(action);
-
     this.calculateSelectionBounds();
-    this.canvas.refreshAll();
-
-    this.trigger('change');
   }
 
   rotateSelected(angle, origin) {
@@ -643,11 +631,7 @@ export default class Editor extends EventEmitter {
     });
 
     this.perform(action);
-
     this.calculateSelectionBounds();
-    this.canvas.refreshAll();
-
-    this.trigger('change');
   }
 
   perform(h) {

@@ -3,6 +3,10 @@ export default class Tool {
     this.editor = editor;
   }
 
+  get id() {
+    return 'unknown';
+  }
+
   handleMousemove(e, posn) {
   }
 
@@ -12,16 +16,15 @@ export default class Tool {
   handleClick(e, posn) {
   }
 
-  handleDragStart(e, posn) {
+  handleDragStart(e, posn, lastPosn) {
   }
 
-  handleDrag(e, posn) {
+  handleDrag(e, posn, lastPosn) {
   }
 
   handleDragStop(e, posn) {
   }
 
   refresh(layer, context) {
-
   }
 }

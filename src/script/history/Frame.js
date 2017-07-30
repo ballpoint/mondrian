@@ -5,14 +5,24 @@ export default class HistoryFrame {
 
     this.succ = [];
     this.timestamp = new Date();
-    this.setSealTime(this.timestamp);
 
     this.sealed = false;
     this.merges = 0;
+
+    this.setSealTime(this.timestamp);
   }
 
-  setSealTime(d) {
-    this.sealTime = new Date(d.valueOf() + 500);
+  setSealTime(current) {
+    if (this.actions.length === 1) {
+      let action = this.actions[0];
+      if (action.constructor.expiration) {
+        this.sealTime = new Date(
+          action.created.valueOf() + action.constructor.expiration
+        );
+      }
+    } else {
+      delete this.sealTime;
+    }
   }
 
   setPrev(prev) {
@@ -47,6 +57,8 @@ export default class HistoryFrame {
   }
 
   isSealed() {
+    if (!this.sealTime) return false;
+
     return this.sealed || (new Date().valueOf() > this.sealTime.valueOf());
   }
 

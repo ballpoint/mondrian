@@ -33,6 +33,7 @@ export default class Path extends Item {
       new PathPoint(x+width,y),
       new PathPoint(x+width,y+height),
       new PathPoint(x,y+height),
+      new PathPoint(x,y),
     ]);
     segment.close();
 

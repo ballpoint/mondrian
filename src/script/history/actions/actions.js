@@ -14,9 +14,11 @@ export class InitAction extends HistoryAction {
 }
 
 export class NudgeAction extends HistoryAction {
+  static get expiration() { return 500 }
+
   perform(editor) {
-    editor.selectFromIndexes(this.data.indexes);
-    for (let item of editor.state.selection) {
+    for (let index of this.data.indexes) {
+      let item = editor.doc.getFromIndex(index);
       item.nudge(this.data.xd, this.data.yd);
       
       if (item instanceof Path) {
@@ -25,6 +27,9 @@ export class NudgeAction extends HistoryAction {
         item.path.clearCachedObjects();
       }
     }
+
+    editor.canvas.refreshAll();
+    editor.trigger('change');
   }
 
   merge(action) {
@@ -41,12 +46,43 @@ export class NudgeAction extends HistoryAction {
   }
 }
 
+export class ScaleAction extends HistoryAction {
+  perform(editor) {
+    for (let index of this.data.indexes) {
+      let item = editor.doc.getFromIndex(index);
+      if (item) {
+        item.scale(this.data.x, this.data.y, this.data.origin);
+      } // TODO handle else case?
+    }
+
+    editor.canvas.refreshAll();
+    editor.trigger('change');
+  }
+
+  opposite() {
+    return new ScaleAction({
+      origin: this.data.origin,
+      indexes: this.data.indexes,
+      x: 1/this.data.x,
+      y: 1/this.data.y,
+    });
+  }
+
+  merge(action) {
+    this.data.x *= action.data.x;
+    this.data.y *= action.data.y;
+  }
+}
+
 export class RotateAction extends HistoryAction {
   perform(editor) {
-    editor.selectFromIndexes(this.data.indexes);
-    for (let item of editor.state.selection) {
+    for (let index of this.data.indexes) {
+      let item = editor.doc.getFromIndex(index);
       item.rotate(this.data.a, this.data.origin);
     }
+
+    editor.canvas.refreshAll();
+    editor.trigger('change');
   }
 
   merge(action) {
@@ -77,6 +113,9 @@ export class NudgeHandleAction extends HistoryAction {
         point.path.clearCachedObjects();
       }
     }
+
+    this.canvas.refreshAll();
+    this.trigger('change');
   }
 
   merge(action) {
@@ -125,29 +164,6 @@ export class RemoveHandleAction extends HistoryAction {
   }
 }
 
-export class ScaleAction extends HistoryAction {
-  perform(editor) {
-    editor.selectFromIndexes(this.data.indexes);
-    for (let item of editor.state.selection) {
-      item.scale(this.data.x, this.data.y, this.data.origin);
-    }
-  }
-
-  opposite() {
-    return new ScaleAction({
-      origin: this.data.origin,
-      indexes: this.data.indexes,
-      x: 1/this.data.x,
-      y: 1/this.data.y,
-    });
-  }
-
-  merge(action) {
-    this.data.x *= action.data.x;
-    this.data.y *= action.data.y;
-  }
-}
-
 export class InsertAction extends HistoryAction {
   constructor(data) {
     super(data);
@@ -175,7 +191,7 @@ export class InsertAction extends HistoryAction {
       editor.doc.cacheIndexes();
     }
 
-    editor.selectFromIndexes(indexes);
+    //editor.selectFromIndexes(indexes);
   }
 
   opposite() {

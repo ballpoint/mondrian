@@ -96,8 +96,5 @@ export default class RulersUIElement extends UIElement {
     } else {
       return val.toFixed(0);
     }
-
   }
-
-
 }

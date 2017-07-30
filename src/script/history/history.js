@@ -1,11 +1,14 @@
 import HistoryFrame from 'history/Frame';
+import * as actions from 'history/actions/actions';
 
 const FRAME_MERGE_THRESHOLD = 500; // ms
 
 export default class DocHistory {
   // Linked list history data struct ,'>)
   constructor() {
-    this.head = new HistoryFrame();
+    this.head = new HistoryFrame([
+        new actions.InitAction() // TODO shove doc in here
+    ]);
     this.head.seal();
   }
 

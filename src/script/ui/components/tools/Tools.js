@@ -18,6 +18,10 @@ const config = [
   {
     label: 'Pen',
     constructor: tools.Pen,
+  },
+  {
+    label: 'Rect',
+    constructor: tools.Rect,
   }
 ]
 
