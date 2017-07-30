@@ -22,14 +22,24 @@ let Utils = React.createClass({
   getWindows() {
     let w = [];
 
-    w.push(<TransformUtil key="selection" editor={this.props.editor} />);
+    w.push(
+      <TransformUtil
+        key="selection"
+        editor={this.props.editor}
+        selection={this.state.selection}
+        selectionBounds={this.state.selectionBounds}
+      />
+    );
 
     if (this.props.editor.doc) {
-      w.push(<DocumentUtil key="document" editor={this.props.editor} />);
-    }
-
-    if (this.props.editor.history && false) {
-      w.push(<HistoryUtil key="history" history={this.props.editor.history} />);
+      w.push(
+        <DocumentUtil
+          key="document"
+          editor={this.props.editor} 
+          selection={this.state.selection}
+          selectionBounds={this.state.selectionBounds}
+        />
+      );
     }
 
     return w;

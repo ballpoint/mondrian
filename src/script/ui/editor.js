@@ -415,6 +415,7 @@ export default class Editor extends EventEmitter {
 
     this.calculateSelectionBounds();
     this.trigger('change');
+    this.trigger('change:selection');
   }
 
   insertElements(elems) {
@@ -689,15 +690,11 @@ export default class Editor extends EventEmitter {
   undo() {
     this.history.undo(this);
     this.calculateSelectionBounds();
-    this.canvas.refreshAll();
-    this.trigger('change');
   }
 
   redo() {
     this.history.redo(this);
     this.calculateSelectionBounds();
-    this.canvas.refreshAll();
-    this.trigger('change');
   }
 
   cut(e) {

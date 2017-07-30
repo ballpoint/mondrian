@@ -15,6 +15,15 @@ let TransformUtil = React.createClass({
     }
   },
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if (!this.props.selectionBounds || nextProps.selectionBounds) {
+      return true;
+    } else {
+      return !this.props.selectionBounds.bounds.equal(nextProps.selectionBounds.bounds);
+    }
+    return true;
+  },
+
   renderSubheader() {
     let sel = this.props.editor.state.selection;
     let subheader;

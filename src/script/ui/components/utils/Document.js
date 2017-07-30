@@ -101,6 +101,11 @@ let DocumentUtil = React.createClass({
     }, 250);
   },
 
+  shouldComponentUpdate(nextProps, nextState) {
+    // TODO optimize this shit
+    return false;
+  },
+
   componentWillReceiveProps(prevState) {
     this._clearCachedThumbnails();
   },

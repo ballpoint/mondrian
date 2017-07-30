@@ -26,13 +26,16 @@ export default class Bounds {
   get t() { return Math.min(this.y, this.y2); }
   get b() { return Math.max(this.y, this.y2); }
 
-
   get width() {
     return this.r - this.l;
   }
 
   get height() {
     return this.b - this.t;
+  }
+
+  equal(ob) {
+    return this.t === ob.t && this.l === ob.l && this.r === ob.r && this.b === ob.b;
   }
 
   static fromPosns(posns) {

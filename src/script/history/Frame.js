@@ -57,9 +57,13 @@ export default class HistoryFrame {
   }
 
   isSealed() {
-    if (!this.sealTime) return false;
+    if (this.sealed) return true;
 
-    return this.sealed || (new Date().valueOf() > this.sealTime.valueOf());
+    if (this.sealTime) {
+      return (new Date().valueOf() > this.sealTime.valueOf());
+    } else {
+      return false;
+    }
   }
 
   get last() {
