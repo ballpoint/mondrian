@@ -33,7 +33,7 @@
       flex-direction: row;
       justify-content: center;
 
-      img {
+      canvas {
         align-self: center;
         max-width: 20px;
         max-height: 20px;
@@ -62,10 +62,6 @@
 
     .doc-util__item:last-child {
       border-bottom: 1px solid $blue-grey;
-    }
-
-    &.doc-util__item__children--hidden {
-      display: none;
     }
   }
 

@@ -61,6 +61,7 @@ export default class Editor extends EventEmitter {
 
     this.canvas.refreshAll();
 
+    this.trigger('change');
     this.trigger('change:doc');
   }
 
@@ -407,15 +408,7 @@ export default class Editor extends EventEmitter {
     });
 
     this.perform(action);
-
     this.cleanUpEmptyItems(action);
-
-    this.setSelection([]);
-    this.canvas.refreshAll();
-
-    this.calculateSelectionBounds();
-    this.trigger('change');
-    this.trigger('change:selection');
   }
 
   insertElements(elems) {
@@ -590,7 +583,6 @@ export default class Editor extends EventEmitter {
     });
 
     this.perform(action);
-    this.calculateSelectionBounds();
   }
 
   nudgeHandle(index, handle, xd, yd) {
@@ -603,7 +595,6 @@ export default class Editor extends EventEmitter {
     });
 
     this.perform(action);
-    this.calculateSelectionBounds();
   }
 
   scaleSelected(x, y, origin) {
@@ -617,7 +608,6 @@ export default class Editor extends EventEmitter {
     });
 
     this.perform(action);
-    this.calculateSelectionBounds();
   }
 
   rotateSelected(angle, origin) {
@@ -632,7 +622,6 @@ export default class Editor extends EventEmitter {
     });
 
     this.perform(action);
-    this.calculateSelectionBounds();
   }
 
   perform(h) {
@@ -689,12 +678,10 @@ export default class Editor extends EventEmitter {
 
   undo() {
     this.history.undo(this);
-    this.calculateSelectionBounds();
   }
 
   redo() {
     this.history.redo(this);
-    this.calculateSelectionBounds();
   }
 
   cut(e) {

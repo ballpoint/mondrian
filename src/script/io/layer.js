@@ -1,3 +1,4 @@
+import Bounds from 'geometry/bounds';
 import Group from 'geometry/group';
 
 export default class Layer {
@@ -6,12 +7,18 @@ export default class Layer {
     this.children = attrs.children;
   }
 
-  get childrenFlat() {
-    
-  }
-
   remove(elem) {
     this.children = this.children.filter((existing) => { return existing !== elem });
+  }
+
+  bounds() {
+    return new Bounds(this.children.map((item) => { return item.bounds() }));
+  }
+
+  drawToCanvas() {
+    for (let elem of this.children) {
+      elem.drawToCanvas(...arguments);
+    }
   }
 
   get childrenFlat() {
@@ -26,6 +33,13 @@ export default class Layer {
 
     return cf;
   }
+
+  get __nonce__() {
+    return this.children.map((child) => {
+      return child.__nonce__;
+    }).reduce((a, b) => { return a + b }, 0);
+  }
+
 
   child(i) {
     return this.children[i];

@@ -2,11 +2,35 @@ import 'utils/document.scss';
 import classnames from 'classnames';
 import Util from 'ui/components/utils/Util';
 import Layer from 'io/layer';
+import Thumb from 'ui/thumb';
+import CanvasLayer from 'ui/layer';
 
 let DocumentUtilChild = React.createClass({
   getInitialState() {
     return {
-      expanded: false,
+      nonce: 0,
+    }
+  },
+
+  componentDidMount() {
+    this.updateThumbDebounced = _.debounce(this.updateThumb, 1000);
+    this.updateThumb();
+  },
+
+  componentDidUpdate() {
+    this.updateThumb();
+  },
+
+  updateThumb() {
+    let nonce = this.props.child.__nonce__;
+    if (this.state.nonce < nonce) {
+      let canvas = ReactDOM.findDOMNode(this.refs.thumbnail);
+      if (canvas) {
+        let thumb = new Thumb([this.props.child], { maxWidth: 20, maxHeight: 20 });
+        thumb.drawTo(new CanvasLayer('thumb', canvas));
+        //console.log('thumb', this.state.nonce, nonce, this.props.child);
+        this.setState({ nonce });
+      }
     }
   },
 
@@ -15,10 +39,9 @@ let DocumentUtilChild = React.createClass({
     let children;
     let isSelected = this.props.editor.isSelected(child);
 
-    if (child.children && child.children.length > 0) {
+    if (child.children && child.children.length > 0 && this.props.isExpanded(this.props.child)) {
       children = <div className={classnames({
         "doc-util__item__children": true,
-        "doc-util__item__children--hidden": !this.state.expanded,
       })}>
         {
           child.children.slice(0).reverse().map((child) => {
@@ -26,14 +49,14 @@ let DocumentUtilChild = React.createClass({
               key={child.index.toString()}
               child={child}
               editor={this.props.editor}
-              getThumbnail={this.props.getThumbnail}
+              isExpanded={this.props.isExpanded}
+              expand={this.props.expand}
+              collapse={this.props.collapse}
             />
           })
         }
       </div>
     }
-
-    let thumbnail = this.props.getThumbnail(this.props.child);
 
     return (
       <div className={classnames({
@@ -54,7 +77,11 @@ let DocumentUtilChild = React.createClass({
             }
           }}
           onDoubleClick={() => {
-            this.setState({ expanded: !this.state.expanded });
+            if (this.props.isExpanded(this.props.child)) {
+              this.props.collapse(this.props.child);
+            } else {
+              this.props.expand(this.props.child);
+            }
           }}
           onMouseMove={(e) => {
             e.stopPropagation();
@@ -65,7 +92,7 @@ let DocumentUtilChild = React.createClass({
             this.props.editor.setHovering([]);
           }}
         >
-          { thumbnail ? <div className="doc-util__item__bar__thumb"><img src={thumbnail.url} /></div> : null }
+          <div className="doc-util__item__bar__thumb"><canvas ref="thumbnail" /></div>
           <div className="doc-util__item__bar__type">{ child.constructor.name }</div>
           <div className="doc-util__item__bar__id">{ child.id }</div>
         </div>
@@ -78,36 +105,33 @@ let DocumentUtilChild = React.createClass({
 let DocumentUtil = React.createClass({
   getInitialState() {
     return {
-      cachedThumbnails: {}
+      expandedIndexes: {}
     }
-  },
-
-  getThumbnail(child) {
-    let cached = this.state.cachedThumbnails[child.__id__];
-    if (cached) {
-      return cached;
-    }
-
-    // Generate thumbnail
-    let thumb = child.thumbnail;
-
-    this.state.cachedThumbnails[child.__id__] = thumb;
-    return thumb;
   },
 
   componentDidMount() {
-    this._clearCachedThumbnails = _.debounce(() => {
-      this.setState({ cachedThumbnails: {} });
-    }, 250);
   },
 
   shouldComponentUpdate(nextProps, nextState) {
     // TODO optimize this shit
-    return false;
+    return true;
   },
 
   componentWillReceiveProps(prevState) {
-    this._clearCachedThumbnails();
+  },
+
+  expand(child) {
+    this.state.expandedIndexes[child.index.toString()] = true;
+    this.setState({ expandedIndexes: this.state.expandedIndexes });
+  },
+
+  collapse(child) {
+    delete this.state.expandedIndexes[child.index.toString()];
+    this.setState({ expandedIndexes: this.state.expandedIndexes });
+  },
+
+  isExpanded(child) {
+    return !!this.state.expandedIndexes[child.index.toString()];
   },
 
   render() {
@@ -119,7 +143,9 @@ let DocumentUtil = React.createClass({
               key={child.index.toString()}
               child={child}
               editor={this.props.editor}
-              getThumbnail={this.getThumbnail}
+              isExpanded={this.isExpanded}
+              expand={this.expand}
+              collapse={this.collapse}
             />
           })
         }

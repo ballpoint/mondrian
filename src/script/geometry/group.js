@@ -34,6 +34,12 @@ export default class Group {
     return cf;
   }
 
+  get __nonce__() {
+    return this.children.map((child) => {
+      return child.__nonce__;
+    }).reduce((a, b) => { return a + b }, 0);
+  }
+
   child(i) {
     return this.children[i];
   }

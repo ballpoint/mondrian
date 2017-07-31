@@ -37,14 +37,10 @@ export default class Item {
       this.metadata.angle = parseFloat(this.data["mondrian:angle"], 10);
     }
 
-    this.clearCachedThumbnail = _.debounce(() => {
-      console.log('clearing cached thumb', this);
-      this.thumbnailCached = null;
-    }, 500);
-
     // Internal ID only to be used for caching session-specific state
     // like thumbnails. Never persisted.
     this.__id__ = UUIDV4(); 
+    this.__nonce__ = 1;
   }
 
   /*
@@ -144,18 +140,6 @@ export default class Item {
     return this.data['stroke-width'] = val;
   }
 
-  get thumbnail() {
-    if (this.thumbnailCached) {
-      return this.thumbnailCached;
-    }
-
-    // Generate thumbnail
-    let bounds = this.bounds();
-    let thumb = new Thumb([this]);
-    this.thumbnailCached = thumb;
-    return thumb;
-  }
-
   finishToCanvas(context, projection) {
     if (this.data.fill) {
       context.fillStyle = this.data.fill.toRGBString();
@@ -186,6 +170,7 @@ export default class Item {
   nudgeCachedObjects(x, y) {
     if (this.boundsCached != null) {
       this.boundsCached.nudge(x, y);
+      this.__nonce__ ++;
     }
   }
 
@@ -193,13 +178,13 @@ export default class Item {
     if (this.boundsCached != null) {
       this.boundsCached.scale(x, y, origin);
       this.boundsCached.unflip();
+      this.__nonce__ ++;
     }
-    this.thumbnailCached = null;
   }
 
   clearCachedObjects() {
     this.boundsCached = null;
-    this.thumbnailCached = null;
+    this.__nonce__ ++;
     return this;
   }
 

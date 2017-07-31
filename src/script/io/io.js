@@ -26,8 +26,10 @@ let io = {
         this.applyTransform(node, group);
         this.applyStyles(node, group);
 
-        // Don't keep groups with one item inside
-        if (group.children.length === 1) {
+        if (group.children.length === 0) {
+          // Omit empty group
+        } else if (group.children.length === 1) {
+          // Expand unnecessary group
           results.push(group.children[0]);
         } else {
           results.push(group);
@@ -145,7 +147,7 @@ let io = {
           elem.setStrokeWidth(val);
           break;
         default:
-          console.warn('TODO handle style', key, val);
+          //console.warn('TODO handle style', key, val);
           break;
       }
     }

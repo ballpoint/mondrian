@@ -226,7 +226,7 @@ html {
       display: flex;
       flex-direction: row;
       justify-content: center; }
-      .doc-util__item .doc-util__item__bar .doc-util__item__bar__thumb img {
+      .doc-util__item .doc-util__item__bar .doc-util__item__bar__thumb canvas {
         align-self: center;
         max-width: 20px;
         max-height: 20px;
@@ -243,8 +243,6 @@ html {
     padding-bottom: 3px; }
     .doc-util__item .doc-util__item__children .doc-util__item:last-child {
       border-bottom: 1px solid #bbc4c9; }
-    .doc-util__item .doc-util__item__children.doc-util__item__children--hidden {
-      display: none; }
   .doc-util__item.selected {
     border-left-color: #0072d1; }
     .doc-util__item.selected > .doc-util__item__bar {

@@ -33,7 +33,7 @@ export default class Rect extends Tool {
 
       this.scaleOrigin = lastPosn;
 
-      this.rect = Path.rectangle({ x, y, width, height, fill: '#ffffff', stroke: '#ccccee' });
+      this.rect = Path.rectangle({ x, y, width, height, fill: '#ccccee', stroke: '#000000' });
 
       this.currentIndex = this.editor.state.layer.nextChildIndex();
 
@@ -91,6 +91,7 @@ export default class Rect extends Tool {
 
   handleDragStop(e, posn) {
     this.editor.selectFromIndexes([this.currentIndex]);
+    this.editor.history.head.seal();
 
     delete this.currentIndex;
     delete this.scaleOrigin;

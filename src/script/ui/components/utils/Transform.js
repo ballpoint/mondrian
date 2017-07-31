@@ -11,7 +11,6 @@ const THUMB_IMG_MAX_HEIGHT = 100;
 let TransformUtil = React.createClass({
   getInitialState() {
     return {
-      cachedThumbnail: null,
       originId: 'tl',
     }
   },
@@ -48,17 +47,11 @@ let TransformUtil = React.createClass({
     }
   },
 
-  componentDidMount() {
-    this._clearCachedThumbnailDebounced = _.debounce(() => {
-      this.setState({ cachedThumbnail: null });
-    }, 250);
-  },
-
   componentDidUpdate() {
-    let thumb = this.getThumbnail();
     let canvas = ReactDOM.findDOMNode(this.refs.thumbnail);
 
     if (canvas) {
+      let thumb = this.getThumbnail();
       thumb.drawTo(new Layer('thumb', canvas));
     }
   },
@@ -66,13 +59,6 @@ let TransformUtil = React.createClass({
   componentWillReceiveProps(prevState) {
     // Handle changing the thumbnail. Debounce if selection ids haven't changed.
     let selectionKey = this.getSelectionIdKey();
-
-    if (selectionKey === this.state.selectionKey) {
-      this._clearCachedThumbnailDebounced();
-    } else {
-      this.setState({ cachedThumbnail: null });
-    }
-
     this.setState({ selectionKey });
   },
 
@@ -111,20 +97,16 @@ let TransformUtil = React.createClass({
           break;
       }
       if (xs !== 1 || ys !== 1) {
-        this.setState({ cachedThumbnail: null });
         this.props.editor.scaleSelected(xs, ys, origin);
       }
     }
   },
 
   getThumbnail() {
-    if (this.state.cachedThumbnail) return this.state.cachedThumbnail;
-
-    this.state.cachedThumbnail = new Thumb(this.props.editor.state.selection, {
+    return new Thumb(this.props.editor.state.selection, {
       maxWidth: 140,
       maxHeight: 100
     });
-    return this.state.cachedThumbnail;
   },
 
   renderOriginButton(id) {
