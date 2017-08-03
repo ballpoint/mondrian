@@ -64,3 +64,15 @@ export default class Index {
     return new Index(parts);
   }
 }
+
+export function sortIndexes(indexes) {
+  return indexes.sort((a, b) => {
+    return a.compare(b);
+  });
+}
+
+export function indexesIdentical(ia, ib) {
+  ia = sortIndexes(ia);
+  ib = sortIndexes(ib);
+  return ia.join(',') === ib.join(',');
+}

@@ -13,6 +13,7 @@ import PathPoint from 'geometry/path-point';
 import PointsSegment from 'geometry/points-segment';
 
 import Layer from 'io/layer';
+import * as actions from 'history/actions/actions';
 
 import Projection from 'ui/projection';
 import hotkeys from 'ui/hotkeys';
@@ -21,12 +22,8 @@ import Element from 'ui/element';
 import CursorTracking from 'ui/cursor-tracking';
 import CursorHandler from 'ui/cursor-handler';
 
-import DocHistory from 'history/history';
-import * as actions from 'history/actions/actions';
-import HistoryFrame from 'history/Frame';
 
 import * as tools from 'ui/tools/tools';
-
 import RulersUIElement from 'ui/editor/rulers';
 import TransformerUIElement from 'ui/editor/transformer';
 import DocumentPointsUIElement from 'ui/editor/doc_pts';
@@ -52,8 +49,7 @@ export default class Editor extends EventEmitter {
     this.doc = doc;
     window.doc = doc;
 
-    this.history = new DocHistory();
-    window.h = this.history;
+    window.h = this.doc.history;
 
     this.setPosition(doc.center());
     this.fitToScreen();
@@ -411,6 +407,46 @@ export default class Editor extends EventEmitter {
     this.cleanUpEmptyItems(action);
   }
 
+  cleanUpEmptyItems(action) {
+    let markedForRemoval = [];
+    for (let pair of action.data.items) {
+      let { index, item } = pair;
+
+      let toRemove;
+      let parent = item;
+
+      while (true) {
+        let index = parent.index;
+        let nextParent = this.doc.getFromIndex(index.parent);
+        if (!nextParent) break;
+
+        // We don't remove empty layers;
+        if (nextParent instanceof Layer) break;
+
+        if (nextParent.empty) {
+          toRemove = nextParent;
+          parent = nextParent;
+        } else {
+          break;
+        }
+      }
+
+      if (toRemove && markedForRemoval.indexOf(toRemove) === -1) {
+        markedForRemoval.push(toRemove);
+      }
+    }
+
+    if (markedForRemoval.length > 0) {
+      let cleanUpAction = new actions.DeleteAction({
+        items: markedForRemoval.map((item) => {
+          return { item, index: item.index }
+        })
+      });
+
+      this.perform(cleanUpAction);
+    }
+  }
+
   insertElements(elems) {
     let items = [];
     let parent = this.doc.getFromIndex(this.state.scope);
@@ -625,63 +661,24 @@ export default class Editor extends EventEmitter {
   }
 
   perform(h) {
-    if (h instanceof HistoryFrame) {
-      for (let action of h.actions) {
-        action.perform(this);
-      }
-      this.history.pushFrame(h);
-    } else if (h instanceof actions.HistoryAction) {
-      h.perform(this);
-      this.history.pushAction(h);
-    }
-  }
-
-  cleanUpEmptyItems(action) {
-    let markedForRemoval = [];
-    for (let pair of action.data.items) {
-      let { index, item } = pair;
-
-      let toRemove;
-      let parent = item;
-
-      while (true) {
-        let index = parent.index;
-        let nextParent = this.doc.getFromIndex(index.parent);
-        if (!nextParent) break;
-
-        // We don't remove empty layers;
-        if (nextParent instanceof Layer) break;
-
-        if (nextParent.empty) {
-          toRemove = nextParent;
-          parent = nextParent;
-        } else {
-          break;
-        }
-      }
-
-      if (toRemove && markedForRemoval.indexOf(toRemove) === -1) {
-        markedForRemoval.push(toRemove);
-      }
-    }
-
-    if (markedForRemoval.length > 0) {
-      let cleanUpAction = new actions.DeleteAction({
-        items: markedForRemoval.map((item) => {
-          return { item, index: item.index }
-        })
-      });
-
-      this.perform(cleanUpAction);
-    }
+    this.doc.perform(h);
+    this.canvas.refreshAll();
+    this.calculateSelectionBounds();
+    this.trigger('change');
   }
 
   undo() {
-    this.history.undo(this);
+    this.doc.undo(this);
+    this.canvas.refreshAll();
+    this.calculateSelectionBounds();
+    this.trigger('change');
   }
 
   redo() {
-    this.history.redo(this);
+    this.doc.redo(this);
+    this.canvas.refreshAll();
+    this.calculateSelectionBounds();
+    this.trigger('change');
   }
 
   cut(e) {

@@ -1,9 +1,12 @@
 import io from 'io/io';
-import Index from 'geometry/index';
 import Layer from 'io/layer';
+import DocHistory from 'history/history';
+import HistoryFrame from 'history/Frame';
+import * as actions from 'history/actions/actions';
+
+import Index from 'geometry/index';
 import Bounds from 'geometry/bounds'
 import Posn from 'geometry/posn'
-
 import Group from 'geometry/group';
 import Path from 'geometry/path';
 import PathPoint from 'geometry/path-point';
@@ -25,6 +28,8 @@ export default class Doc {
     this.bounds = new Bounds(0, 0, this.width, this.height);
 
     this.cacheIndexes(this);
+
+    this.history = new DocHistory();
   }
 
   static fromSVG(str, name) {
@@ -149,6 +154,26 @@ export default class Doc {
     }
 
     return doc;
+  }
+
+  perform(h) {
+    if (h instanceof HistoryFrame) {
+      for (let action of h.actions) {
+        action.perform(this);
+      }
+      this.history.pushFrame(h);
+    } else if (h instanceof actions.HistoryAction) {
+      h.perform(this);
+      this.history.pushAction(h);
+    }
+  }
+
+  undo() {
+    this.history.undo(this);
+  }
+
+  redo() {
+    this.history.redo(this);
   }
 
   toSVG() {

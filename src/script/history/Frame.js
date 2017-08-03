@@ -71,10 +71,19 @@ export default class HistoryFrame {
   }
 
   canMerge(action) {
-    return (
-      this.last.constructor === action.constructor &&
-      this.last.constructor.prototype.merge
-    );
+    let sameType = this.last.constructor === action.constructor;
+    if (!sameType) return false;
+
+    let hasMerge = this.last.constructor.prototype.merge;
+    if (!hasMerge) return false;
+
+    let hasCanMerge = !!this.last.constructor.prototype.canMerge;
+
+    if (hasCanMerge) {
+      return this.last.canMerge(action);
+    } else {
+      return true;
+    }
   }
 
   seal() {

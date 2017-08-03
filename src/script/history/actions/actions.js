@@ -1,6 +1,7 @@
 import Path from 'geometry/path';
 import PathPoint from 'geometry/path-point';
 import Item from 'geometry/item';
+import { indexesIdentical } from 'geometry/index';
 
 export class HistoryAction {
   constructor(data) {
@@ -10,15 +11,15 @@ export class HistoryAction {
 }
 
 export class InitAction extends HistoryAction {
-  perform(editor) {}
+  perform(doc) {}
 }
 
 export class NudgeAction extends HistoryAction {
   static get expiration() { return 500 }
 
-  perform(editor) {
+  perform(doc) {
     for (let index of this.data.indexes) {
-      let item = editor.doc.getFromIndex(index);
+      let item = doc.getFromIndex(index);
       item.nudge(this.data.xd, this.data.yd);
       
       if (item instanceof Path) {
@@ -27,10 +28,6 @@ export class NudgeAction extends HistoryAction {
         item.path.clearCachedObjects();
       }
     }
-
-    editor.canvas.refreshAll();
-    editor.calculateSelectionBounds();
-    editor.trigger('change');
   }
 
   merge(action) {
@@ -50,17 +47,13 @@ export class NudgeAction extends HistoryAction {
 export class ScaleAction extends HistoryAction {
   static get expiration() { return 500 }
 
-  perform(editor) {
+  perform(doc) {
     for (let index of this.data.indexes) {
-      let item = editor.doc.getFromIndex(index);
+      let item = doc.getFromIndex(index);
       if (item) {
         item.scale(this.data.x, this.data.y, this.data.origin);
       } // TODO handle else case?
     }
-
-    editor.canvas.refreshAll();
-    editor.calculateSelectionBounds();
-    editor.trigger('change');
   }
 
   opposite() {
@@ -81,15 +74,11 @@ export class ScaleAction extends HistoryAction {
 export class RotateAction extends HistoryAction {
   static get expiration() { return 500 }
 
-  perform(editor) {
+  perform(doc) {
     for (let index of this.data.indexes) {
-      let item = editor.doc.getFromIndex(index);
+      let item = doc.getFromIndex(index);
       item.rotate(this.data.a, this.data.origin);
     }
-
-    editor.canvas.refreshAll();
-    editor.calculateSelectionBounds();
-    editor.trigger('change');
   }
 
   merge(action) {
@@ -110,9 +99,10 @@ export class RotateAction extends HistoryAction {
 }
 
 export class NudgeHandleAction extends HistoryAction {
-  perform(editor) {
-    let points = this.data.indexes.map((q) => { return editor.doc.getFromIndex(q) });
-    editor.setSelection(points);
+  static get expiration() { return 500 }
+
+  perform(doc) {
+    let points = this.data.indexes.map((q) => { return doc.getFromIndex(q) });
     for (let point of points) {
       point.nudgeHandle(this.data.handle, this.data.xd, this.data.yd);
 
@@ -120,15 +110,15 @@ export class NudgeHandleAction extends HistoryAction {
         point.path.clearCachedObjects();
       }
     }
-
-    editor.canvas.refreshAll();
-    editor.calculateSelectionBounds();
-    editor.trigger('change');
   }
 
   merge(action) {
     this.data.xd += action.data.xd;
     this.data.yd += action.data.yd;
+  }
+
+  canMerge(action) {
+    return indexesIdentical(this.data.indexes, action.data.indexes);
   }
 
   opposite() {
@@ -142,9 +132,9 @@ export class NudgeHandleAction extends HistoryAction {
 }
 
 export class AddHandleAction extends HistoryAction {
-  perform(editor) {
+  perform(doc) {
     for (let index of this.data.indexes) {
-      let pp = editor.doc.getFromIndex(index);
+      let pp = doc.getFromIndex(index);
       pp.setHandle(this.data.handle, this.data.posn);
       if (this.data.reflect) {
         pp.reflectHandle(this.data.handle);
@@ -161,9 +151,9 @@ export class AddHandleAction extends HistoryAction {
 }
 
 export class RemoveHandleAction extends HistoryAction {
-  perform(editor) {
+  perform(doc) {
     for (let index of this.data.indexes) {
-      let pp = editor.doc.getFromIndex(index);
+      let pp = doc.getFromIndex(index);
       pp.unsetHandle(this.data.handle);
       if (this.data.reflect) {
         pp.unsetHandle(this.data.handle === 'pHandle' ? 'sHandle' : 'pHandle');
@@ -182,11 +172,11 @@ export class InsertAction extends HistoryAction {
     });
   }
 
-  perform(editor) {
+  perform(doc) {
     let indexes = [];
     for (let pair of this.data.items) {
       let { item, index } = pair;
-      let parent = editor.doc;
+      let parent = doc;
       // Traverse the object tree to find the item's immediate parent
       for (let pi of index.parts.slice(0,-1)) {
         parent = parent.child(pi);
@@ -196,12 +186,8 @@ export class InsertAction extends HistoryAction {
 
       indexes.push(index);
 
-      editor.doc.cacheIndexes();
+      doc.cacheIndexes();
     }
-
-    editor.trigger('change');
-    editor.calculateSelectionBounds();
-    editor.trigger('change:selection');
   }
 
   opposite() {
@@ -219,17 +205,12 @@ export class DeleteAction extends HistoryAction {
     });
   }
 
-  perform(editor) {
+  perform(doc) {
     let indexes = this.data.items.map((item) => {
       return item.index;
     });
 
-    editor.doc.removeIndexes(indexes);
-
-    editor.trigger('change');
-    editor.calculateSelectionBounds();
-    editor.trigger('change:selection');
-    editor.setSelection([]);
+    doc.removeIndexes(indexes);
   }
 
   opposite() {
