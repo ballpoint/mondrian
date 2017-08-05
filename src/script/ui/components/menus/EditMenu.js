@@ -6,7 +6,7 @@ let EditMenu = React.createClass({
   render() {
     let selectionExists = this.props.editor.state.selection.length > 0;
     let editor = this.props.editor;
-    let history = this.props.editor.history;
+    let history = this.props.editor.doc.history;
     return (
       <MenuBody absoluteTop={this.props.absoluteTop} absoluteLeft={this.props.absoluteLeft}>
         <MenuItem
