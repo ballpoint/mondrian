@@ -21,6 +21,10 @@ const menus = [
   }
 ]
 
+const fileMenu = menus[0];
+const editMenu = menus[1];
+const viewMenu = menus[2];
+
 let Menus = React.createClass({
 
   getInitialState() {
@@ -38,6 +42,16 @@ let Menus = React.createClass({
         this.closeActive();
       }
     });
+
+    this.props.editor.on('hotkey:open', (e) => {
+      this.activateMenu(fileMenu);
+      setTimeout(() => {
+        let inputNode = ReactDOM.findDOMNode(this.refs.activeMenu.refs.fileInput);
+        if (inputNode) {
+          inputNode.click();
+        }
+      }, 100);
+    });
   },
 
   closeActive() {
@@ -54,12 +68,22 @@ let Menus = React.createClass({
       let box = button.getBoundingClientRect();
       return (
         <this.state.active.render
+          ref="activeMenu"
           editor={this.props.editor}
           absoluteTop={box.bottom}
           absoluteLeft={box.left}
         />
       );
     }
+  },
+
+  activateMenu(m) {
+    let button = ReactDOM.findDOMNode(this.refs['button'+m.name]);
+
+    this.setState({
+      active: m,
+      activeButton: button
+    });
   },
 
   render() {
@@ -76,19 +100,13 @@ let Menus = React.createClass({
                 if (this.state.active === m) {
                   this.closeActive();
                 } else {
-                  this.setState({
-                    active: m,
-                    activeButton: e.target,
-                  });
+                  this.activateMenu(m);
                 }
               }}
               onMouseEnter={(e) => {
                 if (this.state.active) {
                   // Steal focus
-                  this.setState({
-                    active: m,
-                    activeButton: e.target,
-                  });
+                  this.activateMenu(m);
                 }
               }}
             />

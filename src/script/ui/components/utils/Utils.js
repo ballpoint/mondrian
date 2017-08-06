@@ -1,8 +1,7 @@
 import 'utils/utils.scss';
 import TransformUtil from 'ui/components/utils/Transform';
-import HistoryUtil from 'ui/components/utils/History';
-import BooleanUtil from 'ui/components/utils/Boolean';
 import DocumentUtil from 'ui/components/utils/Document';
+import ColorUtil from 'ui/components/utils/Color';
 
 let Utils = React.createClass({
   getInitialState() {

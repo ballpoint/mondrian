@@ -35,7 +35,7 @@ let FileMenu = React.createClass({
         <MenuItem label="New" />
         <MenuItem label="Save" />
         <MenuItem className="menu-item--file-input">
-          <input type="file" onChange={this.openFile} />
+          <input ref="fileInput" type="file" onChange={this.openFile} />
           Open
         </MenuItem>
       </MenuBody>

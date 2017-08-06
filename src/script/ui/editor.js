@@ -165,6 +165,11 @@ export default class Editor extends EventEmitter {
       this.selectAll();
     });
 
+    hotkeys.on('down', 'ctrl-O', (e) => {
+      e.preventDefault();
+      this.trigger('hotkey:open');
+    });
+
     hotkeys.on('down', '1', () => {
       let center = this.doc.bounds.center();
       this.setPosition(center);
