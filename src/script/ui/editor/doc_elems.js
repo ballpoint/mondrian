@@ -21,7 +21,7 @@ export default class DocumentPointsUIElement extends UIElement {
     let hovering = this.editor.state.hovering;
 
     for (let elem of hovering) {
-      if (!this.editor.isSelected(elem)) {
+      if (elem.metadata.visible && !this.editor.isSelected(elem)) {
         this.drawOutlines(elem, layer);
       }
     }

@@ -135,6 +135,11 @@ export default class Doc {
     }, []);
   }
 
+  get elementsAvailable() {
+    // Return elements that can be manipulated in the editor (not locked, visible)
+    return this.filterAvailable(this.elements);
+  }
+
   get children() {
     return this.layers;
   }
@@ -178,6 +183,7 @@ export default class Doc {
 
   toSVG() {
     let doc = this.toDocument();
+    doc.setAttribute('xmlns:mondrian', 'http://mondrian.io/xml');
 
     let str = new XMLSerializer().serializeToString(doc);
     // Make better whitespace management happen later
@@ -194,11 +200,36 @@ export default class Doc {
     return `data:image/svg+xml;charset=utf-8;base64,${this.toBase64URI()}`;
   }
 
-  // Constructor helpers
+  isLocked(child) {
+    let index = child.index;
+    // Check to see if item or any of its parents are locked
+    while (index.length > 0) {
+      let item = this.getFromIndex(index);
+      if (item.metadata.locked) return true;
+      index = index.parent;
+    }
 
-  _assignMondrianNamespace() {
-    // Make the mondrian: namespace legal
-    // return this._svgRoot.setAttribute('xmlns:mondrian', 'http://mondrian.io/xml');
+    return false;
+  }
+
+  isVisible(child) {
+    let index = child.index;
+    // Check to see if item or any of its parents are locked
+    while (index.length > 0) {
+      let item = this.getFromIndex(index);
+      if (!item.metadata.visible) return false;
+      index = index.parent;
+    }
+
+    return true;
+  }
+
+  isAvailable(child) {
+    return this.isVisible(child) && !this.isLocked(child);
+  }
+
+  filterAvailable(children) {
+    return children.filter(this.isAvailable.bind(this));
   }
 
   removeIndexes(indexes) {
@@ -267,24 +298,13 @@ export default class Doc {
     return cursor;
   }
 
-  getElements(ids) {
-    let elems = [];
-    for (let id of ids) {
-      let elem = this._elementsIndex[id];
-      if (elem) {
-        elems.push(elem);
-      }
-    }
-    return elems;
-  }
-
   insert(layer, i) {
     this.layers = this.layers.insertAt(layer, i);
   }
 
   drawToCanvas(layer, context, projection) {
-    for (let elem of this.elements) {
-      elem.drawToCanvas(layer, context, projection);
+    for (let child of this.layers) {
+      child.drawToCanvas(layer, context, projection);
     }
   }
 }

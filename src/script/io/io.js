@@ -177,10 +177,12 @@ let io = {
     let result;
 
     switch (type) {
+      /*
       case 'text':
         result = new Text(data);
         result.setContent(elem.textContent);
         break;
+      */
       case 'path':
         result = new Path(data);
         break;

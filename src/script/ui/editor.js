@@ -124,6 +124,8 @@ export default class Editor extends EventEmitter {
     });
 
     this.cursorHandler.on('scroll:x', (e, delta) => {
+      if (!this.canvas.owns(e.target)) return;
+
       if (this.state.tool.id === 'zoom') {
       } else {
         this.nudge(this.projection.zInvert(delta), 0);
@@ -131,6 +133,8 @@ export default class Editor extends EventEmitter {
     });
 
     this.cursorHandler.on('scroll:y', (e, delta) => {
+      if (!this.canvas.owns(e.target)) return;
+
       if (this.state.tool.id === 'zoom') {
         let zd = 1-(delta / 1000);
         let anchor = this.cursor.lastPosn;
@@ -292,9 +296,10 @@ export default class Editor extends EventEmitter {
   }
 
   selectAll() {
-    this.setSelection(this.doc.elements.slice(0));
+    this.setSelection(this.doc.filterAvailable(this.doc.elements.slice(0)));
   }
 
+  /*
   flattenGroupItems(items) {
     let finalItems = [];
     for (let item of items) {
@@ -309,13 +314,13 @@ export default class Editor extends EventEmitter {
     }
     return finalItems;
   }
+  */
 
   setSelection(items) {
     let oldSelection = this.state.selection;
-    let flatItems = this.flattenGroupItems(items);
-    this.state.selection = flatItems;
+    this.state.selection = items;
 
-    if (flatItems[0] instanceof PathPoint) {
+    if (items[0] instanceof PathPoint) {
       this.state.selectionType = 'POINTS';
     } else {
       this.state.selectionType = 'ELEMENTS';
@@ -335,12 +340,10 @@ export default class Editor extends EventEmitter {
 
   setHovering(items) {
     let oldHovering = this.state.hovering;
-
-    let flatItems = this.flattenGroupItems(items);
-    this.state.hovering = flatItems;
+    this.state.hovering = items;
 
     if (this.state.hovering.length > 0) {
-      if (flatItems[0] instanceof PathPoint) {
+      if (items[0] instanceof PathPoint) {
         this.state.hoveringType = 'POINTS';
       } else {
         this.state.hoveringType = 'ELEMENTS';
@@ -356,14 +359,7 @@ export default class Editor extends EventEmitter {
   }
 
   isSelected(item) {
-    if (item instanceof Group) {
-      let isSelected = true;
-      for (let child of item.children) {
-        isSelected = isSelected && this.isSelected(child);
-        if (!isSelected) break;
-      }
-      return isSelected;
-    } else if (item instanceof Layer) {
+    if (item instanceof Layer) {
       return this.state.layer === item;
     } else {
       return this.state.selection.indexOf(item) > -1;

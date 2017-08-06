@@ -210,6 +210,8 @@ export default class Path extends Item {
   }
 
   drawToCanvas(layer, context, projection) {
+    if (this.metadata.visible === false) return;
+
     context.beginPath();
     for (let segment of this.points.segments) {
       segment.drawToCanvas(layer, context, projection);

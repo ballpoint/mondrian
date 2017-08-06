@@ -1,10 +1,14 @@
 import Bounds from 'geometry/bounds';
+import Metadata from 'geometry/metadata';
 import Group from 'geometry/group';
+import UUIDV4 from 'uuid/v4';
 
 export default class Layer {
-  constructor(attrs) {
+  constructor(attrs, metadata={}) {
     this.id = attrs.id;
     this.children = attrs.children;
+    this.metadata = new Metadata(metadata);
+    this.__id__ = UUIDV4(); 
   }
 
   remove(elem) {
@@ -59,5 +63,13 @@ export default class Layer {
 
   nextChildIndex() {
     return this.index.concat([this.children.length]);
+  }
+
+  drawToCanvas(layer, context, projection) {
+    if (this.metadata.visible === false) return;
+
+    for (let child of this.children) {
+      child.drawToCanvas(layer, context, projection);
+    }
   }
 }

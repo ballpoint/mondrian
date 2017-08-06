@@ -26,17 +26,17 @@ export default class Cursor extends Tool {
     let z3 = this.editor.projection.zInvert(3);
     let posnPadded = Bounds.centeredOnPosn(posn, z3, z3);
 
-    let elems = this.editor.doc.elements.slice(0).reverse();
+    let elems = this.editor.doc.elementsAvailable.reverse();
 
     this.skipClick = 0;
     this.hovering = [];
 
     // TODO use bsearch tree here 8)
-    for (let element of elems) {
-      if (shapes.contains(element, posn)) {
-        this.hovering.push(element);
-      } else if (shapes.overlap(element, posnPadded)) {
-        this.hovering.push(element);
+    for (let elem of elems) {
+      if (shapes.contains(elem, posn)) {
+        this.hovering.push(elem);
+      } else if (shapes.overlap(elem, posnPadded)) {
+        this.hovering.push(elem);
       }
     }
 
@@ -97,8 +97,7 @@ export default class Cursor extends Tool {
 
       let newSelection = [];
 
-      let elems = this.editor.doc.elements.slice(0).reverse();
-      console.log(elems.length);
+      let elems = this.editor.doc.elementsAvailable.reverse();
       for (let elem of elems) {
         if (shapes.overlap(bounds, elem)) {
           newSelection.push(elem);

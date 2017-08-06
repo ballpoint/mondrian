@@ -1,8 +1,13 @@
 import Bounds from 'geometry/bounds';
+import Metadata from 'geometry/metadata';
+import UUIDV4 from 'uuid/v4';
 
 export default class Group {
-  constructor(children) {
+  constructor(children, metadata={}) {
     this.children = children;
+
+    this.metadata = new Metadata(metadata);
+    this.__id__ = UUIDV4(); 
   }
 
   bounds() {
@@ -10,6 +15,8 @@ export default class Group {
   }
 
   drawToCanvas() {
+    if (this.metadata.visible === false) return;
+
     for (let elem of this.children) {
       elem.drawToCanvas(...arguments);
     }
@@ -60,7 +67,11 @@ export default class Group {
 
   scale()  { this.propagate('scale', arguments); }
 
-  rotate() { this.propagate('rotate', arguments); }
+  rotate(a) {
+    this.propagate('rotate', arguments);
+
+    this.metadata.angle += a;
+  }
 
   matrix() { this.propagate('matrix', arguments); }
 

@@ -1,78 +1,122 @@
 @import "~vars.scss";
 
-.doc-util__item {
-  user-select: none;
+.doc-util__items {
+  min-height: 100px;
+  max-height: 200px;
+  overflow-y: scroll;
 
-  &:not(.doc-util__item--layer) {
-    border-top: 1px solid $blue-grey;
-    border-left: 5px solid $blue-grey;
-  }
+  .doc-util__item {
+    user-select: none;
 
-
-  .doc-util__item__bar {
-    padding: 4px;
-    border-top: 1px solid $blue-grey;
-    cursor: default;
-
-    display: flex;
-    flex-direction: row;
-
-    > * {
-      align-self: center;
+    &:not(.doc-util__item--layer) {
+      border-top: 1px solid $blue-grey;
+      border-left: 5px solid $blue-grey;
     }
 
-    &:hover {
-      color: $blue;
-    }
+    .doc-util__item__bar {
+      padding: 0 4px;
+      border-top: 1px solid $blue-grey;
+      cursor: default;
 
-    .doc-util__item__bar__thumb {
-      margin-right: 5px;
-      width: 20px;
-      height: 20px;
       display: flex;
       flex-direction: row;
-      justify-content: center;
 
-      canvas {
+      > * {
         align-self: center;
-        max-width: 20px;
-        max-height: 20px;
-        padding: 2px;
-        border: 1px solid $blue-grey;
+      }
+
+
+      .doc-util__item__bar__type, .doc-util__item__bar__id {
+        padding: 2px 5px 2px 0;
+      }
+
+      .doc-util__item__bar__thumb {
+        margin-right: 5px;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+
+        canvas {
+          align-self: center;
+          max-width: 20px;
+          max-height: 20px;
+          //padding: 2px;
+          //border: 1px solid $blue-grey;
+        }
+      }
+
+      .doc-util__item__bar__label {
+        margin-right: 5px;
+        padding: 4px 0;
+        flex-grow: 1;
+        display: flex;
+
+        &:hover {
+          color: $blue;
+        }
+      }
+
+      .doc-util__item__bar__ctrls {
+        margin-left: auto;
+        display: flex;
+
+        .doc-util__item__bar__ctrls__ctrl {
+          width: 20px;
+
+          &.disabled {
+            opacity: 0.5;
+          }
+        }
       }
     }
 
-    .doc-util__item__bar__type {
-      margin-right: 5px;
+
+    &.doc-util__item--layer {
+      > .doc-util__item__bar {
+        .doc-util__item__bar__type, .doc-util__item__bar__id {
+          padding: 7px 5px 7px 0;
+        }
+
+        .doc-util__item__bar__thumb {
+          width: 30px;
+          height: 30px;
+
+          canvas {
+            max-width: 30px;
+            max-height: 30px;
+          }
+        }
+      }
     }
-  }
 
-  &.doc-util__item--layer:first-child .doc-util__item__bar {
-    border-top: none;
-  }
-
-
-  &.doc-util__item--layer > .doc-util__item__bar {
-    padding: 12px 4px;
-  }
-
-  .doc-util__item__children {
-    margin-left: 3px;
-    padding-bottom: 3px;
-
-    .doc-util__item:last-child {
-      border-bottom: 1px solid $blue-grey;
-    }
-  }
-
-  &.selected {
-    border-left-color: $blue;
-
-    > .doc-util__item__bar {
-      color: $blue;
+    &.doc-util__item--layer:first-child .doc-util__item__bar {
+      border-top: none;
     }
 
     .doc-util__item__children {
+      margin-left: 3px;
+      padding-bottom: 3px;
+
+    }
+
+    &:last-child {
+      border-bottom: 1px solid $blue-grey;
+    }
+
+
+    &.selected {
+      border-left-color: $blue;
+
+      > .doc-util__item__bar .doc-util__item__bar__label {
+        color: $blue;
+      }
     }
   }
+}
+
+.doc-util__ctrls {
+  padding: 5px;
+  border-top: 1px solid $blue-grey;
 }

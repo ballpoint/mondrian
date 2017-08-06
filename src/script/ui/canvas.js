@@ -59,6 +59,10 @@ export default class Canvas extends EventEmitter {
     }
   }
 
+  owns(node) {
+    return node.parentNode === this.container;
+  }
+
   center() {
     return new Posn(this.width/2, this.height/2);
   }

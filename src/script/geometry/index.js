@@ -7,6 +7,10 @@ export default class Index {
     this.parts = parts;
   }
 
+  clone() {
+    return new Index(this.parts);
+  }
+
   get length() {
     return this.parts.length;
   }

@@ -1,5 +1,6 @@
 import Color from 'ui/color';
 import Bounds from 'geometry/bounds';
+import Metadata from 'geometry/metadata';
 import Range from 'geometry/range';
 import Posn from 'geometry/posn';
 import Thumb from 'ui/thumb';
@@ -14,7 +15,7 @@ import UUIDV4 from 'uuid/v4';
 */
 
 export default class Item {
-  constructor(data={}) {
+  constructor(data={}, metadata={}) {
     this.data = data;
 
     this.points = [];
@@ -25,10 +26,7 @@ export default class Item {
       this.id = data.id;
     }
 
-    this.metadata = {
-      angle: 0,
-      locked: false
-    };
+    this.metadata = new Metadata(metadata);
 
     this.validateColors();
 

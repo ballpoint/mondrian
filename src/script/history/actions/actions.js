@@ -217,3 +217,21 @@ export class DeleteAction extends HistoryAction {
     return new InsertAction({ items: this.data.items });
   }
 }
+
+export class ToggleMetadataBoolAction extends HistoryAction {
+  constructor(data) {
+    super(data);
+  }
+
+  perform(doc) {
+    for (let index of this.data.indexes) {
+      let item = doc.getFromIndex(index);
+      item.metadata[this.data.key] = !item.metadata[this.data.key];
+    }
+  }
+
+  opposite() {
+    // This will inverse itself
+    return this;
+  }
+}
