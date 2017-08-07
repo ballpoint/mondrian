@@ -29,7 +29,7 @@ import TransformerUIElement from 'ui/editor/transformer';
 import DocumentPointsUIElement from 'ui/editor/doc_pts';
 import DocumentElemsUIElement from 'ui/editor/doc_elems';
 
-const UTILS_WIDTH = 350;
+const UTILS_WIDTH = 350 + 220;
 
 
 export default class Editor extends EventEmitter {
@@ -168,6 +168,11 @@ export default class Editor extends EventEmitter {
     hotkeys.on('down', 'ctrl-O', (e) => {
       e.preventDefault();
       this.trigger('hotkey:open');
+    });
+
+    hotkeys.on('down', 'ctrl-S', (e) => {
+      e.preventDefault();
+      console.log('save lol');
     });
 
     hotkeys.on('down', '1', () => {
@@ -358,9 +363,9 @@ export default class Editor extends EventEmitter {
     if (!oldHovering.sameMembers(this.state.hovering)) {
       this.trigger('change');
       this.trigger('change:hovering');
-    }
 
-    this.canvas.refreshAll();
+      this.canvas.refresh('ui');
+    }
   }
 
   isSelected(item) {

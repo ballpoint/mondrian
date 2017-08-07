@@ -36,10 +36,11 @@ export default class Pen extends Tool {
     let elemsToScan = [];
 
     let p = this.editor.projection.posn(posn);
-    
+    let threshold = this.editor.projection.zInvert(PEN_POINT_THRESHOLD);
+ 
     // Find candidates for near-point check
     for (let elem of this.editor.doc.elementsFlat) {
-      let bounds = this.editor.projection.bounds(elem.bounds()).padded(PEN_POINT_THRESHOLD);
+      let bounds = this.editor.projection.bounds(elem.bounds()).padded(threshold);
       if (shapes.contains(bounds, p)) {
         elemsToScan.push(elem);
       }
@@ -53,7 +54,7 @@ export default class Pen extends Tool {
         let closestPosn = ls.closestPosn(posn);
         let d = closestPosn.distanceFrom(posn);
 
-        if (d < PEN_POINT_THRESHOLD && (!this.closest || d < this.closest.d)) {
+        if (d < threshold && (!this.closest || d < this.closest.d)) {
           this.closest = {
             posn: closestPosn,
             pathPoint: pt,
@@ -101,9 +102,11 @@ export default class Pen extends Tool {
       ]
     }));
 
+
     frame.seal();
 
     this.editor.perform(frame);
+    this.editor.setSelection([pp]);
   }
 
   handleClick(e, posn) {

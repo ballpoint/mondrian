@@ -4,16 +4,28 @@
 $util-grey: darken($bg-grey, 13%);
 
 #app-windows {
+
   position: absolute;
   top: $app-header-height + 30px;
   right: 0;
-  width: 360px;
   bottom: 20px;
   pointer-events: none;
+
+  #app-utils {
+    display: flex;
+
+    #app-utils-left {
+      width: 200px;
+    }
+    #app-utils-right {
+      width: 360px;
+    }
+
+  }
 }
 
 .util-window {
-  margin: 5px;
+  margin: 10px 5px;
   pointer-events: auto;
   @include card-shadow-small;
 

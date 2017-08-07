@@ -11,7 +11,15 @@ export default class Group {
   }
 
   bounds() {
-    return new Bounds(this.children.map((item) => { return item.bounds() }));
+    let nonce = this.__nonce__;
+    if (nonce === this._cachedBoundsNonce) {
+      return this._cachedBounds;
+    }
+
+    let bounds = new Bounds(this.children.map((item) => { return item.bounds() }));
+    this._cachedBoundsNonce = nonce;
+    this._cachedBounds = bounds;
+    return bounds;
   }
 
   drawToCanvas() {

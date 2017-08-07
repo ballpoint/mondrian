@@ -2,6 +2,7 @@ import 'utils/utils.scss';
 import TransformUtil from 'ui/components/utils/Transform';
 import DocumentUtil from 'ui/components/utils/Document';
 import ColorUtil from 'ui/components/utils/Color';
+import AlignUtil from 'ui/components/utils/Align';
 
 let Utils = React.createClass({
   getInitialState() {
@@ -11,29 +12,37 @@ let Utils = React.createClass({
   },
   componentDidMount() {
     this.props.editor.on('change', () => {
-      this.setState({
-        selection:       this.props.editor.state.selection,
-        selectionBounds: this.props.editor.state.selectionBounds
+      window.requestAnimationFrame(() => {
+        let editor = this.props.editor;
+
+        this.setState({
+          selection:       editor.state.selection,
+          selectionBounds: editor.state.selectionBounds,
+          hasSelectedElements: editor.state.selection.length > 0 && editor.state.selectionType === 'ELEMENTS',
+          hasSelectedPoints: editor.state.selection.length > 0 && editor.state.selectionType === 'POINTS'
+        });
       });
     });
   },
 
-  getWindows() {
+  getUtilsLeft() {
     let w = [];
 
+    if (!this.props.editor.doc) return w;
+
     w.push(
-      <TransformUtil
-        key="selection"
-        editor={this.props.editor}
+      <ColorUtil
+        key="color"
+        editor={this.props.editor} 
         selection={this.state.selection}
         selectionBounds={this.state.selectionBounds}
       />
     );
 
-    if (this.props.editor.doc) {
+    if (this.state.selection.length > 0) {
       w.push(
-        <DocumentUtil
-          key="document"
+        <AlignUtil
+          key="align"
           editor={this.props.editor} 
           selection={this.state.selection}
           selectionBounds={this.state.selectionBounds}
@@ -44,10 +53,41 @@ let Utils = React.createClass({
     return w;
   },
 
+  getUtilsRight() {
+    let w = [];
+
+    if (!this.props.editor.doc) return w;
+
+    w.push(
+      <TransformUtil
+        key="selection"
+        editor={this.props.editor}
+        selection={this.state.selection}
+        selectionBounds={this.state.selectionBounds}
+      />
+    );
+
+    w.push(
+      <DocumentUtil
+        key="document"
+        editor={this.props.editor} 
+        selection={this.state.selection}
+        selectionBounds={this.state.selectionBounds}
+      />
+    );
+
+    return w;
+  },
+
   render() {
     return (
-      <div>
-        {this.getWindows()}
+      <div id="app-utils">
+        <div id="app-utils-left">
+          {this.getUtilsLeft()}
+        </div>
+        <div id="app-utils-right">
+          {this.getUtilsRight()}
+        </div>
       </div>
     );
   }

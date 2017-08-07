@@ -5,8 +5,8 @@ import 'utils/selection.scss';
 import Util from 'ui/components/utils/Util';
 import TextInput from 'ui/components/utils/TextInput';
 
-const THUMB_IMG_MAX_WIDTH  = 140;
-const THUMB_IMG_MAX_HEIGHT = 100;
+const THUMB_IMG_MAX_WIDTH  = 120;
+const THUMB_IMG_MAX_HEIGHT = 80;
 
 let TransformUtil = React.createClass({
   getInitialState() {
@@ -104,8 +104,8 @@ let TransformUtil = React.createClass({
 
   getThumbnail() {
     return new Thumb(this.props.editor.state.selection, {
-      maxWidth: 140,
-      maxHeight: 100
+      maxWidth: THUMB_IMG_MAX_WIDTH,
+      maxHeight: THUMB_IMG_MAX_HEIGHT
     });
   },
 

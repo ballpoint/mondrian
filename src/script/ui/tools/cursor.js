@@ -33,10 +33,14 @@ export default class Cursor extends Tool {
 
     // TODO use bsearch tree here 8)
     for (let elem of elems) {
-      if (shapes.contains(elem, posn)) {
-        this.hovering.push(elem);
-      } else if (shapes.overlap(elem, posnPadded)) {
-        this.hovering.push(elem);
+      let bp = elem.bounds().padded(z3); 
+
+      if (bp.contains(posn)) {
+        if (shapes.contains(elem, posn)) {
+          this.hovering.push(elem);
+        } else if (shapes.overlap(elem, posnPadded)) {
+          this.hovering.push(elem);
+        }
       }
     }
 

@@ -72,12 +72,14 @@ export default class Canvas extends EventEmitter {
   }
 
   refreshAll() {
+    //console.trace();
     for (let layer of this.layers) {
       this.refresh(layer.id);
     }
   }
 
   refresh(id) {
+    //console.trace();
     this.refreshNeeded[id] = true;
     if (!this.frameRequest) {
       this.frameRequest = window.requestAnimationFrame(() => {

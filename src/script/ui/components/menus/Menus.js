@@ -18,7 +18,15 @@ const menus = [
   {
     name: 'View',
     render: ViewMenu
-  }
+  },
+  {
+    name: 'Geometry',
+    render: ViewMenu
+  },
+  {
+    name: 'Selection',
+    render: ViewMenu
+  },
 ]
 
 const fileMenu = menus[0];

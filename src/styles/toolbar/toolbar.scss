@@ -5,7 +5,7 @@
   flex-grow: 0;
   height: $toolbar-dimen;
   font-size: 14px;
-  border-top: 1px solid $mg-grey;
+  border-top: 1px solid $blue-grey;
   overflow: hidden;
   padding-bottom: 1px;
 
@@ -29,6 +29,6 @@
       }
     }
 
-    border-right: 1px solid $mg-grey;
+    border-right: 1px solid $blue-grey;
   }
 }

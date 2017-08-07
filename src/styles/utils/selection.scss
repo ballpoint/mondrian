@@ -1,8 +1,9 @@
 @import "~vars.scss";
 
-$sel-height: 220px;
-$sel-thumb-height: 120px;
-$sel-thumb-width: 160px;
+$sel-height: 200px;
+
+$sel-thumb-height: 80px;
+$sel-thumb-width: 120px;
 
 .sel-util {
   height: $sel-height;
@@ -44,8 +45,8 @@ $sel-thumb-width: 160px;
 
           canvas {
             align-self: center;
-            max-width: $sel-thumb-width - 20px;
-            max-height: $sel-thumb-height - 20px;
+            max-width: $sel-thumb-width;
+            max-height: $sel-thumb-height;
           }
 
           .sel-util__thumb__img--doc {

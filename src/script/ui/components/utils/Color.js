@@ -5,6 +5,7 @@ let ColorUtil = React.createClass({
     return (
       <Util title="Color">
         <div className="">
+        color lol
         </div>
       </Util>
     );

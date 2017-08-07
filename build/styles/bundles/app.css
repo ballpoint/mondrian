@@ -76,12 +76,17 @@ html {
   position: absolute;
   top: 148px;
   right: 0;
-  width: 360px;
   bottom: 20px;
   pointer-events: none; }
+  #app-windows #app-utils {
+    display: flex; }
+    #app-windows #app-utils #app-utils-left {
+      width: 200px; }
+    #app-windows #app-utils #app-utils-right {
+      width: 360px; }
 
 .util-window {
-  margin: 5px;
+  margin: 10px 5px;
   pointer-events: auto;
   box-shadow: 0 5px 12px rgba(0, 0, 0, 0.05), 0 4px 4px rgba(0, 0, 0, 0.03); }
   .util-window .util-header {
@@ -99,9 +104,9 @@ html {
 .text-input input[type="text"] {
   width: 64px; }
 .sel-util {
-  height: 220px; }
+  height: 200px; }
   .sel-util .sel-util__main {
-    height: 180px;
+    height: 160px;
     padding: 4px;
     display: flex;
     flex-direction: column;
@@ -130,8 +135,8 @@ html {
           border: 1px solid #ccc; }
           .sel-util .sel-util__main .sel-util__top .sel-util__thumb .sel-util__thumb__img canvas {
             align-self: center;
-            max-width: 140px;
-            max-height: 100px; }
+            max-width: 120px;
+            max-height: 80px; }
           .sel-util .sel-util__main .sel-util__top .sel-util__thumb .sel-util__thumb__img .sel-util__thumb__img--doc {
             display: block; }
           .sel-util .sel-util__main .sel-util__top .sel-util__thumb .sel-util__thumb__img .sel-util__thumb__origin-buttons {
@@ -272,6 +277,100 @@ html {
 .doc-util__ctrls {
   padding: 5px;
   border-top: 1px solid #bbc4c9; }
+.align-util-button {
+  width: 30px;
+  height: 30px;
+  margin: 4px;
+  border: 1px solid #bbc4c9;
+  position: relative;
+  background: white; }
+  .align-util-button .align-util-button__item {
+    width: 13px;
+    height: 13px;
+    border: 1px solid black;
+    background: #f2f2f2;
+    position: absolute; }
+  .align-util-button:hover {
+    border-color: #0072d1; }
+    .align-util-button:hover .align-util-button__item {
+      border-color: #0072d1;
+      background: #cce3f6; }
+  .align-util-button.align-util-button--vt .align-util-button__item {
+    top: -1px;
+    left: 8.5px; }
+  .align-util-button.align-util-button--vc .align-util-button__item {
+    top: 8.5px;
+    left: 8.5px; }
+  .align-util-button.align-util-button--vb .align-util-button__item {
+    bottom: -1px;
+    left: 8.5px; }
+  .align-util-button.align-util-button--hl .align-util-button__item {
+    left: -1px;
+    top: 8.5px; }
+  .align-util-button.align-util-button--hc .align-util-button__item {
+    left: 8.5px;
+    top: 8.5px; }
+  .align-util-button.align-util-button--hr .align-util-button__item {
+    right: -1px;
+    top: 8.5px; }
+
+#align-util__main {
+  display: flex;
+  flex-wrap: wrap; }
+  #align-util__main #align-util__2d-box {
+    display: flex;
+    flex-wrap: wrap;
+    width: 114px;
+    height: 114px;
+    margin: 8px;
+    align-items: center;
+    justify-content: center;
+    position: relative; }
+    #align-util__main #align-util__2d-box .align-util-button--tl .align-util-button__item {
+      top: -1px;
+      left: -1px; }
+    #align-util__main #align-util__2d-box .align-util-button--tc .align-util-button__item {
+      top: -1px;
+      left: 8.5px; }
+    #align-util__main #align-util__2d-box .align-util-button--tr .align-util-button__item {
+      top: -1px;
+      right: -1px; }
+    #align-util__main #align-util__2d-box .align-util-button--cl .align-util-button__item {
+      top: 8.5px;
+      left: -1px; }
+    #align-util__main #align-util__2d-box .align-util-button--c .align-util-button__item {
+      top: 8.5px;
+      left: 8.5px; }
+    #align-util__main #align-util__2d-box .align-util-button--cr .align-util-button__item {
+      top: 8.5px;
+      right: -1px; }
+    #align-util__main #align-util__2d-box .align-util-button--bl .align-util-button__item {
+      bottom: -1px;
+      left: -1px; }
+    #align-util__main #align-util__2d-box .align-util-button--bc .align-util-button__item {
+      bottom: -1px;
+      left: 8.5px; }
+    #align-util__main #align-util__2d-box .align-util-button--br .align-util-button__item {
+      bottom: -1px;
+      right: -1px; }
+    #align-util__main #align-util__2d-box svg.align-util__guides {
+      position: absolute;
+      width: 100%;
+      height: 100%; }
+      #align-util__main #align-util__2d-box svg.align-util__guides line {
+        stroke: #bbc4c9; }
+  #align-util__main #align-util__1d-v {
+    margin: 8px;
+    margin-left: auto;
+    display: flex;
+    flex-direction: column; }
+  #align-util__main #align-util__1d-h {
+    margin: 8px;
+    display: flex;
+    flex-direction: row; }
+  #align-util__main #align-util__scope-menu {
+    margin: 8px;
+    margin-left: auto; }
 #app-tools {
   width: 60px;
   border-right: 1px solid #b2b2b2;
@@ -279,7 +378,7 @@ html {
   #app-tools .app-tool {
     width: 100%;
     padding: 10px;
-    border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid #bbc4c9;
     cursor: default; }
     #app-tools .app-tool.selected {
       color: #0072d1; }
@@ -291,12 +390,12 @@ html {
   flex-grow: 0;
   height: 36px;
   font-size: 14px;
-  border-top: 1px solid #e5e5e5;
+  border-top: 1px solid #bbc4c9;
   overflow: hidden;
   padding-bottom: 1px; }
   #app-toolbar .toolbar-group {
     display: flex;
-    border-right: 1px solid #e5e5e5; }
+    border-right: 1px solid #bbc4c9; }
     #app-toolbar .toolbar-group .toolbar-button {
       width: 36px;
       height: 100%;
@@ -352,7 +451,7 @@ html {
       position: relative;
       display: flex; }
       .app-menus-row .app-menu-body .app-menu-item + .app-menu-item {
-        border-top: 1px solid #b2b2b2; }
+        border-top: 1px solid #bbc4c9; }
       .app-menus-row .app-menu-body .app-menu-item.disabled {
         color: #b2b2b2; }
       .app-menus-row .app-menu-body .app-menu-item:not(.disabled):hover .app-menu-item__label {
