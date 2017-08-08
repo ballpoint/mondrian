@@ -93,7 +93,11 @@ html {
     padding: 3px;
     font-size: 14px;
     background-color: #bbc4c9;
-    border-bottom: 1px solid #9fabb2; }
+    border-bottom: 1px solid #9fabb2;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none; }
   .util-window .util-body {
     background: white;
     font-size: 14px; }
@@ -278,6 +282,7 @@ html {
   padding: 5px;
   border-top: 1px solid #bbc4c9; }
 .align-util-button {
+  display: block;
   width: 30px;
   height: 30px;
   margin: 4px;
@@ -295,6 +300,16 @@ html {
     .align-util-button:hover .align-util-button__item {
       border-color: #0072d1;
       background: #cce3f6; }
+  .align-util-button:active {
+    background: #f2f2f2; }
+    .align-util-button:active .align-util-button__item {
+      background: #66aae3; }
+  .align-util-button.align-util-mode-button svg {
+    width: 100%;
+    height: 100%; }
+    .align-util-button.align-util-mode-button svg rect {
+      stroke: black;
+      fill: white; }
   .align-util-button.align-util-button--vt .align-util-button__item {
     top: -1px;
     left: 8.5px; }
@@ -353,21 +368,23 @@ html {
     #align-util__main #align-util__2d-box .align-util-button--br .align-util-button__item {
       bottom: -1px;
       right: -1px; }
-    #align-util__main #align-util__2d-box svg.align-util__guides {
-      position: absolute;
-      width: 100%;
-      height: 100%; }
-      #align-util__main #align-util__2d-box svg.align-util__guides line {
-        stroke: #bbc4c9; }
+  #align-util__main svg.align-util__guides {
+    position: absolute;
+    width: 100%;
+    height: 100%; }
+    #align-util__main svg.align-util__guides line {
+      stroke: #bbc4c9; }
   #align-util__main #align-util__1d-v {
     margin: 8px;
     margin-left: auto;
     display: flex;
-    flex-direction: column; }
+    flex-direction: column;
+    position: relative; }
   #align-util__main #align-util__1d-h {
     margin: 8px;
     display: flex;
-    flex-direction: row; }
+    flex-direction: row;
+    position: relative; }
   #align-util__main #align-util__scope-menu {
     margin: 8px;
     margin-left: auto; }

@@ -91,7 +91,7 @@ export default class Rect extends Tool {
 
   handleDragStop(e, posn) {
     this.editor.selectFromIndexes([this.currentIndex]);
-    this.editor.history.head.seal();
+    this.editor.doc.history.head.seal();
 
     delete this.currentIndex;
     delete this.scaleOrigin;

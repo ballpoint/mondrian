@@ -4,7 +4,6 @@
 $util-grey: darken($bg-grey, 13%);
 
 #app-windows {
-
   position: absolute;
   top: $app-header-height + 30px;
   right: 0;
@@ -39,6 +38,7 @@ $util-grey: darken($bg-grey, 13%);
     //background: -moz-linear-gradient(to top, #c7cdd5, #adb4bd);
     //background: linear-gradient(to top, #c7cdd5, #adb4bd);
     border-bottom: 1px solid darken($blue-grey, 10%);
+    @include no-select;
   }
 
   .util-body {

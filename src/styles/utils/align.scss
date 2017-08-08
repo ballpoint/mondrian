@@ -6,6 +6,7 @@ $section-margin: 8px;
 $button-item-dimen: 13px;
 
 .align-util-button {
+  display: block;
   width: $button-dimen;
   height: $button-dimen;
   margin: $button-margin;
@@ -27,6 +28,25 @@ $button-item-dimen: 13px;
     .align-util-button__item {
       border-color: $blue;
       background: $paleblue;
+    }
+  }
+
+  &:active {
+    background: $bg-grey;
+
+    .align-util-button__item {
+      background: $midblue;
+    }
+  }
+
+  &.align-util-mode-button {
+    svg {
+      width: 100%;
+      height: 100%;
+      rect {
+        stroke: black;
+        fill: white;
+      }
     }
   }
 
@@ -96,15 +116,15 @@ $button-item-dimen: 13px;
     .align-util-button--br {
       .align-util-button__item { bottom: -1px; right: -1px; }
     }
+  }
 
-    svg.align-util__guides {
-      position: absolute;
-      width: 100%;
-      height: 100%;
+  svg.align-util__guides {
+    position: absolute;
+    width: 100%;
+    height: 100%;
 
-      line {
-        stroke: $blue-grey;
-      }
+    line {
+      stroke: $blue-grey;
     }
   }
 
@@ -113,12 +133,14 @@ $button-item-dimen: 13px;
     margin-left: auto;
     display: flex;
     flex-direction: column;
+    position: relative;
   }
 
   #align-util__1d-h {
     margin: $section-margin;
     display: flex;
     flex-direction: row;
+    position: relative;
   }
 
   #align-util__scope-menu {
