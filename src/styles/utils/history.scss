@@ -3,7 +3,9 @@
 
 .history-util__frame {
   padding: 5px;
-  border-bottom: 1px solid $fg-grey;
+  &:not(:last-child) {
+    border-bottom: 1px solid $fg-grey;
+  }
   cursor: default;
   display: flex;
   @include no-select;

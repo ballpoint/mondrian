@@ -283,13 +283,14 @@ html {
   border-top: 1px solid #bbc4c9; }
 .history-util__frame {
   padding: 5px;
-  border-bottom: 1px solid #b2b2b2;
   cursor: default;
   display: flex;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none; }
+  .history-util__frame:not(:last-child) {
+    border-bottom: 1px solid #b2b2b2; }
   .history-util__frame .history-util__frame__depth {
     color: #b2b2b2;
     margin-right: 16px; }
