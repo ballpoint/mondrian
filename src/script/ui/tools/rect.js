@@ -55,7 +55,7 @@ export default class Rect extends Tool {
           x: 1, y: 1, 
           origin: this.scaleOrigin
         })
-      ]);
+      ], 'Draw Rectangle');
 
       this.editor.perform(frame);
     }

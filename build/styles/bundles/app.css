@@ -136,7 +136,7 @@ html {
           margin-right: auto;
           position: relative;
           flex: 0;
-          border: 1px solid #ccc; }
+          border: 1px solid #bbc4c9; }
           .sel-util .sel-util__main .sel-util__top .sel-util__thumb .sel-util__thumb__img canvas {
             align-self: center;
             max-width: 120px;
@@ -290,7 +290,7 @@ html {
   -ms-user-select: none;
   user-select: none; }
   .history-util__frame:not(:last-child) {
-    border-bottom: 1px solid #b2b2b2; }
+    border-bottom: 1px solid #bbc4c9; }
   .history-util__frame .history-util__frame__depth {
     color: #b2b2b2;
     margin-right: 16px; }

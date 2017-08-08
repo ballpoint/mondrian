@@ -4,7 +4,7 @@
 .history-util__frame {
   padding: 5px;
   &:not(:last-child) {
-    border-bottom: 1px solid $fg-grey;
+    border-bottom: 1px solid $blue-grey;
   }
   cursor: default;
   display: flex;
