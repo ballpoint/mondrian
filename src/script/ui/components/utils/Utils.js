@@ -1,6 +1,7 @@
 import 'utils/utils.scss';
 import TransformUtil from 'ui/components/utils/Transform';
 import DocumentUtil from 'ui/components/utils/Document';
+import HistoryUtil from 'ui/components/utils/History';
 import ColorUtil from 'ui/components/utils/Color';
 import AlignUtil from 'ui/components/utils/Align';
 
@@ -69,6 +70,16 @@ let Utils = React.createClass({
       <DocumentUtil
         key="document"
         editor={this.props.editor} 
+        selection={this.state.selection}
+        selectionBounds={this.state.selectionBounds}
+      />
+    );
+
+    w.push(
+      <HistoryUtil
+        key="history"
+        editor={this.props.editor} 
+        doc={this.props.editor.doc}
         selection={this.state.selection}
         selectionBounds={this.state.selectionBounds}
       />

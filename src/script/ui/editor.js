@@ -684,14 +684,21 @@ export default class Editor extends EventEmitter {
   }
 
   undo() {
-    this.doc.undo(this);
+    this.doc.undo();
     this.canvas.refreshAll();
     this.calculateSelectionBounds();
     this.trigger('change');
   }
 
   redo() {
-    this.doc.redo(this);
+    this.doc.redo();
+    this.canvas.refreshAll();
+    this.calculateSelectionBounds();
+    this.trigger('change');
+  }
+
+  jumpToHistoryDepth(depth) {
+    this.doc.jumpToHistoryDepth(depth);
     this.canvas.refreshAll();
     this.calculateSelectionBounds();
     this.trigger('change');

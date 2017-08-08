@@ -329,6 +329,7 @@ export default class TransformerUIElement extends UIElement {
       },
       'drag:stop': (e, posn, startPosn) => {
         e.stopPropagation();
+        this.editor.doc.history.head.seal();
       }
     }, {
       cursor
@@ -366,6 +367,11 @@ export default class TransformerUIElement extends UIElement {
         let angleDelta = lineAfter.angle360 - lineBefore.angle360;
 
         this.editor.rotateSelected(angleDelta, center);
+      },
+
+      'drag:stop': (e) => {
+        e.stopPropagation();
+        this.editor.doc.history.head.seal();
       }
     });
 

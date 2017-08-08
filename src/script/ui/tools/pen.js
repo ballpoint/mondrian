@@ -102,8 +102,7 @@ export default class Pen extends Tool {
       ]
     }));
 
-
-    frame.seal();
+    //frame.seal();
 
     this.editor.perform(frame);
     this.editor.setSelection([pp]);
@@ -201,6 +200,7 @@ export default class Pen extends Tool {
   }
 
   handleDragStop(e, posn) {
+    this.editor.doc.history.head.seal();
   }
 
   refresh(layer, context) {

@@ -1,27 +1,23 @@
 export default class HistoryFrame {
 
-  constructor(actions = []) {
+  constructor(actions = [], title='') {
     this.actions = actions;
+    this.title = title;
 
     this.succ = [];
     this.timestamp = new Date();
 
     this.sealed = false;
     this.merges = 0;
-
-    this.setSealTime(this.timestamp);
   }
 
-  setSealTime(current) {
-    if (this.actions.length === 1) {
-      let action = this.actions[0];
-      if (action.constructor.expiration) {
-        this.sealTime = new Date(
-          action.created.valueOf() + action.constructor.expiration
-        );
-      }
+  get displayTitle() {
+    if (this.title) {
+      return this.title;
     } else {
-      delete this.sealTime;
+      return this.actions.map((a) => {
+        return a.displayTitle || a.constructor.name;
+      }).join('; ');
     }
   }
 
@@ -46,7 +42,6 @@ export default class HistoryFrame {
     for (let a of this.actions) {
       if (a.constructor === action.constructor) {
         a.merge(action);
-        this.setSealTime(action.created);
         this.merges++;
       }
     }
@@ -57,13 +52,7 @@ export default class HistoryFrame {
   }
 
   isSealed() {
-    if (this.sealed) return true;
-
-    if (this.sealTime) {
-      return (new Date().valueOf() > this.sealTime.valueOf());
-    } else {
-      return false;
-    }
+    return this.sealed;
   }
 
   get last() {

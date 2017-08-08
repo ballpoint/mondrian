@@ -112,6 +112,8 @@ export default class Cursor extends Tool {
 
       this.dragSelectStart = null;
       this.dragSelectEnd = null;
+    } else {
+      this.editor.doc.history.head.seal();
     }
   }
 

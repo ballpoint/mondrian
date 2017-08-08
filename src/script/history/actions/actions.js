@@ -11,11 +11,13 @@ export class HistoryAction {
 }
 
 export class InitAction extends HistoryAction {
+  get displayTitle() { return 'Initialize Document'; }
+
   perform(doc) {}
 }
 
 export class NudgeAction extends HistoryAction {
-  static get expiration() { return 500 }
+  get displayTitle() { return 'Move'; }
 
   perform(doc) {
     for (let index of this.data.indexes) {
@@ -45,7 +47,7 @@ export class NudgeAction extends HistoryAction {
 }
 
 export class ScaleAction extends HistoryAction {
-  static get expiration() { return 500 }
+  get displayTitle() { return 'Scale'; }
 
   perform(doc) {
     for (let index of this.data.indexes) {
@@ -72,7 +74,7 @@ export class ScaleAction extends HistoryAction {
 }
 
 export class RotateAction extends HistoryAction {
-  static get expiration() { return 500 }
+  get displayTitle() { return 'Rotate'; }
 
   perform(doc) {
     for (let index of this.data.indexes) {
@@ -99,7 +101,7 @@ export class RotateAction extends HistoryAction {
 }
 
 export class NudgeHandleAction extends HistoryAction {
-  static get expiration() { return 500 }
+  get displayTitle() { return 'Move Handle'; }
 
   perform(doc) {
     let points = this.data.indexes.map((q) => { return doc.getFromIndex(q) });
@@ -132,6 +134,8 @@ export class NudgeHandleAction extends HistoryAction {
 }
 
 export class AddHandleAction extends HistoryAction {
+  get displayTitle() { return 'Add Handle'; }
+
   perform(doc) {
     for (let index of this.data.indexes) {
       let pp = doc.getFromIndex(index);
@@ -151,6 +155,8 @@ export class AddHandleAction extends HistoryAction {
 }
 
 export class RemoveHandleAction extends HistoryAction {
+  get displayTitle() { return 'Remove Handle'; }
+
   perform(doc) {
     for (let index of this.data.indexes) {
       let pp = doc.getFromIndex(index);
@@ -163,6 +169,8 @@ export class RemoveHandleAction extends HistoryAction {
 }
 
 export class InsertAction extends HistoryAction {
+  get displayTitle() { return 'Insert Shapes'; }
+
   constructor(data) {
     super(data);
 
@@ -196,6 +204,8 @@ export class InsertAction extends HistoryAction {
 }
 
 export class DeleteAction extends HistoryAction {
+  get displayTitle() { return 'Remove Shapes'; }
+
   constructor(data) {
     super(data);
 
@@ -219,6 +229,8 @@ export class DeleteAction extends HistoryAction {
 }
 
 export class ToggleMetadataBoolAction extends HistoryAction {
+  get displayTitle() { return 'Toggle Metadata'; }
+
   constructor(data) {
     super(data);
   }

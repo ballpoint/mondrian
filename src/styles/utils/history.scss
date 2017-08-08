@@ -1,0 +1,33 @@
+@import "~vars.scss";
+@import "~mixins.scss";
+
+.history-util__frame {
+  padding: 5px;
+  border-bottom: 1px solid $fg-grey;
+  cursor: default;
+  display: flex;
+  @include no-select;
+
+  .history-util__frame__depth {
+    color: $fg-grey;
+    margin-right: 16px;
+  }
+
+  .history-util__frame__title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &.selected, &:hover {
+    color: $blue;
+
+    .history-util__frame__depth {
+      color: $midblue;
+    }
+  }
+
+  &:active {
+    background-color: $bg-grey;
+  }
+}

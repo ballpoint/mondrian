@@ -181,6 +181,10 @@ export default class Doc {
     this.history.redo(this);
   }
 
+  jumpToHistoryDepth(d) {
+    this.history.jumpToDepth(this, d);
+  }
+
   toSVG() {
     let doc = this.toDocument();
     doc.setAttribute('xmlns:mondrian', 'http://mondrian.io/xml');

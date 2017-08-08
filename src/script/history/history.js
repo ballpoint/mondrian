@@ -1,18 +1,23 @@
 import HistoryFrame from 'history/Frame';
 import * as actions from 'history/actions/actions';
 
-const FRAME_MERGE_THRESHOLD = 500; // ms
-
 export default class DocHistory {
   // Linked list history data struct ,'>)
   constructor() {
-    this.head = new HistoryFrame([
+    let initFrame = new HistoryFrame([
         new actions.InitAction() // TODO shove doc in here
     ]);
-    this.head.seal();
+    initFrame.seal();
+    this.pushFrame(initFrame);
   }
 
   pushFrame(frame) {
+    if (this.head) {
+      frame.depth = this.head.depth+1;
+    } else {
+      frame.depth = 0;
+    }
+
     frame.setPrev(this.head);
     this.setHead(frame);
   }
@@ -26,20 +31,8 @@ export default class DocHistory {
       }
     } else {
       let nf = new HistoryFrame([action]);
-      nf.setPrev(this.head);
-      this.setHead(nf);
+      this.pushFrame(nf);
     }
-
-    /*
-    if (
-      this.head.constructor === action.constructor &&
-      (action.created.valueOf() - this.head.created.valueOf()) < FRAME_MERGE_THRESHOLD
-    ) {
-      // Merge events
-      this.head.merge(action);
-      return;
-    }
-    */
   }
 
   setHead(action) {
@@ -50,9 +43,9 @@ export default class DocHistory {
     return this.head.hasPrev();
   }
 
-  undo(editor) {
+  undo(doc) {
     if (this.head.hasPrev()) {
-      this.head.undo(editor);
+      this.head.undo(doc);
       if (this.head.prev) {
         this.setHead(this.head.prev);
       }
@@ -63,11 +56,26 @@ export default class DocHistory {
     return !!this.head.newestSucc;
   }
 
-  redo(editor) {
+  redo(doc) {
     let next = this.head.newestSucc;
     if (next) {
-      next.perform(editor);
+      next.perform(doc);
       this.setHead(next);
+    }
+  }
+  
+  jumpToDepth(doc, d) {
+    let delta = this.head.depth - d;
+    if (delta === 0) {
+      return;
+    } else if (delta < 0) {
+      for (let i = 0; i < Math.abs(delta); i++) {
+        this.redo(doc);
+      }
+    } else if (delta > 0) {
+      for (let i = 0; i < delta; i++) {
+        this.undo(doc);
+      }
     }
   }
 }
