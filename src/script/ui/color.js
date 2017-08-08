@@ -143,11 +143,9 @@ export default class Color {
     };
   }
 
-
   recalculateHex() {
     return this.hex = this.rgbToHex(this.r, this.g, this.b);
   }
-
 
   darken(amt) {
     let macro = val => val / amt;
@@ -193,7 +191,6 @@ export default class Color {
     return this;
   }
 
-
   toRGBString() {
     if (this.r === null) {
       return "none";
@@ -202,11 +199,9 @@ export default class Color {
     }
   }
 
-
   toHexString() {
     return `#${this.hex}`;
   }
-
 
   toString() {
     this.removeNaNs(); // HACK
@@ -238,11 +233,4 @@ export default class Color {
   }
 }
 
-
-
-
-
 window.Color = Color;
-
-
-

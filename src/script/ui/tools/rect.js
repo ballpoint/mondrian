@@ -33,7 +33,14 @@ export default class Rect extends Tool {
 
       this.scaleOrigin = lastPosn;
 
-      this.rect = Path.rectangle({ x, y, width, height, fill: '#ccccee', stroke: '#000000' });
+      this.rect = Path.rectangle({
+        x,
+        y,
+        width,
+        height,
+        fill: this.editor.state.colors.fill,
+        stroke: this.editor.state.colors.stroke
+      });
 
       this.currentIndex = this.editor.state.layer.nextChildIndex();
 

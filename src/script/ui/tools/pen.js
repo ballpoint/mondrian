@@ -79,8 +79,8 @@ export default class Pen extends Tool {
 
     if (!this.pathItem) {
       this.pathItem = new Path({
-        fill: '#a877d6',
-        stroke: '#000000',
+        fill: this.editor.state.colors.fill,
+        stroke: this.editor.state.colors.stroke
       });
 
       pathIndex = this.editor.state.layer.nextChildIndex()

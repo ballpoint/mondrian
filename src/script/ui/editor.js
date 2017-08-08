@@ -2,6 +2,8 @@ import { PIXEL_RATIO } from 'lib/math';
 import { scaleLinear } from 'd3-scale';
 import consts from 'consts';
 import Color from 'ui/color';
+import SelectedColors from 'ui/SelectedColors';
+import SelectedStrokeStyle from 'ui/SelectedStrokeStyle';
 import EventEmitter from 'lib/events';
 import Canvas from 'ui/canvas';
 
@@ -220,7 +222,11 @@ export default class Editor extends EventEmitter {
         selection: [],
         hovering:  [],
         scope: new Index([0]),
-        tool: new tools.Cursor(this)
+        tool: new tools.Cursor(this),
+
+        // Style
+        colors: new SelectedColors(),
+        stroke: new SelectedStrokeStyle(),
       }
     } else {
       this.state = {
@@ -228,7 +234,11 @@ export default class Editor extends EventEmitter {
         selection: [],
         hovering:  [],
         scope: new Index([0]),
-        tool: new tools.Cursor(this)
+        tool: new tools.Cursor(this),
+
+        // Style
+        colors: new SelectedColors(),
+        stroke: new SelectedStrokeStyle(),
       };
 
     }

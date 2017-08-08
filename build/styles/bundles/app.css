@@ -403,6 +403,11 @@ html {
       color: #0072d1; }
     #app-tools .app-tool:active {
       background-color: #f2f2f2; }
+  #app-tools #current-colors {
+    margin: 12px; }
+    #app-tools #current-colors .color-indicator {
+      width: 36px;
+      height: 36px; }
 #app-toolbar {
   flex-grow: 0;
   height: 36px;

@@ -23,6 +23,18 @@
       background-color: $bg-grey;
     }
   }
+
+  $color-swatch-margin: 12px;
+
+  #current-colors {
+    margin: $color-swatch-margin;
+
+
+    .color-indicator {
+      width: $app-toolbar-width - ($color-swatch-margin*2);
+      height: $app-toolbar-width - ($color-swatch-margin*2);
+    }
+  }
 }
 
 

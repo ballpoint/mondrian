@@ -1,6 +1,7 @@
 import * as tools from 'ui/tools/tools';
 import classnames from 'classnames';
 import 'tools/tools.scss';
+import CurrentColors from 'ui/components/tools/CurrentColors';
 
 const config = [
   {
@@ -64,6 +65,10 @@ let Tools = React.createClass({
               { t.label }
             </div>
           })
+        }
+
+        {
+          <CurrentColors editor={this.props.editor} />
         }
       </div>
     );

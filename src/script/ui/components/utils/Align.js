@@ -42,11 +42,11 @@ let AlignUtil = React.createClass({
       case SELECTION:
         buttonIcon = (
           <svg>
-            <rect x="20%" y="20%" width="60%" height="60%" />
-            <rect x="15%" y="15%" width="10%" height="10%" />
-            <rect x="75%" y="15%" width="10%" height="10%" />
-            <rect x="15%" y="75%" width="10%" height="10%" />
-            <rect x="75%" y="75%" width="10%" height="10%" />
+            <rect x="6" y="6" width="16" height="16" />
+            <rect x="4" y="4" width="4" height="4" />
+            <rect x="4" y="20" width="4" height="4" />
+            <rect x="20" y="4" width="4" height="4" />
+            <rect x="20" y="20" width="4" height="4" />
           </svg>
         );
         buttonHint = 'Aligning to selection. Click to align to canvas.';
@@ -54,7 +54,7 @@ let AlignUtil = React.createClass({
       case CANVAS:
         buttonIcon = (
           <svg>
-            <rect x="20%" y="20%" width="60%" height="60%" />
+            <rect x="4" y="4" width="20" height="20" />
           </svg>
         );
         buttonHint = 'Aligning to canvas. Click to align to selection.';
