@@ -90,27 +90,27 @@ $button-item-dimen: 13px;
     .align-util-button--tl {
       .align-util-button__item { top: -1px; left: -1px; }
     }
-    .align-util-button--t {
+    .align-util-button--tc {
       .align-util-button__item { top: -1px; left: ($button-dimen/2)-($button-item-dimen/2); }
     }
     .align-util-button--tr {
       .align-util-button__item { top: -1px; right: -1px; }
     }
 
-    .align-util-button--l {
+    .align-util-button--cl {
       .align-util-button__item { top: ($button-dimen/2)-($button-item-dimen/2); left: -1px; }
     }
     .align-util-button--c {
       .align-util-button__item { top: ($button-dimen/2)-($button-item-dimen/2); left: ($button-dimen/2)-($button-item-dimen/2); }
     }
-    .align-util-button--r {
+    .align-util-button--cr {
       .align-util-button__item { top: ($button-dimen/2)-($button-item-dimen/2); right: -1px; }
     }
 
     .align-util-button--bl {
       .align-util-button__item { bottom: -1px; left: -1px; }
     }
-    .align-util-button--b {
+    .align-util-button--bc {
       .align-util-button__item { bottom: -1px; left: ($button-dimen/2)-($button-item-dimen/2); }
     }
     .align-util-button--br {

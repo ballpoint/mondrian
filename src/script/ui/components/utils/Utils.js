@@ -39,16 +39,14 @@ let Utils = React.createClass({
       />
     );
 
-    if (this.state.selection.length > 0) {
-      w.push(
-        <AlignUtil
-          key="align"
-          editor={this.props.editor} 
-          selection={this.state.selection}
-          selectionBounds={this.state.selectionBounds}
-        />
-      );
-    }
+    w.push(
+      <AlignUtil
+        key="align"
+        editor={this.props.editor} 
+        selection={this.state.selection}
+        selectionBounds={this.state.selectionBounds}
+      />
+    );
 
     return w;
   },

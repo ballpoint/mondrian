@@ -93,16 +93,21 @@ let AlignUtil = React.createClass({
       // Determine xd
       switch (which) {
         case 'tl':
-        case 'l':
         case 'bl':
+        case 'cl':
+        case 'hl':
           xd = sb.l - b.l;
           break;
+        case 'tc':
         case 'c':
+        case 'bc':
+        case 'hc':
           xd = sb.center().x - b.center().x;
           break;
         case 'tr':
-        case 'r':
         case 'br':
+        case 'cr':
+        case 'hr':
           xd = sb.r - b.r;
           break;
       }
@@ -110,16 +115,21 @@ let AlignUtil = React.createClass({
       // Determine yd
       switch (which) {
         case 'tl':
-        case 't':
+        case 'tc':
         case 'tr':
+        case 'vt':
           yd = sb.t - b.t;
           break;
+        case 'cl':
         case 'c':
+        case 'cr':
+        case 'vc':
           yd = sb.center().y - b.center().y
           break;
         case 'bl':
-        case 'b':
+        case 'bc':
         case 'br':
+        case 'vb':
           yd = sb.b - b.b;
           break;
       }
@@ -129,6 +139,7 @@ let AlignUtil = React.createClass({
           indexes: [elem.index], xd, yd
         }));
       }
+
     }
 
     let frame = new HistoryFrame(as);
@@ -150,13 +161,13 @@ let AlignUtil = React.createClass({
             </svg>
 
             <AlignUtilButton which="tl" performAlign={this.performAlign} />
-            <AlignUtilButton which="t" performAlign={this.performAlign} />
+            <AlignUtilButton which="tc" performAlign={this.performAlign} />
             <AlignUtilButton which="tr" performAlign={this.performAlign} />
-            <AlignUtilButton which="l" performAlign={this.performAlign} />
+            <AlignUtilButton which="cl" performAlign={this.performAlign} />
             <AlignUtilButton which="c" performAlign={this.performAlign} />
-            <AlignUtilButton which="r" performAlign={this.performAlign} />
+            <AlignUtilButton which="cr" performAlign={this.performAlign} />
             <AlignUtilButton which="bl" performAlign={this.performAlign} />
-            <AlignUtilButton which="b" performAlign={this.performAlign} />
+            <AlignUtilButton which="bc" performAlign={this.performAlign} />
             <AlignUtilButton which="br" performAlign={this.performAlign} />
           </div>
           <div id="align-util__1d-v">
