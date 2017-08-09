@@ -1,2 +1,1 @@
-$(npm bin)/prettier $(cat .prettier) --write src/script/*.js
-$(npm bin)/prettier $(cat .prettier) --write src/script/**/*.js
+$(npm bin)/prettier --single-quote --trailing-comma none --write $(find src/script -name '*.js')
