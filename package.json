@@ -42,6 +42,7 @@
     "mocha": "^3.4.2",
     "mocha-loader": "^1.1.1",
     "node-sass": "^4.1.0",
+    "prettier": "^1.5.3",
     "raw-loader": "^0.5.1",
     "sass-loader": "^4.0.1",
     "webpack": "^2.5.1"
