@@ -1,7 +1,7 @@
-import Path from "geometry/path";
-import PathPoint from "geometry/path-point";
-import Item from "geometry/item";
-import { indexesIdentical } from "geometry/index";
+import Path from 'geometry/path';
+import PathPoint from 'geometry/path-point';
+import Item from 'geometry/item';
+import { indexesIdentical } from 'geometry/index';
 
 export class HistoryAction {
   constructor(data) {
@@ -12,7 +12,7 @@ export class HistoryAction {
 
 export class InitAction extends HistoryAction {
   get displayTitle() {
-    return "Initialize Document";
+    return 'Initialize Document';
   }
 
   perform(doc) {}
@@ -20,7 +20,7 @@ export class InitAction extends HistoryAction {
 
 export class NudgeAction extends HistoryAction {
   get displayTitle() {
-    return "Move";
+    return 'Move';
   }
 
   perform(doc) {
@@ -52,7 +52,7 @@ export class NudgeAction extends HistoryAction {
 
 export class ScaleAction extends HistoryAction {
   get displayTitle() {
-    return "Scale";
+    return 'Scale';
   }
 
   perform(doc) {
@@ -81,7 +81,7 @@ export class ScaleAction extends HistoryAction {
 
 export class RotateAction extends HistoryAction {
   get displayTitle() {
-    return "Rotate";
+    return 'Rotate';
   }
 
   perform(doc) {
@@ -110,7 +110,7 @@ export class RotateAction extends HistoryAction {
 
 export class NudgeHandleAction extends HistoryAction {
   get displayTitle() {
-    return "Move Handle";
+    return 'Move Handle';
   }
 
   perform(doc) {
@@ -147,7 +147,7 @@ export class NudgeHandleAction extends HistoryAction {
 
 export class AddHandleAction extends HistoryAction {
   get displayTitle() {
-    return "Add Handle";
+    return 'Add Handle';
   }
 
   perform(doc) {
@@ -170,7 +170,7 @@ export class AddHandleAction extends HistoryAction {
 
 export class RemoveHandleAction extends HistoryAction {
   get displayTitle() {
-    return "Remove Handle";
+    return 'Remove Handle';
   }
 
   perform(doc) {
@@ -178,7 +178,7 @@ export class RemoveHandleAction extends HistoryAction {
       let pp = doc.getFromIndex(index);
       pp.unsetHandle(this.data.handle);
       if (this.data.reflect) {
-        pp.unsetHandle(this.data.handle === "pHandle" ? "sHandle" : "pHandle");
+        pp.unsetHandle(this.data.handle === 'pHandle' ? 'sHandle' : 'pHandle');
       }
     }
   }
@@ -186,7 +186,7 @@ export class RemoveHandleAction extends HistoryAction {
 
 export class InsertAction extends HistoryAction {
   get displayTitle() {
-    return "Insert Shapes";
+    return 'Insert Shapes';
   }
 
   constructor(data) {
@@ -223,7 +223,7 @@ export class InsertAction extends HistoryAction {
 
 export class DeleteAction extends HistoryAction {
   get displayTitle() {
-    return "Remove Shapes";
+    return 'Remove Shapes';
   }
 
   constructor(data) {
@@ -250,7 +250,7 @@ export class DeleteAction extends HistoryAction {
 
 export class ToggleMetadataBoolAction extends HistoryAction {
   get displayTitle() {
-    return "Toggle Metadata";
+    return 'Toggle Metadata';
   }
 
   constructor(data) {

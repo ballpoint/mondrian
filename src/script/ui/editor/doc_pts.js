@@ -1,7 +1,7 @@
-import consts from "consts";
-import Circle from "geometry/circle";
-import Element from "ui/element";
-import UIElement from "ui/editor/ui_element";
+import consts from 'consts';
+import Circle from 'geometry/circle';
+import Element from 'ui/element';
+import UIElement from 'ui/editor/ui_element';
 
 export default class DocumentPointsUIElement extends UIElement {
   reset() {
@@ -13,7 +13,7 @@ export default class DocumentPointsUIElement extends UIElement {
 
     let tool = this.editor.state.tool;
 
-    if (tool.id === "subcursor") {
+    if (tool.id === 'subcursor') {
       for (let elem of this.editor.doc.elementsFlat) {
         if (!elem.points) continue;
         let points = elem.points.all();
@@ -23,7 +23,7 @@ export default class DocumentPointsUIElement extends UIElement {
             if (pt !== tool.hovering) {
               layer.drawCircle(this.editor.projection.posn(pt), 2.5, {
                 stroke: consts.point,
-                fill: "white"
+                fill: 'white'
               });
             }
           }
@@ -36,11 +36,11 @@ export default class DocumentPointsUIElement extends UIElement {
     }
 
     // Don't draw selected points when we're manipulating points
-    if (tool.id === "pen" && tool.closest) {
+    if (tool.id === 'pen' && tool.closest) {
       return;
     }
 
-    if (this.editor.state.selectionType === "POINTS") {
+    if (this.editor.state.selectionType === 'POINTS') {
       // draw selected pts
       for (let pt of this.editor.state.selection) {
         this.handlePoint(pt, layer, {
@@ -54,12 +54,12 @@ export default class DocumentPointsUIElement extends UIElement {
     let mainPosn = this.editor.projection.posn(pt);
 
     if (opts.includeHandles) {
-      for (let name of ["sHandle", "pHandle"]) {
+      for (let name of ['sHandle', 'pHandle']) {
         let handle = pt[name];
         if (!handle) continue;
 
         let sp = this.editor.projection.posn(handle);
-        let id = "selectedPoint:" + pt.index.toString() + ":" + name;
+        let id = 'selectedPoint:' + pt.index.toString() + ':' + name;
         layer.drawLineSegment(mainPosn, sp, { stroke: consts.point });
 
         this.drawPoint(id, handle, sp, layer);
@@ -79,7 +79,7 @@ export default class DocumentPointsUIElement extends UIElement {
       }
     }
 
-    let mainId = "selectedPoint:" + pt.index.toString();
+    let mainId = 'selectedPoint:' + pt.index.toString();
     let mp = this.editor.projection.posn(pt);
 
     // Main point
@@ -101,7 +101,7 @@ export default class DocumentPointsUIElement extends UIElement {
   }
 
   drawPoint(id, point, posn, layer, onDrag) {
-    let style = { stroke: consts.point, fill: "white" };
+    let style = { stroke: consts.point, fill: 'white' };
     let radius = 2.5;
     if (this.editor.isSelected(point)) {
       //style.stroke = 'blue';
@@ -124,10 +124,10 @@ export default class DocumentPointsUIElement extends UIElement {
         e.stopPropagation();
         onDrag(e, posn, lastPosn);
       },
-      "drag:start": e => {
+      'drag:start': e => {
         e.stopPropagation();
       },
-      "drag:stop": e => {
+      'drag:stop': e => {
         e.stopPropagation();
       }
     });

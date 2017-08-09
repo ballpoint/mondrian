@@ -6,37 +6,39 @@ import CurrentColors from 'ui/components/tools/CurrentColors';
 const config = [
   {
     label: 'Cursor',
-    constructor: tools.Cursor,
+    constructor: tools.Cursor
   },
   {
     label: 'Subcursor',
-    constructor: tools.SubCursor,
+    constructor: tools.SubCursor
   },
   {
     label: 'Zoom',
-    constructor: tools.Zoom,
+    constructor: tools.Zoom
   },
   {
     label: 'Pen',
-    constructor: tools.Pen,
+    constructor: tools.Pen
   },
   {
     label: 'Rect',
-    constructor: tools.Rect,
+    constructor: tools.Rect
   }
-]
+];
 
 let Tools = React.createClass({
-
   getInitialState() {
     return {
-      selected: this.props.editor.state.tool,
-    }
+      selected: this.props.editor.state.tool
+    };
   },
 
   componentDidMount() {
     this.props.editor.on('change:tool', () => {
-      if (!this.state.selected || this.props.editor.state.tool.id !== this.state.selected.id) {
+      if (
+        !this.state.selected ||
+        this.props.editor.state.tool.id !== this.state.selected.id
+      ) {
         this.setState({
           selected: this.props.editor.state.tool
         });
@@ -45,16 +47,17 @@ let Tools = React.createClass({
   },
 
   render() {
-
     return (
       <div>
-        { 
-          config.map((t) => {
-            let isSelected = this.state.selected && this.props.editor.state.tool.constructor === t.constructor;
-            return <div
+        {config.map(t => {
+          let isSelected =
+            this.state.selected &&
+            this.props.editor.state.tool.constructor === t.constructor;
+          return (
+            <div
               className={classnames({
                 'app-tool': true,
-                'selected': isSelected
+                selected: isSelected
               })}
               onClick={() => {
                 this.props.editor.selectTool(
@@ -62,19 +65,15 @@ let Tools = React.createClass({
                 );
               }}
             >
-              { t.label }
+              {t.label}
             </div>
-          })
-        }
+          );
+        })}
 
-        {
-          <CurrentColors editor={this.props.editor} />
-        }
+        {<CurrentColors editor={this.props.editor} />}
       </div>
     );
-
   }
-
 });
 
 export default Tools;

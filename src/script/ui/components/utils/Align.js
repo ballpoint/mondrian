@@ -8,14 +8,14 @@ import * as actions from 'history/actions/actions';
 let AlignUtilButton = React.createClass({
   render() {
     return (
-      <div className={classnames({
-        "align-util-button": true,
-        ["align-util-button--"+this.props.which]: true,
-      })}
-      
-      onClick={() => {
-        this.props.performAlign(this.props.which);
-      }}
+      <div
+        className={classnames({
+          'align-util-button': true,
+          ['align-util-button--' + this.props.which]: true
+        })}
+        onClick={() => {
+          this.props.performAlign(this.props.which);
+        }}
       >
         <div className="align-util-button__item" />
         <div className="align-util-button__item" />
@@ -31,7 +31,7 @@ let AlignUtil = React.createClass({
   getInitialState() {
     return {
       mode: SELECTION
-    }
+    };
   },
 
   renderModeButton() {
@@ -62,7 +62,11 @@ let AlignUtil = React.createClass({
     }
 
     return (
-      <a title={buttonHint} className="align-util-button align-util-mode-button" onClick={this.toggleMode}>
+      <a
+        title={buttonHint}
+        className="align-util-button align-util-mode-button"
+        onClick={this.toggleMode}
+      >
         {buttonIcon}
       </a>
     );
@@ -74,7 +78,7 @@ let AlignUtil = React.createClass({
 
   performAlign(which) {
     let sb;
-    
+
     switch (this.state.mode) {
       case SELECTION:
         sb = this.props.selectionBounds.bounds;
@@ -124,7 +128,7 @@ let AlignUtil = React.createClass({
         case 'c':
         case 'cr':
         case 'vc':
-          yd = sb.center().y - b.center().y
+          yd = sb.center().y - b.center().y;
           break;
         case 'bl':
         case 'bc':
@@ -135,11 +139,14 @@ let AlignUtil = React.createClass({
       }
 
       if (xd != 0 || yd != 0) {
-        as.push(new actions.NudgeAction({
-          indexes: [elem.index], xd, yd
-        }));
+        as.push(
+          new actions.NudgeAction({
+            indexes: [elem.index],
+            xd,
+            yd
+          })
+        );
       }
-
     }
 
     let frame = new HistoryFrame(as);

@@ -3,16 +3,24 @@ import classnames from 'classnames';
 import Util from 'ui/components/utils/Util';
 
 let HistoryUtil = React.createClass({
-  renderHistoryFrame(frame, selected=false) {
+  renderHistoryFrame(frame, selected = false) {
     return (
-      <div key={"frame"+frame.depth} className={classnames({
-        "history-util__frame": true,
-        "selected": selected,
-      })} onClick={() => {
-        this.props.editor.jumpToHistoryDepth(frame.depth);
-      }}>
-        <div className="history-util__frame__depth">{ frame.depth }</div> 
-        <div className="history-util__frame__title">{ frame.displayTitle }</div>
+      <div
+        key={'frame' + frame.depth}
+        className={classnames({
+          'history-util__frame': true,
+          selected: selected
+        })}
+        onClick={() => {
+          this.props.editor.jumpToHistoryDepth(frame.depth);
+        }}
+      >
+        <div className="history-util__frame__depth">
+          {frame.depth}
+        </div>
+        <div className="history-util__frame__title">
+          {frame.displayTitle}
+        </div>
       </div>
     );
   },
@@ -59,5 +67,3 @@ let HistoryUtil = React.createClass({
 });
 
 export default HistoryUtil;
-
-

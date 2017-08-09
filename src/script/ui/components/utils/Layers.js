@@ -15,4 +15,3 @@ let LayersUtil = React.createClass({
 });
 
 export default LayersUtil;
-

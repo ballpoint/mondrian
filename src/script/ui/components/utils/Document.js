@@ -50,10 +50,13 @@ let ChildCtrlButton = React.createClass({
 
   render() {
     return (
-      <div className={classnames({
-        "doc-util__item__bar__ctrls__ctrl": true,
-        "disabled": this.props.disabled,
-      })} onClick={this.onClick}>
+      <div
+        className={classnames({
+          'doc-util__item__bar__ctrls__ctrl': true,
+          disabled: this.props.disabled
+        })}
+        onClick={this.onClick}
+      >
         {this.label()}
       </div>
     );
@@ -64,8 +67,8 @@ let DocumentUtilChild = React.createClass({
   getInitialState() {
     return {
       nonce: 0,
-      id: '',
-    }
+      id: ''
+    };
   },
 
   componentWillReceiveProps(nextProps) {
@@ -96,7 +99,10 @@ let DocumentUtilChild = React.createClass({
     if (this.state.nonce < nonce) {
       let canvas = ReactDOM.findDOMNode(this.refs.thumbnail);
       if (canvas) {
-        let thumb = new Thumb([this.props.child], { maxWidth: dimens, maxHeight: dimens });
+        let thumb = new Thumb([this.props.child], {
+          maxWidth: dimens,
+          maxHeight: dimens
+        });
         thumb.drawTo(new CanvasLayer('thumb', canvas));
         this.setState({ nonce });
       }
@@ -107,50 +113,61 @@ let DocumentUtilChild = React.createClass({
     let child = this.props.child;
     let children;
 
-    let isSelected = this.props.parentSelected || this.props.editor.isSelected(child);
+    let isSelected =
+      this.props.parentSelected || this.props.editor.isSelected(child);
     let propagateSelected = !(child instanceof Layer);
 
     let isLocked = this.props.editor.doc.isLocked(child);
     let isVisible = this.props.editor.doc.isVisible(child);
     let isAvailable = !isLocked && isVisible;
 
-    if (child.children && child.children.length > 0 && this.props.isExpanded(this.props.child)) {
-      children = <div className={classnames({
-        "doc-util__item__children": true,
-      })}>
-        {
-          child.children.slice(0).reverse().map((child) => {
-            return <DocumentUtilChild
-              key={child.index.toString()}
-              child={child}
-              editor={this.props.editor}
-              isExpanded={this.props.isExpanded}
-              expand={this.props.expand}
-              collapse={this.props.collapse}
-              parentSelected={propagateSelected && isSelected}
-              parentLocked={isLocked}
-              parentVisible={isVisible}
-            />
-          })
-        }
-      </div>
+    if (
+      child.children &&
+      child.children.length > 0 &&
+      this.props.isExpanded(this.props.child)
+    ) {
+      children = (
+        <div
+          className={classnames({
+            'doc-util__item__children': true
+          })}
+        >
+          {child.children.slice(0).reverse().map(child => {
+            return (
+              <DocumentUtilChild
+                key={child.index.toString()}
+                child={child}
+                editor={this.props.editor}
+                isExpanded={this.props.isExpanded}
+                expand={this.props.expand}
+                collapse={this.props.collapse}
+                parentSelected={propagateSelected && isSelected}
+                parentLocked={isLocked}
+                parentVisible={isVisible}
+              />
+            );
+          })}
+        </div>
+      );
     }
 
     return (
-      <div className={classnames({
-        "doc-util__item": true,
-        "doc-util__item--parent": (child.children && child.children.length > 0),
-        ["doc-util__item--"+child.constructor.name]: true,
-        "selected": isSelected,
-      })}>
+      <div
+        className={classnames({
+          'doc-util__item': true,
+          'doc-util__item--parent': child.children && child.children.length > 0,
+          ['doc-util__item--' + child.constructor.name]: true,
+          selected: isSelected
+        })}
+      >
         <div
           className={classnames({
-            "doc-util__item__bar": true,
+            'doc-util__item__bar': true
           })}
         >
-          <div 
+          <div
             className="doc-util__item__bar__label"
-            onClick={(e) => {
+            onClick={e => {
               e.stopPropagation();
               if (!isAvailable) return;
               if (child instanceof Layer) {
@@ -166,30 +183,48 @@ let DocumentUtilChild = React.createClass({
                 this.props.expand(this.props.child);
               }
             }}
-            onMouseMove={(e) => {
+            onMouseMove={e => {
               e.stopPropagation();
               if (!isAvailable) return;
               this.props.editor.setHovering([child]);
             }}
-            onMouseOut={(e) => {
+            onMouseOut={e => {
               e.stopPropagation();
               if (!isAvailable) return;
               this.props.editor.setHovering([]);
             }}
-
           >
-            <div className="doc-util__item__bar__thumb"><canvas ref="thumbnail" /></div>
+            <div className="doc-util__item__bar__thumb">
+              <canvas ref="thumbnail" />
+            </div>
             <div className="doc-util__item__bar__type">
-              { child.constructor.name }
+              {child.constructor.name}
             </div>
             <div className="doc-util__item__bar__id">
-              { child.id }
+              {child.id}
             </div>
           </div>
           <div className="doc-util__item__bar__ctrls">
-            <ChildCtrlButton child={this.props.child} editor={this.props.editor} type="visibility" value={isVisible} disabled={!this.props.parentVisible} />
-            <ChildCtrlButton child={this.props.child} editor={this.props.editor} type="lock" value={isLocked} disabled={this.props.parentLocked} />
-            <ChildCtrlButton child={this.props.child} editor={this.props.editor} type="delete" value={true} />
+            <ChildCtrlButton
+              child={this.props.child}
+              editor={this.props.editor}
+              type="visibility"
+              value={isVisible}
+              disabled={!this.props.parentVisible}
+            />
+            <ChildCtrlButton
+              child={this.props.child}
+              editor={this.props.editor}
+              type="lock"
+              value={isLocked}
+              disabled={this.props.parentLocked}
+            />
+            <ChildCtrlButton
+              child={this.props.child}
+              editor={this.props.editor}
+              type="delete"
+              value={true}
+            />
           </div>
         </div>
         {children}
@@ -202,19 +237,17 @@ let DocumentUtil = React.createClass({
   getInitialState() {
     return {
       expandedIndexes: {}
-    }
+    };
   },
 
-  componentDidMount() {
-  },
+  componentDidMount() {},
 
   shouldComponentUpdate(nextProps, nextState) {
     // TODO optimize this shit
     return true;
   },
 
-  componentWillReceiveProps(prevState) {
-  },
+  componentWillReceiveProps(prevState) {},
 
   expand(child) {
     this.state.expandedIndexes[child.index.toString()] = true;
@@ -234,9 +267,9 @@ let DocumentUtil = React.createClass({
     return (
       <Util title="Document">
         <div className="doc-util__items">
-          {
-            this.props.editor.doc.layers.slice(0).reverse().map((child) => {
-              return <DocumentUtilChild
+          {this.props.editor.doc.layers.slice(0).reverse().map(child => {
+            return (
+              <DocumentUtilChild
                 key={child.index.toString()}
                 child={child}
                 editor={this.props.editor}
@@ -246,12 +279,10 @@ let DocumentUtil = React.createClass({
                 parentVisible={true}
                 parentLocked={false}
               />
-            })
-          }
+            );
+          })}
         </div>
-        <div className="doc-util__ctrls">
-          +
-        </div>
+        <div className="doc-util__ctrls">+</div>
       </Util>
     );
   }

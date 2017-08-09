@@ -1,4 +1,4 @@
-import Tool from "ui/tools/tool";
+import Tool from 'ui/tools/tool';
 
 export default class Paw extends Tool {
   constructor(editor) {

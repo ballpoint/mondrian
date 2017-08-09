@@ -1,6 +1,6 @@
 import MenuBody from 'ui/components/menus/MenuBody';
 import MenuItem from 'ui/components/menus/MenuItem';
-import "menus.scss";
+import 'menus.scss';
 
 let EditMenu = React.createClass({
   render() {
@@ -8,7 +8,10 @@ let EditMenu = React.createClass({
     let editor = this.props.editor;
     let history = this.props.editor.doc.history;
     return (
-      <MenuBody absoluteTop={this.props.absoluteTop} absoluteLeft={this.props.absoluteLeft}>
+      <MenuBody
+        absoluteTop={this.props.absoluteTop}
+        absoluteLeft={this.props.absoluteLeft}
+      >
         <MenuItem
           label="Undo"
           disabled={!history.canUndo()}
@@ -45,5 +48,3 @@ let EditMenu = React.createClass({
 });
 
 export default EditMenu;
-
-

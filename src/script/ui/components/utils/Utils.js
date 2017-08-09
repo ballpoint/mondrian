@@ -8,8 +8,8 @@ import AlignUtil from 'ui/components/utils/Align';
 let Utils = React.createClass({
   getInitialState() {
     return {
-      selection: [],
-    }
+      selection: []
+    };
   },
   componentDidMount() {
     this.props.editor.on('change', () => {
@@ -17,10 +17,14 @@ let Utils = React.createClass({
         let editor = this.props.editor;
 
         this.setState({
-          selection:       editor.state.selection,
+          selection: editor.state.selection,
           selectionBounds: editor.state.selectionBounds,
-          hasSelectedElements: editor.state.selection.length > 0 && editor.state.selectionType === 'ELEMENTS',
-          hasSelectedPoints: editor.state.selection.length > 0 && editor.state.selectionType === 'POINTS'
+          hasSelectedElements:
+            editor.state.selection.length > 0 &&
+            editor.state.selectionType === 'ELEMENTS',
+          hasSelectedPoints:
+            editor.state.selection.length > 0 &&
+            editor.state.selectionType === 'POINTS'
         });
       });
     });
@@ -34,7 +38,7 @@ let Utils = React.createClass({
     w.push(
       <ColorUtil
         key="color"
-        editor={this.props.editor} 
+        editor={this.props.editor}
         selection={this.state.selection}
         selectionBounds={this.state.selectionBounds}
       />
@@ -43,7 +47,7 @@ let Utils = React.createClass({
     w.push(
       <AlignUtil
         key="align"
-        editor={this.props.editor} 
+        editor={this.props.editor}
         selection={this.state.selection}
         selectionBounds={this.state.selectionBounds}
       />
@@ -69,7 +73,7 @@ let Utils = React.createClass({
     w.push(
       <DocumentUtil
         key="document"
-        editor={this.props.editor} 
+        editor={this.props.editor}
         selection={this.state.selection}
         selectionBounds={this.state.selectionBounds}
       />
@@ -78,7 +82,7 @@ let Utils = React.createClass({
     w.push(
       <HistoryUtil
         key="history"
-        editor={this.props.editor} 
+        editor={this.props.editor}
         doc={this.props.editor.doc}
         selection={this.state.selection}
         selectionBounds={this.state.selectionBounds}

@@ -14,9 +14,36 @@ let BooleanUtil = React.createClass({
     return (
       <Util title="Boolean">
         <div>
-          <div><a href="#" onClick={() => {this.do('unite')}}>Unite</a></div>
-          <div><a href="#" onClick={() => {this.do('subtract')}}>Subtract</a></div>
-          <div><a href="#" onClick={() => {this.do('intersect')}}>Intersect</a></div>
+          <div>
+            <a
+              href="#"
+              onClick={() => {
+                this.do('unite');
+              }}
+            >
+              Unite
+            </a>
+          </div>
+          <div>
+            <a
+              href="#"
+              onClick={() => {
+                this.do('subtract');
+              }}
+            >
+              Subtract
+            </a>
+          </div>
+          <div>
+            <a
+              href="#"
+              onClick={() => {
+                this.do('intersect');
+              }}
+            >
+              Intersect
+            </a>
+          </div>
         </div>
       </Util>
     );
@@ -24,6 +51,3 @@ let BooleanUtil = React.createClass({
 });
 
 export default BooleanUtil;
-
-
-

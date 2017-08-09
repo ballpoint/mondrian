@@ -1,11 +1,10 @@
 import MenuBody from 'ui/components/menus/MenuBody';
 import MenuItem from 'ui/components/menus/MenuItem';
 import Doc from 'io/doc';
-import "menus.scss";
-import "menus/file-menu.scss";
+import 'menus.scss';
+import 'menus/file-menu.scss';
 
 let FileMenu = React.createClass({
-
   openFile(e) {
     e = e.nativeEvent || e;
 
@@ -15,13 +14,13 @@ let FileMenu = React.createClass({
       let fn = files[0].name;
       console.log(files);
 
-      reader.onload = (e) => {
+      reader.onload = e => {
         let text = e.target.result;
 
         let doc = Doc.fromSVG(text, fn);
 
         this.props.editor.load(doc);
-      }
+      };
 
       reader.readAsText(files[0]);
     } else {
@@ -31,7 +30,10 @@ let FileMenu = React.createClass({
 
   render() {
     return (
-      <MenuBody absoluteTop={this.props.absoluteTop} absoluteLeft={this.props.absoluteLeft}>
+      <MenuBody
+        absoluteTop={this.props.absoluteTop}
+        absoluteLeft={this.props.absoluteLeft}
+      >
         <MenuItem label="New" />
         <MenuItem label="Save" />
         <MenuItem className="menu-item--file-input">
@@ -44,4 +46,3 @@ let FileMenu = React.createClass({
 });
 
 export default FileMenu;
-

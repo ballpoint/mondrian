@@ -1,13 +1,13 @@
-import consts from "consts";
-import shapes from "lab/shapes";
-import Tool from "ui/tools/tool";
-import Bounds from "geometry/bounds";
-import Path from "geometry/path";
-import PathPoint from "geometry/path-point";
-import LineSegment from "geometry/line-segment";
-import CubicBezier from "geometry/cubic-bezier-line-segment";
-import HistoryFrame from "history/Frame";
-import * as actions from "history/actions/actions";
+import consts from 'consts';
+import shapes from 'lab/shapes';
+import Tool from 'ui/tools/tool';
+import Bounds from 'geometry/bounds';
+import Path from 'geometry/path';
+import PathPoint from 'geometry/path-point';
+import LineSegment from 'geometry/line-segment';
+import CubicBezier from 'geometry/cubic-bezier-line-segment';
+import HistoryFrame from 'history/Frame';
+import * as actions from 'history/actions/actions';
 
 const PEN_POINT_THRESHOLD = 15;
 
@@ -19,7 +19,7 @@ export default class Pen extends Tool {
   }
 
   get id() {
-    return "pen";
+    return 'pen';
   }
 
   handleMousemove(e, posn) {
@@ -195,7 +195,7 @@ export default class Pen extends Tool {
 
       action = new actions.NudgeHandleAction({
         indexes: [currentPoint.index],
-        handle: "sHandle",
+        handle: 'sHandle',
         reflect: true,
         xd,
         yd
@@ -204,7 +204,7 @@ export default class Pen extends Tool {
       // Set it for the first time
       action = new actions.AddHandleAction({
         indexes: [currentPoint.index],
-        handle: "sHandle",
+        handle: 'sHandle',
         reflect: true,
         posn
       });
@@ -221,7 +221,7 @@ export default class Pen extends Tool {
     if (this.closest) {
       let proj = this.editor.projection;
       let splits = this.closest.splits;
-      let pointStyles = { stroke: consts.point, fill: "white" };
+      let pointStyles = { stroke: consts.point, fill: 'white' };
 
       if (
         splits[0] instanceof CubicBezier &&

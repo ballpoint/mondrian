@@ -4,7 +4,7 @@ export default class Tool {
   }
 
   get id() {
-    return "unknown";
+    return 'unknown';
   }
 
   handleMousemove(e, posn) {}

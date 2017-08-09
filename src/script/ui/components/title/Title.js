@@ -4,7 +4,7 @@ let Title = React.createClass({
   getInitialState() {
     return {
       doc: null
-    }
+    };
   },
 
   componentDidMount() {

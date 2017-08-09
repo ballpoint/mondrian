@@ -1,7 +1,7 @@
-import Posn from "geometry/posn";
-import Bounds from "geometry/bounds";
-import UIElement from "ui/editor/ui_element";
-import math from "lib/math";
+import Posn from 'geometry/posn';
+import Bounds from 'geometry/bounds';
+import UIElement from 'ui/editor/ui_element';
+import math from 'lib/math';
 
 const RULER_DIMEN = math.sharpen(20);
 
@@ -15,26 +15,26 @@ export default class RulersUIElement extends UIElement {
 
     if (this.editor.doc) {
       docBounds = this.editor.screenBounds().sharp();
-      layer.drawRect(docBounds, { stroke: "black" });
+      layer.drawRect(docBounds, { stroke: 'black' });
     }
 
     // Draw ruler
-    layer.drawRect(new Bounds(-1, -1, 21, 21).sharp(), { fill: "#ffffff" });
+    layer.drawRect(new Bounds(-1, -1, 21, 21).sharp(), { fill: '#ffffff' });
     layer.drawRect(new Bounds(20, -1, this.editor.canvas.width, 21).sharp(), {
-      fill: "#ffffff"
+      fill: '#ffffff'
     });
     layer.drawRect(new Bounds(-1, 20, 21, this.editor.canvas.height).sharp(), {
-      fill: "#ffffff"
+      fill: '#ffffff'
     });
     layer.drawLineSegment(
       { x: -1, y: RULER_DIMEN },
       { x: this.editor.canvas.width, y: RULER_DIMEN },
-      { stroke: "#c9c9c9" }
+      { stroke: '#c9c9c9' }
     );
     layer.drawLineSegment(
       { x: RULER_DIMEN, y: -1 },
       { x: RULER_DIMEN, y: this.editor.canvas.height },
-      { stroke: "#c9c9c9" }
+      { stroke: '#c9c9c9' }
     );
 
     let step = 0.00000001;
@@ -81,11 +81,11 @@ export default class RulersUIElement extends UIElement {
     layer.drawLineSegment(
       { x, y: 6 },
       { x, y: RULER_DIMEN },
-      { stroke: "#000000" }
+      { stroke: '#000000' }
     );
 
     layer.drawText(new Posn(x + 4, 15), this.formatLabel(xval), {
-      fill: "black"
+      fill: 'black'
     });
   }
 
@@ -96,11 +96,11 @@ export default class RulersUIElement extends UIElement {
     layer.drawLineSegment(
       { x: 6, y },
       { x: RULER_DIMEN, y },
-      { stroke: "#000000" }
+      { stroke: '#000000' }
     );
 
     layer.drawText(new Posn(15, y - 4), this.formatLabel(yval), {
-      fill: "black",
+      fill: 'black',
       rotate: -90
     });
   }

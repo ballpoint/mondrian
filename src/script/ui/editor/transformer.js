@@ -1,10 +1,10 @@
-import consts from "consts";
-import Posn from "geometry/posn";
-import LineSegment from "geometry/line-segment";
-import Bounds from "geometry/bounds";
-import Circle from "geometry/circle";
-import Element from "ui/element";
-import UIElement from "ui/editor/ui_element";
+import consts from 'consts';
+import Posn from 'geometry/posn';
+import LineSegment from 'geometry/line-segment';
+import Bounds from 'geometry/bounds';
+import Circle from 'geometry/circle';
+import Element from 'ui/element';
+import UIElement from 'ui/editor/ui_element';
 
 const CTRL_PT_DIMEN = 7;
 
@@ -16,67 +16,67 @@ export default class TransformerUIElement extends UIElement {
   }
 
   reset() {
-    for (let id of ["tl", "tr", "bl", "br", "t", "l", "r", "b"]) {
-      id = "transformer:scale:" + id;
+    for (let id of ['tl', 'tr', 'bl', 'br', 't', 'l', 'r', 'b']) {
+      id = 'transformer:scale:' + id;
       this.editor.cursorHandler.unregisterElement(id);
     }
-    for (let id of ["tl", "tr", "bl", "br"]) {
-      id = "transformer:rotate:" + id;
+    for (let id of ['tl', 'tr', 'bl', 'br']) {
+      id = 'transformer:rotate:' + id;
       this.editor.cursorHandler.unregisterElement(id);
     }
   }
 
   oppositeX(which) {
     switch (which) {
-      case "l":
-        return "r";
-      case "r":
-        return "l";
-      case "tl":
-        return "tr";
-      case "bl":
-        return "br";
-      case "tr":
-        return "tl";
-      case "br":
-        return "bl";
+      case 'l':
+        return 'r';
+      case 'r':
+        return 'l';
+      case 'tl':
+        return 'tr';
+      case 'bl':
+        return 'br';
+      case 'tr':
+        return 'tl';
+      case 'br':
+        return 'bl';
     }
   }
 
   oppositeY(which) {
     switch (which) {
-      case "t":
-        return "b";
-      case "b":
-        return "t";
-      case "tl":
-        return "bl";
-      case "bl":
-        return "tl";
-      case "tr":
-        return "br";
-      case "br":
-        return "tr";
+      case 't':
+        return 'b';
+      case 'b':
+        return 't';
+      case 'tl':
+        return 'bl';
+      case 'bl':
+        return 'tl';
+      case 'tr':
+        return 'br';
+      case 'br':
+        return 'tr';
     }
   }
 
   oppositeForPoint(which, bounds) {
     switch (which) {
-      case "tl":
+      case 'tl':
         return bounds.br();
-      case "tr":
+      case 'tr':
         return bounds.bl();
-      case "br":
+      case 'br':
         return bounds.tl();
-      case "bl":
+      case 'bl':
         return bounds.tr();
-      case "t":
+      case 't':
         return bounds.bm();
-      case "b":
+      case 'b':
         return bounds.tm();
-      case "l":
+      case 'l':
         return bounds.rm();
-      case "r":
+      case 'r':
         return bounds.lm();
     }
   }
@@ -219,25 +219,25 @@ export default class TransformerUIElement extends UIElement {
     );
 
     // Corner ctrl points
-    this.registerCtrlPoint("tl", layer, tl);
-    this.registerCtrlPoint("tr", layer, tr);
-    this.registerCtrlPoint("bl", layer, bl);
-    this.registerCtrlPoint("br", layer, br);
+    this.registerCtrlPoint('tl', layer, tl);
+    this.registerCtrlPoint('tr', layer, tr);
+    this.registerCtrlPoint('bl', layer, bl);
+    this.registerCtrlPoint('br', layer, br);
 
-    this.registerCtrlPoint("t", layer, tm);
-    this.registerCtrlPoint("b", layer, bm);
-    this.registerCtrlPoint("l", layer, lm);
-    this.registerCtrlPoint("r", layer, rm);
+    this.registerCtrlPoint('t', layer, tm);
+    this.registerCtrlPoint('b', layer, bm);
+    this.registerCtrlPoint('l', layer, lm);
+    this.registerCtrlPoint('r', layer, rm);
 
     let rotationExpandedBounds = bounds.clone().padded(6);
-    this.registerRotationPoint("tl", layer, rotationExpandedBounds.tl());
-    this.registerRotationPoint("tr", layer, rotationExpandedBounds.tr());
-    this.registerRotationPoint("bl", layer, rotationExpandedBounds.bl());
-    this.registerRotationPoint("br", layer, rotationExpandedBounds.br());
+    this.registerRotationPoint('tl', layer, rotationExpandedBounds.tl());
+    this.registerRotationPoint('tr', layer, rotationExpandedBounds.tr());
+    this.registerRotationPoint('bl', layer, rotationExpandedBounds.bl());
+    this.registerRotationPoint('br', layer, rotationExpandedBounds.br());
   }
 
   registerCtrlPoint(which, layer, origin) {
-    let id = "transformer:scale:" + which;
+    let id = 'transformer:scale:' + which;
 
     let opposite;
 
@@ -260,14 +260,14 @@ export default class TransformerUIElement extends UIElement {
     layer.drawRect(ctrlBounds, ctrlOpts);
 
     let cursor = {
-      t: "ns-resize",
-      b: "ns-resize",
-      l: "ew-resize",
-      r: "ew-resize",
-      tl: "nwse-resize",
-      br: "nwse-resize",
-      bl: "nesw-resize",
-      tr: "nesw-resize"
+      t: 'ns-resize',
+      b: 'ns-resize',
+      l: 'ew-resize',
+      r: 'ew-resize',
+      tl: 'nwse-resize',
+      br: 'nwse-resize',
+      bl: 'nesw-resize',
+      tr: 'nesw-resize'
     }[which];
 
     let elem = new Element(
@@ -302,34 +302,34 @@ export default class TransformerUIElement extends UIElement {
           let resultBounds = bounds.clone();
 
           switch (which) {
-            case "tl":
-              resultBounds.moveEdge("t", diffY).moveEdge("l", diffX);
+            case 'tl':
+              resultBounds.moveEdge('t', diffY).moveEdge('l', diffX);
               break;
-            case "tr":
-              resultBounds.moveEdge("t", diffY).moveEdge("r", diffX);
+            case 'tr':
+              resultBounds.moveEdge('t', diffY).moveEdge('r', diffX);
               break;
-            case "br":
-              resultBounds.moveEdge("b", diffY).moveEdge("r", diffX);
+            case 'br':
+              resultBounds.moveEdge('b', diffY).moveEdge('r', diffX);
               break;
-            case "bl":
-              resultBounds.moveEdge("b", diffY).moveEdge("l", diffX);
+            case 'bl':
+              resultBounds.moveEdge('b', diffY).moveEdge('l', diffX);
               break;
-            case "t":
-              resultBounds.moveEdge("t", diffY);
+            case 't':
+              resultBounds.moveEdge('t', diffY);
               break;
-            case "b":
-              resultBounds.moveEdge("b", diffY);
+            case 'b':
+              resultBounds.moveEdge('b', diffY);
               break;
-            case "l":
-              resultBounds.moveEdge("l", diffX);
+            case 'l':
+              resultBounds.moveEdge('l', diffX);
               break;
-            case "r":
-              resultBounds.moveEdge("r", diffX);
+            case 'r':
+              resultBounds.moveEdge('r', diffX);
               break;
           }
 
-          let flipX = resultBounds.flipped("x") != bounds.flipped("x");
-          let flipY = resultBounds.flipped("y") != bounds.flipped("y");
+          let flipX = resultBounds.flipped('x') != bounds.flipped('x');
+          let flipY = resultBounds.flipped('y') != bounds.flipped('y');
 
           let xScale = 1,
             yScale = 1;
@@ -349,7 +349,7 @@ export default class TransformerUIElement extends UIElement {
 
             if (flipX) {
               this.editor.cursorHandler.setActive(
-                "transformer:scale:" + this.oppositeX(which)
+                'transformer:scale:' + this.oppositeX(which)
               );
               //which = this.oppositeX(which);
               // Take new opposite from editor-calculated bounds so that it's perfect
@@ -359,7 +359,7 @@ export default class TransformerUIElement extends UIElement {
 
             if (flipY) {
               this.editor.cursorHandler.setActive(
-                "transformer:scale:" + this.oppositeY(which)
+                'transformer:scale:' + this.oppositeY(which)
               );
               //which = this.oppositeY(which);
               // Take new opposite from editor-calculated bounds so that it's perfect
@@ -368,7 +368,7 @@ export default class TransformerUIElement extends UIElement {
             }
           }
         },
-        "drag:stop": (e, posn, startPosn) => {
+        'drag:stop': (e, posn, startPosn) => {
           e.stopPropagation();
           this.editor.doc.history.head.seal();
         }
@@ -382,7 +382,7 @@ export default class TransformerUIElement extends UIElement {
   }
 
   registerRotationPoint(which, layer, posn) {
-    let id = "transformer:rotate:" + which;
+    let id = 'transformer:rotate:' + which;
     let ctrlBounds = Bounds.centeredOnPosn(
       posn.sharp(),
       CTRL_PT_DIMEN,
@@ -416,7 +416,7 @@ export default class TransformerUIElement extends UIElement {
         this.editor.rotateSelected(angleDelta, center);
       },
 
-      "drag:stop": e => {
+      'drag:stop': e => {
         e.stopPropagation();
         this.editor.doc.history.head.seal();
       }

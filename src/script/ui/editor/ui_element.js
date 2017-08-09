@@ -6,7 +6,7 @@ export default class UIElement {
 
   refresh(layer, context) {
     if (!this._refresh) {
-      console.warn("No refresh defined for UIElement " + this.id);
+      console.warn('No refresh defined for UIElement ' + this.id);
     } else {
       this._refresh.call(this, layer, context);
     }

@@ -1,7 +1,7 @@
-import Tool from "ui/tools/tool";
-import Path from "geometry/path";
-import HistoryFrame from "history/Frame";
-import * as actions from "history/actions/actions";
+import Tool from 'ui/tools/tool';
+import Path from 'geometry/path';
+import HistoryFrame from 'history/Frame';
+import * as actions from 'history/actions/actions';
 
 export default class Rect extends Tool {
   constructor(editor) {
@@ -9,7 +9,7 @@ export default class Rect extends Tool {
   }
 
   get id() {
-    return "rect";
+    return 'rect';
   }
 
   handleMousemove(e, posn) {}
@@ -52,7 +52,7 @@ export default class Rect extends Tool {
             origin: this.scaleOrigin
           })
         ],
-        "Draw Rectangle"
+        'Draw Rectangle'
       );
 
       this.editor.perform(frame);

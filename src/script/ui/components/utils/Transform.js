@@ -5,21 +5,23 @@ import 'utils/selection.scss';
 import Util from 'ui/components/utils/Util';
 import TextInput from 'ui/components/utils/TextInput';
 
-const THUMB_IMG_MAX_WIDTH  = 120;
+const THUMB_IMG_MAX_WIDTH = 120;
 const THUMB_IMG_MAX_HEIGHT = 80;
 
 let TransformUtil = React.createClass({
   getInitialState() {
     return {
-      originId: 'tl',
-    }
+      originId: 'tl'
+    };
   },
 
   shouldComponentUpdate(nextProps, nextState) {
     if (!this.props.selectionBounds || nextProps.selectionBounds) {
       return true;
     } else {
-      return !this.props.selectionBounds.bounds.equal(nextProps.selectionBounds.bounds);
+      return !this.props.selectionBounds.bounds.equal(
+        nextProps.selectionBounds.bounds
+      );
     }
     return true;
   },
@@ -28,20 +30,29 @@ let TransformUtil = React.createClass({
     let sel = this.props.editor.state.selection;
     let subheader;
     if (sel.length === 0) {
-      subheader = 'Document'
-    } else  if (sel.length === 1) {
-      subheader = sel[0].constructor.name +' '+sel[0]._i
+      subheader = 'Document';
+    } else if (sel.length === 1) {
+      subheader = sel[0].constructor.name + ' ' + sel[0]._i;
     } else if (sel.length > 1) {
-      subheader = sel.length + ' items'
+      subheader = sel.length + ' items';
     }
 
-    return <div className="sel-util__subheader">{subheader}</div>;
+    return (
+      <div className="sel-util__subheader">
+        {subheader}
+      </div>
+    );
   },
 
   getSelectionIdKey() {
     let { state } = this.props.editor;
     if (state.selectionType === 'ELEMENTS') {
-      return state.selection.map((e) => { return e.__id__ }).sort().join(',');
+      return state.selection
+        .map(e => {
+          return e.__id__;
+        })
+        .sort()
+        .join(',');
     } else {
       return '';
     }
@@ -63,7 +74,8 @@ let TransformUtil = React.createClass({
   },
 
   onChangeCoord(val, which) {
-    let xd = 0, yd = 0;
+    let xd = 0,
+      yd = 0;
     let { state, doc } = this.props.editor;
     if (state.selectionBounds) {
       let bounds = state.selectionBounds.bounds;
@@ -83,7 +95,8 @@ let TransformUtil = React.createClass({
   },
 
   onChangeScale(val, which) {
-    let xs = 1, ys = 1;
+    let xs = 1,
+      ys = 1;
     let { state, doc } = this.props.editor;
     if (state.selectionBounds) {
       let bounds = state.selectionBounds.bounds;
@@ -112,14 +125,14 @@ let TransformUtil = React.createClass({
   renderOriginButton(id) {
     return (
       <div
-        className={
-          classnames({
-            "sel-util__thumb__origin-button": true,
-            ["sel-util__thumb__origin-button--"+id]: true,
-            "sel-util__thumb__origin-button--active": this.state.originId === id
-          })
-        }
-        onClick={() => { this.setState({ originId: id }) }}
+        className={classnames({
+          'sel-util__thumb__origin-button': true,
+          ['sel-util__thumb__origin-button--' + id]: true,
+          'sel-util__thumb__origin-button--active': this.state.originId === id
+        })}
+        onClick={() => {
+          this.setState({ originId: id });
+        }}
       />
     );
   },
@@ -133,24 +146,24 @@ let TransformUtil = React.createClass({
     if (!doc) return;
 
     if (state.selection.length === 0) {
-      let docBounds = doc.bounds.fitToDimensions(THUMB_IMG_MAX_WIDTH, THUMB_IMG_MAX_HEIGHT);
+      let docBounds = doc.bounds.fitToDimensions(
+        THUMB_IMG_MAX_WIDTH,
+        THUMB_IMG_MAX_HEIGHT
+      );
 
       return (
         <div className="sel-util__thumb">
           <div className="sel-util__thumb__img">
-            <div className="sel-util__thumb__img--doc"
-              style={
-                {
-                  width:  docBounds.width,
-                  height: docBounds.height,
-                }
-              }
-            >
-            </div>
+            <div
+              className="sel-util__thumb__img--doc"
+              style={{
+                width: docBounds.width,
+                height: docBounds.height
+              }}
+            />
           </div>
         </div>
       );
-
     } else {
       if (state.selectionType === 'ELEMENTS') {
         let thumb = this.getThumbnail();
@@ -158,8 +171,8 @@ let TransformUtil = React.createClass({
           <div className="sel-util__thumb">
             <div className="sel-util__thumb__img">
               <canvas ref="thumbnail" />
-              <div className="sel-util__thumb__height-bracket"></div>
-              <div className="sel-util__thumb__width-bracket"></div>
+              <div className="sel-util__thumb__height-bracket" />
+              <div className="sel-util__thumb__width-bracket" />
 
               <div className="sel-util__thumb__origin-buttons">
                 {this.renderOriginButton('tl')}
@@ -174,10 +187,9 @@ let TransformUtil = React.createClass({
       } else if (state.selectionType === 'POINTS') {
         return (
           <div className="sel-util__thumb">
-            <div className="sel-util__thumb__img">
-            </div>
+            <div className="sel-util__thumb__img" />
           </div>
-        )
+        );
       }
     }
   },
@@ -207,10 +219,24 @@ let TransformUtil = React.createClass({
         return (
           <div className="sel-util__coords">
             <div className="sel-util__coords__x-input">
-              <TextInput label="x" id="selection-x" value={origin.x} onSubmit={(val) => { this.onChangeCoord(val, 'x') }} />
+              <TextInput
+                label="x"
+                id="selection-x"
+                value={origin.x}
+                onSubmit={val => {
+                  this.onChangeCoord(val, 'x');
+                }}
+              />
             </div>
             <div className="sel-util__coords__y-input">
-              <TextInput label="y" id="selection-y" value={origin.y} onSubmit={(val) => { this.onChangeCoord(val, 'y') }} />
+              <TextInput
+                label="y"
+                id="selection-y"
+                value={origin.y}
+                onSubmit={val => {
+                  this.onChangeCoord(val, 'y');
+                }}
+              />
             </div>
           </div>
         );
@@ -231,7 +257,13 @@ let TransformUtil = React.createClass({
         return (
           <div className="sel-util__height">
             <div className="sel-util__height__input">
-              <TextInput id="selection-h" value={bounds.height} onSubmit={(val) => { this.onChangeScale(val, 'h') }} />
+              <TextInput
+                id="selection-h"
+                value={bounds.height}
+                onSubmit={val => {
+                  this.onChangeScale(val, 'h');
+                }}
+              />
             </div>
           </div>
         );
@@ -251,7 +283,13 @@ let TransformUtil = React.createClass({
         return (
           <div className="sel-util__width">
             <div className="sel-util__width__input">
-              <TextInput id="selection-w" value={bounds.width} onSubmit={(val) => { this.onChangeScale(val, 'w') }} />
+              <TextInput
+                id="selection-w"
+                value={bounds.width}
+                onSubmit={val => {
+                  this.onChangeScale(val, 'w');
+                }}
+              />
             </div>
           </div>
         );
@@ -266,16 +304,16 @@ let TransformUtil = React.createClass({
         <div className="sel-util">
           <div className="sel-util__main">
             <div className="sel-util__top">
-              { this.renderCoords() }
-              { this.renderThumb() }
-              { this.renderHeight() }
+              {this.renderCoords()}
+              {this.renderThumb()}
+              {this.renderHeight()}
             </div>
             <div className="sel-util__middle">
-              { this.renderWidth() }
+              {this.renderWidth()}
             </div>
           </div>
           <div className="sel-util__bottom">
-            { this.renderSubheader() }
+            {this.renderSubheader()}
           </div>
         </div>
       </Util>

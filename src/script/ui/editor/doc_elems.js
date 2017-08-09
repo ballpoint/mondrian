@@ -1,5 +1,5 @@
-import consts from "consts";
-import UIElement from "ui/editor/ui_element";
+import consts from 'consts';
+import UIElement from 'ui/editor/ui_element';
 
 export default class DocumentPointsUIElement extends UIElement {
   reset() {}
@@ -10,7 +10,7 @@ export default class DocumentPointsUIElement extends UIElement {
     let tool = this.editor.state.tool;
     let selection = this.editor.state.selection;
 
-    if (this.editor.state.selectionType === "ELEMENTS") {
+    if (this.editor.state.selectionType === 'ELEMENTS') {
       for (let elem of selection) {
         this.drawOutlines(elem, layer);
       }

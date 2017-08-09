@@ -14,7 +14,11 @@ let ToolbarGroup = React.createClass({
 let ToolbarButton = React.createClass({
   render() {
     return (
-      <a className="toolbar-button" onClick={this.props.onClick} title={this.props.title}>
+      <a
+        className="toolbar-button"
+        onClick={this.props.onClick}
+        title={this.props.title}
+      >
         {this.props.children}
       </a>
     );
@@ -25,7 +29,7 @@ let Toolbar = React.createClass({
   getInitialState() {
     return {
       selection: null
-    }
+    };
   },
 
   componentDidMount() {
@@ -40,8 +44,18 @@ let Toolbar = React.createClass({
   renderHistoryGroup() {
     return (
       <ToolbarGroup>
-        <ToolbarButton onClick={this.props.editor.undo.bind(this.props.editor)} title="Undo">UN</ToolbarButton>
-        <ToolbarButton onClick={this.props.editor.redo.bind(this.props.editor)} title="Redo">RE</ToolbarButton>
+        <ToolbarButton
+          onClick={this.props.editor.undo.bind(this.props.editor)}
+          title="Undo"
+        >
+          UN
+        </ToolbarButton>
+        <ToolbarButton
+          onClick={this.props.editor.redo.bind(this.props.editor)}
+          title="Redo"
+        >
+          RE
+        </ToolbarButton>
       </ToolbarGroup>
     );
   },
@@ -60,9 +74,15 @@ let Toolbar = React.createClass({
     if (this.state.selection && this.state.selection.length > 1) {
       return (
         <ToolbarGroup>
-          <ToolbarButton onClick={boolOp('unite')} title="Unite">U</ToolbarButton>
-          <ToolbarButton onClick={boolOp('subtract')} title="Subtract">S</ToolbarButton>
-          <ToolbarButton onClick={boolOp('intersect')} title="Intersect">X</ToolbarButton>
+          <ToolbarButton onClick={boolOp('unite')} title="Unite">
+            U
+          </ToolbarButton>
+          <ToolbarButton onClick={boolOp('subtract')} title="Subtract">
+            S
+          </ToolbarButton>
+          <ToolbarButton onClick={boolOp('intersect')} title="Intersect">
+            X
+          </ToolbarButton>
         </ToolbarGroup>
       );
     }

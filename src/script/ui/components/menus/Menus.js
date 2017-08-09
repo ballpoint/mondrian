@@ -4,7 +4,7 @@ import FileMenu from 'ui/components/menus/FileMenu';
 import EditMenu from 'ui/components/menus/EditMenu';
 import ViewMenu from 'ui/components/menus/ViewMenu';
 import HistoryMenu from 'ui/components/menus/HistoryMenu';
-import "menus.scss";
+import 'menus.scss';
 
 const menus = [
   {
@@ -26,23 +26,22 @@ const menus = [
   {
     name: 'Selection',
     render: ViewMenu
-  },
-]
+  }
+];
 
 const fileMenu = menus[0];
 const editMenu = menus[1];
 const viewMenu = menus[2];
 
 let Menus = React.createClass({
-
   getInitialState() {
     return {
       active: null
-    }
+    };
   },
 
   componentDidMount() {
-    document.addEventListener('mousedown', (e) => {
+    document.addEventListener('mousedown', e => {
       let root = ReactDOM.findDOMNode(this);
       if (!this.state.active) return;
       let inside = insideOf(e.target, root);
@@ -51,10 +50,12 @@ let Menus = React.createClass({
       }
     });
 
-    this.props.editor.on('hotkey:open', (e) => {
+    this.props.editor.on('hotkey:open', e => {
       this.activateMenu(fileMenu);
       setTimeout(() => {
-        let inputNode = ReactDOM.findDOMNode(this.refs.activeMenu.refs.fileInput);
+        let inputNode = ReactDOM.findDOMNode(
+          this.refs.activeMenu.refs.fileInput
+        );
         if (inputNode) {
           inputNode.click();
         }
@@ -72,7 +73,7 @@ let Menus = React.createClass({
   renderActiveMenu() {
     let a = this.state.active;
     if (a) {
-      let button = this.state.activeButton;//ReactDOM.findDOMNode(this.refs['button'+a.name]);
+      let button = this.state.activeButton; //ReactDOM.findDOMNode(this.refs['button'+a.name]);
       let box = button.getBoundingClientRect();
       return (
         <this.state.active.render
@@ -86,7 +87,7 @@ let Menus = React.createClass({
   },
 
   activateMenu(m) {
-    let button = ReactDOM.findDOMNode(this.refs['button'+m.name]);
+    let button = ReactDOM.findDOMNode(this.refs['button' + m.name]);
 
     this.setState({
       active: m,
@@ -97,37 +98,34 @@ let Menus = React.createClass({
   render() {
     return (
       <div className="app-menus-row">
-        {
-          menus.map((m) => {
-            return <MenuButton
+        {menus.map(m => {
+          return (
+            <MenuButton
               key={m.name}
               name={m.name}
-              ref={'button'+m.name}
+              ref={'button' + m.name}
               active={this.state.active === m}
-              onClick={(e) => {
+              onClick={e => {
                 if (this.state.active === m) {
                   this.closeActive();
                 } else {
                   this.activateMenu(m);
                 }
               }}
-              onMouseEnter={(e) => {
+              onMouseEnter={e => {
                 if (this.state.active) {
                   // Steal focus
                   this.activateMenu(m);
                 }
               }}
             />
-          })
-        }
+          );
+        })}
 
-        {
-          this.renderActiveMenu()
-        }
+        {this.renderActiveMenu()}
       </div>
     );
   }
-
 });
 
 export default Menus;

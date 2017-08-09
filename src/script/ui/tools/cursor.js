@@ -1,7 +1,7 @@
-import shapes from "lab/shapes";
-import Tool from "ui/tools/tool";
-import Bounds from "geometry/bounds";
-import Circle from "geometry/circle";
+import shapes from 'lab/shapes';
+import Tool from 'ui/tools/tool';
+import Bounds from 'geometry/bounds';
+import Circle from 'geometry/circle';
 
 export default class Cursor extends Tool {
   constructor(editor) {
@@ -15,7 +15,7 @@ export default class Cursor extends Tool {
   }
 
   get id() {
-    return "cursor";
+    return 'cursor';
   }
 
   handleMousemove(e, posn) {
@@ -121,7 +121,7 @@ export default class Cursor extends Tool {
       let bounds = Bounds.fromPosns([this.dragSelectStart, this.dragSelectEnd]);
       bounds = this.editor.projection.bounds(bounds).sharp();
       layer.setLineWidth(1);
-      layer.drawRect(bounds, { stroke: "black" });
+      layer.drawRect(bounds, { stroke: 'black' });
     }
   }
 }

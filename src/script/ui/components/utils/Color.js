@@ -4,9 +4,7 @@ let ColorUtil = React.createClass({
   render() {
     return (
       <Util title="Color">
-        <div className="">
-        color lol
-        </div>
+        <div className="">color lol</div>
       </Util>
     );
   }
