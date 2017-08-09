@@ -1,7 +1,7 @@
-import Posn from "geometry/posn";
-import Bounds from "geometry/bounds";
-import EventEmitter from "lib/events";
-import Layer from "ui/layer";
+import Posn from 'geometry/posn';
+import Bounds from 'geometry/bounds';
+import EventEmitter from 'lib/events';
+import Layer from 'ui/layer';
 
 export default class Canvas extends EventEmitter {
   constructor(parent) {
@@ -14,8 +14,8 @@ export default class Canvas extends EventEmitter {
     this.refreshNeeded = {};
 
     if (parent) {
-      this.container = document.createElement("div");
-      this.container.className = "canvas-container";
+      this.container = document.createElement('div');
+      this.container.className = 'canvas-container';
       parent.appendChild(this.container);
 
       window.onresize = () => {

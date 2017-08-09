@@ -1,7 +1,7 @@
-import Bounds from "geometry/bounds";
-import Metadata from "geometry/metadata";
-import Group from "geometry/group";
-import UUIDV4 from "uuid/v4";
+import Bounds from 'geometry/bounds';
+import Metadata from 'geometry/metadata';
+import Group from 'geometry/group';
+import UUIDV4 from 'uuid/v4';
 
 export default class Layer {
   constructor(attrs, metadata = {}) {

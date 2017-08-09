@@ -1,7 +1,7 @@
-import PointsSegment from "geometry/points-segment";
-import PathPoint from "geometry/path-point";
-import Range from "geometry/range";
-import Bounds from "geometry/bounds";
+import PointsSegment from 'geometry/points-segment';
+import PathPoint from 'geometry/path-point';
+import Range from 'geometry/range';
+import Bounds from 'geometry/bounds';
 
 //  PointsList
 
@@ -32,7 +32,7 @@ export default class PointsList {
         if (currentMatch) {
           commands.push(currentMatch);
         }
-        currentMatch = "";
+        currentMatch = '';
       }
       currentMatch += char;
     }
@@ -55,10 +55,10 @@ export default class PointsList {
       let command = str[0];
 
       switch (command.toLowerCase()) {
-        case "z":
+        case 'z':
           // TODO: TREAT AS LINETO;
           break;
-        case "m":
+        case 'm':
           // Start new segment
           list.closeSegment();
       }
@@ -163,7 +163,7 @@ export default class PointsList {
   }
 
   segmentContaining(a) {
-    if (typeof a === "number") {
+    if (typeof a === 'number') {
       let segm;
       for (let s of Array.from(this.segments)) {
         if (s.startsAt <= a) {
@@ -193,7 +193,7 @@ export default class PointsList {
   }
 
   remove(x) {
-    if (typeof x === "number") {
+    if (typeof x === 'number') {
       x = this.i(x);
     }
     if (x instanceof Array) {
@@ -272,6 +272,6 @@ export default class PointsList {
       .map(s => {
         return s.toSVGString();
       })
-      .join(" ");
+      .join(' ');
   }
 }

@@ -1,15 +1,15 @@
-import { PIXEL_RATIO } from "lib/math";
-import LineSegment from "geometry/line-segment";
-import CubicBezier from "geometry/cubic-bezier-line-segment";
-import math from "lib/math";
+import { PIXEL_RATIO } from 'lib/math';
+import LineSegment from 'geometry/line-segment';
+import CubicBezier from 'geometry/cubic-bezier-line-segment';
+import math from 'lib/math';
 
 export default class Layer {
-  constructor(id, node = document.createElement("canvas")) {
+  constructor(id, node = document.createElement('canvas')) {
     this.id = id;
 
     this.node = node;
 
-    this.context = this.node.getContext("2d");
+    this.context = this.node.getContext('2d');
 
     this.setLineWidth(1); // DEFAULT
 
@@ -135,7 +135,7 @@ export default class Layer {
   }
 
   drawText(posn, text, opts) {
-    this.context.textAlign = opts.align || "left";
+    this.context.textAlign = opts.align || 'left';
 
     if (opts.rotate) {
       this.context.save();

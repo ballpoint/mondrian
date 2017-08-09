@@ -1,6 +1,6 @@
 // Does phrase exist within a string, verbatim?
 String.prototype.mentions = function(phrase) {
-  if (typeof phrase === "string") {
+  if (typeof phrase === 'string') {
     return this.indexOf(phrase) > -1;
   } else if (phrase instanceof Array) {
     for (let p of Array.from(phrase)) {
@@ -50,7 +50,7 @@ Number.prototype.within = function(tolerance, other) {
 };
 
 String.prototype.strip = function() {
-  return this.replace(/^\s*/, "").replace(/\s*$/, "");
+  return this.replace(/^\s*/, '').replace(/\s*$/, '');
 };
 
 Array.prototype.sameMembers = function(other) {

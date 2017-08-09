@@ -1,7 +1,7 @@
 export default class Index {
   constructor(parts) {
     if (!parts) {
-      console.error("Invalid Index", parts);
+      console.error('Invalid Index', parts);
       return;
     }
     this.parts = parts;
@@ -16,12 +16,12 @@ export default class Index {
   }
 
   toString() {
-    return this.parts.join(":");
+    return this.parts.join(':');
   }
 
   static fromString(index) {
     return new Index(
-      index.split(":").map(i => {
+      index.split(':').map(i => {
         return parseInt(i, 10);
       })
     );
@@ -82,5 +82,5 @@ export function sortIndexes(indexes) {
 export function indexesIdentical(ia, ib) {
   ia = sortIndexes(ia);
   ib = sortIndexes(ib);
-  return ia.join(",") === ib.join(",");
+  return ia.join(',') === ib.join(',');
 }

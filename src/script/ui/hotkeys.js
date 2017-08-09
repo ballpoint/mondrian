@@ -1,5 +1,5 @@
-import Range from "geometry/range";
-import EventEmitter from "lib/events";
+import Range from 'geometry/range';
+import EventEmitter from 'lib/events';
 /*
 
   Mondrian.io hotkeys management
@@ -34,7 +34,7 @@ let hotkeys = {
   },
 
   reset() {
-    this.lastKeystroke = "";
+    this.lastKeystroke = '';
     this.modifiersDown = [];
     this.keysDown = [];
   },
@@ -83,18 +83,18 @@ let hotkeys = {
 
   keypressIntervals: [],
 
-  lastKeystroke: "",
+  lastKeystroke: '',
 
   lastEvent: {},
 
   modifierCodes: {
-    [8]: "backspace",
-    [16]: "shift",
-    [17]: "ctrl",
-    [18]: "alt",
-    [91]: "cmd",
-    [92]: "cmd",
-    [224]: "cmd"
+    [8]: 'backspace',
+    [16]: 'shift',
+    [17]: 'ctrl',
+    [18]: 'alt',
+    [91]: 'cmd',
+    [92]: 'cmd',
+    [224]: 'cmd'
   },
 
   /*
@@ -112,14 +112,14 @@ let hotkeys = {
   setup() {
     // Map the ctrl key as cmd if the user is on windows.
     let fullKeystroke, key, keystroke;
-    if (~navigator.appVersion.indexOf("Win")) {
-      this.modifierCodes[17] = "cmd";
+    if (~navigator.appVersion.indexOf('Win')) {
+      this.modifierCodes[17] = 'cmd';
       if (dom.body != null) {
-        dom.body.setAttribute("os", "windows");
+        dom.body.setAttribute('os', 'windows');
       }
     }
 
-    document.addEventListener("visibilitychange", () => {
+    document.addEventListener('visibilitychange', () => {
       if (!document.hidden) {
         this.modifiersDown = [];
         this.keysDown = [];
@@ -127,7 +127,7 @@ let hotkeys = {
     });
 
     document.onkeydown = e => {
-      if (e.target.nodeName.toLowerCase() === "input") {
+      if (e.target.nodeName.toLowerCase() === 'input') {
         return;
       }
       let newStroke;
@@ -149,18 +149,18 @@ let hotkeys = {
       this.lastEvent = e;
 
       // Cmd has been pushed
-      if (keystroke === "cmd") {
+      if (keystroke === 'cmd') {
         this.cmdDown = true; // Custom tracking for cmd
-        this.registerModifier("cmd");
+        this.registerModifier('cmd');
         return;
-      } else if (["shift", "alt", "ctrl"].includes(keystroke)) {
+      } else if (['shift', 'alt', 'ctrl'].includes(keystroke)) {
         this.registerModifier(keystroke);
 
         // Stop registering previously registered keystrokes without this as a modifier.
         for (key of Array.from(this.keysDown)) {
           __guard__(
             this.listeners.up != null
-              ? this.listeners.up[this.fullKeystroke(key, "")]
+              ? this.listeners.up[this.fullKeystroke(key, '')]
               : undefined,
             x => x.call(this.listeners.context, e)
           );
@@ -177,13 +177,13 @@ let hotkeys = {
 
       // By now, the keystroke should only be a letter or number.
 
-      if (e.altKey === false) this.registerModifierUp("alt");
-      if (e.shiftKey === false) this.registerModifierUp("shift");
+      if (e.altKey === false) this.registerModifierUp('alt');
+      if (e.shiftKey === false) this.registerModifierUp('shift');
 
       fullKeystroke = this.fullKeystroke(keystroke);
       //console.log "FULL: #{fullKeystroke}"
 
-      if (fullKeystroke === "cmd-O") {
+      if (fullKeystroke === 'cmd-O') {
         e.preventDefault();
       }
 
@@ -248,7 +248,7 @@ let hotkeys = {
               if (this.listeners.inheritFromApp.has(character)) {
                 this.sets.app.down[character].call(ui);
                 this.listeners.context.$rep.blur();
-                this.use("app");
+                this.use('app');
               }
               return false;
             } else {
@@ -260,7 +260,7 @@ let hotkeys = {
     };
 
     document.onkeyup = e => {
-      if (e.target.nodeName.toLowerCase() === "input") {
+      if (e.target.nodeName.toLowerCase() === 'input') {
         return;
       }
 
@@ -310,7 +310,7 @@ let hotkeys = {
         x3 => x3.call(this.listeners.context, this.lastEvent)
       );
 
-      if (keystroke === "cmd") {
+      if (keystroke === 'cmd') {
         // CMD has been released!
         this.registerModifierUp(keystroke);
         this.keysDown = [];
@@ -318,14 +318,14 @@ let hotkeys = {
 
         for (let hotkey of Object.keys(this.listeners.up || {})) {
           let action = this.listeners.up[hotkey];
-          if (hotkey.mentions("cmd")) {
+          if (hotkey.mentions('cmd')) {
             action.call(this.listeners.context, e);
           }
         }
 
-        this.lastKeystroke = ""; // Let me redo CMD strokes completely please
+        this.lastKeystroke = ''; // Let me redo CMD strokes completely please
         return this.maintainInterval();
-      } else if (["shift", "alt", "ctrl"].includes(keystroke)) {
+      } else if (['shift', 'alt', 'ctrl'].includes(keystroke)) {
         this.registerModifierUp(keystroke);
         return this.maintainInterval();
       } else {
@@ -415,9 +415,9 @@ let hotkeys = {
 
   isModifier(key) {
     switch (key) {
-      case "shift":
-      case "cmd":
-      case "alt":
+      case 'shift':
+      case 'cmd':
+      case 'alt':
         return true;
       default:
         return false;
@@ -450,19 +450,19 @@ let hotkeys = {
 
     // Certain keycodes we rename to be more clear
     let remaps = {
-      [13]: "enter",
-      [32]: "space",
-      [37]: "leftArrow",
-      [38]: "upArrow",
-      [39]: "rightArrow",
-      [40]: "downArrow",
-      [187]: "+",
-      [188]: ",",
-      [189]: "-",
-      [190]: ".",
-      [219]: "[",
-      [220]: "\\",
-      [221]: "]",
+      [13]: 'enter',
+      [32]: 'space',
+      [37]: 'leftArrow',
+      [38]: 'upArrow',
+      [39]: 'rightArrow',
+      [40]: 'downArrow',
+      [187]: '+',
+      [188]: ',',
+      [189]: '-',
+      [190]: '.',
+      [219]: '[',
+      [220]: '\\',
+      [221]: ']',
       [222]: "'"
     };
 
@@ -475,7 +475,7 @@ let hotkeys = {
     if (mods == null) {
       mods = this.modifiersPrefix();
     }
-    return `${mods}${mods.length > 0 ? "-" : ""}${key}`;
+    return `${mods}${mods.length > 0 ? '-' : ''}${key}`;
   },
 
   /*
@@ -485,9 +485,9 @@ let hotkeys = {
   */
 
   modifiersPrefix() {
-    let mods = this.modifiersDown.sort().join("-");
+    let mods = this.modifiersDown.sort().join('-');
     if (/Win/.test(navigator.platform)) {
-      mods = mods.replace("ctrl", "cmd");
+      mods = mods.replace('ctrl', 'cmd');
     }
     return mods;
   }
@@ -498,7 +498,7 @@ hotkeys.setup();
 export default hotkeys;
 
 function __guard__(value, transform) {
-  return typeof value !== "undefined" && value !== null
+  return typeof value !== 'undefined' && value !== null
     ? transform(value)
     : undefined;
 }

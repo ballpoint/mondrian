@@ -1,5 +1,5 @@
 export default class HistoryFrame {
-  constructor(actions = [], title = "") {
+  constructor(actions = [], title = '') {
     this.actions = actions;
     this.title = title;
 
@@ -18,7 +18,7 @@ export default class HistoryFrame {
         .map(a => {
           return a.displayTitle || a.constructor.name;
         })
-        .join("; ");
+        .join('; ');
     }
   }
 

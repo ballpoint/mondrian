@@ -1,34 +1,34 @@
-import { PIXEL_RATIO } from "lib/math";
-import { scaleLinear } from "d3-scale";
-import consts from "consts";
-import Color from "ui/color";
-import SelectedColors from "ui/SelectedColors";
-import SelectedStrokeStyle from "ui/SelectedStrokeStyle";
-import EventEmitter from "lib/events";
-import Canvas from "ui/canvas";
+import { PIXEL_RATIO } from 'lib/math';
+import { scaleLinear } from 'd3-scale';
+import consts from 'consts';
+import Color from 'ui/color';
+import SelectedColors from 'ui/SelectedColors';
+import SelectedStrokeStyle from 'ui/SelectedStrokeStyle';
+import EventEmitter from 'lib/events';
+import Canvas from 'ui/canvas';
 
-import Posn from "geometry/posn";
-import Group from "geometry/group";
-import Index from "geometry/index";
-import Path from "geometry/path";
-import PathPoint from "geometry/path-point";
-import PointsSegment from "geometry/points-segment";
+import Posn from 'geometry/posn';
+import Group from 'geometry/group';
+import Index from 'geometry/index';
+import Path from 'geometry/path';
+import PathPoint from 'geometry/path-point';
+import PointsSegment from 'geometry/points-segment';
 
-import Layer from "io/layer";
-import * as actions from "history/actions/actions";
+import Layer from 'io/layer';
+import * as actions from 'history/actions/actions';
 
-import Projection from "ui/projection";
-import hotkeys from "ui/hotkeys";
-import Bounds from "geometry/bounds";
-import Element from "ui/element";
-import CursorTracking from "ui/cursor-tracking";
-import CursorHandler from "ui/cursor-handler";
+import Projection from 'ui/projection';
+import hotkeys from 'ui/hotkeys';
+import Bounds from 'geometry/bounds';
+import Element from 'ui/element';
+import CursorTracking from 'ui/cursor-tracking';
+import CursorHandler from 'ui/cursor-handler';
 
-import * as tools from "ui/tools/tools";
-import RulersUIElement from "ui/editor/rulers";
-import TransformerUIElement from "ui/editor/transformer";
-import DocumentPointsUIElement from "ui/editor/doc_pts";
-import DocumentElemsUIElement from "ui/editor/doc_elems";
+import * as tools from 'ui/tools/tools';
+import RulersUIElement from 'ui/editor/rulers';
+import TransformerUIElement from 'ui/editor/transformer';
+import DocumentPointsUIElement from 'ui/editor/doc_pts';
+import DocumentElemsUIElement from 'ui/editor/doc_elems';
 
 const UTILS_WIDTH = 350 + 220;
 
@@ -57,8 +57,8 @@ export default class Editor extends EventEmitter {
 
     this.canvas.refreshAll();
 
-    this.trigger("change");
-    this.trigger("change:doc");
+    this.trigger('change');
+    this.trigger('change:doc');
   }
 
   initCanvas() {
@@ -71,71 +71,71 @@ export default class Editor extends EventEmitter {
 
     // UIElements
     let uiElems = [
-      new DocumentPointsUIElement(this, "doc-pts"),
-      new DocumentElemsUIElement(this, "doc-elems"),
-      new TransformerUIElement(this, "transformer"),
-      new RulersUIElement(this, "rulers")
+      new DocumentPointsUIElement(this, 'doc-pts'),
+      new DocumentElemsUIElement(this, 'doc-elems'),
+      new TransformerUIElement(this, 'transformer'),
+      new RulersUIElement(this, 'rulers')
     ];
 
-    this.canvas.createLayer("background", this.refreshBackground.bind(this));
-    this.canvas.createLayer("drawing", this.refreshDrawing.bind(this));
-    this.canvas.createLayer("tool", this.refreshTool.bind(this));
-    this.canvas.createLayer("ui", (layer, context) => {
+    this.canvas.createLayer('background', this.refreshBackground.bind(this));
+    this.canvas.createLayer('drawing', this.refreshDrawing.bind(this));
+    this.canvas.createLayer('tool', this.refreshTool.bind(this));
+    this.canvas.createLayer('ui', (layer, context) => {
       for (let elem of uiElems) {
         elem.refresh(layer, context);
       }
     });
-    this.canvas.createLayer("debug", () => {});
+    this.canvas.createLayer('debug', () => {});
 
-    this.cursorHandler.on("mousemove", (e, posn) => {
+    this.cursorHandler.on('mousemove', (e, posn) => {
       if (e.propagateToTool) this.state.tool.handleMousemove(e, posn);
-      this.canvas.refresh("tool");
-      this.canvas.refresh("ui");
+      this.canvas.refresh('tool');
+      this.canvas.refresh('ui');
     });
 
-    this.cursorHandler.on("mousedown", (e, posn) => {
+    this.cursorHandler.on('mousedown', (e, posn) => {
       if (e.propagateToTool) this.state.tool.handleMousedown(e, posn);
-      this.canvas.refresh("tool");
-      this.canvas.refresh("ui");
+      this.canvas.refresh('tool');
+      this.canvas.refresh('ui');
     });
 
-    this.cursorHandler.on("click", (e, posn) => {
+    this.cursorHandler.on('click', (e, posn) => {
       if (e.propagateToTool) this.state.tool.handleClick(e, posn);
-      this.canvas.refresh("tool");
-      this.canvas.refresh("ui");
+      this.canvas.refresh('tool');
+      this.canvas.refresh('ui');
     });
 
-    this.cursorHandler.on("drag:start", (e, posn, lastPosn) => {
+    this.cursorHandler.on('drag:start', (e, posn, lastPosn) => {
       if (e.propagateToTool) this.state.tool.handleDragStart(e, posn, lastPosn);
-      this.canvas.refresh("tool");
-      this.canvas.refresh("ui");
+      this.canvas.refresh('tool');
+      this.canvas.refresh('ui');
     });
 
-    this.cursorHandler.on("drag", (e, posn, lastPosn) => {
+    this.cursorHandler.on('drag', (e, posn, lastPosn) => {
       if (e.propagateToTool) this.state.tool.handleDrag(e, posn, lastPosn);
-      this.canvas.refresh("tool");
-      this.canvas.refresh("ui");
+      this.canvas.refresh('tool');
+      this.canvas.refresh('ui');
     });
 
-    this.cursorHandler.on("drag:stop", (e, posn, startPosn) => {
+    this.cursorHandler.on('drag:stop', (e, posn, startPosn) => {
       if (e.propagateToTool) this.state.tool.handleDragStop(e, posn, startPosn);
-      this.canvas.refresh("tool");
-      this.canvas.refresh("ui");
+      this.canvas.refresh('tool');
+      this.canvas.refresh('ui');
     });
 
-    this.cursorHandler.on("scroll:x", (e, delta) => {
+    this.cursorHandler.on('scroll:x', (e, delta) => {
       if (!this.canvas.owns(e.target)) return;
 
-      if (this.state.tool.id === "zoom") {
+      if (this.state.tool.id === 'zoom') {
       } else {
         this.nudge(this.projection.zInvert(delta), 0);
       }
     });
 
-    this.cursorHandler.on("scroll:y", (e, delta) => {
+    this.cursorHandler.on('scroll:y', (e, delta) => {
       if (!this.canvas.owns(e.target)) return;
 
-      if (this.state.tool.id === "zoom") {
+      if (this.state.tool.id === 'zoom') {
         let zd = 1 - delta / 1000;
         let anchor = this.cursor.lastPosn;
         this.setZoom(this.state.zoomLevel * zd, anchor);
@@ -144,89 +144,89 @@ export default class Editor extends EventEmitter {
       }
     });
 
-    hotkeys.on("down", "downArrow", () => {
+    hotkeys.on('down', 'downArrow', () => {
       this.nudgeSelected(0, 1);
     });
-    hotkeys.on("down", "upArrow", () => {
+    hotkeys.on('down', 'upArrow', () => {
       this.nudgeSelected(0, -1);
     });
-    hotkeys.on("down", "leftArrow", () => {
+    hotkeys.on('down', 'leftArrow', () => {
       this.nudgeSelected(-1, 0);
     });
-    hotkeys.on("down", "rightArrow", () => {
+    hotkeys.on('down', 'rightArrow', () => {
       this.nudgeSelected(1, 0);
     });
-    hotkeys.on("down", "shift-downArrow", () => {
+    hotkeys.on('down', 'shift-downArrow', () => {
       this.nudgeSelected(0, 10);
     });
-    hotkeys.on("down", "shift-rightArrow", () => {
+    hotkeys.on('down', 'shift-rightArrow', () => {
       this.nudgeSelected(10, 0);
     });
-    hotkeys.on("down", "shift-upArrow", () => {
+    hotkeys.on('down', 'shift-upArrow', () => {
       this.nudgeSelected(0, -10);
     });
-    hotkeys.on("down", "shift-leftArrow", () => {
+    hotkeys.on('down', 'shift-leftArrow', () => {
       this.nudgeSelected(-10, 0);
     });
 
-    hotkeys.on("down", "V", () => {
+    hotkeys.on('down', 'V', () => {
       this.selectTool(new tools.Cursor(this));
     });
-    hotkeys.on("down", "A", () => {
+    hotkeys.on('down', 'A', () => {
       this.selectTool(new tools.SubCursor(this));
     });
-    hotkeys.on("down", "Z", () => {
+    hotkeys.on('down', 'Z', () => {
       this.selectTool(new tools.Zoom(this));
     });
-    hotkeys.on("down", "P", () => {
+    hotkeys.on('down', 'P', () => {
       this.selectTool(new tools.Pen(this));
     });
-    hotkeys.on("down", "space", () => {
+    hotkeys.on('down', 'space', () => {
       this.selectTool(new tools.Paw(this));
     });
-    hotkeys.on("up", "space", () => {
+    hotkeys.on('up', 'space', () => {
       this.selectTool(this.state.lastTool);
     });
 
-    hotkeys.on("down", "ctrl-A", e => {
+    hotkeys.on('down', 'ctrl-A', e => {
       e.preventDefault();
       this.selectAll();
     });
 
-    hotkeys.on("down", "ctrl-O", e => {
+    hotkeys.on('down', 'ctrl-O', e => {
       e.preventDefault();
-      this.trigger("hotkey:open");
+      this.trigger('hotkey:open');
     });
 
-    hotkeys.on("down", "ctrl-S", e => {
+    hotkeys.on('down', 'ctrl-S', e => {
       e.preventDefault();
-      console.log("save lol");
+      console.log('save lol');
     });
 
-    hotkeys.on("down", "1", () => {
+    hotkeys.on('down', '1', () => {
       let center = this.doc.bounds.center();
       this.setPosition(center);
       this.setZoom(1);
     });
-    hotkeys.on("down", "0", () => {
+    hotkeys.on('down', '0', () => {
       this.fitToScreen();
     });
 
-    hotkeys.on("down", "+", () => {
+    hotkeys.on('down', '+', () => {
       this.zoomIn();
     });
-    hotkeys.on("down", "-", () => {
+    hotkeys.on('down', '-', () => {
       this.zoomOut();
     });
 
-    hotkeys.on("down", "backspace", () => {
+    hotkeys.on('down', 'backspace', () => {
       this.deleteSelection();
     });
 
-    hotkeys.on("down", "ctrl-Z", () => {
+    hotkeys.on('down', 'ctrl-Z', () => {
       this.undo();
     });
-    hotkeys.on("down", "ctrl-shift-Z", () => {
+    hotkeys.on('down', 'ctrl-shift-Z', () => {
       this.redo();
     });
 
@@ -236,10 +236,10 @@ export default class Editor extends EventEmitter {
     });
     */
 
-    document.addEventListener("copy", e => {
+    document.addEventListener('copy', e => {
       this.copy(e);
     });
-    document.addEventListener("paste", e => {
+    document.addEventListener('paste', e => {
       this.paste(e);
     });
 
@@ -247,7 +247,7 @@ export default class Editor extends EventEmitter {
   }
 
   initState() {
-    let cached = sessionStorage.getItem("editor:state");
+    let cached = sessionStorage.getItem('editor:state');
     if (cached) {
       cached = JSON.parse(cached);
       this.state = {
@@ -279,7 +279,7 @@ export default class Editor extends EventEmitter {
 
   cacheState() {
     sessionStorage.setItem(
-      "editor:state",
+      'editor:state',
       JSON.stringify({
         zoomLevel: this.state.zoomLevel,
         position: this.state.position
@@ -376,9 +376,9 @@ export default class Editor extends EventEmitter {
     this.state.selection = items;
 
     if (items[0] instanceof PathPoint) {
-      this.state.selectionType = "POINTS";
+      this.state.selectionType = 'POINTS';
     } else {
-      this.state.selectionType = "ELEMENTS";
+      this.state.selectionType = 'ELEMENTS';
     }
 
     window.$s = items; // DEBUG
@@ -386,8 +386,8 @@ export default class Editor extends EventEmitter {
     this.calculateSelectionBounds();
 
     if (!oldSelection.sameMembers(this.state.selection)) {
-      this.trigger("change");
-      this.trigger("change:selection");
+      this.trigger('change');
+      this.trigger('change:selection');
     }
 
     this.canvas.refreshAll();
@@ -399,17 +399,17 @@ export default class Editor extends EventEmitter {
 
     if (this.state.hovering.length > 0) {
       if (items[0] instanceof PathPoint) {
-        this.state.hoveringType = "POINTS";
+        this.state.hoveringType = 'POINTS';
       } else {
-        this.state.hoveringType = "ELEMENTS";
+        this.state.hoveringType = 'ELEMENTS';
       }
     }
 
     if (!oldHovering.sameMembers(this.state.hovering)) {
-      this.trigger("change");
-      this.trigger("change:hovering");
+      this.trigger('change');
+      this.trigger('change:hovering');
 
-      this.canvas.refresh("ui");
+      this.canvas.refresh('ui');
     }
   }
 
@@ -428,8 +428,8 @@ export default class Editor extends EventEmitter {
 
     // defer
     setTimeout(() => {
-      this.trigger("change");
-      this.trigger("change:layer");
+      this.trigger('change');
+      this.trigger('change:layer');
     }, 1);
   }
 
@@ -440,7 +440,7 @@ export default class Editor extends EventEmitter {
     this.state.tool = tool;
     this.canvas.refreshAll();
 
-    this.trigger("change:tool");
+    this.trigger('change:tool');
   }
 
   deleteSelection() {
@@ -521,7 +521,7 @@ export default class Editor extends EventEmitter {
       let angle = 0;
       let center;
 
-      if (this.state.selectionType === "ELEMENTS") {
+      if (this.state.selectionType === 'ELEMENTS') {
         let selectedAngles = _.uniq(
           this.state.selection.map(e => {
             return e.metadata.angle;
@@ -545,7 +545,7 @@ export default class Editor extends EventEmitter {
 
         bounds = new Bounds(boundsList);
         center = bounds.center();
-      } else if (this.state.selectionType === "POINTS") {
+      } else if (this.state.selectionType === 'POINTS') {
         let selectedAngles = _.uniq(
           this.state.selection.map(e => {
             return e.path.metadata.angle;
@@ -591,7 +591,7 @@ export default class Editor extends EventEmitter {
       })
       .filter(index => {
         if (index === null) {
-          console.warn("null index in history!");
+          console.warn('null index in history!');
           return false;
         } else {
           return true;
@@ -656,10 +656,10 @@ export default class Editor extends EventEmitter {
   viewportBounds() {
     let b = this.canvas.bounds();
     // Account for ruler
-    b.moveEdge("l", 20);
-    b.moveEdge("t", 20);
+    b.moveEdge('l', 20);
+    b.moveEdge('t', 20);
     // Account for utils
-    b.moveEdge("r", -UTILS_WIDTH);
+    b.moveEdge('r', -UTILS_WIDTH);
     return b;
   }
 
@@ -670,7 +670,7 @@ export default class Editor extends EventEmitter {
     // Draw white background
     if (this.doc) {
       let bounds = this.screenBounds();
-      layer.drawRect(bounds, { fill: new Color("#ffffff") });
+      layer.drawRect(bounds, { fill: new Color('#ffffff') });
     }
   }
 
@@ -736,28 +736,28 @@ export default class Editor extends EventEmitter {
     this.doc.perform(h);
     this.canvas.refreshAll();
     this.calculateSelectionBounds();
-    this.trigger("change");
+    this.trigger('change');
   }
 
   undo() {
     this.doc.undo();
     this.canvas.refreshAll();
     this.calculateSelectionBounds();
-    this.trigger("change");
+    this.trigger('change');
   }
 
   redo() {
     this.doc.redo();
     this.canvas.refreshAll();
     this.calculateSelectionBounds();
-    this.trigger("change");
+    this.trigger('change');
   }
 
   jumpToHistoryDepth(depth) {
     this.doc.jumpToHistoryDepth(depth);
     this.canvas.refreshAll();
     this.calculateSelectionBounds();
-    this.trigger("change");
+    this.trigger('change');
   }
 
   cut(e) {
@@ -765,21 +765,21 @@ export default class Editor extends EventEmitter {
       return e.clone();
     });
     this.deleteSelection();
-    this.trigger("change");
+    this.trigger('change');
   }
 
   copy(e) {
     this.state.clipboard = this.state.selection.map(e => {
       return e.clone();
     });
-    this.trigger("change");
+    this.trigger('change');
   }
 
   paste(e) {
     if (this.state.clipboard) {
       this.insertElements(this.state.clipboard);
     }
-    this.trigger("change");
+    this.trigger('change');
   }
 
   refreshTool(layer, context) {

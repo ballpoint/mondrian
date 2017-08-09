@@ -1,7 +1,7 @@
-import Posn from "geometry/posn";
-import Index from "geometry/index";
-import LineSegment from "geometry/line-segment";
-import CubicBezier from "geometry/cubic-bezier-line-segment";
+import Posn from 'geometry/posn';
+import Index from 'geometry/index';
+import LineSegment from 'geometry/line-segment';
+import CubicBezier from 'geometry/cubic-bezier-line-segment';
 
 // PathPoint
 
@@ -147,7 +147,7 @@ export default class PathPoint extends Posn {
 
                 if (prec) {
                   switch (key) {
-                    case "vertiTo":
+                    case 'vertiTo':
                       compareVal = prec.y;
                       break;
                     default:
@@ -167,7 +167,7 @@ export default class PathPoint extends Posn {
 
             let values = set;
 
-            if (values.join(" ").mentions("NaN")) {
+            if (values.join(' ').mentions('NaN')) {
               debugger;
             }
 
@@ -182,17 +182,17 @@ export default class PathPoint extends Posn {
             let prec_sHandle;
 
             switch (key) {
-              case "moveTo":
-              case "lineTo":
+              case 'moveTo':
+              case 'lineTo':
                 p = new Posn(values[0], values[1]);
                 break;
-              case "vertiTo":
+              case 'vertiTo':
                 p = new Posn(prec.x, values[0]);
                 break;
-              case "horizTo":
+              case 'horizTo':
                 p = new Posn(values[0], prec.y);
                 break;
-              case "smoothTo":
+              case 'smoothTo':
                 p = new Posn(values[2], values[3]);
                 pHandle = new Posn(values[0], values[1]);
                 pHandle.x = values[0];
@@ -208,7 +208,7 @@ export default class PathPoint extends Posn {
                 }
                 */
                 break;
-              case "curveTo":
+              case 'curveTo':
                 p = new Posn(values[4], values[5]);
                 pHandle = new Posn(values[2], values[3]);
                 prec_sHandle = new Posn(values[0], values[1]);
@@ -371,10 +371,10 @@ export default class PathPoint extends Posn {
 
   setHandle(which, posn) {
     switch (which) {
-      case "sHandle":
+      case 'sHandle':
         this.setSHandle(posn);
         break;
-      case "pHandle":
+      case 'pHandle':
         this.setPHandle(posn);
         break;
     }
@@ -382,10 +382,10 @@ export default class PathPoint extends Posn {
 
   unsetHandle(which) {
     switch (which) {
-      case "sHandle":
+      case 'sHandle':
         delete this.sHandle;
         break;
-      case "pHandle":
+      case 'pHandle':
         delete this.pHandle;
         break;
     }
@@ -393,10 +393,10 @@ export default class PathPoint extends Posn {
 
   reflectHandle(which) {
     switch (which) {
-      case "sHandle":
+      case 'sHandle':
         this.setPHandle(this.sHandle.reflect(this));
         break;
-      case "pHandle":
+      case 'pHandle':
         this.setSHandle(this.pHandle.reflect(this));
         break;
     }

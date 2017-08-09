@@ -1,6 +1,6 @@
-import Posn from "geometry/posn";
-import Bounds from "geometry/bounds";
-import Range from "geometry/range";
+import Posn from 'geometry/posn';
+import Bounds from 'geometry/bounds';
+import Range from 'geometry/range';
 /*
   Internal representation of a straight line segment
 
@@ -246,7 +246,7 @@ export default class LineSegment {
     if (forced == null) {
       forced = null;
     }
-    if (typeof p === "number") {
+    if (typeof p === 'number') {
       let split = forced ? forced : this.posnAt(p);
       return [new LineSegment(this.a, split), new LineSegment(split, this.b)];
     } else if (p instanceof Posn) {

@@ -1,6 +1,6 @@
-import Range from "geometry/range";
-import Posn from "geometry/posn";
-import Bounds from "geometry/bounds";
+import Range from 'geometry/range';
+import Posn from 'geometry/posn';
+import Bounds from 'geometry/bounds';
 
 const EPSILON = 1e-12;
 
@@ -277,7 +277,7 @@ export default class CubicBezier {
     // The resulting curves will be
     // [new CubicBezier(p1, p5, p8, p10), new CubicBezier(p10, p9, p7, p4)]
 
-    if (typeof t === "number") {
+    if (typeof t === 'number') {
       let p5 = new LineSegment(this.p1, this.p2).posnAt(t);
       let p6 = new LineSegment(this.p2, this.p3).posnAt(t);
       let p7 = new LineSegment(this.p3, this.p4).posnAt(t);

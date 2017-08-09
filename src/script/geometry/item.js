@@ -1,10 +1,10 @@
-import Color from "ui/color";
-import Bounds from "geometry/bounds";
-import Metadata from "geometry/metadata";
-import Range from "geometry/range";
-import Posn from "geometry/posn";
-import Thumb from "ui/thumb";
-import UUIDV4 from "uuid/v4";
+import Color from 'ui/color';
+import Bounds from 'geometry/bounds';
+import Metadata from 'geometry/metadata';
+import Range from 'geometry/range';
+import Posn from 'geometry/posn';
+import Thumb from 'ui/thumb';
+import UUIDV4 from 'uuid/v4';
 
 /*
 
@@ -31,8 +31,8 @@ export default class Item {
     this.validateColors();
 
     // Apply
-    if (this.data["mondrian:angle"] != null) {
-      this.metadata.angle = parseFloat(this.data["mondrian:angle"], 10);
+    if (this.data['mondrian:angle'] != null) {
+      this.metadata.angle = parseFloat(this.data['mondrian:angle'], 10);
     }
 
     // Internal ID only to be used for caching session-specific state
@@ -67,8 +67,8 @@ export default class Item {
     if (this.data.stroke != null && !(this.data.stroke instanceof Color)) {
       this.data.stroke = new Color(this.data.stroke);
     }
-    if (this.data["stroke-width"] == null) {
-      return (this.data["stroke-width"] = 1);
+    if (this.data['stroke-width'] == null) {
+      return (this.data['stroke-width'] = 1);
     }
   }
 
@@ -81,7 +81,7 @@ export default class Item {
       let result = [];
       for (let key in data) {
         let val = data[key];
-        if (typeof val === "function") {
+        if (typeof val === 'function') {
           result.push((this.data[key] = val(this.data[key])));
         } else {
           result.push((this.data[key] = val));
@@ -134,7 +134,7 @@ export default class Item {
   }
 
   setStrokeWidth(val) {
-    return (this.data["stroke-width"] = val);
+    return (this.data['stroke-width'] = val);
   }
 
   finishToCanvas(context, projection) {
@@ -146,8 +146,8 @@ export default class Item {
     if (this.data.stroke) {
       context.strokeStyle = this.data.stroke.toRGBString();
       let lw = 1;
-      if (this.data["stroke-width"] !== undefined) {
-        lw = parseFloat(this.data["stroke-width"]);
+      if (this.data['stroke-width'] !== undefined) {
+        lw = parseFloat(this.data['stroke-width']);
       }
 
       if (lw !== 0) {
@@ -159,7 +159,7 @@ export default class Item {
     if (!this.data.fill && !this.data.stroke) {
       // Default behavior for elements with neither a fill nor stroke set is to just
       // fill them with black.
-      context.fillStyle = "#000000";
+      context.fillStyle = '#000000';
       context.fill();
     }
   }
@@ -189,7 +189,7 @@ export default class Item {
 }
 
 function __guard__(value, transform) {
-  return typeof value !== "undefined" && value !== null
+  return typeof value !== 'undefined' && value !== null
     ? transform(value)
     : undefined;
 }

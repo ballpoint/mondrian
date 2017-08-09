@@ -1,9 +1,9 @@
-import Item from "geometry/item";
-import PointsSegment from "geometry/points-segment";
-import PointsList from "geometry/points-list";
-import Range from "geometry/range";
-import PathPoint from "geometry/path-point";
-import Posn from "geometry/posn";
+import Item from 'geometry/item';
+import PointsSegment from 'geometry/points-segment';
+import PointsList from 'geometry/points-list';
+import Range from 'geometry/range';
+import PathPoint from 'geometry/path-point';
+import Posn from 'geometry/posn';
 
 export default class Path extends Item {
   constructor(data) {
@@ -16,7 +16,7 @@ export default class Path extends Item {
   }
 
   get type() {
-    return "path";
+    return 'path';
   }
 
   // Constructors
@@ -83,12 +83,12 @@ export default class Path extends Item {
   static polyline(data) {
     let segment = new PointsSegment(
       data.points
-        .split(" ")
+        .split(' ')
         .filter(p => {
-          return p !== "";
+          return p !== '';
         })
         .map((p, i) => {
-          let parts = p.split(",");
+          let parts = p.split(',');
           let x = parseFloat(parts[0]);
           let y = parseFloat(parts[1]);
           return new PathPoint(x, y);
@@ -111,7 +111,7 @@ export default class Path extends Item {
     if (points instanceof PointsList) {
       this.points = points;
       points.path = this;
-    } else if (typeof points === "string") {
+    } else if (typeof points === 'string') {
       this.points = PointsList.fromString(points, this);
     }
 

@@ -1,12 +1,12 @@
-import Posn from "geometry/posn";
-import Polynomial from "geometry/polynomial";
-import Bounds from "geometry/bounds";
-import Circle from "geometry/circle";
-import CubicBezier from "geometry/cubic-bezier-line-segment";
+import Posn from 'geometry/posn';
+import Polynomial from 'geometry/polynomial';
+import Bounds from 'geometry/bounds';
+import Circle from 'geometry/circle';
+import CubicBezier from 'geometry/cubic-bezier-line-segment';
 
-export const OUTSIDE = Symbol("OUTSIDE");
-export const INCIDENT = Symbol("INCIDENT");
-export const INSIDE = Symbol("INSIDE");
+export const OUTSIDE = Symbol('OUTSIDE');
+export const INCIDENT = Symbol('INCIDENT');
+export const INSIDE = Symbol('INSIDE');
 
 export default {
   contains(shape, posn) {
@@ -141,7 +141,7 @@ export default {
 
         break mainLoop;
       } else {
-        console.error("Cannot perform shapes.contains; no lineSegments");
+        console.error('Cannot perform shapes.contains; no lineSegments');
         return OUTSIDE;
       }
     }
@@ -182,7 +182,7 @@ export default {
     if (a.lineSegments && b.lineSegments) {
       return this.lineSegmentsIntersect(a, b);
     } else {
-      console.log("Incompatible overlap call", a, b);
+      console.log('Incompatible overlap call', a, b);
       console.trace();
     }
   },
@@ -264,7 +264,7 @@ export default {
       } else if (subject instanceof Ellipse) {
         return this.lineSegmentIntersectionsWithEllipse(line, subject);
       } else {
-        throw new Error("Invalid intersections call");
+        throw new Error('Invalid intersections call');
       }
     } else if (line instanceof CubicBezier) {
       if (subject instanceof LineSegment) {
@@ -272,7 +272,7 @@ export default {
       } else if (subject instanceof CubicBezier) {
         return this.cubicBezierIntersectionsWithCubicBezier(line, subject);
       } else {
-        throw new Error("Invalid intersections call");
+        throw new Error('Invalid intersections call');
       }
     }
   },

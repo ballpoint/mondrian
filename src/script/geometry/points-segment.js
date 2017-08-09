@@ -1,6 +1,6 @@
-import LineSegment from "geometry/line-segment";
-import CubicBezier from "geometry/cubic-bezier-line-segment";
-import PathPoint from "geometry/path-point";
+import LineSegment from 'geometry/line-segment';
+import CubicBezier from 'geometry/cubic-bezier-line-segment';
+import PathPoint from 'geometry/path-point';
 
 export default class PointsSegment {
   constructor(points, list) {
@@ -175,21 +175,21 @@ export default class PointsSegment {
   }
 
   toSVGString() {
-    let s = "";
+    let s = '';
 
     for (let i = 0; i < this.points.length; i++) {
       let pt = this.points[i];
       if (i === 0) {
         s += `M${pt.x.toFixed(8)},${pt.y.toFixed(8)}`;
       } else {
-        s += " ";
+        s += ' ';
         s += pt.toSVGString();
       }
     }
 
     if (this.closed) {
       let fpt = this.points[0];
-      s += " ";
+      s += ' ';
       s += fpt.toSVGString();
     }
 

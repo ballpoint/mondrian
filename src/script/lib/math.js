@@ -33,6 +33,6 @@ export default {
   },
 
   fmtFloat(n, prec) {
-    return n.toFixed(prec).replace(/\.?0+$/, "");
+    return n.toFixed(prec).replace(/\.?0+$/, '');
   }
 };

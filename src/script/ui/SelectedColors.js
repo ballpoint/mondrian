@@ -1,5 +1,5 @@
-import consts from "consts";
-import Color from "ui/color";
+import consts from 'consts';
+import Color from 'ui/color';
 
 export default class SelectedColors {
   constructor(fill = consts.white, stroke = consts.black) {

@@ -1,11 +1,11 @@
-import Posn from "geometry/posn";
-import CubicBezier from "geometry/cubic-bezier-line-segment";
-import assert from "assert";
-import assertUtil from "test/util";
-import chai from "chai";
-import shapes from "lab/shapes";
+import Posn from 'geometry/posn';
+import CubicBezier from 'geometry/cubic-bezier-line-segment';
+import assert from 'assert';
+import assertUtil from 'test/util';
+import chai from 'chai';
+import shapes from 'lab/shapes';
 
-describe("CubicBezier", function() {
+describe('CubicBezier', function() {
   it("works as expected when it's a straight line", done => {
     let cb = new CubicBezier(
       new Posn(0, 10),
@@ -24,7 +24,7 @@ describe("CubicBezier", function() {
     done();
   });
 
-  it("splitAt findPercentageOfPosn round trip", done => {
+  it('splitAt findPercentageOfPosn round trip', done => {
     let cb = new CubicBezier(
       new Posn(0, 10),
       new Posn(2, 2),
@@ -42,7 +42,7 @@ describe("CubicBezier", function() {
     done();
   });
 
-  it("handles intersections", done => {
+  it('handles intersections', done => {
     let c1 = new CubicBezier(
       new Posn(169.78713546239803, 104.64514289267613),
       new Posn(167.43103575881548, 130.09348307511416),
@@ -64,7 +64,7 @@ describe("CubicBezier", function() {
     done();
   });
 
-  it("isIncident", done => {
+  it('isIncident', done => {
     let c1 = new CubicBezier(
       new Posn(113.61580366762904, 149.5963227684857),
       new Posn(125.9753648760792, 128.44150524428468),

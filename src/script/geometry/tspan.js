@@ -1,4 +1,4 @@
-import Item from "geometry/item";
+import Item from 'geometry/item';
 
 /*
 
@@ -8,7 +8,7 @@ import Item from "geometry/item";
 
 class Tspan extends Item {
   static initClass() {
-    this.prototype.type = "tspan";
+    this.prototype.type = 'tspan';
   }
 
   constructor(data) {

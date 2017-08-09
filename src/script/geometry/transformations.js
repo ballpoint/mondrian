@@ -2,7 +2,7 @@ class Transformations {
   constructor(owner, transformations) {
     this.owner = owner;
     this.transformations = transformations;
-    let transform = this.owner.rep.getAttribute("transform");
+    let transform = this.owner.rep.getAttribute('transform');
     this.transformations.map(t => (t.family = this));
     if (transform != null) {
       this.parseExisting(transform);
@@ -14,11 +14,11 @@ class Transformations {
   }
 
   toAttr() {
-    return this.transformations.map(t => t.toAttr()).join(" ");
+    return this.transformations.map(t => t.toAttr()).join(' ');
   }
 
   toCSS() {
-    return this.transformations.map(t => t.toCSS()).join(" ");
+    return this.transformations.map(t => t.toCSS()).join(' ');
   }
 
   get(key) {
@@ -72,7 +72,7 @@ class Transformations {
 
 class RotateTransformation {
   static initClass() {
-    this.prototype.key = "rotate";
+    this.prototype.key = 'rotate';
   }
   constructor(deg, family) {
     this.deg = deg;
@@ -106,7 +106,7 @@ RotateTransformation.initClass();
 
 class ScaleTransformation {
   static initClass() {
-    this.prototype.key = "scale";
+    this.prototype.key = 'scale';
   }
   constructor(x, y) {
     if (x == null) {
@@ -149,7 +149,7 @@ ScaleTransformation.initClass();
 
 class TranslateTransformation {
   static initClass() {
-    this.prototype.key = "translate";
+    this.prototype.key = 'translate';
   }
   constructor(x, y) {
     if (x == null) {

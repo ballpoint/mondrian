@@ -1,7 +1,7 @@
-import EventEmitter from "lib/events";
-import Posn from "geometry/posn";
-import LineSegment from "geometry/line-segment";
-import { insideOf } from "lib/dom";
+import EventEmitter from 'lib/events';
+import Posn from 'geometry/posn';
+import LineSegment from 'geometry/line-segment';
+import { insideOf } from 'lib/dom';
 
 const DRAG_THRESHOLD = 5;
 const DOUBLE_CLICK_THRESHOLD = 500;
@@ -22,12 +22,12 @@ export default class CursorTracking extends EventEmitter {
 
     this._clientBounds = this.root.getBoundingClientRect();
 
-    document.addEventListener("click", this._click.bind(this));
-    document.addEventListener("mousedown", this._mousedown.bind(this));
-    document.addEventListener("mouseup", this._mouseup.bind(this));
-    document.addEventListener("mousemove", this._mousemove.bind(this));
-    document.addEventListener("mouseover", this._mouseover.bind(this));
-    document.addEventListener("mousewheel", this._scroll.bind(this));
+    document.addEventListener('click', this._click.bind(this));
+    document.addEventListener('mousedown', this._mousedown.bind(this));
+    document.addEventListener('mouseup', this._mouseup.bind(this));
+    document.addEventListener('mousemove', this._mousemove.bind(this));
+    document.addEventListener('mouseover', this._mouseover.bind(this));
+    document.addEventListener('mousewheel', this._scroll.bind(this));
   }
 
   reset() {
@@ -117,7 +117,7 @@ export default class CursorTracking extends EventEmitter {
       e.preventDefault();
 
       // Send the event to ui, which will dispatch it to the appropriate places
-      this.trigger("mousedown", e, this.currentPosn);
+      this.trigger('mousedown', e, this.currentPosn);
 
       // Set tracking variables
       this.down = true;
@@ -128,18 +128,18 @@ export default class CursorTracking extends EventEmitter {
   }
 
   _mouseup(e) {
-    this.trigger("mouseup", e, this.currentPosn);
+    this.trigger('mouseup', e, this.currentPosn);
     // End dragging sequence if it was occurring
     if (this.dragging && !this.draggingJustBegan) {
-      this.trigger("drag:stop", e, this.currentPosn, this.dragStartPosn);
+      this.trigger('drag:stop', e, this.currentPosn, this.dragStartPosn);
     } else {
       if (this.doubleclickArmed) {
         this.doubleclickArmed = false;
-        this.trigger("doubleclick", e, this.currentPosn);
+        this.trigger('doubleclick', e, this.currentPosn);
       } else {
         // It's a static click, meaning the cursor didn't move
         // between mousedown and mouseup so no drag occurred.
-        this.trigger("click", e, this.currentPosn);
+        this.trigger('click', e, this.currentPosn);
         // HACK
         this.armDoubleClick();
       }
@@ -159,7 +159,7 @@ export default class CursorTracking extends EventEmitter {
     this.currentPosn = this._posnForEvent(e);
 
     if (true) {
-      this.trigger("mousemove", e, this.currentPosn);
+      this.trigger('mousemove', e, this.currentPosn);
       e.preventDefault();
 
       // Set some tracking variables
@@ -176,10 +176,10 @@ export default class CursorTracking extends EventEmitter {
           this.currentPosn.distanceFrom(this.lastDown) > DRAG_THRESHOLD
         ) {
           this.dragStartPosn = this.lastDown;
-          this.trigger("drag:start", e, this.currentPosn, this.lastPosn);
+          this.trigger('drag:start', e, this.currentPosn, this.lastPosn);
           this.dragging = this.draggingJustBegan = true;
         }
-        this.trigger("drag", e, this.currentPosn, this.lastPosn);
+        this.trigger('drag', e, this.currentPosn, this.lastPosn);
       }
     }
   }
@@ -188,10 +188,10 @@ export default class CursorTracking extends EventEmitter {
 
   _scroll(e) {
     if (e.deltaY !== 0) {
-      this.trigger("scroll:y", e, e.deltaY);
+      this.trigger('scroll:y', e, e.deltaY);
     }
     if (e.deltaX !== 0) {
-      this.trigger("scroll:x", e, e.deltaX);
+      this.trigger('scroll:x', e, e.deltaX);
     }
   }
 }

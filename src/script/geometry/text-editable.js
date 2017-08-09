@@ -16,23 +16,23 @@ class TextEditable {
   refresh() {
     let resetToBlank;
     this.$rep.text(this.owner.content);
-    if (this.owner.data["font-size"] != null) {
+    if (this.owner.data['font-size'] != null) {
       this.$rep.css({
-        "font-size": float(this.owner.data["font-size"]) * ui.canvas.zoom + "px"
+        'font-size': float(this.owner.data['font-size']) * ui.canvas.zoom + 'px'
       });
     }
 
-    if (this.owner.data["font-family"] != null) {
-      this.$rep.css({ "font-family": this.owner.data["font-family"] });
+    if (this.owner.data['font-family'] != null) {
+      this.$rep.css({ 'font-family': this.owner.data['font-family'] });
     }
 
-    let tr = this.owner.transformations.get("translate");
+    let tr = this.owner.transformations.get('translate');
 
-    if (this.owner.rep.textContent === "") {
+    if (this.owner.rep.textContent === '') {
       // $.fn.offset returns 0, 0 if the contents are empty
       resetToBlank = true;
-      this.owner.rep.textContent = "[FILLER]";
-      this.$rep.text("[FILLER]");
+      this.owner.rep.textContent = '[FILLER]';
+      this.$rep.text('[FILLER]');
     }
 
     let ownerOffset = this.owner.$rep.offset();
@@ -59,8 +59,8 @@ class TextEditable {
     let myOffset = this.$rep.offset();
 
     if (resetToBlank) {
-      this.$rep.text("");
-      this.owner.rep.textContent = "";
+      this.$rep.text('');
+      this.owner.rep.textContent = '';
     }
 
     return this.$rep.css({
@@ -79,14 +79,14 @@ class TextEditable {
 `);
     this.rep = this.$rep[0];
 
-    $("#typography").append(this.$rep);
+    $('#typography').append(this.$rep);
 
-    this.$rep.one("blur", () => {
+    this.$rep.one('blur', () => {
       this.commit();
       return this.owner.displayMode();
     });
 
-    this.rep.style.display = "block";
+    this.rep.style.display = 'block';
 
     return this.refresh();
   }
@@ -105,7 +105,7 @@ class TextEditable {
 
   commit() {
     let oldOr = this.owner.originRotated();
-    this.owner.setContent(this.$rep.text().replace(/$\s+/g, ""));
+    this.owner.setContent(this.$rep.text().replace(/$\s+/g, ''));
     let newOr = this.owner.originRotated();
     return this.owner.nudge(oldOr.x - newOr.x, oldOr.y - newOr.y);
   }

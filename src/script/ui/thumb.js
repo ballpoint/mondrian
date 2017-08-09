@@ -1,7 +1,7 @@
-import Bounds from "geometry/bounds";
-import Projection from "ui/projection";
-import { scaleLinear } from "d3-scale";
-import Canvas from "ui/canvas";
+import Bounds from 'geometry/bounds';
+import Projection from 'ui/projection';
+import { scaleLinear } from 'd3-scale';
+import Canvas from 'ui/canvas';
 
 const THUMBNAIL_DIMEN = 300;
 

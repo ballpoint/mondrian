@@ -1,9 +1,9 @@
-import Posn from "geometry/posn";
-import LineSegment from "geometry/line-segment";
-import assert from "assert";
+import Posn from 'geometry/posn';
+import LineSegment from 'geometry/line-segment';
+import assert from 'assert';
 
-describe("LineSegment", function() {
-  it("has an angle", done => {
+describe('LineSegment', function() {
+  it('has an angle', done => {
     // North
     let l1 = new LineSegment(new Posn(0, 0), new Posn(0, -10));
     // East

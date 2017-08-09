@@ -1,6 +1,6 @@
-import Bounds from "geometry/bounds";
-import Metadata from "geometry/metadata";
-import UUIDV4 from "uuid/v4";
+import Bounds from 'geometry/bounds';
+import Metadata from 'geometry/metadata';
+import UUIDV4 from 'uuid/v4';
 
 export default class Group {
   constructor(children, metadata = {}) {
@@ -82,33 +82,33 @@ export default class Group {
   }
 
   nudge() {
-    this.propagate("nudge", arguments);
+    this.propagate('nudge', arguments);
   }
 
   scale() {
-    this.propagate("scale", arguments);
+    this.propagate('scale', arguments);
   }
 
   rotate(a) {
-    this.propagate("rotate", arguments);
+    this.propagate('rotate', arguments);
 
     this.metadata.angle += a;
   }
 
   matrix() {
-    this.propagate("matrix", arguments);
+    this.propagate('matrix', arguments);
   }
 
   setFill() {
-    this.propagate("setFill", arguments);
+    this.propagate('setFill', arguments);
   }
 
   setStroke() {
-    this.propagate("setStroke", arguments);
+    this.propagate('setStroke', arguments);
   }
 
   setStrokeWidth() {
-    this.propagate("setStrokeWidth", arguments);
+    this.propagate('setStrokeWidth', arguments);
   }
 
   propagate(method, args) {

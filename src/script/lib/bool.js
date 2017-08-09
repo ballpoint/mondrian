@@ -1,12 +1,12 @@
-import "util/prototypes";
-import logger from "lib/logger";
-import Path from "geometry/path";
-import PathPoint from "geometry/path-point";
-import shapes from "lab/shapes";
-import { OUTSIDE, INCIDENT, INSIDE } from "lab/shapes";
-import LineSegment from "geometry/line-segment";
-import CubicBezier from "geometry/cubic-bezier-line-segment";
-import PointsList from "geometry/points-list";
+import 'util/prototypes';
+import logger from 'lib/logger';
+import Path from 'geometry/path';
+import PathPoint from 'geometry/path-point';
+import shapes from 'lab/shapes';
+import { OUTSIDE, INCIDENT, INSIDE } from 'lab/shapes';
+import LineSegment from 'geometry/line-segment';
+import CubicBezier from 'geometry/cubic-bezier-line-segment';
+import PointsList from 'geometry/points-list';
 
 const XN_TOLERANCE = 0.001;
 
@@ -158,7 +158,7 @@ export class Edge {
 
   toString() {
     return (
-      this.origin.toShortString() + " -> " + this.destination.toShortString()
+      this.origin.toShortString() + ' -> ' + this.destination.toShortString()
     );
   }
 }
@@ -221,13 +221,13 @@ export class EdgeSet {
     if (replacements.length === 1 && replacements[0] === remove) return remove; // no work to do!
 
     logger.verbose(
-      "replacing",
+      'replacing',
       remove.toString(),
-      "with",
+      'with',
       replacements[0].toString(),
-      "\n",
-      "pushing",
-      replacements.slice(1).join("; ")
+      '\n',
+      'pushing',
+      replacements.slice(1).join('; ')
     );
     let i = this.edges.indexOf(remove);
     this.edges[i] = replacements[0];
@@ -316,7 +316,7 @@ export class EdgeSet {
 }
 
 function doBoolean(a, b, op) {
-  logger.verbose("a", a, "b", b);
+  logger.verbose('a', a, 'b', b);
 
   let aes = EdgeSet.fromPointsList(a);
   let bes = EdgeSet.fromPointsList(b);
@@ -324,7 +324,7 @@ function doBoolean(a, b, op) {
   // Resolve intersections
   let xns = aes.intersect(bes);
 
-  logger.verbose("xns", xns);
+  logger.verbose('xns', xns);
 
   function wasIntersection(pt, other) {
     //let rel = shapes.relationship(other, pt);
@@ -342,15 +342,15 @@ function doBoolean(a, b, op) {
     let rel;
 
     switch (op) {
-      case "unite":
+      case 'unite':
         // In the case of union, we only keep points not inside
         // the other shape.
         rel = shapes.relationship(other, pt);
         return rel != INSIDE;
-      case "intersect":
+      case 'intersect':
         rel = shapes.relationship(other, pt);
         return rel == INSIDE || rel == INCIDENT;
-      case "subtract":
+      case 'subtract':
         switch (owner) {
           case a:
             rel = shapes.relationship(b, pt);
@@ -370,10 +370,10 @@ function doBoolean(a, b, op) {
       let midpt = edge.lineSegment.posnAt(0.5);
       let rel;
       switch (op) {
-        case "unite":
+        case 'unite':
           rel = shapes.relationship(other, midpt);
           return rel != INSIDE;
-        case "subtract":
+        case 'subtract':
           if (owner === a) {
             rel = shapes.relationship(b, midpt);
             return rel == INSIDE;
@@ -381,7 +381,7 @@ function doBoolean(a, b, op) {
             rel = shapes.relationship(a, midpt);
             return rel == OUTSIDE;
           }
-        case "intersect":
+        case 'intersect':
           rel = shapes.relationship(other, midpt);
           return rel != OUTSIDE;
       }
@@ -425,15 +425,15 @@ function doBoolean(a, b, op) {
     }
   }
 
-  logger.verbose("total edges", edgesToUse.length / 2 + edgesToOmit.length);
+  logger.verbose('total edges', edgesToUse.length / 2 + edgesToOmit.length);
 
-  logger.verbose(edgesToUse, "to use", edgesToUse.length / 2);
+  logger.verbose(edgesToUse, 'to use', edgesToUse.length / 2);
   /*
   for (let edge of edgesToUse) {
     logger.verbose(edge.toString());
   }
   */
-  logger.verbose(edgesToOmit, "to omit", edgesToOmit.length);
+  logger.verbose(edgesToOmit, 'to omit', edgesToOmit.length);
   /*
   for (let edge of edgesToOmit) {
     logger.verbose(edge.toString());
@@ -441,7 +441,7 @@ function doBoolean(a, b, op) {
   */
 
   if (edgesToUse.length === 0) {
-    console.warn("Empty boolean result");
+    console.warn('Empty boolean result');
     return pl;
   }
 
@@ -449,8 +449,8 @@ function doBoolean(a, b, op) {
   let cursor = edgesToUse[0];
   let prevEdge;
   pl.push(cursor.origin);
-  logger.verbose("-------------");
-  logger.verbose("start at", cursor.origin.toShortString());
+  logger.verbose('-------------');
+  logger.verbose('start at', cursor.origin.toShortString());
 
   let iters = edgesToUse.length / 2;
 
@@ -471,22 +471,22 @@ function doBoolean(a, b, op) {
         if (cursor.origin.sHandle) {
           lastPoint.setSHandle(cursor.origin.sHandle);
         } else {
-          lastPoint.unsetHandle("sHandle");
+          lastPoint.unsetHandle('sHandle');
         }
 
         let firstPoint = seg.first;
         if (cursor.destination.pHandle) {
           firstPoint.setPHandle(cursor.destination.pHandle);
         } else {
-          firstPoint.unsetHandle("pHandle");
+          firstPoint.unsetHandle('pHandle');
         }
       }
     } else {
       seg.push(cursor.destination);
       logger.verbose(
-        "push",
+        'push',
         cursor.destination.toShortString(),
-        "(" + cursor.toString() + ")"
+        '(' + cursor.toString() + ')'
       );
 
       // Set the last point's sHandle
@@ -495,7 +495,7 @@ function doBoolean(a, b, op) {
         if (cursor.origin.sHandle) {
           prevPoint.setSHandle(cursor.origin.sHandle);
         } else {
-          prevPoint.unsetHandle("sHandle");
+          prevPoint.unsetHandle('sHandle');
         }
       }
     }
@@ -527,20 +527,20 @@ function doBoolean(a, b, op) {
       }
 
       if (cursorOpts.length === 1) {
-        logger.verbose("using only cursorOpts");
+        logger.verbose('using only cursorOpts');
         cursor = cursorOpts[0];
       } else if (cursorOpts.length == 0) {
         // The current segment is closed and we need to pick an edge that's remaining
         // to continue in a new segment.
-        logger.verbose("closing and moving on");
+        logger.verbose('closing and moving on');
         pl.closeSegment();
 
         cursor = edgesToUse[0];
         pl.push(cursor.origin);
       } else {
         // TODO handle this case! I think we need to move clockwise.
-        logger.verbose("opts not 1 with edges left", cursor);
-        console.log(cursorOpts.join("\n"));
+        logger.verbose('opts not 1 with edges left', cursor);
+        console.log(cursorOpts.join('\n'));
         debugger;
         break;
       }
@@ -587,12 +587,12 @@ function doElements(elements, op) {
 
 export default {
   unite(elems) {
-    return doElements(elems, "unite");
+    return doElements(elems, 'unite');
   },
   intersect(elems) {
-    return doElements(elems, "intersect");
+    return doElements(elems, 'intersect');
   },
   subtract(elems) {
-    return doElements(elems, "subtract");
+    return doElements(elems, 'subtract');
   }
 };

@@ -1,6 +1,6 @@
-import math from "lib/math";
-import Posn from "geometry/posn";
-import Range from "geometry/range";
+import math from 'lib/math';
+import Posn from 'geometry/posn';
+import Range from 'geometry/range';
 
 export default class Bounds {
   constructor(x1, y1, width, height, angle = 0) {
@@ -243,28 +243,28 @@ export default class Bounds {
 
   moveEdge(edge, amount) {
     switch (edge) {
-      case "t":
+      case 't':
         if (this.y < this.y2) {
           this.y += amount;
         } else {
           this.y2 += amount;
         }
         break;
-      case "b":
+      case 'b':
         if (this.y > this.y2) {
           this.y += amount;
         } else {
           this.y2 += amount;
         }
         break;
-      case "l":
+      case 'l':
         if (this.x < this.x2) {
           this.x += amount;
         } else {
           this.x2 += amount;
         }
         break;
-      case "r":
+      case 'r':
         if (this.x > this.x2) {
           this.x += amount;
         } else {
@@ -277,20 +277,20 @@ export default class Bounds {
 
   flipped(axis) {
     switch (axis) {
-      case "x":
+      case 'x':
         return this.x2 < this.x;
-      case "y":
+      case 'y':
         return this.y2 < this.y;
     }
   }
 
   unflip() {
-    if (this.flipped("x")) {
+    if (this.flipped('x')) {
       let { x, x2 } = this;
       this.x = x2;
       this.x2 = x;
     }
-    if (this.flipped("y")) {
+    if (this.flipped('y')) {
       let { y, y2 } = this;
       this.y = y2;
       this.y2 = y;

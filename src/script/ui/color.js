@@ -17,9 +17,9 @@ export default class Color {
       return;
     }
 
-    if (r === null || r === "none") {
+    if (r === null || r === 'none') {
       // Default to black
-      this.hex = "none";
+      this.hex = 'none';
       this.r = 0;
       this.g = 0;
       this.b = 0;
@@ -29,10 +29,10 @@ export default class Color {
 
     if (a === null) a = 1.0;
 
-    if (typeof r === "string") {
-      if (r.charAt(0) === "#" || r.length === 6) {
+    if (typeof r === 'string') {
+      if (r.charAt(0) === '#' || r.length === 6) {
         // Convert hex to rgba
-        this.hex = r.toUpperCase().replace("#", "");
+        this.hex = r.toUpperCase().replace('#', '');
         let rgb = this.hexToRGB(this.hex);
         this.r = rgb.r;
         this.g = rgb.g;
@@ -94,7 +94,7 @@ export default class Color {
     this.b = color.b;
     this.a = color.a;
     this.hex = color.hex;
-    if (typeof this.refresh === "function") {
+    if (typeof this.refresh === 'function') {
       this.refresh();
     }
     return this;
@@ -117,12 +117,12 @@ export default class Color {
   }
 
   valToHex(val) {
-    let chars = "0123456789ABCDEF";
+    let chars = '0123456789ABCDEF';
     return chars.charAt((val - val % 16) / 16) + chars.charAt(val % 16);
   }
 
   hexToVal(hex) {
-    let chars = "0123456789ABCDEF";
+    let chars = '0123456789ABCDEF';
     return chars.indexOf(hex.charAt(0)) * 16 + chars.indexOf(hex.charAt(1));
   }
 
@@ -193,7 +193,7 @@ export default class Color {
 
   toRGBString() {
     if (this.r === null) {
-      return "none";
+      return 'none';
     } else {
       return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a === undefined
         ? 1

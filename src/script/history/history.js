@@ -1,5 +1,5 @@
-import HistoryFrame from "history/Frame";
-import * as actions from "history/actions/actions";
+import HistoryFrame from 'history/Frame';
+import * as actions from 'history/actions/actions';
 
 export default class DocHistory {
   // Linked list history data struct ,'>)

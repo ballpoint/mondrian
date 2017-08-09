@@ -1,8 +1,8 @@
-import Posn from "geometry/posn";
-import assert from "assert";
+import Posn from 'geometry/posn';
+import assert from 'assert';
 
-describe("Posn", function() {
-  it("nudges", done => {
+describe('Posn', function() {
+  it('nudges', done => {
     let p = new Posn(0, 0);
 
     assert.equal(0, p.x);

@@ -1,4 +1,4 @@
-import math from "lib/math";
+import math from 'lib/math';
 
 /*
 
@@ -42,9 +42,9 @@ export default class Posn {
         this.y = this.x.y;
         this.x = this.x.x;
       }
-    } else if (typeof this.x === "string" && this.x.mentions(",")) {
+    } else if (typeof this.x === 'string' && this.x.mentions(',')) {
       // Support for giving a string of two numbers and a comma "12.3,840"
-      let split = this.x.split(",").map(parseFloat);
+      let split = this.x.split(',').map(parseFloat);
       let x = split[0];
       let y = split[1];
       this.x = x;
@@ -75,7 +75,7 @@ export default class Posn {
     //
     // O/P: self
 
-    for (let a of ["x", "y", "x2", "y2", "x3", "y3"]) {
+    for (let a of ['x', 'y', 'x2', 'y2', 'x3', 'y3']) {
       this[a] = this[a] != null ? fun(this[a]) : this[a];
     }
     return this;
@@ -122,9 +122,9 @@ export default class Posn {
   }
 
   directionRelativeTo(p) {
-    return `${this.y < p.y ? "t" : this.y > p.y ? "b" : ""}${this.x < p.x
-      ? "l"
-      : this.x > p.x ? "r" : ""}`;
+    return `${this.y < p.y ? 't' : this.y > p.y ? 'b' : ''}${this.x < p.x
+      ? 'l'
+      : this.x > p.x ? 'r' : ''}`;
   }
 
   squareUpAgainst(p) {
@@ -140,40 +140,40 @@ export default class Posn {
     }
 
     switch (direction) {
-      case "tl":
+      case 'tl':
         if (xDiff < yDiff) {
           this.nudge(xDiff - yDiff, 0);
         } else if (yDiff < xDiff) {
           this.nudge(0, xDiff - yDiff, 0);
         }
         break;
-      case "tr":
+      case 'tr':
         if (xDiff < yDiff) {
           this.nudge(yDiff - xDiff, 0);
         } else if (yDiff < xDiff) {
           this.nudge(0, xDiff - yDiff);
         }
         break;
-      case "br":
+      case 'br':
         if (xDiff < yDiff) {
           this.nudge(yDiff - xDiff, 0);
         } else if (yDiff < xDiff) {
           this.nudge(0, yDiff - xDiff);
         }
         break;
-      case "bl":
+      case 'bl':
         if (xDiff < yDiff) {
           this.nudge(xDiff - yDiff, 0);
         } else if (yDiff < xDiff) {
           this.nudge(0, yDiff - xDiff);
         }
         break;
-      case "t":
-      case "b":
+      case 't':
+      case 'b':
         this.nudge(yDiff, 0);
         break;
-      case "r":
-      case "l":
+      case 'r':
+      case 'l':
         this.nudge(0, xDiff);
         break;
     }
@@ -286,12 +286,12 @@ export default class Posn {
 
   multiplyBy(s) {
     switch (typeof s) {
-      case "number":
+      case 'number':
         let np = this.clone();
         np.x *= s;
         np.y *= s;
         return np;
-      case "object":
+      case 'object':
         np = this.clone();
         np.x *= s.x;
         np.y *= s.y;
@@ -316,18 +316,18 @@ export default class Posn {
 
   add(s) {
     switch (typeof s) {
-      case "number":
+      case 'number':
         return new Posn(this.x + s, this.y + s);
-      case "object":
+      case 'object':
         return new Posn(this.x + s.x, this.y + s.y);
     }
   }
 
   subtract(s) {
     switch (typeof s) {
-      case "number":
+      case 'number':
         return new Posn(this.x - s, this.y - s);
-      case "object":
+      case 'object':
         return new Posn(this.x - s.x, this.y - s.y);
     }
   }
