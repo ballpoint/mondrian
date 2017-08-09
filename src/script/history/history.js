@@ -1,11 +1,11 @@
-import HistoryFrame from 'history/Frame';
-import * as actions from 'history/actions/actions';
+import HistoryFrame from "history/Frame";
+import * as actions from "history/actions/actions";
 
 export default class DocHistory {
   // Linked list history data struct ,'>)
   constructor() {
     let initFrame = new HistoryFrame([
-        new actions.InitAction() // TODO shove doc in here
+      new actions.InitAction() // TODO shove doc in here
     ]);
     initFrame.seal();
     this.pushFrame(initFrame);
@@ -13,7 +13,7 @@ export default class DocHistory {
 
   pushFrame(frame) {
     if (this.head) {
-      frame.depth = this.head.depth+1;
+      frame.depth = this.head.depth + 1;
     } else {
       frame.depth = 0;
     }
@@ -23,7 +23,7 @@ export default class DocHistory {
   }
 
   pushAction(action) {
-    if (!this.head.isSealed()){ 
+    if (!this.head.isSealed()) {
       if (this.head.canMerge(action)) {
         this.head.merge(action);
       } else {
@@ -63,7 +63,7 @@ export default class DocHistory {
       this.setHead(next);
     }
   }
-  
+
   jumpToDepth(doc, d) {
     let delta = this.head.depth - d;
     if (delta === 0) {

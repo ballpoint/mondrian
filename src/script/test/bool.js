@@ -1,17 +1,19 @@
-import LineSegment from 'geometry/line-segment';
-import Path from 'geometry/path';
-import { EdgeSet } from 'lib/bool';
-import bool from 'lib/bool';
-import assert from 'assert';
+import LineSegment from "geometry/line-segment";
+import Path from "geometry/path";
+import { EdgeSet } from "lib/bool";
+import bool from "lib/bool";
+import assert from "assert";
 
 describe("Edge", function() {
-  it('calculates its line segment', (done) => {
-    let edges = EdgeSet.fromPath(Path.rectangle({
-      x: 10,
-      y: 10,
-      width: 20,
-      height: 40,
-    }));
+  it("calculates its line segment", done => {
+    let edges = EdgeSet.fromPath(
+      Path.rectangle({
+        x: 10,
+        y: 10,
+        width: 20,
+        height: 40
+      })
+    );
 
     let edge1Ls = edges.get(0).lineSegment;
 
@@ -26,13 +28,15 @@ describe("Edge", function() {
 });
 
 describe("EdgeSet", function() {
-  it('builds edges from path', (done) => {
-    let edges = EdgeSet.fromPath(Path.rectangle({
-      x: 10,
-      y: 10,
-      width: 20,
-      height: 40,
-    }));
+  it("builds edges from path", done => {
+    let edges = EdgeSet.fromPath(
+      Path.rectangle({
+        x: 10,
+        y: 10,
+        width: 20,
+        height: 40
+      })
+    );
 
     assert.equal(4, edges.length);
 
@@ -48,20 +52,24 @@ describe("EdgeSet", function() {
     done();
   });
 
-  it('intersects', (done) => {
-    let es1 = EdgeSet.fromPath(Path.rectangle({
-      x: 0,
-      y: 0,
-      width: 40,
-      height: 40,
-    }));
+  it("intersects", done => {
+    let es1 = EdgeSet.fromPath(
+      Path.rectangle({
+        x: 0,
+        y: 0,
+        width: 40,
+        height: 40
+      })
+    );
 
-    let es2 = EdgeSet.fromPath(Path.rectangle({
-      x: 20,
-      y: 20,
-      width: 40,
-      height: 40,
-    }));
+    let es2 = EdgeSet.fromPath(
+      Path.rectangle({
+        x: 20,
+        y: 20,
+        width: 40,
+        height: 40
+      })
+    );
 
     // A pair of squares where the second's origin is the middle of
     // the first. They should have two intersections:
@@ -103,17 +111,17 @@ describe("Boolean operations", function() {
     x: 0,
     y: 0,
     width: 40,
-    height: 40,
+    height: 40
   });
 
   let r2 = Path.rectangle({
     x: 20,
     y: 20,
     width: 40,
-    height: 40,
+    height: 40
   });
 
-  it('unite', (done) => {
+  it("unite", done => {
     bool.unite([r1.points, r2.points]);
 
     done();

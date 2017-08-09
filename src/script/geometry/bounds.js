@@ -1,10 +1,9 @@
-import math from 'lib/math';
-import Posn from 'geometry/posn';
-import Range from 'geometry/range';
+import math from "lib/math";
+import Posn from "geometry/posn";
+import Range from "geometry/range";
 
 export default class Bounds {
-
-  constructor(x1, y1, width, height, angle=0) {
+  constructor(x1, y1, width, height, angle = 0) {
     this.angle = angle;
     if (x1 instanceof Array) {
       // A list of bounds
@@ -21,10 +20,18 @@ export default class Bounds {
     this.yr = new Range(this.y, this.y + height);
   }
 
-  get l() { return Math.min(this.x, this.x2); }
-  get r() { return Math.max(this.x, this.x2); }
-  get t() { return Math.min(this.y, this.y2); }
-  get b() { return Math.max(this.y, this.y2); }
+  get l() {
+    return Math.min(this.x, this.x2);
+  }
+  get r() {
+    return Math.max(this.x, this.x2);
+  }
+  get t() {
+    return Math.min(this.y, this.y2);
+  }
+  get b() {
+    return Math.max(this.y, this.y2);
+  }
 
   get width() {
     return this.r - this.l;
@@ -35,12 +42,18 @@ export default class Bounds {
   }
 
   equal(ob) {
-    return this.t === ob.t && this.l === ob.l && this.r === ob.r && this.b === ob.b;
+    return (
+      this.t === ob.t && this.l === ob.l && this.r === ob.r && this.b === ob.b
+    );
   }
 
   static fromPosns(posns) {
-    let xs = posns.map((p) => { return p.x });
-    let ys = posns.map((p) => { return p.y });
+    let xs = posns.map(p => {
+      return p.x;
+    });
+    let ys = posns.map(p => {
+      return p.y;
+    });
     let minX = Math.min(...xs);
     let minY = Math.min(...ys);
     let maxX = Math.max(...xs);
@@ -50,11 +63,11 @@ export default class Bounds {
   }
 
   static fromBounds(bounds) {
-    let x  = Math.min.apply(this, bounds.map(b => b.x));
-    let y  = Math.min.apply(this, bounds.map(b => b.y));
+    let x = Math.min.apply(this, bounds.map(b => b.x));
+    let y = Math.min.apply(this, bounds.map(b => b.y));
     let x2 = Math.max.apply(this, bounds.map(b => b.x2));
     let y2 = Math.max.apply(this, bounds.map(b => b.y2));
-    return new Bounds(x, y, x2-x, y2-y);
+    return new Bounds(x, y, x2 - x, y2 - y);
   }
 
   sharp() {
@@ -67,35 +80,83 @@ export default class Bounds {
   }
 
   // Corners
-  tl() { return new Posn(this.l, this.t).rotate(this.angle, this.center()); }
-  tr() { return new Posn(this.r, this.t).rotate(this.angle, this.center()); }
-  br() { return new Posn(this.r, this.b).rotate(this.angle, this.center()); }
-  bl() { return new Posn(this.l, this.b).rotate(this.angle, this.center()); }
+  tl() {
+    return new Posn(this.l, this.t).rotate(this.angle, this.center());
+  }
+  tr() {
+    return new Posn(this.r, this.t).rotate(this.angle, this.center());
+  }
+  br() {
+    return new Posn(this.r, this.b).rotate(this.angle, this.center());
+  }
+  bl() {
+    return new Posn(this.l, this.b).rotate(this.angle, this.center());
+  }
 
   // Middles
-  tm() { return new Posn(this.l+(this.width/2), this.t).rotate(this.angle, this.center()); }
-  bm() { return new Posn(this.l+(this.width/2), this.b).rotate(this.angle, this.center()); }
-  rm() { return new Posn(this.r, this.t+(this.height/2)).rotate(this.angle, this.center()); }
-  lm() { return new Posn(this.l, this.t+(this.height/2)).rotate(this.angle, this.center()); }
+  tm() {
+    return new Posn(this.l + this.width / 2, this.t).rotate(
+      this.angle,
+      this.center()
+    );
+  }
+  bm() {
+    return new Posn(this.l + this.width / 2, this.b).rotate(
+      this.angle,
+      this.center()
+    );
+  }
+  rm() {
+    return new Posn(this.r, this.t + this.height / 2).rotate(
+      this.angle,
+      this.center()
+    );
+  }
+  lm() {
+    return new Posn(this.l, this.t + this.height / 2).rotate(
+      this.angle,
+      this.center()
+    );
+  }
 
   transform(x, y, z) {
-    return new Bounds(x(this.x), y(this.y), z(this.width), z(this.height), this.angle);
+    return new Bounds(
+      x(this.x),
+      y(this.y),
+      z(this.width),
+      z(this.height),
+      this.angle
+    );
   }
 
-  clone() { return new Bounds(this.x, this.y, this.width, this.height, this.angle); }
+  clone() {
+    return new Bounds(this.x, this.y, this.width, this.height, this.angle);
+  }
 
   center() {
-    return new Posn(this.x + (this.width / 2), this.y + (this.height / 2));
+    return new Posn(this.x + this.width / 2, this.y + this.height / 2);
   }
 
-  points() { return [new Posn(this.x, this.y), new Posn(this.x2, this.y), new Posn(this.x2, this.y2), new Posn(this.x, this.y2)]; }
+  points() {
+    return [
+      new Posn(this.x, this.y),
+      new Posn(this.x2, this.y),
+      new Posn(this.x2, this.y2),
+      new Posn(this.x, this.y2)
+    ];
+  }
 
-  contains(posn, tolerance=null) {
-    return this.xr.containsInclusive(posn.x, tolerance) && this.yr.containsInclusive(posn.y, tolerance);
+  contains(posn, tolerance = null) {
+    return (
+      this.xr.containsInclusive(posn.x, tolerance) &&
+      this.yr.containsInclusive(posn.y, tolerance)
+    );
   }
 
   overlapsBounds(other, recur) {
-    if (recur == null) { recur = true; }
+    if (recur == null) {
+      recur = true;
+    }
     return this.toRect().overlaps(other.toRect());
   }
 
@@ -130,14 +191,20 @@ export default class Bounds {
   }
 
   padded(n) {
-    return new Bounds(this.l - n, this.t - n, this.width + (n*2), this.height + (n*2), this.angle)
+    return new Bounds(
+      this.l - n,
+      this.t - n,
+      this.width + n * 2,
+      this.height + n * 2,
+      this.angle
+    );
   }
 
   squareSmaller(anchor) {
     if (this.width < this.height) {
-      return this.height = this.width;
+      return (this.height = this.width);
     } else {
-      return this.width = this.height;
+      return (this.width = this.height);
     }
   }
 
@@ -162,7 +229,7 @@ export default class Bounds {
   }
 
   static centeredOnPosn(posn, w, h) {
-    return new Bounds(posn.x-(w/2), posn.y-(h/2), w, h);
+    return new Bounds(posn.x - w / 2, posn.y - h / 2, w, h);
   }
 
   lineSegments() {
@@ -170,34 +237,34 @@ export default class Bounds {
       new LineSegment(this.tl(), this.tr()),
       new LineSegment(this.tr(), this.br()),
       new LineSegment(this.br(), this.bl()),
-      new LineSegment(this.bl(), this.tl()),
+      new LineSegment(this.bl(), this.tl())
     ];
   }
 
   moveEdge(edge, amount) {
     switch (edge) {
-      case 't':
+      case "t":
         if (this.y < this.y2) {
           this.y += amount;
         } else {
           this.y2 += amount;
         }
         break;
-      case 'b':
+      case "b":
         if (this.y > this.y2) {
           this.y += amount;
         } else {
           this.y2 += amount;
         }
         break;
-      case 'l':
+      case "l":
         if (this.x < this.x2) {
           this.x += amount;
         } else {
           this.x2 += amount;
         }
         break;
-      case 'r':
+      case "r":
         if (this.x > this.x2) {
           this.x += amount;
         } else {
@@ -210,24 +277,23 @@ export default class Bounds {
 
   flipped(axis) {
     switch (axis) {
-      case 'x':
+      case "x":
         return this.x2 < this.x;
-      case 'y':
+      case "y":
         return this.y2 < this.y;
     }
   }
 
   unflip() {
-    if (this.flipped('x')) {
+    if (this.flipped("x")) {
       let { x, x2 } = this;
       this.x = x2;
       this.x2 = x;
     }
-    if (this.flipped('y')) {
+    if (this.flipped("y")) {
       let { y, y2 } = this;
       this.y = y2;
       this.y2 = y;
     }
   }
 }
-

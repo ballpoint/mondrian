@@ -1,12 +1,12 @@
-import 'util/prototypes';
-import logger from 'lib/logger';
-import Path from 'geometry/path';
-import PathPoint from 'geometry/path-point';
-import shapes from 'lab/shapes';
-import { OUTSIDE, INCIDENT, INSIDE } from 'lab/shapes';
-import LineSegment from 'geometry/line-segment';
-import CubicBezier from 'geometry/cubic-bezier-line-segment';
-import PointsList from 'geometry/points-list'
+import "util/prototypes";
+import logger from "lib/logger";
+import Path from "geometry/path";
+import PathPoint from "geometry/path-point";
+import shapes from "lab/shapes";
+import { OUTSIDE, INCIDENT, INSIDE } from "lab/shapes";
+import LineSegment from "geometry/line-segment";
+import CubicBezier from "geometry/cubic-bezier-line-segment";
+import PointsList from "geometry/points-list";
 
 const XN_TOLERANCE = 0.001;
 
@@ -23,12 +23,17 @@ export class Edge {
 
   get lineSegment() {
     try {
-    return this.destination.toLineSegment(this.origin);
-    } catch(e) { debugger; }
+      return this.destination.toLineSegment(this.origin);
+    } catch (e) {
+      debugger;
+    }
   }
 
   equal(other) {
-    return this.origin.fullEqual(other.origin) && this.destination.fullEqual(other.destination);
+    return (
+      this.origin.fullEqual(other.origin) &&
+      this.destination.fullEqual(other.destination)
+    );
   }
 
   incident(other) {
@@ -56,12 +61,11 @@ export class Edge {
 
     return {
       own: incidentEndpointOwn,
-      other: incidentEndpointOther,
+      other: incidentEndpointOther
     };
   }
 
   intersections(other) {
-
     let lsa = this.lineSegment;
     let lsb = other.lineSegment;
 
@@ -71,8 +75,11 @@ export class Edge {
   }
 
   splitOn(xns) {
-    xns = xns.filter((xn) => {
-      return !(xn.within(this.origin, XN_TOLERANCE) || xn.within(this.destination, XN_TOLERANCE));
+    xns = xns.filter(xn => {
+      return !(
+        xn.within(this.origin, XN_TOLERANCE) ||
+        xn.within(this.destination, XN_TOLERANCE)
+      );
     });
 
     if (xns.length === 0) {
@@ -104,12 +111,20 @@ export class Edge {
       let dest;
 
       if (ls instanceof CubicBezier) {
-        origin = PathPoint.fromPosns(splits[0].p1, origin.pHandle, splits[0].p2);
-        dest   = PathPoint.fromPosns(splits[1].p1, splits[0].p3, splits[1].p2);
-        finalDestination = PathPoint.fromPosns(splits[1].p4, splits[1].p3, this.destination.sHandle);
+        origin = PathPoint.fromPosns(
+          splits[0].p1,
+          origin.pHandle,
+          splits[0].p2
+        );
+        dest = PathPoint.fromPosns(splits[1].p1, splits[0].p3, splits[1].p2);
+        finalDestination = PathPoint.fromPosns(
+          splits[1].p4,
+          splits[1].p3,
+          this.destination.sHandle
+        );
       } else {
         origin = PathPoint.fromPosns(splits[0].a);
-        dest   = PathPoint.fromPosns(splits[0].b);
+        dest = PathPoint.fromPosns(splits[0].b);
         finalDestination = PathPoint.fromPosns(splits[1].b);
       }
 
@@ -142,12 +157,14 @@ export class Edge {
   }
 
   toString() {
-    return this.origin.toShortString() + ' -> ' + this.destination.toShortString();
+    return (
+      this.origin.toShortString() + " -> " + this.destination.toShortString()
+    );
   }
 }
 
 export class EdgeSet {
-  constructor(edges=[]) {
+  constructor(edges = []) {
     this.edges = edges;
   }
 
@@ -162,11 +179,11 @@ export class EdgeSet {
   static linkEdges(edges) {
     for (let i = 0; i < edges.length; i++) {
       let edge = edges[i];
-      let prev = edges[i-1];
-      let next = edges[i+1];
+      let prev = edges[i - 1];
+      let next = edges[i + 1];
       if (i === 0) {
-        prev = edges[edges.length-1];
-      } else if (i === edges.length-1) {
+        prev = edges[edges.length - 1];
+      } else if (i === edges.length - 1) {
         next = edges[0];
       }
       edge.prev = prev;
@@ -178,11 +195,11 @@ export class EdgeSet {
   }
 
   static fromPointsList(pl) {
-    let segments = pl.segments.map((seg) => {
-      return seg.points.map((pt) => {
+    let segments = pl.segments.map(seg => {
+      return seg.points.map(pt => {
         // Going in default dir
         return new Edge(pt.clone(), pt.succ.clone());
-      })
+      });
     });
 
     for (let seg of segments) {
@@ -194,7 +211,6 @@ export class EdgeSet {
     }, []);
 
     return new EdgeSet(edges);
-
   }
 
   static fromPath(path) {
@@ -204,7 +220,15 @@ export class EdgeSet {
   replace(remove, replacements) {
     if (replacements.length === 1 && replacements[0] === remove) return remove; // no work to do!
 
-    logger.verbose('replacing', remove.toString(), 'with', replacements[0].toString(), '\n', 'pushing', replacements.slice(1).join('; '));
+    logger.verbose(
+      "replacing",
+      remove.toString(),
+      "with",
+      replacements[0].toString(),
+      "\n",
+      "pushing",
+      replacements.slice(1).join("; ")
+    );
     let i = this.edges.indexOf(remove);
     this.edges[i] = replacements[0];
 
@@ -222,7 +246,9 @@ export class EdgeSet {
   }
 
   get twins() {
-    return this.edges.map((edge) => { return edge.twin });
+    return this.edges.map(edge => {
+      return edge.twin;
+    });
   }
 
   intersect(os) {
@@ -231,10 +257,10 @@ export class EdgeSet {
     let xnsSelf = {};
     let xnsOther = {};
 
-    for (let i = 0; i < this.edges.length; i ++) {
+    for (let i = 0; i < this.edges.length; i++) {
       let edge = this.edges[i];
 
-      for (let ii = 0; ii < os.edges.length; ii ++) {
+      for (let ii = 0; ii < os.edges.length; ii++) {
         let other = os.edges[ii];
 
         let isEqual = edge.equal(other);
@@ -267,7 +293,7 @@ export class EdgeSet {
       }
     }
 
-    for (let i = 0; i < this.edges.length; i ++) {
+    for (let i = 0; i < this.edges.length; i++) {
       let edge = this.edges[i];
 
       let edgeXns = xnsSelf[i];
@@ -276,7 +302,7 @@ export class EdgeSet {
       }
     }
 
-    for (let i = 0; i < os.edges.length; i ++) {
+    for (let i = 0; i < os.edges.length; i++) {
       let edge = os.edges[i];
 
       let edgeXns = xnsOther[i];
@@ -287,10 +313,10 @@ export class EdgeSet {
 
     return xnsAll;
   }
-};
+}
 
 function doBoolean(a, b, op) {
-  logger.verbose('a', a, 'b', b);
+  logger.verbose("a", a, "b", b);
 
   let aes = EdgeSet.fromPointsList(a);
   let bes = EdgeSet.fromPointsList(b);
@@ -298,7 +324,7 @@ function doBoolean(a, b, op) {
   // Resolve intersections
   let xns = aes.intersect(bes);
 
-  logger.verbose('xns', xns);
+  logger.verbose("xns", xns);
 
   function wasIntersection(pt, other) {
     //let rel = shapes.relationship(other, pt);
@@ -316,15 +342,15 @@ function doBoolean(a, b, op) {
     let rel;
 
     switch (op) {
-      case 'unite':
+      case "unite":
         // In the case of union, we only keep points not inside
         // the other shape.
         rel = shapes.relationship(other, pt);
         return rel != INSIDE;
-      case 'intersect':
+      case "intersect":
         rel = shapes.relationship(other, pt);
         return rel == INSIDE || rel == INCIDENT;
-      case 'subtract':
+      case "subtract":
         switch (owner) {
           case a:
             rel = shapes.relationship(b, pt);
@@ -337,14 +363,17 @@ function doBoolean(a, b, op) {
   }
 
   function includeEdge(edge, owner, other) {
-    if (wasIntersection(edge.origin, other) && wasIntersection(edge.destination, other)) {
+    if (
+      wasIntersection(edge.origin, other) &&
+      wasIntersection(edge.destination, other)
+    ) {
       let midpt = edge.lineSegment.posnAt(0.5);
       let rel;
       switch (op) {
-        case 'unite':
+        case "unite":
           rel = shapes.relationship(other, midpt);
           return rel != INSIDE;
-        case 'subtract':
+        case "subtract":
           if (owner === a) {
             rel = shapes.relationship(b, midpt);
             return rel == INSIDE;
@@ -352,7 +381,7 @@ function doBoolean(a, b, op) {
             rel = shapes.relationship(a, midpt);
             return rel == OUTSIDE;
           }
-        case 'intersect':
+        case "intersect":
           rel = shapes.relationship(other, midpt);
           return rel != OUTSIDE;
       }
@@ -396,15 +425,15 @@ function doBoolean(a, b, op) {
     }
   }
 
-  logger.verbose('total edges', (edgesToUse.length/2) + edgesToOmit.length);
+  logger.verbose("total edges", edgesToUse.length / 2 + edgesToOmit.length);
 
-  logger.verbose(edgesToUse, 'to use', edgesToUse.length/2);
+  logger.verbose(edgesToUse, "to use", edgesToUse.length / 2);
   /*
   for (let edge of edgesToUse) {
     logger.verbose(edge.toString());
   }
   */
-  logger.verbose(edgesToOmit, 'to omit', edgesToOmit.length);
+  logger.verbose(edgesToOmit, "to omit", edgesToOmit.length);
   /*
   for (let edge of edgesToOmit) {
     logger.verbose(edge.toString());
@@ -412,7 +441,7 @@ function doBoolean(a, b, op) {
   */
 
   if (edgesToUse.length === 0) {
-    console.warn('Empty boolean result');
+    console.warn("Empty boolean result");
     return pl;
   }
 
@@ -420,16 +449,20 @@ function doBoolean(a, b, op) {
   let cursor = edgesToUse[0];
   let prevEdge;
   pl.push(cursor.origin);
-  logger.verbose('-------------');
-  logger.verbose('start at', cursor.origin.toShortString());
+  logger.verbose("-------------");
+  logger.verbose("start at", cursor.origin.toShortString());
 
-  let iters = edgesToUse.length/2;
+  let iters = edgesToUse.length / 2;
 
   for (let i = iters; i > 0; i--) {
     let seg = pl.lastSegment;
 
     // Push current destination and go on to find the next
-    if (seg.length > 0 && seg.first.equal(cursor.destination) && edgesUsed.indexOf(cursor.next) > -1) {
+    if (
+      seg.length > 0 &&
+      seg.first.equal(cursor.destination) &&
+      edgesUsed.indexOf(cursor.next) > -1
+    ) {
       seg.push(cursor.destination);
       pl.closeSegment();
 
@@ -438,32 +471,36 @@ function doBoolean(a, b, op) {
         if (cursor.origin.sHandle) {
           lastPoint.setSHandle(cursor.origin.sHandle);
         } else {
-          lastPoint.unsetHandle('sHandle');
+          lastPoint.unsetHandle("sHandle");
         }
 
         let firstPoint = seg.first;
         if (cursor.destination.pHandle) {
           firstPoint.setPHandle(cursor.destination.pHandle);
         } else {
-          firstPoint.unsetHandle('pHandle');
+          firstPoint.unsetHandle("pHandle");
         }
       }
     } else {
       seg.push(cursor.destination);
-      logger.verbose('push', cursor.destination.toShortString(), '('+cursor.toString()+')');
+      logger.verbose(
+        "push",
+        cursor.destination.toShortString(),
+        "(" + cursor.toString() + ")"
+      );
 
       // Set the last point's sHandle
       if (seg.length > 1) {
-        let prevPoint = seg.points[seg.length-2];
+        let prevPoint = seg.points[seg.length - 2];
         if (cursor.origin.sHandle) {
           prevPoint.setSHandle(cursor.origin.sHandle);
         } else {
-          prevPoint.unsetHandle('sHandle');
+          prevPoint.unsetHandle("sHandle");
         }
       }
     }
 
-    edgesToUse = edgesToUse.filter((edge) => {
+    edgesToUse = edgesToUse.filter(edge => {
       return !edge.equal(cursor) && !edge.equal(cursor.twin);
     });
 
@@ -490,20 +527,20 @@ function doBoolean(a, b, op) {
       }
 
       if (cursorOpts.length === 1) {
-        logger.verbose('using only cursorOpts');
+        logger.verbose("using only cursorOpts");
         cursor = cursorOpts[0];
       } else if (cursorOpts.length == 0) {
         // The current segment is closed and we need to pick an edge that's remaining
         // to continue in a new segment.
-        logger.verbose('closing and moving on');
+        logger.verbose("closing and moving on");
         pl.closeSegment();
 
         cursor = edgesToUse[0];
         pl.push(cursor.origin);
       } else {
         // TODO handle this case! I think we need to move clockwise.
-        logger.verbose('opts not 1 with edges left', cursor);
-        console.log(cursorOpts.join('\n'));
+        logger.verbose("opts not 1 with edges left", cursor);
+        console.log(cursorOpts.join("\n"));
         debugger;
         break;
       }
@@ -513,7 +550,7 @@ function doBoolean(a, b, op) {
   pl.closeSegment();
 
   return pl;
-};
+}
 
 function doQueue(queue, op) {
   logger.verbose(queue, op);
@@ -529,7 +566,9 @@ function doQueue(queue, op) {
 }
 
 function doElements(elements, op) {
-  let queue = elements.map((elem) => { return elem.points });
+  let queue = elements.map(elem => {
+    return elem.points;
+  });
 
   let resultPoints = doQueue(queue, op);
 
@@ -540,20 +579,20 @@ function doElements(elements, op) {
   let result = new Path({
     d: resultPoints,
     stroke: elements[0].data.stroke,
-    fill:   elements[0].data.fill
+    fill: elements[0].data.fill
   });
 
   return result;
 }
 
 export default {
-  unite(elems) { 
-    return doElements(elems, 'unite');
+  unite(elems) {
+    return doElements(elems, "unite");
   },
-  intersect(elems) { 
-    return doElements(elems, 'intersect');
+  intersect(elems) {
+    return doElements(elems, "intersect");
   },
-  subtract(elems) { 
-    return doElements(elems, 'subtract');
-  },
+  subtract(elems) {
+    return doElements(elems, "subtract");
+  }
 };

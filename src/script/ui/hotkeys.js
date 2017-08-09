@@ -1,5 +1,5 @@
-import Range from 'geometry/range';
-import EventEmitter from 'lib/events';
+import Range from "geometry/range";
+import EventEmitter from "lib/events";
 /*
 
   Mondrian.io hotkeys management
@@ -13,14 +13,14 @@ import EventEmitter from 'lib/events';
 
 */
 
-
-let isDefaultQuarantined = () => { return false };
+let isDefaultQuarantined = () => {
+  return false;
+};
 
 let hotkeys = {
-
   listeners: {
     down: {},
-    up: {},
+    up: {}
   },
 
   on(dir, combination, handler) {
@@ -34,7 +34,7 @@ let hotkeys = {
   },
 
   reset() {
-    this.lastKeystroke = '';
+    this.lastKeystroke = "";
     this.modifiersDown = [];
     this.keysDown = [];
   },
@@ -61,7 +61,6 @@ let hotkeys = {
   // Example: when dragging a shape, hitting Shift
   // makes it start snapping to the closest 45°
 
-
   registerModifier(modifier) {
     if (!this.modifiersDown.has(modifier)) {
       this.modifiersDown.push(modifier);
@@ -84,18 +83,18 @@ let hotkeys = {
 
   keypressIntervals: [],
 
-  lastKeystroke: '',
+  lastKeystroke: "",
 
   lastEvent: {},
 
   modifierCodes: {
-    [8]: 'backspace',
-    [16]: 'shift',
-    [17]: 'ctrl',
-    [18]: 'alt',
-    [91]: 'cmd',
-    [92]: 'cmd',
-    [224]: 'cmd'
+    [8]: "backspace",
+    [16]: "shift",
+    [17]: "ctrl",
+    [18]: "alt",
+    [91]: "cmd",
+    [92]: "cmd",
+    [224]: "cmd"
   },
 
   /*
@@ -114,12 +113,11 @@ let hotkeys = {
     // Map the ctrl key as cmd if the user is on windows.
     let fullKeystroke, key, keystroke;
     if (~navigator.appVersion.indexOf("Win")) {
-      this.modifierCodes[17] = 'cmd';
+      this.modifierCodes[17] = "cmd";
       if (dom.body != null) {
-        dom.body.setAttribute('os', 'windows');
+        dom.body.setAttribute("os", "windows");
       }
     }
-
 
     document.addEventListener("visibilitychange", () => {
       if (!document.hidden) {
@@ -128,41 +126,47 @@ let hotkeys = {
       }
     });
 
-    document.onkeydown = (e) => {
-      if (e.target.nodeName.toLowerCase() === 'input') {
+    document.onkeydown = e => {
+      if (e.target.nodeName.toLowerCase() === "input") {
         return;
       }
       let newStroke;
 
       // Stop immediately if hotkeys are disabled
-      if (this.disabled) { return true; }
+      if (this.disabled) {
+        return true;
+      }
 
       // Parse the keystroke into a string we can read/map to a function
       keystroke = this.parseKeystroke(e);
 
       // Stop if we haven't recognized this keystroke via parseKeystroke
-      if (keystroke === null) { return false; }
+      if (keystroke === null) {
+        return false;
+      }
 
       // Save this event for
       this.lastEvent = e;
 
       // Cmd has been pushed
-      if (keystroke === 'cmd') {
+      if (keystroke === "cmd") {
         this.cmdDown = true; // Custom tracking for cmd
         this.registerModifier("cmd");
         return;
-
-      } else if (['shift', 'alt', 'ctrl'].includes(keystroke)) {
+      } else if (["shift", "alt", "ctrl"].includes(keystroke)) {
         this.registerModifier(keystroke);
 
         // Stop registering previously registered keystrokes without this as a modifier.
         for (key of Array.from(this.keysDown)) {
-          __guard__(this.listeners.up != null ? this.listeners.up[this.fullKeystroke(key, "")] : undefined, x => x.call(this.listeners.context, e));
+          __guard__(
+            this.listeners.up != null
+              ? this.listeners.up[this.fullKeystroke(key, "")]
+              : undefined,
+            x => x.call(this.listeners.context, e)
+          );
         }
         return;
-
       } else {
-
         if (!this.keysDown.has(keystroke)) {
           newStroke = true;
           this.keysDown.push(keystroke);
@@ -173,18 +177,25 @@ let hotkeys = {
 
       // By now, the keystroke should only be a letter or number.
 
-      if (e.altKey === false) this.registerModifierUp('alt');
-      if (e.shiftKey === false) this.registerModifierUp('shift');
+      if (e.altKey === false) this.registerModifierUp("alt");
+      if (e.shiftKey === false) this.registerModifierUp("shift");
 
       fullKeystroke = this.fullKeystroke(keystroke);
       //console.log "FULL: #{fullKeystroke}"
 
-      if (fullKeystroke === "cmd-O") { e.preventDefault(); }
+      if (fullKeystroke === "cmd-O") {
+        e.preventDefault();
+      }
 
-      if (((this.listeners.down != null ? this.listeners.down[fullKeystroke] : undefined) != null) || ((this.listeners.up != null ? this.listeners.up[fullKeystroke] : undefined) != null)) {
-
+      if (
+        (this.listeners.down != null
+          ? this.listeners.down[fullKeystroke]
+          : undefined) != null ||
+        (this.listeners.up != null
+          ? this.listeners.up[fullKeystroke]
+          : undefined) != null
+      ) {
         if (this.keypressIntervals.length === 0) {
-
           // There should be no interval going.
           this.simulatedKeypress();
           this.keypressIntervals = [];
@@ -203,20 +214,22 @@ let hotkeys = {
             clearTimeout(this.beginSimulatedKeypressTimeout);
           }
 
-          return this.beginSimulatedKeypressTimeout = setTimeout(() => {
-            return this.keypressIntervals.push(setInterval((() => this.simulatedKeypress()), 100));
-          }
-          , 350);
+          return (this.beginSimulatedKeypressTimeout = setTimeout(() => {
+            return this.keypressIntervals.push(
+              setInterval(() => this.simulatedKeypress(), 100)
+            );
+          }, 350));
         } else if (this.keypressIntervals.length > 0) {
           /*
             Allow new single key presses while the interval is getting set up.
             (This becomes obvious when you try nudging an element diagonally
             with upArrow + leftArrow, for example)
           */
-          if (newStroke) { this.simulatedKeypress(); }
+          if (newStroke) {
+            this.simulatedKeypress();
+          }
 
           return false; // Putting this here. Might break shit later. Seems to fix bugs for now.
-
         } else {
           return false; // Ignore the entire keypress if we are already simulating the keystroke
         }
@@ -224,7 +237,10 @@ let hotkeys = {
         if (this.listeners.ignoreAllOthers) {
           return false;
         } else {
-          if ((this.listeners.blacklist != null) && (this.listeners.blacklist !== null)) {
+          if (
+            this.listeners.blacklist != null &&
+            this.listeners.blacklist !== null
+          ) {
             let chars = this.listeners.blacklist;
             let character = fullKeystroke;
 
@@ -241,14 +257,16 @@ let hotkeys = {
           }
         }
       }
-    }
-    
-    document.onkeyup = (e) => {
-      if (e.target.nodeName.toLowerCase() === 'input') {
+    };
+
+    document.onkeyup = e => {
+      if (e.target.nodeName.toLowerCase() === "input") {
         return;
       }
 
-      if (this.disabled) { return true; }
+      if (this.disabled) {
+        return true;
+      }
 
       keystroke = this.parseKeystroke(e);
 
@@ -256,39 +274,58 @@ let hotkeys = {
         this.clearAllIntervals();
       }
 
-      if (keystroke === null) { return false; }
+      if (keystroke === null) {
+        return false;
+      }
 
-      __guard__(this.listeners.up != null ? this.listeners.up[keystroke] : undefined, x => x.call(this.listeners.context, e));
+      __guard__(
+        this.listeners.up != null ? this.listeners.up[keystroke] : undefined,
+        x => x.call(this.listeners.context, e)
+      );
 
       if (this.modifiersDown.length > 0) {
-        __guard__(this.listeners.up != null ? this.listeners.up[this.fullKeystroke(keystroke)] : undefined, x1 => x1.call(this.listeners.context, e));
+        __guard__(
+          this.listeners.up != null
+            ? this.listeners.up[this.fullKeystroke(keystroke)]
+            : undefined,
+          x1 => x1.call(this.listeners.context, e)
+        );
       }
 
       // if is modifier, call up for every key down and this modifier
 
       if (this.isModifier(keystroke)) {
         for (key of Array.from(this.keysDown)) {
-          __guard__(this.listeners.up != null ? this.listeners.up[this.fullKeystroke(key, keystroke)] : undefined, x2 => x2.call(this.listeners.context, e));
+          __guard__(
+            this.listeners.up != null
+              ? this.listeners.up[this.fullKeystroke(key, keystroke)]
+              : undefined,
+            x2 => x2.call(this.listeners.context, e)
+          );
         }
       }
 
+      __guard__(
+        this.listeners.up != null ? this.listeners.up.always : undefined,
+        x3 => x3.call(this.listeners.context, this.lastEvent)
+      );
 
-      __guard__(this.listeners.up != null ? this.listeners.up.always : undefined, x3 => x3.call(this.listeners.context, this.lastEvent));
-
-      if (keystroke === 'cmd') { // CMD has been released!
+      if (keystroke === "cmd") {
+        // CMD has been released!
         this.registerModifierUp(keystroke);
         this.keysDown = [];
         this.cmdDown = false;
 
         for (let hotkey of Object.keys(this.listeners.up || {})) {
           let action = this.listeners.up[hotkey];
-          if (hotkey.mentions("cmd")) { action.call(this.listeners.context, e); }
+          if (hotkey.mentions("cmd")) {
+            action.call(this.listeners.context, e);
+          }
         }
 
-        this.lastKeystroke = ''; // Let me redo CMD strokes completely please
+        this.lastKeystroke = ""; // Let me redo CMD strokes completely please
         return this.maintainInterval();
-
-      } else if (['shift', 'alt', 'ctrl'].includes(keystroke)) {
+      } else if (["shift", "alt", "ctrl"].includes(keystroke)) {
         this.registerModifierUp(keystroke);
         return this.maintainInterval();
       } else {
@@ -298,14 +335,12 @@ let hotkeys = {
     };
   },
 
-
   clearAllIntervals() {
     for (let id of Array.from(this.keypressIntervals)) {
       clearInterval(id);
     }
-    return this.keypressIntervals = [];
+    return (this.keypressIntervals = []);
   },
-
 
   simulatedKeypress() {
     //console.trace();
@@ -321,14 +356,15 @@ let hotkeys = {
       and KILLING IT IMMEDIATELY if not.
     */
 
-
     this.maintainInterval();
 
     //console.log @keysDown.join(", ")
 
     // Assuming it is still valid, carry on and execute all hotkeys requested.
 
-    if (this.keysDown.length === 0) { return; } // If it's just modifiers, don't bother doing any more work.
+    if (this.keysDown.length === 0) {
+      return;
+    } // If it's just modifiers, don't bother doing any more work.
 
     return (() => {
       let result = [];
@@ -341,42 +377,54 @@ let hotkeys = {
             4;
           }
         }
-            //return
+        //return
 
-        if ((this.listeners.down != null ? this.listeners.down[fullKeystroke] : undefined) != null) {
+        if (
+          (this.listeners.down != null
+            ? this.listeners.down[fullKeystroke]
+            : undefined) != null
+        ) {
           if (this.listeners.down != null) {
-            this.listeners.down[fullKeystroke].call(this.listeners.context, this.lastEvent);
+            this.listeners.down[fullKeystroke].call(
+              this.listeners.context,
+              this.lastEvent
+            );
           }
           this.lastKeystroke = fullKeystroke;
         }
 
-        result.push(__guard__(this.listeners.down != null ? this.listeners.down.always : undefined, x => x.call(this.listeners.context, this.lastEvent)));
+        result.push(
+          __guard__(
+            this.listeners.down != null
+              ? this.listeners.down.always
+              : undefined,
+            x => x.call(this.listeners.context, this.lastEvent)
+          )
+        );
       }
       return result;
     })();
   },
 
-
-  maintainInterval() { // Kills the simulated keypress interval when appropriate.
+  maintainInterval() {
+    // Kills the simulated keypress interval when appropriate.
     if (this.keysDown.length === 0) {
       return this.clearAllIntervals();
     }
   },
 
-
   isModifier(key) {
     switch (key) {
-      case "shift": case "cmd": case "alt":
+      case "shift":
+      case "cmd":
+      case "alt":
         return true;
       default:
         return false;
     }
   },
 
-
-
   parseKeystroke(e) {
-
     if (this.modifierCodes[e.which] != null) {
       return this.modifierCodes[e.which];
     }
@@ -393,23 +441,28 @@ let hotkeys = {
     ];
 
     // If e.which isn't in any of the ranges, stop here.
-    if (accepted.map(x => x.containsInclusive(e.which)).filter(x => x === true).length === 0) { return null; }
+    if (
+      accepted.map(x => x.containsInclusive(e.which)).filter(x => x === true)
+        .length === 0
+    ) {
+      return null;
+    }
 
     // Certain keycodes we rename to be more clear
     let remaps = {
-      [13]: 'enter',
-      [32]: 'space',
-      [37]: 'leftArrow',
-      [38]: 'upArrow',
-      [39]: 'rightArrow',
-      [40]: 'downArrow',
-      [187]: '+',
-      [188]: ',',
-      [189]: '-',
-      [190]: '.',
-      [219]: '[',
-      [220]: '\\',
-      [221]: ']',
+      [13]: "enter",
+      [32]: "space",
+      [37]: "leftArrow",
+      [38]: "upArrow",
+      [39]: "rightArrow",
+      [40]: "downArrow",
+      [187]: "+",
+      [188]: ",",
+      [189]: "-",
+      [190]: ".",
+      [219]: "[",
+      [220]: "\\",
+      [221]: "]",
       [222]: "'"
     };
 
@@ -419,10 +472,11 @@ let hotkeys = {
   },
 
   fullKeystroke(key, mods) {
-    if (mods == null) { mods = this.modifiersPrefix(); }
-    return `${mods}${mods.length > 0 ? '-' : ''}${key}`;
+    if (mods == null) {
+      mods = this.modifiersPrefix();
+    }
+    return `${mods}${mods.length > 0 ? "-" : ""}${key}`;
   },
-
 
   /*
     Returns a string line 'cmd-shift-' or 'alt-cmd-shift-' or 'shift-'
@@ -431,9 +485,9 @@ let hotkeys = {
   */
 
   modifiersPrefix() {
-    let mods = this.modifiersDown.sort().join('-');
+    let mods = this.modifiersDown.sort().join("-");
     if (/Win/.test(navigator.platform)) {
-      mods = mods.replace('ctrl', 'cmd');
+      mods = mods.replace("ctrl", "cmd");
     }
     return mods;
   }
@@ -443,7 +497,8 @@ hotkeys.setup();
 
 export default hotkeys;
 
-
 function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
+  return typeof value !== "undefined" && value !== null
+    ? transform(value)
+    : undefined;
 }

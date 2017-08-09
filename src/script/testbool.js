@@ -1,27 +1,27 @@
-import 'util/prototypes';
-import 'test/testbool.scss';
-import Doc from 'io/doc';
-import { scaleLinear } from 'd3-scale';
-import Projection from 'ui/projection';
-import Layer from 'io/layer';
-import Canvas from 'ui/canvas';
-import bool from 'lib/bool';
+import "util/prototypes";
+import "test/testbool.scss";
+import Doc from "io/doc";
+import { scaleLinear } from "d3-scale";
+import Projection from "ui/projection";
+import Layer from "io/layer";
+import Canvas from "ui/canvas";
+import bool from "lib/bool";
 
-import rect1 from 'booltest/rect1.svg';
-import rect2 from 'booltest/rect2.svg';
-import rect3 from 'booltest/rect3.svg';
-import rect4 from 'booltest/rect4.svg';
-import rect5 from 'booltest/rect5.svg';
-import rect6 from 'booltest/rect6.svg';
-import crosshatch from 'booltest/crosshatch.svg';
-import circles1 from 'booltest/circles1.svg';
-import circles2 from 'booltest/circles2.svg';
-import hazmat from 'booltest/hazmat.svg';
-import zia from 'booltest/zia.svg';
-import oog from 'booltest/oog.svg';
-import overlapcircle from 'booltest/overlapcircle.svg';
-import overlapcircle_rotate from 'booltest/overlapcircle_rotate.svg';
-import overlapcircle_rotate2 from 'booltest/overlapcircle_rotate2.svg';
+import rect1 from "booltest/rect1.svg";
+import rect2 from "booltest/rect2.svg";
+import rect3 from "booltest/rect3.svg";
+import rect4 from "booltest/rect4.svg";
+import rect5 from "booltest/rect5.svg";
+import rect6 from "booltest/rect6.svg";
+import crosshatch from "booltest/crosshatch.svg";
+import circles1 from "booltest/circles1.svg";
+import circles2 from "booltest/circles2.svg";
+import hazmat from "booltest/hazmat.svg";
+import zia from "booltest/zia.svg";
+import oog from "booltest/oog.svg";
+import overlapcircle from "booltest/overlapcircle.svg";
+import overlapcircle_rotate from "booltest/overlapcircle_rotate.svg";
+import overlapcircle_rotate2 from "booltest/overlapcircle_rotate2.svg";
 
 const testFiles = {
   rect1,
@@ -38,31 +38,30 @@ const testFiles = {
   overlapcircle_rotate2,
   hazmat,
   zia,
-  oog,
-}
+  oog
+};
 
-
-let main = document.querySelector('main');
+let main = document.querySelector("main");
 
 let i = 0;
 let filter;
 if (location.hash) {
-  filter = parseInt(location.hash.replace('#',''), 10);
-  window.LOGLEVEL=4;
+  filter = parseInt(location.hash.replace("#", ""), 10);
+  window.LOGLEVEL = 4;
 }
 
 function appendDoc(section, doc, label) {
   let w = doc.width;
   let h = doc.height;
-  let container = document.createElement('div');
-  container.className = 'doc'
-  container.style.width = w+'px';
-  container.style.height = h+'px';
+  let container = document.createElement("div");
+  container.className = "doc";
+  container.style.width = w + "px";
+  container.style.height = h + "px";
 
-  let labelElem = document.createElement('a');
+  let labelElem = document.createElement("a");
   labelElem.innerHTML = label;
-  labelElem.href = '#'+i
-  labelElem.target = '_blank';
+  labelElem.href = "#" + i;
+  labelElem.target = "_blank";
 
   section.appendChild(container);
   let cnv = new Canvas(container);
@@ -76,15 +75,15 @@ function appendDoc(section, doc, label) {
 
   container.appendChild(labelElem);
 
-  let sourceElem = document.createElement('a');
-  sourceElem.innerHTML = '[source]';
-  sourceElem.target = '_blank';
-  sourceElem.href = 'data:image/svg+xml;utf8,'+doc.toSVG();
-  sourceElem.style.marginLeft = '10px';
+  let sourceElem = document.createElement("a");
+  sourceElem.innerHTML = "[source]";
+  sourceElem.target = "_blank";
+  sourceElem.href = "data:image/svg+xml;utf8," + doc.toSVG();
+  sourceElem.style.marginLeft = "10px";
 
   container.appendChild(sourceElem);
 
-  cnv.createLayer('main', (layer, context) => {
+  cnv.createLayer("main", (layer, context) => {
     doc.drawToCanvas(layer, context, proj);
   });
 
@@ -94,14 +93,14 @@ function appendDoc(section, doc, label) {
 }
 
 function boolDoc(doc, op) {
-  let children = doc.elements
+  let children = doc.elements;
 
   let t1 = window.performance.now();
-  children = [bool[op](children)]
+  children = [bool[op](children)];
   let t2 = window.performance.now();
 
   let layer = new Layer({
-    id: 'main',
+    id: "main",
     children
   });
 
@@ -109,10 +108,10 @@ function boolDoc(doc, op) {
     doc: new Doc({
       layers: [layer],
       width: doc.width,
-      height: doc.height,
+      height: doc.height
     }),
-    time: t2-t1
-  }
+    time: t2 - t1
+  };
 }
 
 for (let key in testFiles) {
@@ -126,11 +125,11 @@ for (let key in testFiles) {
   }
 
   let file = testFiles[key];
-  let doc = Doc.fromSVG(file);  
+  let doc = Doc.fromSVG(file);
 
   if (doc.elements.length === 0) debugger;
 
-  let section = document.createElement('section');
+  let section = document.createElement("section");
   main.appendChild(section);
 
   // Draw original
@@ -141,22 +140,34 @@ for (let key in testFiles) {
 
   // Draw united
   if (filter === undefined || i === filter) {
-    let united = boolDoc(doc, 'unite');
-    appendDoc(section, united.doc, key + ' unite: ' + united.time.toFixed(2) + 'ms');
+    let united = boolDoc(doc, "unite");
+    appendDoc(
+      section,
+      united.doc,
+      key + " unite: " + united.time.toFixed(2) + "ms"
+    );
   }
   i++;
 
   // Draw united
   if (filter === undefined || i === filter) {
-    let subtracted = boolDoc(doc, 'subtract');
-    appendDoc(section, subtracted.doc, key + ' subtract: ' + subtracted.time.toFixed(2) + 'ms');
+    let subtracted = boolDoc(doc, "subtract");
+    appendDoc(
+      section,
+      subtracted.doc,
+      key + " subtract: " + subtracted.time.toFixed(2) + "ms"
+    );
   }
   i++;
 
   // Draw intersected
   if (filter === undefined || i === filter) {
-    let intersected = boolDoc(doc, 'intersect');
-    appendDoc(section, intersected.doc, key + ' intersect: ' + intersected.time.toFixed(2) + 'ms');
+    let intersected = boolDoc(doc, "intersect");
+    appendDoc(
+      section,
+      intersected.doc,
+      key + " intersect: " + intersected.time.toFixed(2) + "ms"
+    );
   }
   i++;
 }

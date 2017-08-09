@@ -1,9 +1,9 @@
-import Item from 'geometry/item'
-import PointsSegment from 'geometry/points-segment'
-import PointsList from 'geometry/points-list'
-import Range from 'geometry/range'
-import PathPoint from 'geometry/path-point';
-import Posn from 'geometry/posn';
+import Item from "geometry/item";
+import PointsSegment from "geometry/points-segment";
+import PointsList from "geometry/points-list";
+import Range from "geometry/range";
+import PathPoint from "geometry/path-point";
+import Posn from "geometry/posn";
 
 export default class Path extends Item {
   constructor(data) {
@@ -16,7 +16,7 @@ export default class Path extends Item {
   }
 
   get type() {
-    return 'path';
+    return "path";
   }
 
   // Constructors
@@ -29,11 +29,11 @@ export default class Path extends Item {
     height = parseFloat(height);
 
     let segment = new PointsSegment([
-      new PathPoint(x,y),
-      new PathPoint(x+width,y),
-      new PathPoint(x+width,y+height),
-      new PathPoint(x,y+height),
-      new PathPoint(x,y),
+      new PathPoint(x, y),
+      new PathPoint(x + width, y),
+      new PathPoint(x + width, y + height),
+      new PathPoint(x, y + height),
+      new PathPoint(x, y)
     ]);
     segment.close();
 
@@ -67,7 +67,7 @@ export default class Path extends Item {
       new PathPoint(r.x, r.y, r.x, r.y - ky, r.x, r.y + ky),
       new PathPoint(b.x, b.y, b.x + kx, b.y, b.x - kx, b.y),
       new PathPoint(l.x, l.y, l.x, l.y + ky, l.x, l.y - ky),
-      new PathPoint(t.x, t.y, t.x - kx, t.y, t.x + kx, t.y),
+      new PathPoint(t.x, t.y, t.x - kx, t.y, t.x + kx, t.y)
     ]);
     segment.close();
 
@@ -82,12 +82,17 @@ export default class Path extends Item {
 
   static polyline(data) {
     let segment = new PointsSegment(
-      data.points.split(' ').filter((p) => { return p !== '' }).map((p,i) => {
-        let parts = p.split(',');
-        let x = parseFloat(parts[0]);
-        let y = parseFloat(parts[1]);
-        return new PathPoint(x, y);
-      })
+      data.points
+        .split(" ")
+        .filter(p => {
+          return p !== "";
+        })
+        .map((p, i) => {
+          let parts = p.split(",");
+          let x = parseFloat(parts[0]);
+          let y = parseFloat(parts[1]);
+          return new PathPoint(x, y);
+        })
     );
 
     data.d = new PointsList([segment]);
@@ -106,7 +111,7 @@ export default class Path extends Item {
     if (points instanceof PointsList) {
       this.points = points;
       points.path = this;
-    } else if (typeof(points) === 'string') {
+    } else if (typeof points === "string") {
       this.points = PointsList.fromString(points, this);
     }
 
@@ -140,18 +145,24 @@ export default class Path extends Item {
   getRanges() {
     let lineSegments = this.lineSegments();
 
-    let xrs = Range.fromList(lineSegments.map((ls) => {
-      return ls.xRange();
-    }));
-    let yrs = Range.fromList(lineSegments.map((ls) => {
-      return ls.yRange();
-    }));
-    return { xrs, yrs }
+    let xrs = Range.fromList(
+      lineSegments.map(ls => {
+        return ls.xRange();
+      })
+    );
+    let yrs = Range.fromList(
+      lineSegments.map(ls => {
+        return ls.yRange();
+      })
+    );
+    return { xrs, yrs };
   }
 
   scale(x, y, origin) {
     // Keep track of cached bounds and line segments
-    if (origin == null) { origin = this.center(); }
+    if (origin == null) {
+      origin = this.center();
+    }
     this.scaleCachedObjects(x, y, origin);
 
     // We might need to rotate and unrotate this thing
@@ -180,7 +191,7 @@ export default class Path extends Item {
     this.nudgeCachedObjects(x, y);
   }
 
-  rotate(a, origin=this.center()) {
+  rotate(a, origin = this.center()) {
     // Add to the transform angle we're keeping track of.
     this.metadata.angle += a;
 
@@ -196,8 +207,8 @@ export default class Path extends Item {
     this.clearCachedObjects();
   }
 
-  matrix(a,b,c,d,e,f) {
-    this.points.map(p => p.matrix(a,b,c,e,d,f));
+  matrix(a, b, c, d, e, f) {
+    this.points.map(p => p.matrix(a, b, c, e, d, f));
   }
 
   getPoints() {

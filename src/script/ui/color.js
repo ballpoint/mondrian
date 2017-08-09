@@ -7,7 +7,6 @@
 */
 
 export default class Color {
-
   constructor(r, g, b, a) {
     if (r instanceof Color) {
       this.r = r.r;
@@ -18,9 +17,9 @@ export default class Color {
       return;
     }
 
-    if (r === null || r === 'none') {
+    if (r === null || r === "none") {
       // Default to black
-      this.hex = 'none';
+      this.hex = "none";
       this.r = 0;
       this.g = 0;
       this.b = 0;
@@ -31,7 +30,7 @@ export default class Color {
     if (a === null) a = 1.0;
 
     if (typeof r === "string") {
-      if ((r.charAt(0) === "#") || (r.length === 6)) {
+      if (r.charAt(0) === "#" || r.length === 6) {
         // Convert hex to rgba
         this.hex = r.toUpperCase().replace("#", "");
         let rgb = this.hexToRGB(this.hex);
@@ -56,7 +55,7 @@ export default class Color {
       this.b = b;
       this.a = a;
 
-      if ((this.g == null) && (this.b == null)) {
+      if (this.g == null && this.b == null) {
         this.g = this.r;
         this.b = this.r;
       }
@@ -64,9 +63,15 @@ export default class Color {
     }
 
     if (isNaN(this.r || isNaN(this.g || isNaN(this.b)))) {
-      if (isNaN(this.r)) { this.r = 0; }
-      if (isNaN(this.g)) { this.g = 0; }
-      if (isNaN(this.b)) { this.b = 0; }
+      if (isNaN(this.r)) {
+        this.r = 0;
+      }
+      if (isNaN(this.g)) {
+        this.g = 0;
+      }
+      if (isNaN(this.b)) {
+        this.b = 0;
+      }
       this.updateHex();
     }
 
@@ -79,10 +84,9 @@ export default class Color {
     this.b = Math.max(this.b, 0);
   }
 
-
-
-  clone() { return new Color(this.r, this.g, this.b); }
-
+  clone() {
+    return new Color(this.r, this.g, this.b);
+  }
 
   absorb(color) {
     this.r = color.r;
@@ -90,47 +94,41 @@ export default class Color {
     this.b = color.b;
     this.a = color.a;
     this.hex = color.hex;
-    if (typeof this.refresh === 'function') {
+    if (typeof this.refresh === "function") {
       this.refresh();
     }
     return this;
   }
 
-
   min() {
     return [this.r, this.g, this.b].sort((a, b) => a - b)[0];
   }
-
 
   mid() {
     return [this.r, this.g, this.b].sort((a, b) => a - b)[1];
   }
 
-
   max() {
     return [this.r, this.g, this.b].sort((a, b) => a - b)[2];
   }
 
-
-  midpoint() { return this.max() / 2; }
-
+  midpoint() {
+    return this.max() / 2;
+  }
 
   valToHex(val) {
-    let chars = '0123456789ABCDEF';
-    return chars.charAt((val - (val % 16)) / 16) + chars.charAt(val % 16);
+    let chars = "0123456789ABCDEF";
+    return chars.charAt((val - val % 16) / 16) + chars.charAt(val % 16);
   }
-
 
   hexToVal(hex) {
-    let chars = '0123456789ABCDEF';
-    return (chars.indexOf(hex.charAt(0)) * 16) + chars.indexOf(hex.charAt(1));
+    let chars = "0123456789ABCDEF";
+    return chars.indexOf(hex.charAt(0)) * 16 + chars.indexOf(hex.charAt(1));
   }
-
 
   rgbToHex(r, g, b) {
     return `${this.valToHex(r)}${this.valToHex(g)}${this.valToHex(b)}`;
   }
-
 
   hexToRGB(hex) {
     let r = this.hexToVal(hex.substring(0, 2));
@@ -144,7 +142,7 @@ export default class Color {
   }
 
   recalculateHex() {
-    return this.hex = this.rgbToHex(this.r, this.g, this.b);
+    return (this.hex = this.rgbToHex(this.r, this.g, this.b));
   }
 
   darken(amt) {
@@ -152,12 +150,10 @@ export default class Color {
     return new Color(macro(this.r), macro(this.g), macro(this.b));
   }
 
-
   lightness() {
     // returns float 0.0 - 1.0
-    return ((this.min() + this.max()) / 2) / 255;
+    return (this.min() + this.max()) / 2 / 255;
   }
-
 
   saturation() {
     let max = this.max();
@@ -165,13 +161,16 @@ export default class Color {
     let d = max - min;
 
     let sat = this.lightness() >= 0.5 ? d / (510 - max - min) : d / (max + min);
-    if (isNaN(sat)) { sat = 1.0; }
+    if (isNaN(sat)) {
+      sat = 1.0;
+    }
     return sat;
   }
 
-
   desaturate(amt) {
-    if (amt == null) { amt = 1.0; }
+    if (amt == null) {
+      amt = 1.0;
+    }
     let mpt = this.midpoint();
     this.r -= (this.r - mpt) * amt;
     this.g -= (this.g - mpt) * amt;
@@ -180,9 +179,10 @@ export default class Color {
     return this;
   }
 
-
   lighten(amt) {
-    if (amt == null) { amt = 0.5; }
+    if (amt == null) {
+      amt = 0.5;
+    }
     amt *= 255;
     this.r = Math.min(255, this.r + amt);
     this.g = Math.min(255, this.g + amt);
@@ -195,7 +195,9 @@ export default class Color {
     if (this.r === null) {
       return "none";
     } else {
-      return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a === undefined ? 1 : this.a})`;
+      return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a === undefined
+        ? 1
+        : this.a})`;
     }
   }
 
@@ -208,7 +210,6 @@ export default class Color {
     return this.toRGBString();
   }
 
-
   removeNaNs() {
     // HACK BUT IT WORKS FOR NOW LOL FUCK NAN
     if (isNaN(this.r)) {
@@ -218,18 +219,16 @@ export default class Color {
       this.g = 0;
     }
     if (isNaN(this.b)) {
-      return this.b = 0;
+      return (this.b = 0);
     }
   }
-
 
   equal(c) {
     return this.toHexString() === c.toHexString();
   }
 
-
   updateHex() {
-    return this.hex = this.rgbToHex(this.r, this.g, this.b);
+    return (this.hex = this.rgbToHex(this.r, this.g, this.b));
   }
 }
 

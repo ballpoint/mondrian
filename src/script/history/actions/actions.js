@@ -1,7 +1,7 @@
-import Path from 'geometry/path';
-import PathPoint from 'geometry/path-point';
-import Item from 'geometry/item';
-import { indexesIdentical } from 'geometry/index';
+import Path from "geometry/path";
+import PathPoint from "geometry/path-point";
+import Item from "geometry/item";
+import { indexesIdentical } from "geometry/index";
 
 export class HistoryAction {
   constructor(data) {
@@ -11,19 +11,23 @@ export class HistoryAction {
 }
 
 export class InitAction extends HistoryAction {
-  get displayTitle() { return 'Initialize Document'; }
+  get displayTitle() {
+    return "Initialize Document";
+  }
 
   perform(doc) {}
 }
 
 export class NudgeAction extends HistoryAction {
-  get displayTitle() { return 'Move'; }
+  get displayTitle() {
+    return "Move";
+  }
 
   perform(doc) {
     for (let index of this.data.indexes) {
       let item = doc.getFromIndex(index);
       item.nudge(this.data.xd, this.data.yd);
-      
+
       if (item instanceof Path) {
         item.clearCachedObjects();
       } else if (item instanceof PathPoint && item.path) {
@@ -40,14 +44,16 @@ export class NudgeAction extends HistoryAction {
   opposite() {
     return new NudgeAction({
       indexes: this.data.indexes,
-      xd:   -this.data.xd,
-      yd:   -this.data.yd
+      xd: -this.data.xd,
+      yd: -this.data.yd
     });
   }
 }
 
 export class ScaleAction extends HistoryAction {
-  get displayTitle() { return 'Scale'; }
+  get displayTitle() {
+    return "Scale";
+  }
 
   perform(doc) {
     for (let index of this.data.indexes) {
@@ -62,8 +68,8 @@ export class ScaleAction extends HistoryAction {
     return new ScaleAction({
       origin: this.data.origin,
       indexes: this.data.indexes,
-      x: 1/this.data.x,
-      y: 1/this.data.y,
+      x: 1 / this.data.x,
+      y: 1 / this.data.y
     });
   }
 
@@ -74,7 +80,9 @@ export class ScaleAction extends HistoryAction {
 }
 
 export class RotateAction extends HistoryAction {
-  get displayTitle() { return 'Rotate'; }
+  get displayTitle() {
+    return "Rotate";
+  }
 
   perform(doc) {
     for (let index of this.data.indexes) {
@@ -101,10 +109,14 @@ export class RotateAction extends HistoryAction {
 }
 
 export class NudgeHandleAction extends HistoryAction {
-  get displayTitle() { return 'Move Handle'; }
+  get displayTitle() {
+    return "Move Handle";
+  }
 
   perform(doc) {
-    let points = this.data.indexes.map((q) => { return doc.getFromIndex(q) });
+    let points = this.data.indexes.map(q => {
+      return doc.getFromIndex(q);
+    });
     for (let point of points) {
       point.nudgeHandle(this.data.handle, this.data.xd, this.data.yd);
 
@@ -128,13 +140,15 @@ export class NudgeHandleAction extends HistoryAction {
       indexes: this.data.indexes,
       handle: this.data.handle,
       xd: -this.data.xd,
-      yd: -this.data.yd,
+      yd: -this.data.yd
     });
   }
 }
 
 export class AddHandleAction extends HistoryAction {
-  get displayTitle() { return 'Add Handle'; }
+  get displayTitle() {
+    return "Add Handle";
+  }
 
   perform(doc) {
     for (let index of this.data.indexes) {
@@ -155,21 +169,25 @@ export class AddHandleAction extends HistoryAction {
 }
 
 export class RemoveHandleAction extends HistoryAction {
-  get displayTitle() { return 'Remove Handle'; }
+  get displayTitle() {
+    return "Remove Handle";
+  }
 
   perform(doc) {
     for (let index of this.data.indexes) {
       let pp = doc.getFromIndex(index);
       pp.unsetHandle(this.data.handle);
       if (this.data.reflect) {
-        pp.unsetHandle(this.data.handle === 'pHandle' ? 'sHandle' : 'pHandle');
+        pp.unsetHandle(this.data.handle === "pHandle" ? "sHandle" : "pHandle");
       }
     }
   }
 }
 
 export class InsertAction extends HistoryAction {
-  get displayTitle() { return 'Insert Shapes'; }
+  get displayTitle() {
+    return "Insert Shapes";
+  }
 
   constructor(data) {
     super(data);
@@ -186,7 +204,7 @@ export class InsertAction extends HistoryAction {
       let { item, index } = pair;
       let parent = doc;
       // Traverse the object tree to find the item's immediate parent
-      for (let pi of index.parts.slice(0,-1)) {
+      for (let pi of index.parts.slice(0, -1)) {
         parent = parent.child(pi);
       }
 
@@ -204,7 +222,9 @@ export class InsertAction extends HistoryAction {
 }
 
 export class DeleteAction extends HistoryAction {
-  get displayTitle() { return 'Remove Shapes'; }
+  get displayTitle() {
+    return "Remove Shapes";
+  }
 
   constructor(data) {
     super(data);
@@ -216,7 +236,7 @@ export class DeleteAction extends HistoryAction {
   }
 
   perform(doc) {
-    let indexes = this.data.items.map((item) => {
+    let indexes = this.data.items.map(item => {
       return item.index;
     });
 
@@ -229,7 +249,9 @@ export class DeleteAction extends HistoryAction {
 }
 
 export class ToggleMetadataBoolAction extends HistoryAction {
-  get displayTitle() { return 'Toggle Metadata'; }
+  get displayTitle() {
+    return "Toggle Metadata";
+  }
 
   constructor(data) {
     super(data);

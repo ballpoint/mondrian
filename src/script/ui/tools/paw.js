@@ -1,4 +1,4 @@
-import Tool from 'ui/tools/tool';
+import Tool from "ui/tools/tool";
 
 export default class Paw extends Tool {
   constructor(editor) {
@@ -9,7 +9,6 @@ export default class Paw extends Tool {
     let xd = posn.x - lastPosn.x;
     let yd = posn.y - lastPosn.y;
 
-    this.editor.nudge(-xd, -yd)
+    this.editor.nudge(-xd, -yd);
   }
-
 }

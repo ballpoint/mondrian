@@ -1,12 +1,12 @@
-import PointsSegment from 'geometry/points-segment';
-import PathPoint from 'geometry/path-point';
-import Range from 'geometry/range'
-import Bounds from 'geometry/bounds';
+import PointsSegment from "geometry/points-segment";
+import PathPoint from "geometry/path-point";
+import Range from "geometry/range";
+import Bounds from "geometry/bounds";
 
 //  PointsList
 
 export default class PointsList {
-  constructor(segments=[], path) {
+  constructor(segments = [], path) {
     this.segments = segments;
 
     // Ensure at least one segment
@@ -26,19 +26,19 @@ export default class PointsList {
     let commands = [];
     let currentMatch;
 
-    for (let i = 0; i < string.length; i ++) {
+    for (let i = 0; i < string.length; i++) {
       let char = string[i];
       if (/[A-Z]/i.test(char)) {
         if (currentMatch) {
-          commands.push(currentMatch)
+          commands.push(currentMatch);
         }
-        currentMatch = '';
+        currentMatch = "";
       }
       currentMatch += char;
     }
 
     if (currentMatch.length > 0) {
-      commands.push(currentMatch)
+      commands.push(currentMatch);
     }
 
     return commands;
@@ -55,10 +55,10 @@ export default class PointsList {
       let command = str[0];
 
       switch (command.toLowerCase()) {
-        case 'z':
+        case "z":
           // TODO: TREAT AS LINETO;
           break;
-        case 'm':
+        case "m":
           // Start new segment
           list.closeSegment();
       }
@@ -81,7 +81,7 @@ export default class PointsList {
   }
 
   get lastSegment() {
-    return this.segments[this.segments.length-1];
+    return this.segments[this.segments.length - 1];
   }
 
   get first() {
@@ -168,23 +168,28 @@ export default class PointsList {
       for (let s of Array.from(this.segments)) {
         if (s.startsAt <= a) {
           segm = s;
-        } else { break; }
+        } else {
+          break;
+        }
       }
       return segm;
     } else {
       let segments = this.segments.filter(s => s.points.indexOf(a) > -1);
-      if (segments.length === 1) { return segments[0]; }
+      if (segments.length === 1) {
+        return segments[0];
+      }
     }
     return [];
   }
-
 
   hasPointWithin(tolerance, point) {
     return this.filter(p => p.within(tolerance, point)).length > 0;
   }
 
   removeSegment(segment) {
-    this.segments = this.segments.filter((s) => { return s !== segment });
+    this.segments = this.segments.filter(s => {
+      return s !== segment;
+    });
   }
 
   remove(x) {
@@ -192,8 +197,7 @@ export default class PointsList {
       x = this.i(x);
     }
     if (x instanceof Array) {
-      return Array.from(x).map((p) =>
-        this.remove(p));
+      return Array.from(x).map(p => this.remove(p));
     } else if (x instanceof Point) {
       return this.segmentContaining(x).remove(x);
     }
@@ -204,7 +208,9 @@ export default class PointsList {
   }
 
   filterSegments(fun) {
-    return this.segments.map(segment => new PointsSegment(segment.points.filter(fun)));
+    return this.segments.map(
+      segment => new PointsSegment(segment.points.filter(fun))
+    );
   }
 
   fetch(cl) {
@@ -222,7 +228,7 @@ export default class PointsList {
   }
 
   mapApply(fun) {
-    return this.segments.map(s => s.points = s.points.map(fun));
+    return this.segments.map(s => (s.points = s.points.map(fun)));
   }
 
   xRange() {
@@ -238,26 +244,34 @@ export default class PointsList {
   get ranges() {
     let lineSegments = this.lineSegments();
 
-    let xrs = Range.fromList(lineSegments.map((ls) => {
-      return ls.xRange();
-    }));
-    let yrs = Range.fromList(lineSegments.map((ls) => {
-      return ls.yRange();
-    }));
-    return { xrs, yrs }
+    let xrs = Range.fromList(
+      lineSegments.map(ls => {
+        return ls.xRange();
+      })
+    );
+    let yrs = Range.fromList(
+      lineSegments.map(ls => {
+        return ls.yRange();
+      })
+    );
+    return { xrs, yrs };
   }
 
   bounds() {
     let { xrs, yrs } = this.ranges;
-    return this.boundsCached = new Bounds(
+    return (this.boundsCached = new Bounds(
       xrs.min,
       yrs.min,
       xrs.length(),
       yrs.length()
-    );
+    ));
   }
 
   toSVGString() {
-    return this.segments.map((s) => { return s.toSVGString() }).join(' ');
+    return this.segments
+      .map(s => {
+        return s.toSVGString();
+      })
+      .join(" ");
   }
 }

@@ -1,8 +1,7 @@
-import consts from 'consts';
-import shapes from 'lab/shapes';
-import Tool from 'ui/tools/tool';
-import Bounds from 'geometry/bounds';
-
+import consts from "consts";
+import shapes from "lab/shapes";
+import Tool from "ui/tools/tool";
+import Bounds from "geometry/bounds";
 
 export default class SubCursor extends Tool {
   constructor(editor) {
@@ -10,7 +9,7 @@ export default class SubCursor extends Tool {
   }
 
   get id() {
-    return 'subcursor';
+    return "subcursor";
   }
 
   handleMousemove(e, posn) {
@@ -24,9 +23,7 @@ export default class SubCursor extends Tool {
     let skipped = 0;
     let checked = 0;
 
-
     for (let elem of this.editor.doc.elementsFlat) {
-
       // Make sure we're anywhere near this element before we spend time iterating
       // through all of its points
       let bounds = elem.bounds().padded(10);
@@ -40,9 +37,9 @@ export default class SubCursor extends Tool {
     for (let pt of pointsToCheck) {
       let d = this.editor.projection.z(pt.distanceFrom(posn));
       if (d < 8) {
-        if (!closestPoint || (d < closestD)) {
+        if (!closestPoint || d < closestD) {
           closestPoint = pt;
-          closestD     = d;
+          closestD = d;
         }
       }
     }
@@ -56,8 +53,7 @@ export default class SubCursor extends Tool {
     }
   }
 
-  handleClick(e, posn) {
-  }
+  handleClick(e, posn) {}
 
   handleDragStart(e, posn, lastPosn) {
     this.dragSelectStart = lastPosn;
@@ -71,7 +67,7 @@ export default class SubCursor extends Tool {
 
   handleDragStop(e, posn) {
     if (this.dragSelectStart) {
-      let bounds = Bounds.fromPosns([this.dragSelectStart, this.dragSelectEnd])
+      let bounds = Bounds.fromPosns([this.dragSelectStart, this.dragSelectEnd]);
 
       let newSelection = [];
 
@@ -98,7 +94,7 @@ export default class SubCursor extends Tool {
       let bounds = Bounds.fromPosns([this.dragSelectStart, this.dragSelectEnd]);
       bounds = this.editor.projection.bounds(bounds).sharp();
       layer.setLineWidth(1);
-      layer.drawRect(bounds, { stroke: 'black' });
+      layer.drawRect(bounds, { stroke: "black" });
     }
   }
 }

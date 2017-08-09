@@ -1,26 +1,22 @@
-import consts from 'consts';
-import Bounds from 'geometry/bounds';
-import Posn from 'geometry/posn';
-import Path from 'geometry/path';
-import Text from 'geometry/text';
-import Item from 'geometry/item';
-import Group from 'geometry/group';
-import UUIDV4 from 'uuid/v4';
+import consts from "consts";
+import Bounds from "geometry/bounds";
+import Posn from "geometry/posn";
+import Path from "geometry/path";
+import Text from "geometry/text";
+import Item from "geometry/item";
+import Group from "geometry/group";
+import UUIDV4 from "uuid/v4";
 
 let io = {
-
   parse(container) {
     let results = [];
     for (let node of container.childNodes) {
-
       if (node.nodeName === "defs") {
         // <defs> symbols... for now we don't do much with this.
         continue;
-
-      } else if (node.nodeName === '#text') {
+      } else if (node.nodeName === "#text") {
         // This is like whitespace and shit
         continue;
-
       } else if (node.nodeName === "g") {
         let group = new Group(this.parse(node));
         this.applyTransform(node, group);
@@ -35,7 +31,6 @@ let io = {
           results.push(group);
         }
       } else {
-
         // Otherwise it must be a shape node we have a class for.
         let parsed = this.parseElement(node);
 
@@ -50,8 +45,8 @@ let io = {
           this.applyStyles(node, parsed);
           results.push(parsed);
 
-        // <use> tag
-        } else if (parsed instanceof Object && (parsed["xlink:href"] != null)) {
+          // <use> tag
+        } else if (parsed instanceof Object && parsed["xlink:href"] != null) {
           parsed.reference = true;
           results.push(parsed);
         }
@@ -62,38 +57,40 @@ let io = {
   },
 
   applyTransform(node, elem) {
-    let transform = node.getAttribute('transform');
+    let transform = node.getAttribute("transform");
     if (!transform) return;
 
     let items = transform.match(/[a-z]+\([^\)]*\)/gi);
     for (let item of items) {
       let action = item.match(/^[a-z]+/gi);
-      let args = item.match(/\(.*\)$/)
+      let args = item.match(/\(.*\)$/);
 
       if (action && args) {
         action = action[0].strip();
-        args = args[0].replace(/[\(\)]/g, '').split(/[,\s]+/).map((s) => { return s.strip() });
+        args = args[0].replace(/[\(\)]/g, "").split(/[,\s]+/).map(s => {
+          return s.strip();
+        });
       } else {
-        console.warn('Failed to parse transform', item);
+        console.warn("Failed to parse transform", item);
       }
 
       let x, y, deg, origin;
 
       switch (action) {
-        case 'translate':
+        case "translate":
           x = parseFloat(args[0]);
           y = parseFloat(args[1]);
 
           elem.nudge(x, y);
           break;
-        case 'scale':
+        case "scale":
           x = parseFloat(args[0]);
           if (args.length >= 2) {
             y = parseFloat(args[1]);
           }
-          elem.nudge(x, y, new Posn(0,0));
+          elem.nudge(x, y, new Posn(0, 0));
           break;
-        case 'rotate':
+        case "rotate":
           x = 0;
           y = 0;
           deg = parseFloat(args[0]);
@@ -101,19 +98,19 @@ let io = {
             x = parseFloat(args[1]);
             y = parseFloat(args[2]);
           }
-          origin = new Posn(x,y);
+          origin = new Posn(x, y);
           elem.rotate(deg, origin);
           break;
-        case 'matrix':
+        case "matrix":
           if (args.length === 6) {
-            let a,b,c,d,e,f;
+            let a, b, c, d, e, f;
             a = parseFloat(args[0]);
             b = parseFloat(args[1]);
             c = parseFloat(args[2]);
             d = parseFloat(args[3]);
             e = parseFloat(args[4]);
             f = parseFloat(args[5]);
-            elem.matrix(a,b,c,e,d,f);
+            elem.matrix(a, b, c, e, d, f);
           }
           break;
       }
@@ -121,14 +118,14 @@ let io = {
   },
 
   applyStyles(node, elem) {
-    let styles = node.getAttribute('style');
+    let styles = node.getAttribute("style");
     if (!styles) return;
 
     let blacklist = ["display", "transform"];
 
     styles = styles.split(";");
     for (let style of Array.from(styles)) {
-      if (style.strip() === '') continue;
+      if (style.strip() === "") continue;
 
       style = style.split(":");
       let key = style[0].strip();
@@ -137,13 +134,13 @@ let io = {
       if (blacklist.has(key)) continue;
 
       switch (key) {
-        case 'fill':
+        case "fill":
           elem.setFill(val);
           break;
-        case 'stroke':
+        case "stroke":
           elem.setStroke(val);
           break;
-        case 'stroke-width':
+        case "stroke-width":
           elem.setStrokeWidth(val);
           break;
         default:
@@ -154,16 +151,16 @@ let io = {
   },
 
   applyRootAttrs(root, elems) {
-    let keys = ['fill', 'stroke'];
+    let keys = ["fill", "stroke"];
 
     for (let key of keys) {
       let val = root.getAttribute(key);
       if (val) {
         switch (key) {
-          case 'fill':
+          case "fill":
             for (let elem of elems) elem.setFill(val);
             break;
-          case 'stroke':
+          case "stroke":
             for (let elem of elems) elem.setStroke(val);
             break;
         }
@@ -183,25 +180,25 @@ let io = {
         result.setContent(elem.textContent);
         break;
       */
-      case 'path':
+      case "path":
         result = new Path(data);
         break;
-      case 'rect':
+      case "rect":
         result = Path.rectangle(data);
         break;
-      case 'ellipse':
+      case "ellipse":
         result = Path.ellipse(data);
         break;
-      case 'circle':
+      case "circle":
         data.rx = data.r;
         data.ry = data.r;
         delete data.r;
         result = Path.ellipse(data);
         break;
-      case 'polyline':
+      case "polyline":
         result = Path.polyline(data);
         break;
-      case 'polygon':
+      case "polygon":
         result = Path.polygon(data);
         break;
       default:
@@ -216,7 +213,7 @@ let io = {
   },
 
   makeData(elem) {
-    let blacklist = ["inkscape", "sodipodi", "uuid", 'transform', 'style'];
+    let blacklist = ["inkscape", "sodipodi", "uuid", "transform", "style"];
 
     let blacklistCheck = function(key) {
       for (let x of Array.from(blacklist)) {
@@ -234,9 +231,11 @@ let io = {
       let val = attrs[key];
       key = val.name;
       val = val.value;
-      if (key === "") { continue; }
+      if (key === "") {
+        continue;
+      }
 
-      if ((val != null) && blacklistCheck(key)) {
+      if (val != null && blacklistCheck(key)) {
         if (/^\d+$/.test(val)) {
           val = parseFloat(val);
         }
@@ -255,14 +254,14 @@ let io = {
 
   itemToElement(item) {
     if (item instanceof Path) {
-      let elem = this.createSVGElement('path');
+      let elem = this.createSVGElement("path");
       for (let key in item.data) {
         item.commitData();
         elem.setAttribute(key, item.data[key]);
       }
       return elem;
     } else {
-      console.warn('Cannot transform to element:', item);
+      console.warn("Cannot transform to element:", item);
     }
   }
 };

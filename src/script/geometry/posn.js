@@ -1,4 +1,4 @@
-import math from 'lib/math';
+import math from "lib/math";
 
 /*
 
@@ -18,7 +18,6 @@ import math from 'lib/math';
 */
 
 export default class Posn {
-
   constructor(x1, y1) {
     // I/P:
     //   x: number
@@ -33,18 +32,17 @@ export default class Posn {
     if (this.x instanceof Object) {
       // Support for providing an Event object as the only arg.
       // Reads the clientX and clientY values
-      if ((this.x.clientX != null) && (this.x.clientY != null)) {
+      if (this.x.clientX != null && this.x.clientY != null) {
         this.y = this.x.offsetY;
         this.x = this.x.offsetX;
-      } else if ((this.x.left != null) && (this.x.top != null)) {
+      } else if (this.x.left != null && this.x.top != null) {
         this.y = this.x.top;
         this.x = this.x.left;
-      } else if ((this.x.x != null) && (this.x.y != null)) {
+      } else if (this.x.x != null && this.x.y != null) {
         this.y = this.x.y;
         this.x = this.x.x;
       }
-
-    } else if ((typeof this.x === "string") && (this.x.mentions(","))) {
+    } else if (typeof this.x === "string" && this.x.mentions(",")) {
       // Support for giving a string of two numbers and a comma "12.3,840"
       let split = this.x.split(",").map(parseFloat);
       let x = split[0];
@@ -62,11 +60,10 @@ export default class Posn {
     // and we can test it properly
     return;
     this.x = cleanUpNumber(this.x);
-    return this.y = cleanUpNumber(this.y);
+    return (this.y = cleanUpNumber(this.y));
   }
 
   // Helper:
-
 
   alterValues(fun) {
     // Do something to all the values this Posn has. Kind of like map, but return is immediately applied.
@@ -79,11 +76,10 @@ export default class Posn {
     // O/P: self
 
     for (let a of ["x", "y", "x2", "y2", "x3", "y3"]) {
-      this[a] = (this[a] != null) ? fun(this[a]) : this[a];
+      this[a] = this[a] != null ? fun(this[a]) : this[a];
     }
     return this;
   }
-
 
   toString() {
     return `${this.x},${this.y}`;
@@ -111,19 +107,24 @@ export default class Posn {
   }
 
   lerp(b, factor) {
-    return new Posn(this.x + ((b.x - this.x) * factor), this.y + ((b.y - this.y) * factor));
+    return new Posn(
+      this.x + (b.x - this.x) * factor,
+      this.y + (b.y - this.y) * factor
+    );
   }
 
   gte(p) {
-    return (this.x >= p.x) && (this.y >= p.y);
+    return this.x >= p.x && this.y >= p.y;
   }
 
   lte(p) {
-    return (this.x <= p.x) && (this.y <= p.y);
+    return this.x <= p.x && this.y <= p.y;
   }
 
   directionRelativeTo(p) {
-    return `${this.y < p.y ? "t" : (this.y > p.y ? "b" : "")}${this.x < p.x ? "l" : (this.x > p.x ? "r" : "")}`;
+    return `${this.y < p.y ? "t" : this.y > p.y ? "b" : ""}${this.x < p.x
+      ? "l"
+      : this.x > p.x ? "r" : ""}`;
   }
 
   squareUpAgainst(p) {
@@ -134,7 +135,9 @@ export default class Posn {
     let yDiff = Math.abs(this.y - p.y);
     let direction = this.directionRelativeTo(p);
 
-    if ((xDiff === 0) && (yDiff === 0)) { return p; }
+    if (xDiff === 0 && yDiff === 0) {
+      return p;
+    }
 
     switch (direction) {
       case "tl":
@@ -165,16 +168,17 @@ export default class Posn {
           this.nudge(0, yDiff - xDiff);
         }
         break;
-      case "t": case "b":
+      case "t":
+      case "b":
         this.nudge(yDiff, 0);
         break;
-      case "r": case "l":
+      case "r":
+      case "l":
         this.nudge(0, xDiff);
         break;
     }
     return this;
   }
-
 
   equal(p) {
     return this.x === p.x && this.y === p.y;
@@ -196,17 +200,21 @@ export default class Posn {
   rotate(angle, origin) {
     if (angle === 0) return this;
 
-    if (origin == null) { origin = new Posn(0, 0); }
-    if (origin.equal(this)) { return this; }
+    if (origin == null) {
+      origin = new Posn(0, 0);
+    }
+    if (origin.equal(this)) {
+      return this;
+    }
 
-    angle *= (Math.PI / 180);
+    angle *= Math.PI / 180;
 
     // Normalize the point on the origin.
     this.x -= origin.x;
     this.y -= origin.y;
 
-    let x = (this.x * (Math.cos(angle))) - (this.y * Math.sin(angle));
-    let y = (this.x * (Math.sin(angle))) + (this.y * Math.cos(angle));
+    let x = this.x * Math.cos(angle) - this.y * Math.sin(angle);
+    let y = this.x * Math.sin(angle) + this.y * Math.cos(angle);
 
     // Move points back to where they were.
     this.x = x + origin.x;
@@ -216,29 +224,27 @@ export default class Posn {
   }
 
   scale(x, y, origin) {
-    if (origin == null) { origin = new Posn(0, 0); }
+    if (origin == null) {
+      origin = new Posn(0, 0);
+    }
     this.x += (this.x - origin.x) * (x - 1);
     this.y += (this.y - origin.y) * (y - 1);
     return this;
   }
 
-  matrix(a,b,c,d,e,f) {
+  matrix(a, b, c, d, e, f) {
     this.x = a * this.x + c * this.y + e;
     this.y = b * this.x + d * this.y + f;
   }
 
   sharp() {
-    return new Posn(
-      math.sharpen(this.x),
-      math.sharpen(this.y)
-    );
+    return new Posn(math.sharpen(this.x), math.sharpen(this.y));
   }
 
   copy(p) {
     this.x = p.x;
-    return this.y = p.y;
+    return (this.y = p.y);
   }
-
 
   clone() {
     return new Posn(this.x, this.y);
@@ -247,7 +253,9 @@ export default class Posn {
   snap(to, threshold) {
     // Algorithm: bisect the line on this posn's x and y
     // coordinates and return the midpoint of that line.
-    if (threshold == null) { threshold = Math.INFINITY; }
+    if (threshold == null) {
+      threshold = Math.INFINITY;
+    }
     let perpLine = this.verti(10000);
     perpLine.rotate(to.angle360() + 90, this);
     return perpLine.intersection(to);
@@ -278,12 +286,12 @@ export default class Posn {
 
   multiplyBy(s) {
     switch (typeof s) {
-      case 'number':
+      case "number":
         let np = this.clone();
         np.x *= s;
         np.y *= s;
         return np;
-      case 'object':
+      case "object":
         np = this.clone();
         np.x *= s.x;
         np.y *= s.y;
@@ -302,24 +310,24 @@ export default class Posn {
 
     if (this.x3 != null) {
       this.x3 *= s;
-      return this.y3 *= s;
+      return (this.y3 *= s);
     }
   }
 
   add(s) {
     switch (typeof s) {
-      case 'number':
+      case "number":
         return new Posn(this.x + s, this.y + s);
-      case 'object':
+      case "object":
         return new Posn(this.x + s.x, this.y + s.y);
     }
   }
 
   subtract(s) {
     switch (typeof s) {
-      case 'number':
+      case "number":
         return new Posn(this.x - s, this.y - s);
-      case 'object':
+      case "object":
         return new Posn(this.x - s.x, this.y - s.y);
     }
   }
@@ -331,7 +339,6 @@ export default class Posn {
   setSucc(succ) {
     this.succ = succ;
   }
-
 
   /*
       I love you artur
@@ -347,7 +354,10 @@ export default class Posn {
   }
 
   verti(ln) {
-    return new LineSegment(this.clone().nudge(0, -ln), this.clone().nudge(0, ln));
+    return new LineSegment(
+      this.clone().nudge(0, -ln),
+      this.clone().nudge(0, ln)
+    );
   }
 
   insideOf(shape) {
@@ -355,7 +365,7 @@ export default class Posn {
   }
 
   dot(v) {
-    return (this.x * v.x) + (this.y * v.y);
+    return this.x * v.x + this.y * v.y;
   }
 
   within(posn, tolerance) {
@@ -368,6 +378,4 @@ export default class Posn {
   }
 }
 
-
 Posn.fromJSON = json => new Posn(json.x, json.y);
-

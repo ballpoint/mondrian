@@ -1,6 +1,5 @@
 export default class HistoryFrame {
-
-  constructor(actions = [], title='') {
+  constructor(actions = [], title = "") {
     this.actions = actions;
     this.title = title;
 
@@ -15,9 +14,11 @@ export default class HistoryFrame {
     if (this.title) {
       return this.title;
     } else {
-      return this.actions.map((a) => {
-        return a.displayTitle || a.constructor.name;
-      }).join('; ');
+      return this.actions
+        .map(a => {
+          return a.displayTitle || a.constructor.name;
+        })
+        .join("; ");
     }
   }
 
@@ -56,7 +57,7 @@ export default class HistoryFrame {
   }
 
   get last() {
-    return this.actions[this.actions.length-1];
+    return this.actions[this.actions.length - 1];
   }
 
   canMerge(action) {

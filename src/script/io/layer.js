@@ -1,22 +1,28 @@
-import Bounds from 'geometry/bounds';
-import Metadata from 'geometry/metadata';
-import Group from 'geometry/group';
-import UUIDV4 from 'uuid/v4';
+import Bounds from "geometry/bounds";
+import Metadata from "geometry/metadata";
+import Group from "geometry/group";
+import UUIDV4 from "uuid/v4";
 
 export default class Layer {
-  constructor(attrs, metadata={}) {
+  constructor(attrs, metadata = {}) {
     this.id = attrs.id;
     this.children = attrs.children;
     this.metadata = new Metadata(metadata);
-    this.__id__ = UUIDV4(); 
+    this.__id__ = UUIDV4();
   }
 
   remove(elem) {
-    this.children = this.children.filter((existing) => { return existing !== elem });
+    this.children = this.children.filter(existing => {
+      return existing !== elem;
+    });
   }
 
   bounds() {
-    return new Bounds(this.children.map((item) => { return item.bounds() }));
+    return new Bounds(
+      this.children.map(item => {
+        return item.bounds();
+      })
+    );
   }
 
   drawToCanvas() {
@@ -39,11 +45,14 @@ export default class Layer {
   }
 
   get __nonce__() {
-    return this.children.map((child) => {
-      return child.__nonce__;
-    }).reduce((a, b) => { return a + b }, 0);
+    return this.children
+      .map(child => {
+        return child.__nonce__;
+      })
+      .reduce((a, b) => {
+        return a + b;
+      }, 0);
   }
-
 
   child(i) {
     return this.children[i];

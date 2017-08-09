@@ -1,5 +1,5 @@
 export default class Element {
-  constructor(id, shape, handlers={}, opts={}) {
+  constructor(id, shape, handlers = {}, opts = {}) {
     this.id = id;
     this.shape = shape;
     this.handlers = handlers;

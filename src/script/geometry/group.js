@@ -1,13 +1,13 @@
-import Bounds from 'geometry/bounds';
-import Metadata from 'geometry/metadata';
-import UUIDV4 from 'uuid/v4';
+import Bounds from "geometry/bounds";
+import Metadata from "geometry/metadata";
+import UUIDV4 from "uuid/v4";
 
 export default class Group {
-  constructor(children, metadata={}) {
+  constructor(children, metadata = {}) {
     this.children = children;
 
     this.metadata = new Metadata(metadata);
-    this.__id__ = UUIDV4(); 
+    this.__id__ = UUIDV4();
   }
 
   bounds() {
@@ -16,7 +16,11 @@ export default class Group {
       return this._cachedBounds;
     }
 
-    let bounds = new Bounds(this.children.map((item) => { return item.bounds() }));
+    let bounds = new Bounds(
+      this.children.map(item => {
+        return item.bounds();
+      })
+    );
     this._cachedBoundsNonce = nonce;
     this._cachedBounds = bounds;
     return bounds;
@@ -50,9 +54,13 @@ export default class Group {
   }
 
   get __nonce__() {
-    return this.children.map((child) => {
-      return child.__nonce__;
-    }).reduce((a, b) => { return a + b }, 0);
+    return this.children
+      .map(child => {
+        return child.__nonce__;
+      })
+      .reduce((a, b) => {
+        return a + b;
+      }, 0);
   }
 
   child(i) {
@@ -68,26 +76,40 @@ export default class Group {
   }
 
   remove(child) {
-    this.children = this.children.filter((existing) => { return existing !== child });
+    this.children = this.children.filter(existing => {
+      return existing !== child;
+    });
   }
 
-  nudge()  { this.propagate('nudge', arguments); }
+  nudge() {
+    this.propagate("nudge", arguments);
+  }
 
-  scale()  { this.propagate('scale', arguments); }
+  scale() {
+    this.propagate("scale", arguments);
+  }
 
   rotate(a) {
-    this.propagate('rotate', arguments);
+    this.propagate("rotate", arguments);
 
     this.metadata.angle += a;
   }
 
-  matrix() { this.propagate('matrix', arguments); }
+  matrix() {
+    this.propagate("matrix", arguments);
+  }
 
-  setFill() { this.propagate('setFill', arguments); }
+  setFill() {
+    this.propagate("setFill", arguments);
+  }
 
-  setStroke() { this.propagate('setStroke', arguments); }
+  setStroke() {
+    this.propagate("setStroke", arguments);
+  }
 
-  setStrokeWidth() { this.propagate('setStrokeWidth', arguments); }
+  setStrokeWidth() {
+    this.propagate("setStrokeWidth", arguments);
+  }
 
   propagate(method, args) {
     for (let child of this.children) {

@@ -4,27 +4,20 @@ export default class Tool {
   }
 
   get id() {
-    return 'unknown';
+    return "unknown";
   }
 
-  handleMousemove(e, posn) {
-  }
+  handleMousemove(e, posn) {}
 
-  handleMousedown(e, posn) {
-  }
+  handleMousedown(e, posn) {}
 
-  handleClick(e, posn) {
-  }
+  handleClick(e, posn) {}
 
-  handleDragStart(e, posn, lastPosn) {
-  }
+  handleDragStart(e, posn, lastPosn) {}
 
-  handleDrag(e, posn, lastPosn) {
-  }
+  handleDrag(e, posn, lastPosn) {}
 
-  handleDragStop(e, posn) {
-  }
+  handleDragStop(e, posn) {}
 
-  refresh(layer, context) {
-  }
+  refresh(layer, context) {}
 }

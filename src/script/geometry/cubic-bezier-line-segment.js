@@ -1,6 +1,6 @@
-import Range from 'geometry/range'
-import Posn from 'geometry/posn'
-import Bounds from 'geometry/bounds'
+import Range from "geometry/range";
+import Posn from "geometry/posn";
+import Bounds from "geometry/bounds";
 
 const EPSILON = 1e-12;
 
@@ -44,7 +44,12 @@ export default class CubicBezier {
 
   static fromPathPoint(point, prec) {
     if (!prec) prec = point.prec;
-    return new CubicBezier(prec.toPosn(), prec.getSHandle(), point.getPHandle(), point.toPosn());
+    return new CubicBezier(
+      prec.toPosn(),
+      prec.getSHandle(),
+      point.getPHandle(),
+      point.toPosn()
+    );
   }
 
   /*
@@ -61,9 +66,13 @@ export default class CubicBezier {
     return this.intoLineSegments(4).reduce((a, b) => a + b.length);
   }
 
-  beginning() { return this.p1; }
+  beginning() {
+    return this.p1;
+  }
 
-  end() { return this.p4; }
+  end() {
+    return this.p4;
+  }
 
   nudge(x, y) {
     this.p1.nudge(x, y);
@@ -95,16 +104,26 @@ export default class CubicBezier {
   }
 
   equal(cbls) {
-    if (cbls instanceof LineSegment) { return false; }
-    return ((this.p1.equal(cbls.p1)) && (this.p2.equal(cbls.p2)) &&
-      (this.p3.equal(cbls.p3)) && (this.p4.equal(cbls.p4))) ||
-     ((this.p1.equal(cbls.p4)) && (this.p2.equal(cbls.p3)) &&
-      (this.p3.equal(cbls.p2)) && (this.p4.equal(cbls.p1)));
+    if (cbls instanceof LineSegment) {
+      return false;
+    }
+    return (
+      (this.p1.equal(cbls.p1) &&
+        this.p2.equal(cbls.p2) &&
+        this.p3.equal(cbls.p3) &&
+        this.p4.equal(cbls.p4)) ||
+      (this.p1.equal(cbls.p4) &&
+        this.p2.equal(cbls.p3) &&
+        this.p3.equal(cbls.p2) &&
+        this.p4.equal(cbls.p1))
+    );
   }
 
   intersects(other) {
     let inter = this.intersection(other);
-    return inter instanceof Posn || (inter instanceof Array && (inter.length > 0));
+    return (
+      inter instanceof Posn || (inter instanceof Array && inter.length > 0)
+    );
   }
 
   intersection(other) {
@@ -133,8 +152,7 @@ export default class CubicBezier {
     let nearestDist = Infinity;
 
     for (let i = 0; i < 100; i++) {
-      let p = this.posnAt(1/i)
-
+      let p = this.posnAt(1 / i);
     }
   }
 
@@ -149,8 +167,10 @@ export default class CubicBezier {
 
   bounds(useCached) {
     let height, maxy, miny, width;
-    if (useCached == null) { useCached = false; }
-    if ((this.boundsCached != null) && useCached) {
+    if (useCached == null) {
+      useCached = false;
+    }
+    if (this.boundsCached != null && useCached) {
       return this.boundsCached;
     }
 
@@ -166,28 +186,28 @@ export default class CubicBezier {
 
     for (let i = 0; i <= 40; i++) {
       let d = i / 40;
-      let px = this.p1.x + (d * top2x);
-      let py = this.p1.y + (d * top2y);
-      let qx = this.p2.x + (d * top3x);
-      let qy = this.p2.y + (d * top3y);
-      let rx = this.p3.x + (d * top4x);
-      let ry = this.p3.y + (d * top4y);
+      let px = this.p1.x + d * top2x;
+      let py = this.p1.y + d * top2y;
+      let qx = this.p2.x + d * top3x;
+      let qy = this.p2.y + d * top3y;
+      let rx = this.p3.x + d * top4x;
+      let ry = this.p3.y + d * top4y;
 
       let toqx = qx - px;
       let toqy = qy - py;
       let torx = rx - qx;
       let tory = ry - qy;
 
-      let sx = px + (d * toqx);
-      let sy = py + (d * toqy);
-      let tx = qx + (d * torx);
-      let ty = qy + (d * tory);
+      let sx = px + d * toqx;
+      let sy = py + d * toqy;
+      let tx = qx + d * torx;
+      let ty = qy + d * tory;
 
       let totx = tx - sx;
       let toty = ty - sy;
 
-      let x = sx + (d * totx);
-      let y = sy + (d * toty);
+      let x = sx + d * totx;
+      let y = sy + d * toty;
 
       minx = Math.min(minx, x);
       miny = Math.min(miny, y);
@@ -200,9 +220,8 @@ export default class CubicBezier {
 
     // Cache the bounds and return them at the same time
 
-    return this.boundsCached = new Bounds(minx, miny, width, height);
+    return (this.boundsCached = new Bounds(minx, miny, width, height));
   }
-
 
   intoLineSegments(n) {
     // Given n, split the bezier into n consecutive LineSegments, returned in an Array
@@ -211,14 +230,24 @@ export default class CubicBezier {
     // O/P: [LineSegment, LineSegment, LineSegment...] array
 
     let segments = [];
-    for (let m = 0, end = n, asc = 0 <= end; asc ? m <= end : m >= end; asc ? m++ : m--) {
+    for (
+      let m = 0, end = n, asc = 0 <= end;
+      asc ? m <= end : m >= end;
+      asc ? m++ : m--
+    ) {
       var last;
       let i = 1 / m;
-      let x = (Math.pow((1-i), 3) * this.p1.x) + (3 * Math.pow((1-i), 2) * i * this.p2.x) +
-          (3 * (1 - i) * Math.pow(i, 2) * this.p3.x) + (Math.pow(i, 3) * this.p4.x);
-      let y = (Math.pow((1-i), 3) * this.p1.y) + (3 * Math.pow((1-i), 2) * i * this.p2.y) +
-          (3 * (1 - i) * Math.pow(i, 2) * this.p3.y) + (Math.pow(i, 3) * this.p4.y);
-      if ((m % 2) === 0) {
+      let x =
+        Math.pow(1 - i, 3) * this.p1.x +
+        3 * Math.pow(1 - i, 2) * i * this.p2.x +
+        3 * (1 - i) * Math.pow(i, 2) * this.p3.x +
+        Math.pow(i, 3) * this.p4.x;
+      let y =
+        Math.pow(1 - i, 3) * this.p1.y +
+        3 * Math.pow(1 - i, 2) * i * this.p2.y +
+        3 * (1 - i) * Math.pow(i, 2) * this.p3.y +
+        Math.pow(i, 3) * this.p4.y;
+      if (m % 2 === 0) {
         last = new Posn(x, y);
       } else {
         segments.push(new LineSegment(last, new Posn(x, y)));
@@ -226,7 +255,6 @@ export default class CubicBezier {
     }
     return segments.splice(1);
   }
-
 
   splitAt(t, force) {
     // Given a float t between 0 and 1, return two CubicBeziers that result from splitting this one at that percentage in.
@@ -261,8 +289,10 @@ export default class CubicBezier {
         p10 = force;
       }
 
-      return [new CubicBezier(this.p1, p5, p8, p10), new CubicBezier(p10, p9, p7, this.p4)];
-
+      return [
+        new CubicBezier(this.p1, p5, p8, p10),
+        new CubicBezier(p10, p9, p7, this.p4)
+      ];
     } else if (t instanceof Posn) {
       // Given a single Posn, find its percentage and then split the line on it.
       return this.splitAt(this.findPercentageOfPosn(t), t);
@@ -274,24 +304,23 @@ export default class CubicBezier {
     let minDist = Infinity;
     let minPerc = 0;
 
-    let refine = (t) => {
-        if (t >= 0 && t <= 1) {
-            var dist = posn.distanceFrom(this.posnAt(t), true);
-            if (dist < minDist) {
-                minDist = dist;
-                minPerc = t;
-                return true;
-            }
+    let refine = t => {
+      if (t >= 0 && t <= 1) {
+        var dist = posn.distanceFrom(this.posnAt(t), true);
+        if (dist < minDist) {
+          minDist = dist;
+          minPerc = t;
+          return true;
         }
-    }
+      }
+    };
 
     for (var i = 0; i <= count; i++) refine(i / count);
 
     // Now iteratively refine solution until we reach desired precision.
     var step = 1 / (count * 2);
     while (step > CURVETIME_EPSILON) {
-        if (!refine(minPerc - step) && !refine(minPerc + step))
-            step /= 2;
+      if (!refine(minPerc - step) && !refine(minPerc + step)) step /= 2;
     }
     return minPerc;
   }
@@ -310,7 +339,6 @@ export default class CubicBezier {
     Intersection methods
 
   */
-
 
   intersectionWithLineSegment(l) {
     /*
@@ -353,15 +381,18 @@ export default class CubicBezier {
 
     let n = new Posn(l.a.y - l.b.y, l.b.x - l.a.x);
 
-    let cl = (l.a.x * l.b.y) - (l.b.x * l.a.y);
+    let cl = l.a.x * l.b.y - l.b.x * l.a.y;
 
-    let roots = new Polynomial([n.dot(c3), n.dot(c2), n.dot(c1), n.dot(c0) + cl]).roots();
+    let roots = new Polynomial([
+      n.dot(c3),
+      n.dot(c2),
+      n.dot(c1),
+      n.dot(c0) + cl
+    ]).roots();
 
     for (let i in roots) {
-
       let t = roots[i];
-      if ((0 <= t) && (t <= 1)) {
-
+      if (0 <= t && t <= 1) {
         let p5 = this.p1.lerp(this.p2, t);
         let p6 = this.p2.lerp(this.p3, t);
         let p7 = this.p3.lerp(this.p4, t);
@@ -370,11 +401,11 @@ export default class CubicBezier {
         let p10 = p8.lerp(p9, t);
 
         if (l.a.x === l.b.x) {
-          if ((min.y <= p10.y) && (p10.y <= max.y)) {
+          if (min.y <= p10.y && p10.y <= max.y) {
             results.push(p10);
           }
         } else if (l.a.y === l.b.y) {
-          if ((min.x <= p10.x) && (p10.x <= max.x)) {
+          if (min.x <= p10.x && p10.x <= max.x) {
             results.push(p10);
           }
         } else if (p10.gte(min) && p10.lte(max)) {
@@ -385,7 +416,6 @@ export default class CubicBezier {
 
     return results;
   }
-
 
   intersectionWithCubicBezier(other) {
     // I don't know.
@@ -466,199 +496,588 @@ export default class CubicBezier {
     let c23y2 = c23.y * c23.y;
     let c23y3 = c23.y * c23.y * c23.y;
 
-
     let poly = new Polynomial([
-      (((-c13x3*c23y3) + (c13y3*c23x3)) - (3*c13.x*c13y2*c23x2*c23.y)) +
-      (3*c13x2*c13.y*c23.x*c23y2),
+      -c13x3 * c23y3 +
+        c13y3 * c23x3 -
+        3 * c13.x * c13y2 * c23x2 * c23.y +
+        3 * c13x2 * c13.y * c23.x * c23y2,
 
-      (((-6*c13.x*c22.x*c13y2*c23.x*c23.y) + (6*c13x2*c13.y*c22.y*c23.x*c23.y) + (3*c22.x*c13y3*c23x2)) -
-      (3*c13x3*c22.y*c23y2) - (3*c13.x*c13y2*c22.y*c23x2)) + (3*c13x2*c22.x*c13.y*c23y2),
-      ((((-6*c21.x*c13.x*c13y2*c23.x*c23.y) - (6*c13.x*c22.x*c13y2*c22.y*c23.x)) + (6*c13x2*c22.x*c13.y*c22.y*c23.y) +
-      (3*c21.x*c13y3*c23x2) + (3*c22x2*c13y3*c23.x) + (3*c21.x*c13x2*c13.y*c23y2)) - (3*c13.x*c21.y*c13y2*c23x2) -
-      (3*c13.x*c22x2*c13y2*c23.y)) + (c13x2*c13.y*c23.x*((6*c21.y*c23.y) + (3*c22y2))) + (c13x3*((-c21.y*c23y2) -
-      (2*c22y2*c23.y) - (c23.y*((2*c21.y*c23.y) + c22y2)))),
+      -6 * c13.x * c22.x * c13y2 * c23.x * c23.y +
+        6 * c13x2 * c13.y * c22.y * c23.x * c23.y +
+        3 * c22.x * c13y3 * c23x2 -
+        3 * c13x3 * c22.y * c23y2 -
+        3 * c13.x * c13y2 * c22.y * c23x2 +
+        3 * c13x2 * c22.x * c13.y * c23y2,
+      -6 * c21.x * c13.x * c13y2 * c23.x * c23.y -
+        6 * c13.x * c22.x * c13y2 * c22.y * c23.x +
+        6 * c13x2 * c22.x * c13.y * c22.y * c23.y +
+        3 * c21.x * c13y3 * c23x2 +
+        3 * c22x2 * c13y3 * c23.x +
+        3 * c21.x * c13x2 * c13.y * c23y2 -
+        3 * c13.x * c21.y * c13y2 * c23x2 -
+        3 * c13.x * c22x2 * c13y2 * c23.y +
+        c13x2 * c13.y * c23.x * (6 * c21.y * c23.y + 3 * c22y2) +
+        c13x3 *
+          (-c21.y * c23y2 -
+            2 * c22y2 * c23.y -
+            c23.y * (2 * c21.y * c23.y + c22y2)),
 
-      ((((((((((((((((((c11.x*c12.y*c13.x*c13.y*c23.x*c23.y) - (c11.y*c12.x*c13.x*c13.y*c23.x*c23.y)) + (6*c21.x*c22.x*c13y3*c23.x) +
-      (3*c11.x*c12.x*c13.x*c13.y*c23y2) + (6*c10.x*c13.x*c13y2*c23.x*c23.y)) - (3*c11.x*c12.x*c13y2*c23.x*c23.y) -
-      (3*c11.y*c12.y*c13.x*c13.y*c23x2) - (6*c10.y*c13x2*c13.y*c23.x*c23.y) - (6*c20.x*c13.x*c13y2*c23.x*c23.y)) +
-      (3*c11.y*c12.y*c13x2*c23.x*c23.y)) - (2*c12.x*c12y2*c13.x*c23.x*c23.y) - (6*c21.x*c13.x*c22.x*c13y2*c23.y) -
-      (6*c21.x*c13.x*c13y2*c22.y*c23.x) - (6*c13.x*c21.y*c22.x*c13y2*c23.x)) + (6*c21.x*c13x2*c13.y*c22.y*c23.y) +
-      (2*c12x2*c12.y*c13.y*c23.x*c23.y) + (c22x3*c13y3)) - (3*c10.x*c13y3*c23x2)) + (3*c10.y*c13x3*c23y2) +
-      (3*c20.x*c13y3*c23x2) + (c12y3*c13.x*c23x2)) - (c12x3*c13.y*c23y2) - (3*c10.x*c13x2*c13.y*c23y2)) +
-      (3*c10.y*c13.x*c13y2*c23x2)) - (2*c11.x*c12.y*c13x2*c23y2)) + (c11.x*c12.y*c13y2*c23x2)) - (c11.y*c12.x*c13x2*c23y2)) +
-      (2*c11.y*c12.x*c13y2*c23x2) + (3*c20.x*c13x2*c13.y*c23y2)) - (c12.x*c12y2*c13.y*c23x2) -
-      (3*c20.y*c13.x*c13y2*c23x2)) + (c12x2*c12.y*c13.x*c23y2)) - (3*c13.x*c22x2*c13y2*c22.y)) +
-      (c13x2*c13.y*c23.x*((6*c20.y*c23.y) + (6*c21.y*c22.y))) + (c13x2*c22.x*c13.y*((6*c21.y*c23.y) + (3*c22y2))) +
-      (c13x3*((-2*c21.y*c22.y*c23.y) - (c20.y*c23y2) - (c22.y*((2*c21.y*c23.y) + c22y2)) - (c23.y*((2*c20.y*c23.y) + (2*c21.y*c22.y))))),
+      c11.x * c12.y * c13.x * c13.y * c23.x * c23.y -
+        c11.y * c12.x * c13.x * c13.y * c23.x * c23.y +
+        6 * c21.x * c22.x * c13y3 * c23.x +
+        3 * c11.x * c12.x * c13.x * c13.y * c23y2 +
+        6 * c10.x * c13.x * c13y2 * c23.x * c23.y -
+        3 * c11.x * c12.x * c13y2 * c23.x * c23.y -
+        3 * c11.y * c12.y * c13.x * c13.y * c23x2 -
+        6 * c10.y * c13x2 * c13.y * c23.x * c23.y -
+        6 * c20.x * c13.x * c13y2 * c23.x * c23.y +
+        3 * c11.y * c12.y * c13x2 * c23.x * c23.y -
+        2 * c12.x * c12y2 * c13.x * c23.x * c23.y -
+        6 * c21.x * c13.x * c22.x * c13y2 * c23.y -
+        6 * c21.x * c13.x * c13y2 * c22.y * c23.x -
+        6 * c13.x * c21.y * c22.x * c13y2 * c23.x +
+        6 * c21.x * c13x2 * c13.y * c22.y * c23.y +
+        2 * c12x2 * c12.y * c13.y * c23.x * c23.y +
+        c22x3 * c13y3 -
+        3 * c10.x * c13y3 * c23x2 +
+        3 * c10.y * c13x3 * c23y2 +
+        3 * c20.x * c13y3 * c23x2 +
+        c12y3 * c13.x * c23x2 -
+        c12x3 * c13.y * c23y2 -
+        3 * c10.x * c13x2 * c13.y * c23y2 +
+        3 * c10.y * c13.x * c13y2 * c23x2 -
+        2 * c11.x * c12.y * c13x2 * c23y2 +
+        c11.x * c12.y * c13y2 * c23x2 -
+        c11.y * c12.x * c13x2 * c23y2 +
+        2 * c11.y * c12.x * c13y2 * c23x2 +
+        3 * c20.x * c13x2 * c13.y * c23y2 -
+        c12.x * c12y2 * c13.y * c23x2 -
+        3 * c20.y * c13.x * c13y2 * c23x2 +
+        c12x2 * c12.y * c13.x * c23y2 -
+        3 * c13.x * c22x2 * c13y2 * c22.y +
+        c13x2 * c13.y * c23.x * (6 * c20.y * c23.y + 6 * c21.y * c22.y) +
+        c13x2 * c22.x * c13.y * (6 * c21.y * c23.y + 3 * c22y2) +
+        c13x3 *
+          (-2 * c21.y * c22.y * c23.y -
+            c20.y * c23y2 -
+            c22.y * (2 * c21.y * c23.y + c22y2) -
+            c23.y * (2 * c20.y * c23.y + 2 * c21.y * c22.y)),
 
-      (((((((((((((6*c11.x*c12.x*c13.x*c13.y*c22.y*c23.y) + (c11.x*c12.y*c13.x*c22.x*c13.y*c23.y) + (c11.x*c12.y*c13.x*c13.y*c22.y*c23.x)) -
-      (c11.y*c12.x*c13.x*c22.x*c13.y*c23.y) - (c11.y*c12.x*c13.x*c13.y*c22.y*c23.x) - (6*c11.y*c12.y*c13.x*c22.x*c13.y*c23.x) -
-      (6*c10.x*c22.x*c13y3*c23.x)) + (6*c20.x*c22.x*c13y3*c23.x) + (6*c10.y*c13x3*c22.y*c23.y) + (2*c12y3*c13.x*c22.x*c23.x)) -
-      (2*c12x3*c13.y*c22.y*c23.y)) + (6*c10.x*c13.x*c22.x*c13y2*c23.y) + (6*c10.x*c13.x*c13y2*c22.y*c23.x) +
-      (6*c10.y*c13.x*c22.x*c13y2*c23.x)) - (3*c11.x*c12.x*c22.x*c13y2*c23.y) - (3*c11.x*c12.x*c13y2*c22.y*c23.x)) +
-      (2*c11.x*c12.y*c22.x*c13y2*c23.x) + (4*c11.y*c12.x*c22.x*c13y2*c23.x)) - (6*c10.x*c13x2*c13.y*c22.y*c23.y) -
-      (6*c10.y*c13x2*c22.x*c13.y*c23.y) - (6*c10.y*c13x2*c13.y*c22.y*c23.x) - (4*c11.x*c12.y*c13x2*c22.y*c23.y) -
-      (6*c20.x*c13.x*c22.x*c13y2*c23.y) - (6*c20.x*c13.x*c13y2*c22.y*c23.x) - (2*c11.y*c12.x*c13x2*c22.y*c23.y)) +
-      (3*c11.y*c12.y*c13x2*c22.x*c23.y) + (3*c11.y*c12.y*c13x2*c22.y*c23.x)) - (2*c12.x*c12y2*c13.x*c22.x*c23.y) -
-      (2*c12.x*c12y2*c13.x*c22.y*c23.x) - (2*c12.x*c12y2*c22.x*c13.y*c23.x) - (6*c20.y*c13.x*c22.x*c13y2*c23.x) -
-      (6*c21.x*c13.x*c21.y*c13y2*c23.x) - (6*c21.x*c13.x*c22.x*c13y2*c22.y)) + (6*c20.x*c13x2*c13.y*c22.y*c23.y) +
-      (2*c12x2*c12.y*c13.x*c22.y*c23.y) + (2*c12x2*c12.y*c22.x*c13.y*c23.y) + (2*c12x2*c12.y*c13.y*c22.y*c23.x) +
-      (3*c21.x*c22x2*c13y3) + (3*c21x2*c13y3*c23.x)) - (3*c13.x*c21.y*c22x2*c13y2) - (3*c21x2*c13.x*c13y2*c23.y)) +
-      (c13x2*c22.x*c13.y*((6*c20.y*c23.y) + (6*c21.y*c22.y))) + (c13x2*c13.y*c23.x*((6*c20.y*c22.y) + (3*c21y2))) +
-      (c21.x*c13x2*c13.y*((6*c21.y*c23.y) + (3*c22y2))) + (c13x3*((-2*c20.y*c22.y*c23.y) - (c23.y*((2*c20.y*c22.y) + c21y2)) -
-      (c21.y*((2*c21.y*c23.y) + c22y2)) - (c22.y*((2*c20.y*c23.y) + (2*c21.y*c22.y))))),
+      6 * c11.x * c12.x * c13.x * c13.y * c22.y * c23.y +
+        c11.x * c12.y * c13.x * c22.x * c13.y * c23.y +
+        c11.x * c12.y * c13.x * c13.y * c22.y * c23.x -
+        c11.y * c12.x * c13.x * c22.x * c13.y * c23.y -
+        c11.y * c12.x * c13.x * c13.y * c22.y * c23.x -
+        6 * c11.y * c12.y * c13.x * c22.x * c13.y * c23.x -
+        6 * c10.x * c22.x * c13y3 * c23.x +
+        6 * c20.x * c22.x * c13y3 * c23.x +
+        6 * c10.y * c13x3 * c22.y * c23.y +
+        2 * c12y3 * c13.x * c22.x * c23.x -
+        2 * c12x3 * c13.y * c22.y * c23.y +
+        6 * c10.x * c13.x * c22.x * c13y2 * c23.y +
+        6 * c10.x * c13.x * c13y2 * c22.y * c23.x +
+        6 * c10.y * c13.x * c22.x * c13y2 * c23.x -
+        3 * c11.x * c12.x * c22.x * c13y2 * c23.y -
+        3 * c11.x * c12.x * c13y2 * c22.y * c23.x +
+        2 * c11.x * c12.y * c22.x * c13y2 * c23.x +
+        4 * c11.y * c12.x * c22.x * c13y2 * c23.x -
+        6 * c10.x * c13x2 * c13.y * c22.y * c23.y -
+        6 * c10.y * c13x2 * c22.x * c13.y * c23.y -
+        6 * c10.y * c13x2 * c13.y * c22.y * c23.x -
+        4 * c11.x * c12.y * c13x2 * c22.y * c23.y -
+        6 * c20.x * c13.x * c22.x * c13y2 * c23.y -
+        6 * c20.x * c13.x * c13y2 * c22.y * c23.x -
+        2 * c11.y * c12.x * c13x2 * c22.y * c23.y +
+        3 * c11.y * c12.y * c13x2 * c22.x * c23.y +
+        3 * c11.y * c12.y * c13x2 * c22.y * c23.x -
+        2 * c12.x * c12y2 * c13.x * c22.x * c23.y -
+        2 * c12.x * c12y2 * c13.x * c22.y * c23.x -
+        2 * c12.x * c12y2 * c22.x * c13.y * c23.x -
+        6 * c20.y * c13.x * c22.x * c13y2 * c23.x -
+        6 * c21.x * c13.x * c21.y * c13y2 * c23.x -
+        6 * c21.x * c13.x * c22.x * c13y2 * c22.y +
+        6 * c20.x * c13x2 * c13.y * c22.y * c23.y +
+        2 * c12x2 * c12.y * c13.x * c22.y * c23.y +
+        2 * c12x2 * c12.y * c22.x * c13.y * c23.y +
+        2 * c12x2 * c12.y * c13.y * c22.y * c23.x +
+        3 * c21.x * c22x2 * c13y3 +
+        3 * c21x2 * c13y3 * c23.x -
+        3 * c13.x * c21.y * c22x2 * c13y2 -
+        3 * c21x2 * c13.x * c13y2 * c23.y +
+        c13x2 * c22.x * c13.y * (6 * c20.y * c23.y + 6 * c21.y * c22.y) +
+        c13x2 * c13.y * c23.x * (6 * c20.y * c22.y + 3 * c21y2) +
+        c21.x * c13x2 * c13.y * (6 * c21.y * c23.y + 3 * c22y2) +
+        c13x3 *
+          (-2 * c20.y * c22.y * c23.y -
+            c23.y * (2 * c20.y * c22.y + c21y2) -
+            c21.y * (2 * c21.y * c23.y + c22y2) -
+            c22.y * (2 * c20.y * c23.y + 2 * c21.y * c22.y)),
 
-      (((((((((((((((c11.x*c21.x*c12.y*c13.x*c13.y*c23.y) + (c11.x*c12.y*c13.x*c21.y*c13.y*c23.x) + (c11.x*c12.y*c13.x*c22.x*c13.y*c22.y)) -
-      (c11.y*c12.x*c21.x*c13.x*c13.y*c23.y) - (c11.y*c12.x*c13.x*c21.y*c13.y*c23.x) - (c11.y*c12.x*c13.x*c22.x*c13.y*c22.y) -
-      (6*c11.y*c21.x*c12.y*c13.x*c13.y*c23.x) - (6*c10.x*c21.x*c13y3*c23.x)) + (6*c20.x*c21.x*c13y3*c23.x) +
-      (2*c21.x*c12y3*c13.x*c23.x) + (6*c10.x*c21.x*c13.x*c13y2*c23.y) + (6*c10.x*c13.x*c21.y*c13y2*c23.x) +
-      (6*c10.x*c13.x*c22.x*c13y2*c22.y) + (6*c10.y*c21.x*c13.x*c13y2*c23.x)) - (3*c11.x*c12.x*c21.x*c13y2*c23.y) -
-      (3*c11.x*c12.x*c21.y*c13y2*c23.x) - (3*c11.x*c12.x*c22.x*c13y2*c22.y)) + (2*c11.x*c21.x*c12.y*c13y2*c23.x) +
-      (4*c11.y*c12.x*c21.x*c13y2*c23.x)) - (6*c10.y*c21.x*c13x2*c13.y*c23.y) - (6*c10.y*c13x2*c21.y*c13.y*c23.x) -
-      (6*c10.y*c13x2*c22.x*c13.y*c22.y) - (6*c20.x*c21.x*c13.x*c13y2*c23.y) - (6*c20.x*c13.x*c21.y*c13y2*c23.x) -
-      (6*c20.x*c13.x*c22.x*c13y2*c22.y)) + (3*c11.y*c21.x*c12.y*c13x2*c23.y)) - (3*c11.y*c12.y*c13.x*c22x2*c13.y)) +
-      (3*c11.y*c12.y*c13x2*c21.y*c23.x) + (3*c11.y*c12.y*c13x2*c22.x*c22.y)) - (2*c12.x*c21.x*c12y2*c13.x*c23.y) -
-      (2*c12.x*c21.x*c12y2*c13.y*c23.x) - (2*c12.x*c12y2*c13.x*c21.y*c23.x) - (2*c12.x*c12y2*c13.x*c22.x*c22.y) -
-      (6*c20.y*c21.x*c13.x*c13y2*c23.x) - (6*c21.x*c13.x*c21.y*c22.x*c13y2)) + (6*c20.y*c13x2*c21.y*c13.y*c23.x) +
-      (2*c12x2*c21.x*c12.y*c13.y*c23.y) + (2*c12x2*c12.y*c21.y*c13.y*c23.x) + (2*c12x2*c12.y*c22.x*c13.y*c22.y)) -
-      (3*c10.x*c22x2*c13y3)) + (3*c20.x*c22x2*c13y3) + (3*c21x2*c22.x*c13y3) + (c12y3*c13.x*c22x2) +
-      (3*c10.y*c13.x*c22x2*c13y2) + (c11.x*c12.y*c22x2*c13y2) + (2*c11.y*c12.x*c22x2*c13y2)) -
-      (c12.x*c12y2*c22x2*c13.y) - (3*c20.y*c13.x*c22x2*c13y2) - (3*c21x2*c13.x*c13y2*c22.y)) +
-      (c12x2*c12.y*c13.x*((2*c21.y*c23.y) + c22y2)) + (c11.x*c12.x*c13.x*c13.y*((6*c21.y*c23.y) + (3*c22y2))) +
-      (c21.x*c13x2*c13.y*((6*c20.y*c23.y) + (6*c21.y*c22.y))) + (c12x3*c13.y*((-2*c21.y*c23.y) - c22y2)) +
-      (c10.y*c13x3*((6*c21.y*c23.y) + (3*c22y2))) + (c11.y*c12.x*c13x2*((-2*c21.y*c23.y) - c22y2)) +
-      (c11.x*c12.y*c13x2*((-4*c21.y*c23.y) - (2*c22y2))) + (c10.x*c13x2*c13.y*((-6*c21.y*c23.y) - (3*c22y2))) +
-      (c13x2*c22.x*c13.y*((6*c20.y*c22.y) + (3*c21y2))) + (c20.x*c13x2*c13.y*((6*c21.y*c23.y) + (3*c22y2))) +
-      (c13x3*((-2*c20.y*c21.y*c23.y) - (c22.y*((2*c20.y*c22.y) + c21y2)) - (c20.y*((2*c21.y*c23.y) + c22y2)) -
-      (c21.y*((2*c20.y*c23.y) + (2*c21.y*c22.y))))),
+      c11.x * c21.x * c12.y * c13.x * c13.y * c23.y +
+        c11.x * c12.y * c13.x * c21.y * c13.y * c23.x +
+        c11.x * c12.y * c13.x * c22.x * c13.y * c22.y -
+        c11.y * c12.x * c21.x * c13.x * c13.y * c23.y -
+        c11.y * c12.x * c13.x * c21.y * c13.y * c23.x -
+        c11.y * c12.x * c13.x * c22.x * c13.y * c22.y -
+        6 * c11.y * c21.x * c12.y * c13.x * c13.y * c23.x -
+        6 * c10.x * c21.x * c13y3 * c23.x +
+        6 * c20.x * c21.x * c13y3 * c23.x +
+        2 * c21.x * c12y3 * c13.x * c23.x +
+        6 * c10.x * c21.x * c13.x * c13y2 * c23.y +
+        6 * c10.x * c13.x * c21.y * c13y2 * c23.x +
+        6 * c10.x * c13.x * c22.x * c13y2 * c22.y +
+        6 * c10.y * c21.x * c13.x * c13y2 * c23.x -
+        3 * c11.x * c12.x * c21.x * c13y2 * c23.y -
+        3 * c11.x * c12.x * c21.y * c13y2 * c23.x -
+        3 * c11.x * c12.x * c22.x * c13y2 * c22.y +
+        2 * c11.x * c21.x * c12.y * c13y2 * c23.x +
+        4 * c11.y * c12.x * c21.x * c13y2 * c23.x -
+        6 * c10.y * c21.x * c13x2 * c13.y * c23.y -
+        6 * c10.y * c13x2 * c21.y * c13.y * c23.x -
+        6 * c10.y * c13x2 * c22.x * c13.y * c22.y -
+        6 * c20.x * c21.x * c13.x * c13y2 * c23.y -
+        6 * c20.x * c13.x * c21.y * c13y2 * c23.x -
+        6 * c20.x * c13.x * c22.x * c13y2 * c22.y +
+        3 * c11.y * c21.x * c12.y * c13x2 * c23.y -
+        3 * c11.y * c12.y * c13.x * c22x2 * c13.y +
+        3 * c11.y * c12.y * c13x2 * c21.y * c23.x +
+        3 * c11.y * c12.y * c13x2 * c22.x * c22.y -
+        2 * c12.x * c21.x * c12y2 * c13.x * c23.y -
+        2 * c12.x * c21.x * c12y2 * c13.y * c23.x -
+        2 * c12.x * c12y2 * c13.x * c21.y * c23.x -
+        2 * c12.x * c12y2 * c13.x * c22.x * c22.y -
+        6 * c20.y * c21.x * c13.x * c13y2 * c23.x -
+        6 * c21.x * c13.x * c21.y * c22.x * c13y2 +
+        6 * c20.y * c13x2 * c21.y * c13.y * c23.x +
+        2 * c12x2 * c21.x * c12.y * c13.y * c23.y +
+        2 * c12x2 * c12.y * c21.y * c13.y * c23.x +
+        2 * c12x2 * c12.y * c22.x * c13.y * c22.y -
+        3 * c10.x * c22x2 * c13y3 +
+        3 * c20.x * c22x2 * c13y3 +
+        3 * c21x2 * c22.x * c13y3 +
+        c12y3 * c13.x * c22x2 +
+        3 * c10.y * c13.x * c22x2 * c13y2 +
+        c11.x * c12.y * c22x2 * c13y2 +
+        2 * c11.y * c12.x * c22x2 * c13y2 -
+        c12.x * c12y2 * c22x2 * c13.y -
+        3 * c20.y * c13.x * c22x2 * c13y2 -
+        3 * c21x2 * c13.x * c13y2 * c22.y +
+        c12x2 * c12.y * c13.x * (2 * c21.y * c23.y + c22y2) +
+        c11.x * c12.x * c13.x * c13.y * (6 * c21.y * c23.y + 3 * c22y2) +
+        c21.x * c13x2 * c13.y * (6 * c20.y * c23.y + 6 * c21.y * c22.y) +
+        c12x3 * c13.y * (-2 * c21.y * c23.y - c22y2) +
+        c10.y * c13x3 * (6 * c21.y * c23.y + 3 * c22y2) +
+        c11.y * c12.x * c13x2 * (-2 * c21.y * c23.y - c22y2) +
+        c11.x * c12.y * c13x2 * (-4 * c21.y * c23.y - 2 * c22y2) +
+        c10.x * c13x2 * c13.y * (-6 * c21.y * c23.y - 3 * c22y2) +
+        c13x2 * c22.x * c13.y * (6 * c20.y * c22.y + 3 * c21y2) +
+        c20.x * c13x2 * c13.y * (6 * c21.y * c23.y + 3 * c22y2) +
+        c13x3 *
+          (-2 * c20.y * c21.y * c23.y -
+            c22.y * (2 * c20.y * c22.y + c21y2) -
+            c20.y * (2 * c21.y * c23.y + c22y2) -
+            c21.y * (2 * c20.y * c23.y + 2 * c21.y * c22.y)),
 
-      (((((((((((((((((((((((((((((((((((-c10.x*c11.x*c12.y*c13.x*c13.y*c23.y) + (c10.x*c11.y*c12.x*c13.x*c13.y*c23.y) + (6*c10.x*c11.y*c12.y*c13.x*c13.y*c23.x)) -
-      (6*c10.y*c11.x*c12.x*c13.x*c13.y*c23.y) - (c10.y*c11.x*c12.y*c13.x*c13.y*c23.x)) + (c10.y*c11.y*c12.x*c13.x*c13.y*c23.x) +
-      (c11.x*c11.y*c12.x*c12.y*c13.x*c23.y)) - (c11.x*c11.y*c12.x*c12.y*c13.y*c23.x)) + (c11.x*c20.x*c12.y*c13.x*c13.y*c23.y) +
-      (c11.x*c20.y*c12.y*c13.x*c13.y*c23.x) + (c11.x*c21.x*c12.y*c13.x*c13.y*c22.y) + (c11.x*c12.y*c13.x*c21.y*c22.x*c13.y)) -
-      (c20.x*c11.y*c12.x*c13.x*c13.y*c23.y) - (6*c20.x*c11.y*c12.y*c13.x*c13.y*c23.x) - (c11.y*c12.x*c20.y*c13.x*c13.y*c23.x) -
-      (c11.y*c12.x*c21.x*c13.x*c13.y*c22.y) - (c11.y*c12.x*c13.x*c21.y*c22.x*c13.y) - (6*c11.y*c21.x*c12.y*c13.x*c22.x*c13.y) -
-      (6*c10.x*c20.x*c13y3*c23.x) - (6*c10.x*c21.x*c22.x*c13y3) - (2*c10.x*c12y3*c13.x*c23.x)) + (6*c20.x*c21.x*c22.x*c13y3) +
-      (2*c20.x*c12y3*c13.x*c23.x) + (2*c21.x*c12y3*c13.x*c22.x) + (2*c10.y*c12x3*c13.y*c23.y)) - (6*c10.x*c10.y*c13.x*c13y2*c23.x)) +
-      (3*c10.x*c11.x*c12.x*c13y2*c23.y)) - (2*c10.x*c11.x*c12.y*c13y2*c23.x) - (4*c10.x*c11.y*c12.x*c13y2*c23.x)) +
-      (3*c10.y*c11.x*c12.x*c13y2*c23.x) + (6*c10.x*c10.y*c13x2*c13.y*c23.y) + (6*c10.x*c20.x*c13.x*c13y2*c23.y)) -
-      (3*c10.x*c11.y*c12.y*c13x2*c23.y)) + (2*c10.x*c12.x*c12y2*c13.x*c23.y) + (2*c10.x*c12.x*c12y2*c13.y*c23.x) +
-      (6*c10.x*c20.y*c13.x*c13y2*c23.x) + (6*c10.x*c21.x*c13.x*c13y2*c22.y) + (6*c10.x*c13.x*c21.y*c22.x*c13y2) +
-      (4*c10.y*c11.x*c12.y*c13x2*c23.y) + (6*c10.y*c20.x*c13.x*c13y2*c23.x) + (2*c10.y*c11.y*c12.x*c13x2*c23.y)) -
-      (3*c10.y*c11.y*c12.y*c13x2*c23.x)) + (2*c10.y*c12.x*c12y2*c13.x*c23.x) + (6*c10.y*c21.x*c13.x*c22.x*c13y2)) -
-      (3*c11.x*c20.x*c12.x*c13y2*c23.y)) + (2*c11.x*c20.x*c12.y*c13y2*c23.x) + (c11.x*c11.y*c12y2*c13.x*c23.x)) -
-      (3*c11.x*c12.x*c20.y*c13y2*c23.x) - (3*c11.x*c12.x*c21.x*c13y2*c22.y) - (3*c11.x*c12.x*c21.y*c22.x*c13y2)) +
-      (2*c11.x*c21.x*c12.y*c22.x*c13y2) + (4*c20.x*c11.y*c12.x*c13y2*c23.x) + (4*c11.y*c12.x*c21.x*c22.x*c13y2)) -
-      (2*c10.x*c12x2*c12.y*c13.y*c23.y) - (6*c10.y*c20.x*c13x2*c13.y*c23.y) - (6*c10.y*c20.y*c13x2*c13.y*c23.x) -
-      (6*c10.y*c21.x*c13x2*c13.y*c22.y) - (2*c10.y*c12x2*c12.y*c13.x*c23.y) - (2*c10.y*c12x2*c12.y*c13.y*c23.x) -
-      (6*c10.y*c13x2*c21.y*c22.x*c13.y) - (c11.x*c11.y*c12x2*c13.y*c23.y) - (2*c11.x*c11y2*c13.x*c13.y*c23.x)) +
-      (3*c20.x*c11.y*c12.y*c13x2*c23.y)) - (2*c20.x*c12.x*c12y2*c13.x*c23.y) - (2*c20.x*c12.x*c12y2*c13.y*c23.x) -
-      (6*c20.x*c20.y*c13.x*c13y2*c23.x) - (6*c20.x*c21.x*c13.x*c13y2*c22.y) - (6*c20.x*c13.x*c21.y*c22.x*c13y2)) +
-      (3*c11.y*c20.y*c12.y*c13x2*c23.x) + (3*c11.y*c21.x*c12.y*c13x2*c22.y) + (3*c11.y*c12.y*c13x2*c21.y*c22.x)) -
-      (2*c12.x*c20.y*c12y2*c13.x*c23.x) - (2*c12.x*c21.x*c12y2*c13.x*c22.y) - (2*c12.x*c21.x*c12y2*c22.x*c13.y) -
-      (2*c12.x*c12y2*c13.x*c21.y*c22.x) - (6*c20.y*c21.x*c13.x*c22.x*c13y2) - (c11y2*c12.x*c12.y*c13.x*c23.x)) +
-      (2*c20.x*c12x2*c12.y*c13.y*c23.y) + (6*c20.y*c13x2*c21.y*c22.x*c13.y) + (2*c11x2*c11.y*c13.x*c13.y*c23.y) +
-      (c11x2*c12.x*c12.y*c13.y*c23.y) + (2*c12x2*c20.y*c12.y*c13.y*c23.x) + (2*c12x2*c21.x*c12.y*c13.y*c22.y) +
-      (2*c12x2*c12.y*c21.y*c22.x*c13.y) + (c21x3*c13y3) + (3*c10x2*c13y3*c23.x)) - (3*c10y2*c13x3*c23.y)) +
-      (3*c20x2*c13y3*c23.x) + (c11y3*c13x2*c23.x)) - (c11x3*c13y2*c23.y) - (c11.x*c11y2*c13x2*c23.y)) +
-      (c11x2*c11.y*c13y2*c23.x)) - (3*c10x2*c13.x*c13y2*c23.y)) + (3*c10y2*c13x2*c13.y*c23.x)) - (c11x2*c12y2*c13.x*c23.y)) +
-      (c11y2*c12x2*c13.y*c23.x)) - (3*c21x2*c13.x*c21.y*c13y2) - (3*c20x2*c13.x*c13y2*c23.y)) + (3*c20y2*c13x2*c13.y*c23.x) +
-      (c11.x*c12.x*c13.x*c13.y*((6*c20.y*c23.y) + (6*c21.y*c22.y))) + (c12x3*c13.y*((-2*c20.y*c23.y) - (2*c21.y*c22.y))) +
-      (c10.y*c13x3*((6*c20.y*c23.y) + (6*c21.y*c22.y))) + (c11.y*c12.x*c13x2*((-2*c20.y*c23.y) - (2*c21.y*c22.y))) +
-      (c12x2*c12.y*c13.x*((2*c20.y*c23.y) + (2*c21.y*c22.y))) + (c11.x*c12.y*c13x2*((-4*c20.y*c23.y) - (4*c21.y*c22.y))) +
-      (c10.x*c13x2*c13.y*((-6*c20.y*c23.y) - (6*c21.y*c22.y))) + (c20.x*c13x2*c13.y*((6*c20.y*c23.y) + (6*c21.y*c22.y))) +
-      (c21.x*c13x2*c13.y*((6*c20.y*c22.y) + (3*c21y2))) + (c13x3*((-2*c20.y*c21.y*c22.y) - (c20y2*c23.y) -
-      (c21.y*((2*c20.y*c22.y) + c21y2)) - (c20.y*((2*c20.y*c23.y) + (2*c21.y*c22.y))))),
+      -c10.x * c11.x * c12.y * c13.x * c13.y * c23.y +
+        c10.x * c11.y * c12.x * c13.x * c13.y * c23.y +
+        6 * c10.x * c11.y * c12.y * c13.x * c13.y * c23.x -
+        6 * c10.y * c11.x * c12.x * c13.x * c13.y * c23.y -
+        c10.y * c11.x * c12.y * c13.x * c13.y * c23.x +
+        c10.y * c11.y * c12.x * c13.x * c13.y * c23.x +
+        c11.x * c11.y * c12.x * c12.y * c13.x * c23.y -
+        c11.x * c11.y * c12.x * c12.y * c13.y * c23.x +
+        c11.x * c20.x * c12.y * c13.x * c13.y * c23.y +
+        c11.x * c20.y * c12.y * c13.x * c13.y * c23.x +
+        c11.x * c21.x * c12.y * c13.x * c13.y * c22.y +
+        c11.x * c12.y * c13.x * c21.y * c22.x * c13.y -
+        c20.x * c11.y * c12.x * c13.x * c13.y * c23.y -
+        6 * c20.x * c11.y * c12.y * c13.x * c13.y * c23.x -
+        c11.y * c12.x * c20.y * c13.x * c13.y * c23.x -
+        c11.y * c12.x * c21.x * c13.x * c13.y * c22.y -
+        c11.y * c12.x * c13.x * c21.y * c22.x * c13.y -
+        6 * c11.y * c21.x * c12.y * c13.x * c22.x * c13.y -
+        6 * c10.x * c20.x * c13y3 * c23.x -
+        6 * c10.x * c21.x * c22.x * c13y3 -
+        2 * c10.x * c12y3 * c13.x * c23.x +
+        6 * c20.x * c21.x * c22.x * c13y3 +
+        2 * c20.x * c12y3 * c13.x * c23.x +
+        2 * c21.x * c12y3 * c13.x * c22.x +
+        2 * c10.y * c12x3 * c13.y * c23.y -
+        6 * c10.x * c10.y * c13.x * c13y2 * c23.x +
+        3 * c10.x * c11.x * c12.x * c13y2 * c23.y -
+        2 * c10.x * c11.x * c12.y * c13y2 * c23.x -
+        4 * c10.x * c11.y * c12.x * c13y2 * c23.x +
+        3 * c10.y * c11.x * c12.x * c13y2 * c23.x +
+        6 * c10.x * c10.y * c13x2 * c13.y * c23.y +
+        6 * c10.x * c20.x * c13.x * c13y2 * c23.y -
+        3 * c10.x * c11.y * c12.y * c13x2 * c23.y +
+        2 * c10.x * c12.x * c12y2 * c13.x * c23.y +
+        2 * c10.x * c12.x * c12y2 * c13.y * c23.x +
+        6 * c10.x * c20.y * c13.x * c13y2 * c23.x +
+        6 * c10.x * c21.x * c13.x * c13y2 * c22.y +
+        6 * c10.x * c13.x * c21.y * c22.x * c13y2 +
+        4 * c10.y * c11.x * c12.y * c13x2 * c23.y +
+        6 * c10.y * c20.x * c13.x * c13y2 * c23.x +
+        2 * c10.y * c11.y * c12.x * c13x2 * c23.y -
+        3 * c10.y * c11.y * c12.y * c13x2 * c23.x +
+        2 * c10.y * c12.x * c12y2 * c13.x * c23.x +
+        6 * c10.y * c21.x * c13.x * c22.x * c13y2 -
+        3 * c11.x * c20.x * c12.x * c13y2 * c23.y +
+        2 * c11.x * c20.x * c12.y * c13y2 * c23.x +
+        c11.x * c11.y * c12y2 * c13.x * c23.x -
+        3 * c11.x * c12.x * c20.y * c13y2 * c23.x -
+        3 * c11.x * c12.x * c21.x * c13y2 * c22.y -
+        3 * c11.x * c12.x * c21.y * c22.x * c13y2 +
+        2 * c11.x * c21.x * c12.y * c22.x * c13y2 +
+        4 * c20.x * c11.y * c12.x * c13y2 * c23.x +
+        4 * c11.y * c12.x * c21.x * c22.x * c13y2 -
+        2 * c10.x * c12x2 * c12.y * c13.y * c23.y -
+        6 * c10.y * c20.x * c13x2 * c13.y * c23.y -
+        6 * c10.y * c20.y * c13x2 * c13.y * c23.x -
+        6 * c10.y * c21.x * c13x2 * c13.y * c22.y -
+        2 * c10.y * c12x2 * c12.y * c13.x * c23.y -
+        2 * c10.y * c12x2 * c12.y * c13.y * c23.x -
+        6 * c10.y * c13x2 * c21.y * c22.x * c13.y -
+        c11.x * c11.y * c12x2 * c13.y * c23.y -
+        2 * c11.x * c11y2 * c13.x * c13.y * c23.x +
+        3 * c20.x * c11.y * c12.y * c13x2 * c23.y -
+        2 * c20.x * c12.x * c12y2 * c13.x * c23.y -
+        2 * c20.x * c12.x * c12y2 * c13.y * c23.x -
+        6 * c20.x * c20.y * c13.x * c13y2 * c23.x -
+        6 * c20.x * c21.x * c13.x * c13y2 * c22.y -
+        6 * c20.x * c13.x * c21.y * c22.x * c13y2 +
+        3 * c11.y * c20.y * c12.y * c13x2 * c23.x +
+        3 * c11.y * c21.x * c12.y * c13x2 * c22.y +
+        3 * c11.y * c12.y * c13x2 * c21.y * c22.x -
+        2 * c12.x * c20.y * c12y2 * c13.x * c23.x -
+        2 * c12.x * c21.x * c12y2 * c13.x * c22.y -
+        2 * c12.x * c21.x * c12y2 * c22.x * c13.y -
+        2 * c12.x * c12y2 * c13.x * c21.y * c22.x -
+        6 * c20.y * c21.x * c13.x * c22.x * c13y2 -
+        c11y2 * c12.x * c12.y * c13.x * c23.x +
+        2 * c20.x * c12x2 * c12.y * c13.y * c23.y +
+        6 * c20.y * c13x2 * c21.y * c22.x * c13.y +
+        2 * c11x2 * c11.y * c13.x * c13.y * c23.y +
+        c11x2 * c12.x * c12.y * c13.y * c23.y +
+        2 * c12x2 * c20.y * c12.y * c13.y * c23.x +
+        2 * c12x2 * c21.x * c12.y * c13.y * c22.y +
+        2 * c12x2 * c12.y * c21.y * c22.x * c13.y +
+        c21x3 * c13y3 +
+        3 * c10x2 * c13y3 * c23.x -
+        3 * c10y2 * c13x3 * c23.y +
+        3 * c20x2 * c13y3 * c23.x +
+        c11y3 * c13x2 * c23.x -
+        c11x3 * c13y2 * c23.y -
+        c11.x * c11y2 * c13x2 * c23.y +
+        c11x2 * c11.y * c13y2 * c23.x -
+        3 * c10x2 * c13.x * c13y2 * c23.y +
+        3 * c10y2 * c13x2 * c13.y * c23.x -
+        c11x2 * c12y2 * c13.x * c23.y +
+        c11y2 * c12x2 * c13.y * c23.x -
+        3 * c21x2 * c13.x * c21.y * c13y2 -
+        3 * c20x2 * c13.x * c13y2 * c23.y +
+        3 * c20y2 * c13x2 * c13.y * c23.x +
+        c11.x *
+          c12.x *
+          c13.x *
+          c13.y *
+          (6 * c20.y * c23.y + 6 * c21.y * c22.y) +
+        c12x3 * c13.y * (-2 * c20.y * c23.y - 2 * c21.y * c22.y) +
+        c10.y * c13x3 * (6 * c20.y * c23.y + 6 * c21.y * c22.y) +
+        c11.y * c12.x * c13x2 * (-2 * c20.y * c23.y - 2 * c21.y * c22.y) +
+        c12x2 * c12.y * c13.x * (2 * c20.y * c23.y + 2 * c21.y * c22.y) +
+        c11.x * c12.y * c13x2 * (-4 * c20.y * c23.y - 4 * c21.y * c22.y) +
+        c10.x * c13x2 * c13.y * (-6 * c20.y * c23.y - 6 * c21.y * c22.y) +
+        c20.x * c13x2 * c13.y * (6 * c20.y * c23.y + 6 * c21.y * c22.y) +
+        c21.x * c13x2 * c13.y * (6 * c20.y * c22.y + 3 * c21y2) +
+        c13x3 *
+          (-2 * c20.y * c21.y * c22.y -
+            c20y2 * c23.y -
+            c21.y * (2 * c20.y * c22.y + c21y2) -
+            c20.y * (2 * c20.y * c23.y + 2 * c21.y * c22.y)),
 
-      (((((((((((((((((((((((((((((((((((((((((-c10.x*c11.x*c12.y*c13.x*c13.y*c22.y) + (c10.x*c11.y*c12.x*c13.x*c13.y*c22.y) + (6*c10.x*c11.y*c12.y*c13.x*c22.x*c13.y)) -
-      (6*c10.y*c11.x*c12.x*c13.x*c13.y*c22.y) - (c10.y*c11.x*c12.y*c13.x*c22.x*c13.y)) + (c10.y*c11.y*c12.x*c13.x*c22.x*c13.y) +
-      (c11.x*c11.y*c12.x*c12.y*c13.x*c22.y)) - (c11.x*c11.y*c12.x*c12.y*c22.x*c13.y)) + (c11.x*c20.x*c12.y*c13.x*c13.y*c22.y) +
-      (c11.x*c20.y*c12.y*c13.x*c22.x*c13.y) + (c11.x*c21.x*c12.y*c13.x*c21.y*c13.y)) - (c20.x*c11.y*c12.x*c13.x*c13.y*c22.y) -
-      (6*c20.x*c11.y*c12.y*c13.x*c22.x*c13.y) - (c11.y*c12.x*c20.y*c13.x*c22.x*c13.y) - (c11.y*c12.x*c21.x*c13.x*c21.y*c13.y) -
-      (6*c10.x*c20.x*c22.x*c13y3) - (2*c10.x*c12y3*c13.x*c22.x)) + (2*c20.x*c12y3*c13.x*c22.x) + (2*c10.y*c12x3*c13.y*c22.y)) -
-      (6*c10.x*c10.y*c13.x*c22.x*c13y2)) + (3*c10.x*c11.x*c12.x*c13y2*c22.y)) - (2*c10.x*c11.x*c12.y*c22.x*c13y2) -
-      (4*c10.x*c11.y*c12.x*c22.x*c13y2)) + (3*c10.y*c11.x*c12.x*c22.x*c13y2) + (6*c10.x*c10.y*c13x2*c13.y*c22.y) +
-      (6*c10.x*c20.x*c13.x*c13y2*c22.y)) - (3*c10.x*c11.y*c12.y*c13x2*c22.y)) + (2*c10.x*c12.x*c12y2*c13.x*c22.y) +
-      (2*c10.x*c12.x*c12y2*c22.x*c13.y) + (6*c10.x*c20.y*c13.x*c22.x*c13y2) + (6*c10.x*c21.x*c13.x*c21.y*c13y2) +
-      (4*c10.y*c11.x*c12.y*c13x2*c22.y) + (6*c10.y*c20.x*c13.x*c22.x*c13y2) + (2*c10.y*c11.y*c12.x*c13x2*c22.y)) -
-      (3*c10.y*c11.y*c12.y*c13x2*c22.x)) + (2*c10.y*c12.x*c12y2*c13.x*c22.x)) - (3*c11.x*c20.x*c12.x*c13y2*c22.y)) +
-      (2*c11.x*c20.x*c12.y*c22.x*c13y2) + (c11.x*c11.y*c12y2*c13.x*c22.x)) - (3*c11.x*c12.x*c20.y*c22.x*c13y2) -
-      (3*c11.x*c12.x*c21.x*c21.y*c13y2)) + (4*c20.x*c11.y*c12.x*c22.x*c13y2)) - (2*c10.x*c12x2*c12.y*c13.y*c22.y) -
-      (6*c10.y*c20.x*c13x2*c13.y*c22.y) - (6*c10.y*c20.y*c13x2*c22.x*c13.y) - (6*c10.y*c21.x*c13x2*c21.y*c13.y) -
-      (2*c10.y*c12x2*c12.y*c13.x*c22.y) - (2*c10.y*c12x2*c12.y*c22.x*c13.y) - (c11.x*c11.y*c12x2*c13.y*c22.y) -
-      (2*c11.x*c11y2*c13.x*c22.x*c13.y)) + (3*c20.x*c11.y*c12.y*c13x2*c22.y)) - (2*c20.x*c12.x*c12y2*c13.x*c22.y) -
-      (2*c20.x*c12.x*c12y2*c22.x*c13.y) - (6*c20.x*c20.y*c13.x*c22.x*c13y2) - (6*c20.x*c21.x*c13.x*c21.y*c13y2)) +
-      (3*c11.y*c20.y*c12.y*c13x2*c22.x) + (3*c11.y*c21.x*c12.y*c13x2*c21.y)) - (2*c12.x*c20.y*c12y2*c13.x*c22.x) -
-      (2*c12.x*c21.x*c12y2*c13.x*c21.y) - (c11y2*c12.x*c12.y*c13.x*c22.x)) + (2*c20.x*c12x2*c12.y*c13.y*c22.y)) -
-      (3*c11.y*c21x2*c12.y*c13.x*c13.y)) + (6*c20.y*c21.x*c13x2*c21.y*c13.y) + (2*c11x2*c11.y*c13.x*c13.y*c22.y) +
-      (c11x2*c12.x*c12.y*c13.y*c22.y) + (2*c12x2*c20.y*c12.y*c22.x*c13.y) + (2*c12x2*c21.x*c12.y*c21.y*c13.y)) -
-      (3*c10.x*c21x2*c13y3)) + (3*c20.x*c21x2*c13y3) + (3*c10x2*c22.x*c13y3)) - (3*c10y2*c13x3*c22.y)) + (3*c20x2*c22.x*c13y3) +
-      (c21x2*c12y3*c13.x) + (c11y3*c13x2*c22.x)) - (c11x3*c13y2*c22.y)) + (3*c10.y*c21x2*c13.x*c13y2)) -
-      (c11.x*c11y2*c13x2*c22.y)) + (c11.x*c21x2*c12.y*c13y2) + (2*c11.y*c12.x*c21x2*c13y2) + (c11x2*c11.y*c22.x*c13y2)) -
-      (c12.x*c21x2*c12y2*c13.y) - (3*c20.y*c21x2*c13.x*c13y2) - (3*c10x2*c13.x*c13y2*c22.y)) + (3*c10y2*c13x2*c22.x*c13.y)) -
-      (c11x2*c12y2*c13.x*c22.y)) + (c11y2*c12x2*c22.x*c13.y)) - (3*c20x2*c13.x*c13y2*c22.y)) + (3*c20y2*c13x2*c22.x*c13.y) +
-      (c12x2*c12.y*c13.x*((2*c20.y*c22.y) + c21y2)) + (c11.x*c12.x*c13.x*c13.y*((6*c20.y*c22.y) + (3*c21y2))) +
-      (c12x3*c13.y*((-2*c20.y*c22.y) - c21y2)) + (c10.y*c13x3*((6*c20.y*c22.y) + (3*c21y2))) +
-      (c11.y*c12.x*c13x2*((-2*c20.y*c22.y) - c21y2)) + (c11.x*c12.y*c13x2*((-4*c20.y*c22.y) - (2*c21y2))) +
-      (c10.x*c13x2*c13.y*((-6*c20.y*c22.y) - (3*c21y2))) + (c20.x*c13x2*c13.y*((6*c20.y*c22.y) + (3*c21y2))) +
-      (c13x3*((-2*c20.y*c21y2) - (c20y2*c22.y) - (c20.y*((2*c20.y*c22.y) + c21y2)))),
+      -c10.x * c11.x * c12.y * c13.x * c13.y * c22.y +
+        c10.x * c11.y * c12.x * c13.x * c13.y * c22.y +
+        6 * c10.x * c11.y * c12.y * c13.x * c22.x * c13.y -
+        6 * c10.y * c11.x * c12.x * c13.x * c13.y * c22.y -
+        c10.y * c11.x * c12.y * c13.x * c22.x * c13.y +
+        c10.y * c11.y * c12.x * c13.x * c22.x * c13.y +
+        c11.x * c11.y * c12.x * c12.y * c13.x * c22.y -
+        c11.x * c11.y * c12.x * c12.y * c22.x * c13.y +
+        c11.x * c20.x * c12.y * c13.x * c13.y * c22.y +
+        c11.x * c20.y * c12.y * c13.x * c22.x * c13.y +
+        c11.x * c21.x * c12.y * c13.x * c21.y * c13.y -
+        c20.x * c11.y * c12.x * c13.x * c13.y * c22.y -
+        6 * c20.x * c11.y * c12.y * c13.x * c22.x * c13.y -
+        c11.y * c12.x * c20.y * c13.x * c22.x * c13.y -
+        c11.y * c12.x * c21.x * c13.x * c21.y * c13.y -
+        6 * c10.x * c20.x * c22.x * c13y3 -
+        2 * c10.x * c12y3 * c13.x * c22.x +
+        2 * c20.x * c12y3 * c13.x * c22.x +
+        2 * c10.y * c12x3 * c13.y * c22.y -
+        6 * c10.x * c10.y * c13.x * c22.x * c13y2 +
+        3 * c10.x * c11.x * c12.x * c13y2 * c22.y -
+        2 * c10.x * c11.x * c12.y * c22.x * c13y2 -
+        4 * c10.x * c11.y * c12.x * c22.x * c13y2 +
+        3 * c10.y * c11.x * c12.x * c22.x * c13y2 +
+        6 * c10.x * c10.y * c13x2 * c13.y * c22.y +
+        6 * c10.x * c20.x * c13.x * c13y2 * c22.y -
+        3 * c10.x * c11.y * c12.y * c13x2 * c22.y +
+        2 * c10.x * c12.x * c12y2 * c13.x * c22.y +
+        2 * c10.x * c12.x * c12y2 * c22.x * c13.y +
+        6 * c10.x * c20.y * c13.x * c22.x * c13y2 +
+        6 * c10.x * c21.x * c13.x * c21.y * c13y2 +
+        4 * c10.y * c11.x * c12.y * c13x2 * c22.y +
+        6 * c10.y * c20.x * c13.x * c22.x * c13y2 +
+        2 * c10.y * c11.y * c12.x * c13x2 * c22.y -
+        3 * c10.y * c11.y * c12.y * c13x2 * c22.x +
+        2 * c10.y * c12.x * c12y2 * c13.x * c22.x -
+        3 * c11.x * c20.x * c12.x * c13y2 * c22.y +
+        2 * c11.x * c20.x * c12.y * c22.x * c13y2 +
+        c11.x * c11.y * c12y2 * c13.x * c22.x -
+        3 * c11.x * c12.x * c20.y * c22.x * c13y2 -
+        3 * c11.x * c12.x * c21.x * c21.y * c13y2 +
+        4 * c20.x * c11.y * c12.x * c22.x * c13y2 -
+        2 * c10.x * c12x2 * c12.y * c13.y * c22.y -
+        6 * c10.y * c20.x * c13x2 * c13.y * c22.y -
+        6 * c10.y * c20.y * c13x2 * c22.x * c13.y -
+        6 * c10.y * c21.x * c13x2 * c21.y * c13.y -
+        2 * c10.y * c12x2 * c12.y * c13.x * c22.y -
+        2 * c10.y * c12x2 * c12.y * c22.x * c13.y -
+        c11.x * c11.y * c12x2 * c13.y * c22.y -
+        2 * c11.x * c11y2 * c13.x * c22.x * c13.y +
+        3 * c20.x * c11.y * c12.y * c13x2 * c22.y -
+        2 * c20.x * c12.x * c12y2 * c13.x * c22.y -
+        2 * c20.x * c12.x * c12y2 * c22.x * c13.y -
+        6 * c20.x * c20.y * c13.x * c22.x * c13y2 -
+        6 * c20.x * c21.x * c13.x * c21.y * c13y2 +
+        3 * c11.y * c20.y * c12.y * c13x2 * c22.x +
+        3 * c11.y * c21.x * c12.y * c13x2 * c21.y -
+        2 * c12.x * c20.y * c12y2 * c13.x * c22.x -
+        2 * c12.x * c21.x * c12y2 * c13.x * c21.y -
+        c11y2 * c12.x * c12.y * c13.x * c22.x +
+        2 * c20.x * c12x2 * c12.y * c13.y * c22.y -
+        3 * c11.y * c21x2 * c12.y * c13.x * c13.y +
+        6 * c20.y * c21.x * c13x2 * c21.y * c13.y +
+        2 * c11x2 * c11.y * c13.x * c13.y * c22.y +
+        c11x2 * c12.x * c12.y * c13.y * c22.y +
+        2 * c12x2 * c20.y * c12.y * c22.x * c13.y +
+        2 * c12x2 * c21.x * c12.y * c21.y * c13.y -
+        3 * c10.x * c21x2 * c13y3 +
+        3 * c20.x * c21x2 * c13y3 +
+        3 * c10x2 * c22.x * c13y3 -
+        3 * c10y2 * c13x3 * c22.y +
+        3 * c20x2 * c22.x * c13y3 +
+        c21x2 * c12y3 * c13.x +
+        c11y3 * c13x2 * c22.x -
+        c11x3 * c13y2 * c22.y +
+        3 * c10.y * c21x2 * c13.x * c13y2 -
+        c11.x * c11y2 * c13x2 * c22.y +
+        c11.x * c21x2 * c12.y * c13y2 +
+        2 * c11.y * c12.x * c21x2 * c13y2 +
+        c11x2 * c11.y * c22.x * c13y2 -
+        c12.x * c21x2 * c12y2 * c13.y -
+        3 * c20.y * c21x2 * c13.x * c13y2 -
+        3 * c10x2 * c13.x * c13y2 * c22.y +
+        3 * c10y2 * c13x2 * c22.x * c13.y -
+        c11x2 * c12y2 * c13.x * c22.y +
+        c11y2 * c12x2 * c22.x * c13.y -
+        3 * c20x2 * c13.x * c13y2 * c22.y +
+        3 * c20y2 * c13x2 * c22.x * c13.y +
+        c12x2 * c12.y * c13.x * (2 * c20.y * c22.y + c21y2) +
+        c11.x * c12.x * c13.x * c13.y * (6 * c20.y * c22.y + 3 * c21y2) +
+        c12x3 * c13.y * (-2 * c20.y * c22.y - c21y2) +
+        c10.y * c13x3 * (6 * c20.y * c22.y + 3 * c21y2) +
+        c11.y * c12.x * c13x2 * (-2 * c20.y * c22.y - c21y2) +
+        c11.x * c12.y * c13x2 * (-4 * c20.y * c22.y - 2 * c21y2) +
+        c10.x * c13x2 * c13.y * (-6 * c20.y * c22.y - 3 * c21y2) +
+        c20.x * c13x2 * c13.y * (6 * c20.y * c22.y + 3 * c21y2) +
+        c13x3 *
+          (-2 * c20.y * c21y2 -
+            c20y2 * c22.y -
+            c20.y * (2 * c20.y * c22.y + c21y2)),
 
-      (((((((((((((((((((((((((((((((((((-c10.x*c11.x*c12.y*c13.x*c21.y*c13.y) + (c10.x*c11.y*c12.x*c13.x*c21.y*c13.y) + (6*c10.x*c11.y*c21.x*c12.y*c13.x*c13.y)) -
-      (6*c10.y*c11.x*c12.x*c13.x*c21.y*c13.y) - (c10.y*c11.x*c21.x*c12.y*c13.x*c13.y)) + (c10.y*c11.y*c12.x*c21.x*c13.x*c13.y)) -
-      (c11.x*c11.y*c12.x*c21.x*c12.y*c13.y)) + (c11.x*c11.y*c12.x*c12.y*c13.x*c21.y) + (c11.x*c20.x*c12.y*c13.x*c21.y*c13.y) +
-      (6*c11.x*c12.x*c20.y*c13.x*c21.y*c13.y) + (c11.x*c20.y*c21.x*c12.y*c13.x*c13.y)) - (c20.x*c11.y*c12.x*c13.x*c21.y*c13.y) -
-      (6*c20.x*c11.y*c21.x*c12.y*c13.x*c13.y) - (c11.y*c12.x*c20.y*c21.x*c13.x*c13.y) - (6*c10.x*c20.x*c21.x*c13y3) -
-      (2*c10.x*c21.x*c12y3*c13.x)) + (6*c10.y*c20.y*c13x3*c21.y) + (2*c20.x*c21.x*c12y3*c13.x) + (2*c10.y*c12x3*c21.y*c13.y)) -
-      (2*c12x3*c20.y*c21.y*c13.y) - (6*c10.x*c10.y*c21.x*c13.x*c13y2)) + (3*c10.x*c11.x*c12.x*c21.y*c13y2)) -
-      (2*c10.x*c11.x*c21.x*c12.y*c13y2) - (4*c10.x*c11.y*c12.x*c21.x*c13y2)) + (3*c10.y*c11.x*c12.x*c21.x*c13y2) +
-      (6*c10.x*c10.y*c13x2*c21.y*c13.y) + (6*c10.x*c20.x*c13.x*c21.y*c13y2)) - (3*c10.x*c11.y*c12.y*c13x2*c21.y)) +
-      (2*c10.x*c12.x*c21.x*c12y2*c13.y) + (2*c10.x*c12.x*c12y2*c13.x*c21.y) + (6*c10.x*c20.y*c21.x*c13.x*c13y2) +
-      (4*c10.y*c11.x*c12.y*c13x2*c21.y) + (6*c10.y*c20.x*c21.x*c13.x*c13y2) + (2*c10.y*c11.y*c12.x*c13x2*c21.y)) -
-      (3*c10.y*c11.y*c21.x*c12.y*c13x2)) + (2*c10.y*c12.x*c21.x*c12y2*c13.x)) - (3*c11.x*c20.x*c12.x*c21.y*c13y2)) +
-      (2*c11.x*c20.x*c21.x*c12.y*c13y2) + (c11.x*c11.y*c21.x*c12y2*c13.x)) - (3*c11.x*c12.x*c20.y*c21.x*c13y2)) +
-      (4*c20.x*c11.y*c12.x*c21.x*c13y2)) - (6*c10.x*c20.y*c13x2*c21.y*c13.y) - (2*c10.x*c12x2*c12.y*c21.y*c13.y) -
-      (6*c10.y*c20.x*c13x2*c21.y*c13.y) - (6*c10.y*c20.y*c21.x*c13x2*c13.y) - (2*c10.y*c12x2*c21.x*c12.y*c13.y) -
-      (2*c10.y*c12x2*c12.y*c13.x*c21.y) - (c11.x*c11.y*c12x2*c21.y*c13.y) - (4*c11.x*c20.y*c12.y*c13x2*c21.y) -
-      (2*c11.x*c11y2*c21.x*c13.x*c13.y)) + (3*c20.x*c11.y*c12.y*c13x2*c21.y)) - (2*c20.x*c12.x*c21.x*c12y2*c13.y) -
-      (2*c20.x*c12.x*c12y2*c13.x*c21.y) - (6*c20.x*c20.y*c21.x*c13.x*c13y2) - (2*c11.y*c12.x*c20.y*c13x2*c21.y)) +
-      (3*c11.y*c20.y*c21.x*c12.y*c13x2)) - (2*c12.x*c20.y*c21.x*c12y2*c13.x) - (c11y2*c12.x*c21.x*c12.y*c13.x)) +
-      (6*c20.x*c20.y*c13x2*c21.y*c13.y) + (2*c20.x*c12x2*c12.y*c21.y*c13.y) + (2*c11x2*c11.y*c13.x*c21.y*c13.y) +
-      (c11x2*c12.x*c12.y*c21.y*c13.y) + (2*c12x2*c20.y*c21.x*c12.y*c13.y) + (2*c12x2*c20.y*c12.y*c13.x*c21.y) +
-      (3*c10x2*c21.x*c13y3)) - (3*c10y2*c13x3*c21.y)) + (3*c20x2*c21.x*c13y3) + (c11y3*c21.x*c13x2)) - (c11x3*c21.y*c13y2) -
-      (3*c20y2*c13x3*c21.y) - (c11.x*c11y2*c13x2*c21.y)) + (c11x2*c11.y*c21.x*c13y2)) - (3*c10x2*c13.x*c21.y*c13y2)) +
-      (3*c10y2*c21.x*c13x2*c13.y)) - (c11x2*c12y2*c13.x*c21.y)) + (c11y2*c12x2*c21.x*c13.y)) - (3*c20x2*c13.x*c21.y*c13y2)) +
-      (3*c20y2*c21.x*c13x2*c13.y),
+      -c10.x * c11.x * c12.y * c13.x * c21.y * c13.y +
+        c10.x * c11.y * c12.x * c13.x * c21.y * c13.y +
+        6 * c10.x * c11.y * c21.x * c12.y * c13.x * c13.y -
+        6 * c10.y * c11.x * c12.x * c13.x * c21.y * c13.y -
+        c10.y * c11.x * c21.x * c12.y * c13.x * c13.y +
+        c10.y * c11.y * c12.x * c21.x * c13.x * c13.y -
+        c11.x * c11.y * c12.x * c21.x * c12.y * c13.y +
+        c11.x * c11.y * c12.x * c12.y * c13.x * c21.y +
+        c11.x * c20.x * c12.y * c13.x * c21.y * c13.y +
+        6 * c11.x * c12.x * c20.y * c13.x * c21.y * c13.y +
+        c11.x * c20.y * c21.x * c12.y * c13.x * c13.y -
+        c20.x * c11.y * c12.x * c13.x * c21.y * c13.y -
+        6 * c20.x * c11.y * c21.x * c12.y * c13.x * c13.y -
+        c11.y * c12.x * c20.y * c21.x * c13.x * c13.y -
+        6 * c10.x * c20.x * c21.x * c13y3 -
+        2 * c10.x * c21.x * c12y3 * c13.x +
+        6 * c10.y * c20.y * c13x3 * c21.y +
+        2 * c20.x * c21.x * c12y3 * c13.x +
+        2 * c10.y * c12x3 * c21.y * c13.y -
+        2 * c12x3 * c20.y * c21.y * c13.y -
+        6 * c10.x * c10.y * c21.x * c13.x * c13y2 +
+        3 * c10.x * c11.x * c12.x * c21.y * c13y2 -
+        2 * c10.x * c11.x * c21.x * c12.y * c13y2 -
+        4 * c10.x * c11.y * c12.x * c21.x * c13y2 +
+        3 * c10.y * c11.x * c12.x * c21.x * c13y2 +
+        6 * c10.x * c10.y * c13x2 * c21.y * c13.y +
+        6 * c10.x * c20.x * c13.x * c21.y * c13y2 -
+        3 * c10.x * c11.y * c12.y * c13x2 * c21.y +
+        2 * c10.x * c12.x * c21.x * c12y2 * c13.y +
+        2 * c10.x * c12.x * c12y2 * c13.x * c21.y +
+        6 * c10.x * c20.y * c21.x * c13.x * c13y2 +
+        4 * c10.y * c11.x * c12.y * c13x2 * c21.y +
+        6 * c10.y * c20.x * c21.x * c13.x * c13y2 +
+        2 * c10.y * c11.y * c12.x * c13x2 * c21.y -
+        3 * c10.y * c11.y * c21.x * c12.y * c13x2 +
+        2 * c10.y * c12.x * c21.x * c12y2 * c13.x -
+        3 * c11.x * c20.x * c12.x * c21.y * c13y2 +
+        2 * c11.x * c20.x * c21.x * c12.y * c13y2 +
+        c11.x * c11.y * c21.x * c12y2 * c13.x -
+        3 * c11.x * c12.x * c20.y * c21.x * c13y2 +
+        4 * c20.x * c11.y * c12.x * c21.x * c13y2 -
+        6 * c10.x * c20.y * c13x2 * c21.y * c13.y -
+        2 * c10.x * c12x2 * c12.y * c21.y * c13.y -
+        6 * c10.y * c20.x * c13x2 * c21.y * c13.y -
+        6 * c10.y * c20.y * c21.x * c13x2 * c13.y -
+        2 * c10.y * c12x2 * c21.x * c12.y * c13.y -
+        2 * c10.y * c12x2 * c12.y * c13.x * c21.y -
+        c11.x * c11.y * c12x2 * c21.y * c13.y -
+        4 * c11.x * c20.y * c12.y * c13x2 * c21.y -
+        2 * c11.x * c11y2 * c21.x * c13.x * c13.y +
+        3 * c20.x * c11.y * c12.y * c13x2 * c21.y -
+        2 * c20.x * c12.x * c21.x * c12y2 * c13.y -
+        2 * c20.x * c12.x * c12y2 * c13.x * c21.y -
+        6 * c20.x * c20.y * c21.x * c13.x * c13y2 -
+        2 * c11.y * c12.x * c20.y * c13x2 * c21.y +
+        3 * c11.y * c20.y * c21.x * c12.y * c13x2 -
+        2 * c12.x * c20.y * c21.x * c12y2 * c13.x -
+        c11y2 * c12.x * c21.x * c12.y * c13.x +
+        6 * c20.x * c20.y * c13x2 * c21.y * c13.y +
+        2 * c20.x * c12x2 * c12.y * c21.y * c13.y +
+        2 * c11x2 * c11.y * c13.x * c21.y * c13.y +
+        c11x2 * c12.x * c12.y * c21.y * c13.y +
+        2 * c12x2 * c20.y * c21.x * c12.y * c13.y +
+        2 * c12x2 * c20.y * c12.y * c13.x * c21.y +
+        3 * c10x2 * c21.x * c13y3 -
+        3 * c10y2 * c13x3 * c21.y +
+        3 * c20x2 * c21.x * c13y3 +
+        c11y3 * c21.x * c13x2 -
+        c11x3 * c21.y * c13y2 -
+        3 * c20y2 * c13x3 * c21.y -
+        c11.x * c11y2 * c13x2 * c21.y +
+        c11x2 * c11.y * c21.x * c13y2 -
+        3 * c10x2 * c13.x * c21.y * c13y2 +
+        3 * c10y2 * c21.x * c13x2 * c13.y -
+        c11x2 * c12y2 * c13.x * c21.y +
+        c11y2 * c12x2 * c21.x * c13.y -
+        3 * c20x2 * c13.x * c21.y * c13y2 +
+        3 * c20y2 * c21.x * c13x2 * c13.y,
 
-      ((((((((((((((((((((((((((((((((((((((((((((((((((c10.x*c10.y*c11.x*c12.y*c13.x*c13.y) - (c10.x*c10.y*c11.y*c12.x*c13.x*c13.y)) + (c10.x*c11.x*c11.y*c12.x*c12.y*c13.y)) -
-      (c10.y*c11.x*c11.y*c12.x*c12.y*c13.x) - (c10.x*c11.x*c20.y*c12.y*c13.x*c13.y)) + (6*c10.x*c20.x*c11.y*c12.y*c13.x*c13.y) +
-      (c10.x*c11.y*c12.x*c20.y*c13.x*c13.y)) - (c10.y*c11.x*c20.x*c12.y*c13.x*c13.y) - (6*c10.y*c11.x*c12.x*c20.y*c13.x*c13.y)) +
-      (c10.y*c20.x*c11.y*c12.x*c13.x*c13.y)) - (c11.x*c20.x*c11.y*c12.x*c12.y*c13.y)) + (c11.x*c11.y*c12.x*c20.y*c12.y*c13.x) +
-      (c11.x*c20.x*c20.y*c12.y*c13.x*c13.y)) - (c20.x*c11.y*c12.x*c20.y*c13.x*c13.y) - (2*c10.x*c20.x*c12y3*c13.x)) +
-      (2*c10.y*c12x3*c20.y*c13.y)) - (3*c10.x*c10.y*c11.x*c12.x*c13y2) - (6*c10.x*c10.y*c20.x*c13.x*c13y2)) +
-      (3*c10.x*c10.y*c11.y*c12.y*c13x2)) - (2*c10.x*c10.y*c12.x*c12y2*c13.x) - (2*c10.x*c11.x*c20.x*c12.y*c13y2) -
-      (c10.x*c11.x*c11.y*c12y2*c13.x)) + (3*c10.x*c11.x*c12.x*c20.y*c13y2)) - (4*c10.x*c20.x*c11.y*c12.x*c13y2)) +
-      (3*c10.y*c11.x*c20.x*c12.x*c13y2) + (6*c10.x*c10.y*c20.y*c13x2*c13.y) + (2*c10.x*c10.y*c12x2*c12.y*c13.y) +
-      (2*c10.x*c11.x*c11y2*c13.x*c13.y) + (2*c10.x*c20.x*c12.x*c12y2*c13.y) + (6*c10.x*c20.x*c20.y*c13.x*c13y2)) -
-      (3*c10.x*c11.y*c20.y*c12.y*c13x2)) + (2*c10.x*c12.x*c20.y*c12y2*c13.x) + (c10.x*c11y2*c12.x*c12.y*c13.x) +
-      (c10.y*c11.x*c11.y*c12x2*c13.y) + (4*c10.y*c11.x*c20.y*c12.y*c13x2)) - (3*c10.y*c20.x*c11.y*c12.y*c13x2)) +
-      (2*c10.y*c20.x*c12.x*c12y2*c13.x) + (2*c10.y*c11.y*c12.x*c20.y*c13x2) + (c11.x*c20.x*c11.y*c12y2*c13.x)) -
-      (3*c11.x*c20.x*c12.x*c20.y*c13y2) - (2*c10.x*c12x2*c20.y*c12.y*c13.y) - (6*c10.y*c20.x*c20.y*c13x2*c13.y) -
-      (2*c10.y*c20.x*c12x2*c12.y*c13.y) - (2*c10.y*c11x2*c11.y*c13.x*c13.y) - (c10.y*c11x2*c12.x*c12.y*c13.y) -
-      (2*c10.y*c12x2*c20.y*c12.y*c13.x) - (2*c11.x*c20.x*c11y2*c13.x*c13.y) - (c11.x*c11.y*c12x2*c20.y*c13.y)) +
-      (3*c20.x*c11.y*c20.y*c12.y*c13x2)) - (2*c20.x*c12.x*c20.y*c12y2*c13.x) - (c20.x*c11y2*c12.x*c12.y*c13.x)) +
-      (3*c10y2*c11.x*c12.x*c13.x*c13.y) + (3*c11.x*c12.x*c20y2*c13.x*c13.y) + (2*c20.x*c12x2*c20.y*c12.y*c13.y)) -
-      (3*c10x2*c11.y*c12.y*c13.x*c13.y)) + (2*c11x2*c11.y*c20.y*c13.x*c13.y) + (c11x2*c12.x*c20.y*c12.y*c13.y)) -
-      (3*c20x2*c11.y*c12.y*c13.x*c13.y) - (c10x3*c13y3)) + (c10y3*c13x3) + (c20x3*c13y3)) - (c20y3*c13x3) -
-      (3*c10.x*c20x2*c13y3) - (c10.x*c11y3*c13x2)) + (3*c10x2*c20.x*c13y3) + (c10.y*c11x3*c13y2) +
-      (3*c10.y*c20y2*c13x3) + (c20.x*c11y3*c13x2) + (c10x2*c12y3*c13.x)) - (3*c10y2*c20.y*c13x3) - (c10y2*c12x3*c13.y)) +
-      (c20x2*c12y3*c13.x)) - (c11x3*c20.y*c13y2) - (c12x3*c20y2*c13.y) - (c10.x*c11x2*c11.y*c13y2)) +
-      (c10.y*c11.x*c11y2*c13x2)) - (3*c10.x*c10y2*c13x2*c13.y) - (c10.x*c11y2*c12x2*c13.y)) + (c10.y*c11x2*c12y2*c13.x)) -
-      (c11.x*c11y2*c20.y*c13x2)) + (3*c10x2*c10.y*c13.x*c13y2) + (c10x2*c11.x*c12.y*c13y2) +
-      (2*c10x2*c11.y*c12.x*c13y2)) - (2*c10y2*c11.x*c12.y*c13x2) - (c10y2*c11.y*c12.x*c13x2)) + (c11x2*c20.x*c11.y*c13y2)) -
-      (3*c10.x*c20y2*c13x2*c13.y)) + (3*c10.y*c20x2*c13.x*c13y2) + (c11.x*c20x2*c12.y*c13y2)) - (2*c11.x*c20y2*c12.y*c13x2)) +
-      (c20.x*c11y2*c12x2*c13.y)) - (c11.y*c12.x*c20y2*c13x2) - (c10x2*c12.x*c12y2*c13.y) - (3*c10x2*c20.y*c13.x*c13y2)) +
-      (3*c10y2*c20.x*c13x2*c13.y) + (c10y2*c12x2*c12.y*c13.x)) - (c11x2*c20.y*c12y2*c13.x)) + (2*c20x2*c11.y*c12.x*c13y2) +
-      (3*c20.x*c20y2*c13x2*c13.y)) - (c20x2*c12.x*c12y2*c13.y) - (3*c20x2*c20.y*c13.x*c13y2)) + (c12x2*c20y2*c12.y*c13.x)
+      c10.x * c10.y * c11.x * c12.y * c13.x * c13.y -
+        c10.x * c10.y * c11.y * c12.x * c13.x * c13.y +
+        c10.x * c11.x * c11.y * c12.x * c12.y * c13.y -
+        c10.y * c11.x * c11.y * c12.x * c12.y * c13.x -
+        c10.x * c11.x * c20.y * c12.y * c13.x * c13.y +
+        6 * c10.x * c20.x * c11.y * c12.y * c13.x * c13.y +
+        c10.x * c11.y * c12.x * c20.y * c13.x * c13.y -
+        c10.y * c11.x * c20.x * c12.y * c13.x * c13.y -
+        6 * c10.y * c11.x * c12.x * c20.y * c13.x * c13.y +
+        c10.y * c20.x * c11.y * c12.x * c13.x * c13.y -
+        c11.x * c20.x * c11.y * c12.x * c12.y * c13.y +
+        c11.x * c11.y * c12.x * c20.y * c12.y * c13.x +
+        c11.x * c20.x * c20.y * c12.y * c13.x * c13.y -
+        c20.x * c11.y * c12.x * c20.y * c13.x * c13.y -
+        2 * c10.x * c20.x * c12y3 * c13.x +
+        2 * c10.y * c12x3 * c20.y * c13.y -
+        3 * c10.x * c10.y * c11.x * c12.x * c13y2 -
+        6 * c10.x * c10.y * c20.x * c13.x * c13y2 +
+        3 * c10.x * c10.y * c11.y * c12.y * c13x2 -
+        2 * c10.x * c10.y * c12.x * c12y2 * c13.x -
+        2 * c10.x * c11.x * c20.x * c12.y * c13y2 -
+        c10.x * c11.x * c11.y * c12y2 * c13.x +
+        3 * c10.x * c11.x * c12.x * c20.y * c13y2 -
+        4 * c10.x * c20.x * c11.y * c12.x * c13y2 +
+        3 * c10.y * c11.x * c20.x * c12.x * c13y2 +
+        6 * c10.x * c10.y * c20.y * c13x2 * c13.y +
+        2 * c10.x * c10.y * c12x2 * c12.y * c13.y +
+        2 * c10.x * c11.x * c11y2 * c13.x * c13.y +
+        2 * c10.x * c20.x * c12.x * c12y2 * c13.y +
+        6 * c10.x * c20.x * c20.y * c13.x * c13y2 -
+        3 * c10.x * c11.y * c20.y * c12.y * c13x2 +
+        2 * c10.x * c12.x * c20.y * c12y2 * c13.x +
+        c10.x * c11y2 * c12.x * c12.y * c13.x +
+        c10.y * c11.x * c11.y * c12x2 * c13.y +
+        4 * c10.y * c11.x * c20.y * c12.y * c13x2 -
+        3 * c10.y * c20.x * c11.y * c12.y * c13x2 +
+        2 * c10.y * c20.x * c12.x * c12y2 * c13.x +
+        2 * c10.y * c11.y * c12.x * c20.y * c13x2 +
+        c11.x * c20.x * c11.y * c12y2 * c13.x -
+        3 * c11.x * c20.x * c12.x * c20.y * c13y2 -
+        2 * c10.x * c12x2 * c20.y * c12.y * c13.y -
+        6 * c10.y * c20.x * c20.y * c13x2 * c13.y -
+        2 * c10.y * c20.x * c12x2 * c12.y * c13.y -
+        2 * c10.y * c11x2 * c11.y * c13.x * c13.y -
+        c10.y * c11x2 * c12.x * c12.y * c13.y -
+        2 * c10.y * c12x2 * c20.y * c12.y * c13.x -
+        2 * c11.x * c20.x * c11y2 * c13.x * c13.y -
+        c11.x * c11.y * c12x2 * c20.y * c13.y +
+        3 * c20.x * c11.y * c20.y * c12.y * c13x2 -
+        2 * c20.x * c12.x * c20.y * c12y2 * c13.x -
+        c20.x * c11y2 * c12.x * c12.y * c13.x +
+        3 * c10y2 * c11.x * c12.x * c13.x * c13.y +
+        3 * c11.x * c12.x * c20y2 * c13.x * c13.y +
+        2 * c20.x * c12x2 * c20.y * c12.y * c13.y -
+        3 * c10x2 * c11.y * c12.y * c13.x * c13.y +
+        2 * c11x2 * c11.y * c20.y * c13.x * c13.y +
+        c11x2 * c12.x * c20.y * c12.y * c13.y -
+        3 * c20x2 * c11.y * c12.y * c13.x * c13.y -
+        c10x3 * c13y3 +
+        c10y3 * c13x3 +
+        c20x3 * c13y3 -
+        c20y3 * c13x3 -
+        3 * c10.x * c20x2 * c13y3 -
+        c10.x * c11y3 * c13x2 +
+        3 * c10x2 * c20.x * c13y3 +
+        c10.y * c11x3 * c13y2 +
+        3 * c10.y * c20y2 * c13x3 +
+        c20.x * c11y3 * c13x2 +
+        c10x2 * c12y3 * c13.x -
+        3 * c10y2 * c20.y * c13x3 -
+        c10y2 * c12x3 * c13.y +
+        c20x2 * c12y3 * c13.x -
+        c11x3 * c20.y * c13y2 -
+        c12x3 * c20y2 * c13.y -
+        c10.x * c11x2 * c11.y * c13y2 +
+        c10.y * c11.x * c11y2 * c13x2 -
+        3 * c10.x * c10y2 * c13x2 * c13.y -
+        c10.x * c11y2 * c12x2 * c13.y +
+        c10.y * c11x2 * c12y2 * c13.x -
+        c11.x * c11y2 * c20.y * c13x2 +
+        3 * c10x2 * c10.y * c13.x * c13y2 +
+        c10x2 * c11.x * c12.y * c13y2 +
+        2 * c10x2 * c11.y * c12.x * c13y2 -
+        2 * c10y2 * c11.x * c12.y * c13x2 -
+        c10y2 * c11.y * c12.x * c13x2 +
+        c11x2 * c20.x * c11.y * c13y2 -
+        3 * c10.x * c20y2 * c13x2 * c13.y +
+        3 * c10.y * c20x2 * c13.x * c13y2 +
+        c11.x * c20x2 * c12.y * c13y2 -
+        2 * c11.x * c20y2 * c12.y * c13x2 +
+        c20.x * c11y2 * c12x2 * c13.y -
+        c11.y * c12.x * c20y2 * c13x2 -
+        c10x2 * c12.x * c12y2 * c13.y -
+        3 * c10x2 * c20.y * c13.x * c13y2 +
+        3 * c10y2 * c20.x * c13x2 * c13.y +
+        c10y2 * c12x2 * c12.y * c13.x -
+        c11x2 * c20.y * c12y2 * c13.x +
+        2 * c20x2 * c11.y * c12.x * c13y2 +
+        3 * c20.x * c20y2 * c13x2 * c13.y -
+        c20x2 * c12.x * c12y2 * c13.y -
+        3 * c20x2 * c20.y * c13.x * c13y2 +
+        c12x2 * c20y2 * c12.y * c13.x
     ]);
 
     let roots = poly.rootsInterval(0, 1);
@@ -669,29 +1088,31 @@ export default class CubicBezier {
         c13.x,
         c12.x,
         c11.x,
-        c10.x - c20.x - (s * c21.x) - (s * s * c22.x) - (s * s * s * c23.x)
+        c10.x - c20.x - s * c21.x - s * s * c22.x - s * s * s * c23.x
       ]).roots();
       let yRoots = new Polynomial([
         c13.y,
         c12.y,
         c11.y,
-        c10.y - c20.y - (s * c21.y) - (s * s * c22.y) - (s * s * s * c23.y)
+        c10.y - c20.y - s * c21.y - s * s * c22.y - s * s * s * c23.y
       ]).roots();
 
-
-      if ((xRoots.length > 0) && (yRoots.length > 0)) {
+      if (xRoots.length > 0 && yRoots.length > 0) {
         // IMPORTANT
         // Tweaking this to be smaller can make it miss intersections.
         let tolerance = 1e-2;
 
         for (let j of Object.keys(xRoots || {})) {
           let xRoot = xRoots[j];
-          if ((0 <= xRoot) && (xRoot <= 1)) {
+          if (0 <= xRoot && xRoot <= 1) {
             for (let k of Object.keys(yRoots || {})) {
               let yRoot = yRoots[k];
               if (Math.abs(xRoot - yRoot) < tolerance) {
                 results.push(
-                  c23.multiplyBy(s * s * s).add(c22.multiplyBy(s * s).add(c21.multiplyBy(s).add(c20))));
+                  c23
+                    .multiplyBy(s * s * s)
+                    .add(c22.multiplyBy(s * s).add(c21.multiplyBy(s).add(c20)))
+                );
               }
             }
           }
@@ -702,6 +1123,3 @@ export default class CubicBezier {
   }
 }
 CubicBezier.initClass();
-
-
-

@@ -1,6 +1,6 @@
-import Posn from 'geometry/posn';
-import Bounds from 'geometry/bounds';
-import Range from 'geometry/range';
+import Posn from "geometry/posn";
+import Bounds from "geometry/bounds";
+import Range from "geometry/range";
 /*
   Internal representation of a straight line segment
 
@@ -20,10 +20,8 @@ import Range from 'geometry/range';
 
 */
 
-
 export default class LineSegment {
   static initClass() {
-  
     this.prototype.boundsCached = undefined;
   }
 
@@ -45,7 +43,6 @@ export default class LineSegment {
   }
 
   calculate() {
-
     // Do some calculations at startup:
     //
     // Slope, number
@@ -59,7 +56,9 @@ export default class LineSegment {
 
     this.angle = Math.atan(this.slope) / (Math.PI / 180);
 
-    this.length = Math.sqrt(Math.pow((this.b.x - this.a.x), 2) + Math.pow((this.b.y - this.a.y), 2));
+    this.length = Math.sqrt(
+      Math.pow(this.b.x - this.a.x, 2) + Math.pow(this.b.y - this.a.y, 2)
+    );
     return this;
   }
 
@@ -70,9 +69,13 @@ export default class LineSegment {
   get p2() {
     return this.b;
   }
-  beginning() { return this.a; }
+  beginning() {
+    return this.a;
+  }
 
-  end() { return this.a; }
+  end() {
+    return this.a;
+  }
 
   toString() {
     // Returns as string in "x y" format.
@@ -93,8 +96,10 @@ export default class LineSegment {
   }
 
   bounds(useCached) {
-    if (useCached == null) { useCached = false; }
-    if ((this.boundsCached != null) && useCached) {
+    if (useCached == null) {
+      useCached = false;
+    }
+    if (this.boundsCached != null && useCached) {
       return this.boundsCached;
     }
 
@@ -108,10 +113,15 @@ export default class LineSegment {
 
     // Cache the bounds and return them at the same time
 
-    return this.boundsCached = new Bounds(minx, miny, width, height);
+    return (this.boundsCached = new Bounds(minx, miny, width, height));
   }
 
-  rotate(angle, origin) { return new LineSegment(this.a.rotate(angle, origin), this.b.rotate(angle, origin)); }
+  rotate(angle, origin) {
+    return new LineSegment(
+      this.a.rotate(angle, origin),
+      this.b.rotate(angle, origin)
+    );
+  }
 
   width() {
     return Math.abs(this.a.x - this.b.x);
@@ -125,17 +135,21 @@ export default class LineSegment {
     // Returns a Range of x values covered
     //
     // O/P : a Range
-    return new Range(Math.min(this.a.x, this.b.x), Math.max(this.a.x, this.b.x));
+    return new Range(
+      Math.min(this.a.x, this.b.x),
+      Math.max(this.a.x, this.b.x)
+    );
   }
-
 
   yRange() {
     // Returns a Range of y values covered
     //
     // O/P : a Range
-    return new Range(Math.min(this.a.y, this.b.y), Math.max(this.a.y, this.b.y));
+    return new Range(
+      Math.min(this.a.y, this.b.y),
+      Math.max(this.a.y, this.b.y)
+    );
   }
-
 
   xDiff() {
     // Difference between x values of a and b points
@@ -145,7 +159,6 @@ export default class LineSegment {
     return Math.max(this.b.x, this.a.x) - Math.min(this.b.x, this.a.x);
   }
 
-
   xbaDiff() {
     // Difference between second point x and first point x
     //
@@ -153,7 +166,6 @@ export default class LineSegment {
 
     return this.b.x - this.a.x;
   }
-
 
   yDiff() {
     // Difference between y values of a and b points
@@ -163,7 +175,6 @@ export default class LineSegment {
     return Math.max(this.b.y, this.a.y) - Math.min(this.b.y, this.a.y);
   }
 
-
   ybaDiff() {
     // Difference between secoind point y and first point y
     //
@@ -172,24 +183,25 @@ export default class LineSegment {
     return this.b.y - this.a.y;
   }
 
-
   yAtX(x, extrapolate) {
-    if (extrapolate == null) { extrapolate = true; }
+    if (extrapolate == null) {
+      extrapolate = true;
+    }
     if (!extrapolate && !this.xRange().containsInclusive(x)) {
       return null;
     }
-    return this.a.y + ((x - this.a.x) * this.slope);
+    return this.a.y + (x - this.a.x) * this.slope;
   }
 
-
   xAtY(y, extrapolate) {
-    if (extrapolate == null) { extrapolate = true; }
+    if (extrapolate == null) {
+      extrapolate = true;
+    }
     if (!extrapolate && !this.yRange().containsInclusive(y)) {
       return null;
     }
-    return this.a.x + ((y - this.a.y) / this.slope);
+    return this.a.x + (y - this.a.y) / this.slope;
   }
-
 
   ends() {
     return [a, b];
@@ -199,7 +211,10 @@ export default class LineSegment {
     // I/P: p, number between 0 and 1
     // O/P: Posn at that point on the LineSegment
 
-    return new Posn(this.a.x + ((this.b.x - this.a.x) * p), this.a.y + ((this.b.y - this.a.y) * p));
+    return new Posn(
+      this.a.x + (this.b.x - this.a.x) * p,
+      this.a.y + (this.b.y - this.a.y) * p
+    );
   }
 
   isIncident(p) {
@@ -228,11 +243,12 @@ export default class LineSegment {
     //
     // If given Posns, we have to calculate the float for each and then recur.
 
-    if (forced == null) { forced = null; }
+    if (forced == null) {
+      forced = null;
+    }
     if (typeof p === "number") {
       let split = forced ? forced : this.posnAt(p);
       return [new LineSegment(this.a, split), new LineSegment(split, this.b)];
-
     } else if (p instanceof Posn) {
       // Given a single Posn, find how far along it is on the line
       // and recur with that floating point value.
@@ -255,12 +271,16 @@ export default class LineSegment {
   }
 
   equal(ls) {
-    if (ls instanceof CubicBezier) { return false; }
-    return ((this.a.equal(ls.a)) && (this.b.equal(ls.b))) || ((this.a.equal(ls.b)) && (this.b.equal(ls.a)));
+    if (ls instanceof CubicBezier) {
+      return false;
+    }
+    return (
+      (this.a.equal(ls.a) && this.b.equal(ls.b)) ||
+      (this.a.equal(ls.b) && this.b.equal(ls.a))
+    );
   }
 }
 LineSegment.initClass();
-
 
 // TODO RM HACK
 window.LineSegment = LineSegment;

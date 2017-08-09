@@ -1,31 +1,32 @@
-import Item from 'geometry/item'
+import Item from "geometry/item";
 
 /*
 
 
  */
 
-
 class Text extends Item {
   static initClass() {
-    this.prototype.type = 'text';
-  
+    this.prototype.type = "text";
+
     this.prototype.caching = false;
   }
 
-
   constructor(data, content) {
-
     this.data = data;
-    if (content == null) { content = ""; }
-    this.content = content;
-    this.data = $.extend({
-      x: 0,
-      y: 0,
-      'font-size': ui.utilities.typography.sizeControl.read(),
-      'font-family': ui.utilities.typography.faceControl.selected.val
+    if (content == null) {
+      content = "";
     }
-    , this.data);
+    this.content = content;
+    this.data = $.extend(
+      {
+        x: 0,
+        y: 0,
+        "font-size": ui.utilities.typography.sizeControl.read(),
+        "font-family": ui.utilities.typography.faceControl.selected.val
+      },
+      this.data
+    );
 
     this.data.x = float(this.data.x);
     this.data.y = float(this.data.y);
@@ -50,11 +51,11 @@ class Text extends Item {
   }
 
   setSize(size) {
-    return this.data['font-size'] = size;
+    return (this.data["font-size"] = size);
   }
 
   setFace(face) {
-    return this.data['font-family'] = face;
+    return (this.data["font-family"] = face);
   }
 
   commit() {
@@ -80,11 +81,11 @@ class Text extends Item {
   }
 
   show() {
-    return this.rep.style.display = "block";
+    return (this.rep.style.display = "block");
   }
 
   hide() {
-    return this.rep.style.display = "none";
+    return (this.rep.style.display = "none");
   }
 
   originRotated() {
@@ -93,14 +94,15 @@ class Text extends Item {
 
   simulateInSandbox() {
     return $("#text-sandbox").text(this.content).css({
-      'font-size':   this.data['font-size'],
-      'font-family': this.data['font-family']});
+      "font-size": this.data["font-size"],
+      "font-family": this.data["font-family"]
+    });
   }
 
   selectAll() {
     this.editableMode();
     this.textEditable.focus();
-    document.execCommand('selectAll', false, null);
+    document.execCommand("selectAll", false, null);
   }
 
   delete() {
@@ -128,8 +130,12 @@ class Text extends Item {
   }
 
   rotate(a, origin, adjust) {
-    if (origin == null) { origin = this.center(); }
-    if (adjust == null) { adjust = true; }
+    if (origin == null) {
+      origin = this.center();
+    }
+    if (adjust == null) {
+      adjust = true;
+    }
     this.metadata.angle += a;
     this.metadata.angle %= 360;
 
@@ -138,9 +144,11 @@ class Text extends Item {
 
     // Don't use nudge method because we don't want adjustments made
     this.origin.nudge(nc.x - oc.x, oc.y - nc.y);
-    this.transformations.get('rotate').rotate(a);
+    this.transformations.get("rotate").rotate(a);
 
-    if (adjust) { this.adjustForScale(); }
+    if (adjust) {
+      this.adjustForScale();
+    }
 
     return this.commit();
   }
@@ -156,7 +164,7 @@ class Text extends Item {
 
     // The only real point in text objects is the origin
     this.origin.scale(x, y, origin);
-    this.transformations.get('scale').scale(x, y);
+    this.transformations.get("scale").scale(x, y);
     this.adjustForScale();
 
     if (angle !== 0) {
@@ -168,20 +176,21 @@ class Text extends Item {
   }
 
   adjustForScale() {
-    let scale = this.transformations.get('scale');
-    let translate = this.transformations.get('translate');
+    let scale = this.transformations.get("scale");
+    let translate = this.transformations.get("translate");
 
     let a = this.metadata.angle;
     this.rotate(-a, this.center(), false);
-    translate.y = ((scale.y - 1) / scale.y) * -this.origin.y;
-    translate.x = ((scale.x - 1) / scale.x) * -this.origin.x;
+    translate.y = (scale.y - 1) / scale.y * -this.origin.y;
+    translate.x = (scale.x - 1) / scale.x * -this.origin.x;
     this.rotate(a, this.center(), false);
     return this.commit();
   }
 
-
   hover() {
-    if (ui.selection.elements.all.has(this)) { return; }
+    if (ui.selection.elements.all.has(this)) {
+      return;
+    }
     /*
     $("#text-underline").show().css
       left: @origin.x * ui.canvas.zoom
@@ -204,11 +213,13 @@ class Text extends Item {
 
   width() {
     this.simulateInSandbox();
-    return $("#text-sandbox")[0].clientWidth * this.transformations.get('scale').x;
+    return (
+      $("#text-sandbox")[0].clientWidth * this.transformations.get("scale").x
+    );
   }
 
   height() {
-    return this.data['font-size'] * this.transformations.get('scale').y;
+    return this.data["font-size"] * this.transformations.get("scale").y;
   }
 
   xRange() {
@@ -224,7 +235,7 @@ class Text extends Item {
   }
 
   setupToCavnas(context) {
-    let scale = this.transformations.get('scale');
+    let scale = this.transformations.get("scale");
     let orr = this.originRotated();
 
     context.translate(orr.x, orr.y);
@@ -232,20 +243,20 @@ class Text extends Item {
 
     context.scale(scale.x, scale.y);
 
-    context.font = `${this.data['font-size']}px ${this.data['font-family']}`;
+    context.font = `${this.data["font-size"]}px ${this.data["font-family"]}`;
     return context;
   }
 
   drawToCanvas(context) {
-    let scale = this.transformations.get('scale');
+    let scale = this.transformations.get("scale");
     context = this.setupToCavnas(context);
 
     context.fillText(this.content.strip(), 0, 0);
-    return context = this.finishToCanvas(context);
+    return (context = this.finishToCanvas(context));
   }
 
   finishToCanvas(context) {
-    let scale = this.transformations.get('scale');
+    let scale = this.transformations.get("scale");
     let orr = this.originRotated();
 
     context.scale(1 / scale.x, 1 / scale.y);
@@ -256,4 +267,3 @@ class Text extends Item {
   }
 }
 Text.initClass();
-

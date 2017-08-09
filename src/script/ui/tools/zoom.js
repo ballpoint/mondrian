@@ -1,5 +1,5 @@
-import Tool from 'ui/tools/tool';
-import Bounds from 'geometry/bounds'
+import Tool from "ui/tools/tool";
+import Bounds from "geometry/bounds";
 
 export default class Zoom extends Tool {
   constructor(editor) {
@@ -10,17 +10,14 @@ export default class Zoom extends Tool {
   }
 
   get id() {
-    return 'zoom';
+    return "zoom";
   }
 
-  handleMousemove(e, posn) {
-  }
+  handleMousemove(e, posn) {}
 
-  handleMousedown(e, posn) {
-  }
+  handleMousedown(e, posn) {}
 
-  handleClick(e, posn) {
-  }
+  handleClick(e, posn) {}
 
   handleDragStart(e, posn, lastPosn) {
     this.dragStart = lastPosn;
@@ -54,10 +51,8 @@ export default class Zoom extends Tool {
     if (this.dragStart && this.dragEnd) {
       let bounds = Bounds.fromPosns([this.dragStart, this.dragEnd]);
       bounds = this.editor.projection.bounds(bounds);
-      context.strokeStyle = 'black';
+      context.strokeStyle = "black";
       context.strokeRect(bounds.x, bounds.y, bounds.width, bounds.height);
     }
-
   }
 }
-

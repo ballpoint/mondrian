@@ -4,19 +4,23 @@ export default class Range {
     this.max = max;
   }
 
-  length() { return this.max - this.min; }
+  length() {
+    return this.max - this.min;
+  }
 
   contains(n) {
-    return (n > this.min) && (n < this.max);
+    return n > this.min && n < this.max;
   }
 
   containsInclusive(n, tolerance) {
-    if (tolerance == null) { tolerance = 0; }
-    return (n >= (this.min - tolerance)) && (n <= (this.max + tolerance));
+    if (tolerance == null) {
+      tolerance = 0;
+    }
+    return n >= this.min - tolerance && n <= this.max + tolerance;
   }
 
   intersects(n) {
-    return (n === this.min) || (n === this.max);
+    return n === this.min || n === this.max;
   }
 
   fromList(alon) {
@@ -35,14 +39,14 @@ export default class Range {
 
   nudge(amt) {
     this.min += amt;
-    return this.max += amt;
+    return (this.max += amt);
   }
 
   scale(amt, origin) {
     // Amt is an integer
     // Origin is also an integer
     this.min += (this.min - origin) * (amt - 1);
-    return this.max += (this.max - origin) * (amt - 1);
+    return (this.max += (this.max - origin) * (amt - 1));
   }
 
   toString() {
@@ -53,5 +57,3 @@ export default class Range {
     return (v - this.min) / this.length();
   }
 }
-
-

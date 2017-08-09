@@ -1,7 +1,7 @@
 export default class Index {
   constructor(parts) {
     if (!parts) {
-      console.error('Invalid Index', parts);
+      console.error("Invalid Index", parts);
       return;
     }
     this.parts = parts;
@@ -16,16 +16,20 @@ export default class Index {
   }
 
   toString() {
-    return this.parts.join(':');
+    return this.parts.join(":");
   }
 
   static fromString(index) {
-    return new Index(index.split(':').map((i) => { return parseInt(i,10) }));
+    return new Index(
+      index.split(":").map(i => {
+        return parseInt(i, 10);
+      })
+    );
   }
 
   compare(other) {
     let minL = Math.min(this.length, other.length);
-    for (let i = 0; i < minL; i ++) {
+    for (let i = 0; i < minL; i++) {
       let mp = this.parts[i];
       let op = other.parts[i];
 
@@ -55,16 +59,16 @@ export default class Index {
   }
 
   get last() {
-    return this.parts[this.parts.length-1];
+    return this.parts[this.parts.length - 1];
   }
 
   get parent() {
-    return new Index(this.parts.slice(0, this.parts.length-1));
+    return new Index(this.parts.slice(0, this.parts.length - 1));
   }
 
   plus(n) {
     let parts = this.parts.slice(0);
-    parts[parts.length-1] += n;
+    parts[parts.length - 1] += n;
     return new Index(parts);
   }
 }
@@ -78,5 +82,5 @@ export function sortIndexes(indexes) {
 export function indexesIdentical(ia, ib) {
   ia = sortIndexes(ia);
   ib = sortIndexes(ib);
-  return ia.join(',') === ib.join(',');
+  return ia.join(",") === ib.join(",");
 }

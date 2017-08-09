@@ -1,7 +1,7 @@
-import shapes from 'lab/shapes';
-import Tool from 'ui/tools/tool';
-import Bounds from 'geometry/bounds';
-import Circle from 'geometry/circle';
+import shapes from "lab/shapes";
+import Tool from "ui/tools/tool";
+import Bounds from "geometry/bounds";
+import Circle from "geometry/circle";
 
 export default class Cursor extends Tool {
   constructor(editor) {
@@ -15,7 +15,7 @@ export default class Cursor extends Tool {
   }
 
   get id() {
-    return 'cursor';
+    return "cursor";
   }
 
   handleMousemove(e, posn) {
@@ -33,7 +33,7 @@ export default class Cursor extends Tool {
 
     // TODO use bsearch tree here 8)
     for (let elem of elems) {
-      let bp = elem.bounds().padded(z3); 
+      let bp = elem.bounds().padded(z3);
 
       if (bp.contains(posn)) {
         if (shapes.contains(elem, posn)) {
@@ -67,7 +67,6 @@ export default class Cursor extends Tool {
     if (selected) {
       if (!this.editor.isSelected(selected)) {
         this.editor.setSelection([selected]);
-
       }
     } else {
       this.editor.setSelection([]);
@@ -75,7 +74,7 @@ export default class Cursor extends Tool {
   }
 
   handleClick(e, posn) {
-    this.skipClick ++;
+    this.skipClick++;
   }
 
   handleDragStart(e, posn, lastPosn) {
@@ -97,7 +96,7 @@ export default class Cursor extends Tool {
 
   handleDragStop(e, posn, startPosn) {
     if (this.dragSelectStart) {
-      let bounds = Bounds.fromPosns([this.dragSelectStart, this.dragSelectEnd])
+      let bounds = Bounds.fromPosns([this.dragSelectStart, this.dragSelectEnd]);
 
       let newSelection = [];
 
@@ -122,7 +121,7 @@ export default class Cursor extends Tool {
       let bounds = Bounds.fromPosns([this.dragSelectStart, this.dragSelectEnd]);
       bounds = this.editor.projection.bounds(bounds).sharp();
       layer.setLineWidth(1);
-      layer.drawRect(bounds, { stroke: 'black' });
+      layer.drawRect(bounds, { stroke: "black" });
     }
   }
 }

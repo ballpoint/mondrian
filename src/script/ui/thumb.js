@@ -1,12 +1,12 @@
-import Bounds from 'geometry/bounds';
-import Projection from 'ui/projection';
-import { scaleLinear } from 'd3-scale';
-import Canvas from 'ui/canvas';
+import Bounds from "geometry/bounds";
+import Projection from "ui/projection";
+import { scaleLinear } from "d3-scale";
+import Canvas from "ui/canvas";
 
 const THUMBNAIL_DIMEN = 300;
 
 export default class Thumb {
-  constructor(elems, opts={}) {
+  constructor(elems, opts = {}) {
     this.elems = elems;
     this.opts = opts;
   }
@@ -21,8 +21,12 @@ export default class Thumb {
     let maxHeight = this.opts.maxHeight || 100;
     let fb = bounds.fitToDimensions(maxWidth, maxHeight);
     layer.setDimensions(fb.width, fb.height);
-    let x = scaleLinear().domain([bounds.x, bounds.width+bounds.x]).range([0, fb.width]);
-    let y = scaleLinear().domain([bounds.y, bounds.height+bounds.y]).range([0, fb.height]);
+    let x = scaleLinear()
+      .domain([bounds.x, bounds.width + bounds.x])
+      .range([0, fb.width]);
+    let y = scaleLinear()
+      .domain([bounds.y, bounds.height + bounds.y])
+      .range([0, fb.height]);
     let z = fb.width / bounds.width;
     this.projection = new Projection(x, y, z);
 
@@ -33,7 +37,7 @@ export default class Thumb {
 }
 
 export function thumbForElements(elements) {
-  let bounds = elems.map((elem) => { 
+  let bounds = elems.map(elem => {
     return elem.bounds();
   });
 }

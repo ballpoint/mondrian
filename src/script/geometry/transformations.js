@@ -3,12 +3,14 @@ class Transformations {
     this.owner = owner;
     this.transformations = transformations;
     let transform = this.owner.rep.getAttribute("transform");
-    this.transformations.map(t => t.family = this);
-    if (transform != null) { this.parseExisting(transform); }
+    this.transformations.map(t => (t.family = this));
+    if (transform != null) {
+      this.parseExisting(transform);
+    }
   }
 
   commit() {
-    return this.owner.data.transform = this.toAttr();
+    return (this.owner.data.transform = this.toAttr());
   }
 
   toAttr() {
@@ -21,7 +23,9 @@ class Transformations {
 
   get(key) {
     let f = this.transformations.filter(t => t.key === key);
-    if (f.length > 0) { return f[0]; }
+    if (f.length > 0) {
+      return f[0];
+    }
   }
 
   parseExisting(transform) {
@@ -29,7 +33,7 @@ class Transformations {
     return (() => {
       let result = [];
       for (let op of Array.from(operations)) {
-      // get the keyword, like "rotate" from "rotate(10)"
+        // get the keyword, like "rotate" from "rotate(10)"
         let item;
         let keyword = op.match(/^\w+/g)[0];
         let alreadyDefined = this.get(keyword);
@@ -38,7 +42,7 @@ class Transformations {
         } else {
           let representative = {
             rotate: RotateTransformation,
-            scale:  ScaleTransformation
+            scale: ScaleTransformation
           }[keyword];
           if (representative != null) {
             let newlyDefined = new representative().parse(op);
@@ -62,13 +66,12 @@ class Transformations {
     rep.style.webkitTransformOrigin = og;
     rep.style.webkitTransform = tr;
     rep.style.mozTransformOrigin = og;
-    return rep.style.mozTransform = tr;
+    return (rep.style.mozTransform = tr);
   }
 }
 
 class RotateTransformation {
   static initClass() {
-  
     this.prototype.key = "rotate";
   }
   constructor(deg, family) {
@@ -77,7 +80,9 @@ class RotateTransformation {
   }
 
   toAttr() {
-    return `rotate(${this.deg.places(3)} ${this.family.owner.center().x.places(3)} ${this.family.owner.center().y.places(3)})`;
+    return `rotate(${this.deg.places(3)} ${this.family.owner
+      .center()
+      .x.places(3)} ${this.family.owner.center().y.places(3)})`;
   }
 
   toCSS() {
@@ -92,21 +97,25 @@ class RotateTransformation {
 
   parse(op) {
     let ref, x, y;
-    return [this.deg, x, y] = Array.from(ref = op.match(/[\d\.]+/g).map(parseFloat)), ref;
+    return ([this.deg, x, y] = Array.from(
+      (ref = op.match(/[\d\.]+/g).map(parseFloat))
+    )), ref;
   }
 }
 RotateTransformation.initClass();
 
-
 class ScaleTransformation {
   static initClass() {
-  
     this.prototype.key = "scale";
   }
   constructor(x, y) {
-    if (x == null) { x = 1; }
+    if (x == null) {
+      x = 1;
+    }
     this.x = x;
-    if (y == null) { y = 1; }
+    if (y == null) {
+      y = 1;
+    }
     this.y = y;
   }
 
@@ -120,27 +129,36 @@ class ScaleTransformation {
 
   parse(op) {
     let ref;
-    return [this.x, this.y] = Array.from(ref = op.match(/[\d\.]+/g).map(parseFloat)), ref;
+    return ([this.x, this.y] = Array.from(
+      (ref = op.match(/[\d\.]+/g).map(parseFloat))
+    )), ref;
   }
 
   scale(x, y) {
-    if (x == null) { x = 1; }
-    if (y == null) { y = 1; }
+    if (x == null) {
+      x = 1;
+    }
+    if (y == null) {
+      y = 1;
+    }
     this.x *= x;
-    return this.y *= y;
+    return (this.y *= y);
   }
 }
 ScaleTransformation.initClass();
 
 class TranslateTransformation {
   static initClass() {
-  
     this.prototype.key = "translate";
   }
   constructor(x, y) {
-    if (x == null) { x = 0; }
+    if (x == null) {
+      x = 0;
+    }
     this.x = x;
-    if (y == null) { y = 1; }
+    if (y == null) {
+      y = 1;
+    }
     this.y = y;
   }
 
@@ -154,15 +172,15 @@ class TranslateTransformation {
 
   parse(op) {
     let ref;
-    return [this.x, this.y] = Array.from(ref = op.match(/[\-\d\.]+/g).map(parseFloat)), ref;
+    return ([this.x, this.y] = Array.from(
+      (ref = op.match(/[\-\d\.]+/g).map(parseFloat))
+    )), ref;
   }
 
   nudge(x, y) {
     console.log(x, y);
     this.x += x;
-    return this.y -= y;
+    return (this.y -= y);
   }
 }
 TranslateTransformation.initClass();
-
-

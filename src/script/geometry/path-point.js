@@ -1,7 +1,7 @@
-import Posn from 'geometry/posn';
-import Index from 'geometry/index';
-import LineSegment from 'geometry/line-segment';
-import CubicBezier from 'geometry/cubic-bezier-line-segment';
+import Posn from "geometry/posn";
+import Index from "geometry/index";
+import LineSegment from "geometry/line-segment";
+import CubicBezier from "geometry/cubic-bezier-line-segment";
 
 // PathPoint
 
@@ -71,21 +71,21 @@ export default class PathPoint extends Posn {
     //   VertiTo
 
     let patterns = {
-      moveTo:   /M[^A-Za-z]+/i,
-      lineTo:   /L[^A-Za-z]+/i,
-      curveTo:  /C[^A-Za-z]+/i,
+      moveTo: /M[^A-Za-z]+/i,
+      lineTo: /L[^A-Za-z]+/i,
+      curveTo: /C[^A-Za-z]+/i,
       smoothTo: /S[^A-Za-z]+/i,
-      horizTo:  /H[^A-Za-z]+/i,
-      vertiTo:  /V[^A-Za-z]+/i
+      horizTo: /H[^A-Za-z]+/i,
+      vertiTo: /V[^A-Za-z]+/i
     };
 
     let lengths = {
-      moveTo:   2,
-      lineTo:   2,
-      curveTo:  6,
+      moveTo: 2,
+      lineTo: 2,
+      curveTo: 6,
       smoothTo: 4,
-      horizTo:  1,
-      vertiTo:  1
+      horizTo: 1,
+      vertiTo: 1
     };
 
     let pairs = /[-+]?\d*\.?\d*(e\-)?\d*/g;
@@ -106,14 +106,16 @@ export default class PathPoint extends Posn {
       let matched = string.match(val);
 
       if (matched !== null) {
-
         // Matched will not be null when we find the correct point from the 'pattern' regex collection.
         // Match for the cooridinate pairs inside this point (1-3 should show up)
         // These then get mapped with parseFloat to get the true values, as coords
 
-        let coords = (string.match(pairs)).filter(p => p.length > 0).map(parseFloat);
+        let coords = string
+          .match(pairs)
+          .filter(p => p.length > 0)
+          .map(parseFloat);
 
-        let relative = string.substring(0,1).match(/[mlcshv]/) !== null; // Is it lower-case? So it's relative? Shit!
+        let relative = string.substring(0, 1).match(/[mlcshv]/) !== null; // Is it lower-case? So it's relative? Shit!
 
         //
         //TODO debug with chipotle logo
@@ -128,11 +130,14 @@ export default class PathPoint extends Posn {
         let elen = lengths[key]; // The expected amount of values for this kind of point
 
         // If the number of coordinates checks out, build the point(s)
-        if ((clen % elen) === 0) {
-
+        if (clen % elen === 0) {
           let sliceAt = 0;
 
-          for (let i = 0, end = (clen / elen) - 1, asc = 0 <= end; asc ? i <= end : i >= end; asc ? i++ : i--) {
+          for (
+            let i = 0, end = clen / elen - 1, asc = 0 <= end;
+            asc ? i <= end : i >= end;
+            asc ? i++ : i--
+          ) {
             let set = coords.slice(sliceAt, sliceAt + elen);
 
             // Never represent points as relative internally
@@ -142,7 +147,7 @@ export default class PathPoint extends Posn {
 
                 if (prec) {
                   switch (key) {
-                    case 'vertiTo':
+                    case "vertiTo":
                       compareVal = prec.y;
                       break;
                     default:
@@ -162,7 +167,9 @@ export default class PathPoint extends Posn {
 
             let values = set;
 
-            if (values.join(' ').mentions("NaN")) { debugger; }
+            if (values.join(" ").mentions("NaN")) {
+              debugger;
+            }
 
             // At this point, values should be an array that looks like this:
             // [100, 120, 300.5, 320.5]
@@ -175,17 +182,17 @@ export default class PathPoint extends Posn {
             let prec_sHandle;
 
             switch (key) {
-              case 'moveTo':
-              case 'lineTo':
+              case "moveTo":
+              case "lineTo":
                 p = new Posn(values[0], values[1]);
                 break;
-              case 'vertiTo':
+              case "vertiTo":
                 p = new Posn(prec.x, values[0]);
                 break;
-              case 'horizTo':
+              case "horizTo":
                 p = new Posn(values[0], prec.y);
                 break;
-              case 'smoothTo':
+              case "smoothTo":
                 p = new Posn(values[2], values[3]);
                 pHandle = new Posn(values[0], values[1]);
                 pHandle.x = values[0];
@@ -201,7 +208,7 @@ export default class PathPoint extends Posn {
                 }
                 */
                 break;
-              case 'curveTo':
+              case "curveTo":
                 p = new Posn(values[4], values[5]);
                 pHandle = new Posn(values[2], values[3]);
                 prec_sHandle = new Posn(values[0], values[1]);
@@ -215,18 +222,18 @@ export default class PathPoint extends Posn {
 
             point.str = string;
 
-
             points.push(point);
             prec = point;
 
             sliceAt += elen;
           }
-
         } else {
           // We got a weird amount of points. Dunno what to do with that.
           // TODO maybe I should actually rethink this later to be more robust: like, parse what I can and
           // ignore the rest. Idk if that would be irresponsible.
-          console.error(`Wrong amount of coordinates: ${string}. Expected ${elen} and got ${clen}.`);
+          console.error(
+            `Wrong amount of coordinates: ${string}. Expected ${elen} and got ${clen}.`
+          );
         }
 
         // Don't keep looking
@@ -241,7 +248,7 @@ export default class PathPoint extends Posn {
     return points;
   }
 
-  toLineSegment(prec=this.prec) {
+  toLineSegment(prec = this.prec) {
     if (!prec) {
       return null;
     }
@@ -266,7 +273,11 @@ export default class PathPoint extends Posn {
   }
 
   checkIfHandlesLocked() {
-    this.handlesLocked = !!(this.pHandle && this.sHandle && this.pHandle.reflect(this).within(this.sHandle, 1));
+    this.handlesLocked = !!(
+      this.pHandle &&
+      this.sHandle &&
+      this.pHandle.reflect(this).within(this.sHandle, 1)
+    );
   }
 
   getPHandle() {
@@ -312,7 +323,7 @@ export default class PathPoint extends Posn {
   }
 
   reverse() {
-    let p =  PathPoint.fromPosns(this, this.sHandle, this.pHandle);
+    let p = PathPoint.fromPosns(this, this.sHandle, this.pHandle);
     return p;
   }
 
@@ -330,11 +341,10 @@ export default class PathPoint extends Posn {
     return this;
   }
 
-
-  matrix(a,b,c,d,e,f) {
-    super.matrix(a,b,c,d,e,f);
-    if (this.pHandle) this.pHandle.matrix(a,b,c,d,e,f);
-    if (this.sHandle) this.sHandle.matrix(a,b,c,d,e,f);
+  matrix(a, b, c, d, e, f) {
+    super.matrix(a, b, c, d, e, f);
+    if (this.pHandle) this.pHandle.matrix(a, b, c, d, e, f);
+    if (this.sHandle) this.sHandle.matrix(a, b, c, d, e, f);
     return this;
   }
 
@@ -361,10 +371,10 @@ export default class PathPoint extends Posn {
 
   setHandle(which, posn) {
     switch (which) {
-      case 'sHandle':
+      case "sHandle":
         this.setSHandle(posn);
         break;
-      case 'pHandle':
+      case "pHandle":
         this.setPHandle(posn);
         break;
     }
@@ -372,10 +382,10 @@ export default class PathPoint extends Posn {
 
   unsetHandle(which) {
     switch (which) {
-      case 'sHandle':
+      case "sHandle":
         delete this.sHandle;
         break;
-      case 'pHandle':
+      case "pHandle":
         delete this.pHandle;
         break;
     }
@@ -383,10 +393,10 @@ export default class PathPoint extends Posn {
 
   reflectHandle(which) {
     switch (which) {
-      case 'sHandle':
+      case "sHandle":
         this.setPHandle(this.sHandle.reflect(this));
         break;
-      case 'pHandle':
+      case "pHandle":
         this.setSHandle(this.pHandle.reflect(this));
         break;
     }
@@ -409,7 +419,9 @@ export default class PathPoint extends Posn {
     if (p1 || p2) {
       if (!p1) p1 = this.prec;
       if (!p2) p2 = this;
-      return `C${p1.x.toFixed(8)},${p1.y.toFixed(8)} ${p2.x.toFixed(8)},${p2.y.toFixed(8)} ${this.x.toFixed(8)},${this.y.toFixed(8)}`;
+      return `C${p1.x.toFixed(8)},${p1.y.toFixed(8)} ${p2.x.toFixed(
+        8
+      )},${p2.y.toFixed(8)} ${this.x.toFixed(8)},${this.y.toFixed(8)}`;
       // CurveTo
     } else {
       // LineTo

@@ -1,12 +1,11 @@
 export default class EventEmitter {
-
   on(name, cb) {
     if (cb === undefined) debugger;
     if (name instanceof Array) {
       for (let n of name) {
         this.on(n, cb);
       }
-      return
+      return;
     }
     this._events = this._events || {};
     this._events[name] = this._events[name] || [];
@@ -20,12 +19,12 @@ export default class EventEmitter {
    *
    * TODO: off should require a callback be supplied.
    */
-  off(name, cb=null) {
+  off(name, cb = null) {
     if (name instanceof Array) {
       for (let n of name) {
         this.off(n, cb);
       }
-      return
+      return;
     }
     this._events = this._events || {};
     this._events[name] = this._events[name] || [];
@@ -41,9 +40,9 @@ export default class EventEmitter {
     if (this._events === undefined) return;
     let events = this._events[name];
     if (events !== undefined) {
-      for (let i = 0; i < events.length; i ++) {
-        let cb = events[i]
-          , cont = cb.call(this, ...args);
+      for (let i = 0; i < events.length; i++) {
+        let cb = events[i],
+          cont = cb.call(this, ...args);
         if (cont === false) break;
       }
     }

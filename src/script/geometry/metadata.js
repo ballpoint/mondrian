@@ -1,7 +1,7 @@
 // Editor metadata for items
 
 export default class Metadata {
-  constructor(metadata={}) {
+  constructor(metadata = {}) {
     if (metadata.angle === undefined) metadata.angle = 0;
     if (metadata.visible === undefined) metadata.visible = true;
     if (metadata.locked === undefined) metadata.locked = false;
