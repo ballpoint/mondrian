@@ -15,6 +15,8 @@ import PathPoint from 'geometry/path-point';
 import PointsSegment from 'geometry/points-segment';
 
 import Layer from 'io/layer';
+
+import HistoryFrame from 'history/Frame';
 import * as actions from 'history/actions/actions';
 
 import Projection from 'ui/projection';
@@ -448,14 +450,22 @@ export default class Editor extends EventEmitter {
       return;
     }
 
-    let action = new actions.DeleteAction({
-      items: this.state.selection.slice(0).map(item => {
-        return { item, index: item.index };
-      })
-    });
+    let frame = new HistoryFrame(
+      [
+        new actions.DeleteAction({
+          items: this.state.selection.slice(0).map(item => {
+            return { item, index: item.index };
+          })
+        })
+      ],
+      'Delete selection'
+    );
 
-    this.perform(action);
-    this.cleanUpEmptyItems(action);
+    this.perform(frame);
+
+    this.cleanUpEmptyItems(frame.actions[0]);
+
+    frame.seal();
   }
 
   cleanUpEmptyItems(action) {
@@ -513,8 +523,21 @@ export default class Editor extends EventEmitter {
     this.perform(action);
   }
 
+  updateSelection() {
+    // Filter out deleted items
+    this.state.selection = this.state.selection.filter(item => {
+      return doc.getFromIndex(item.index) === item;
+    });
+
+    this.state.hovering = this.state.hovering.filter(item => {
+      return doc.getFromIndex(item.index) === item;
+    });
+  }
+
   calculateSelectionBounds() {
     let selectionBounds = {};
+
+    this.updateSelection();
 
     if (this.state.selection.length > 0) {
       let bounds;

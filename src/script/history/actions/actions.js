@@ -2,6 +2,7 @@ import Path from 'geometry/path';
 import PathPoint from 'geometry/path-point';
 import Item from 'geometry/item';
 import { indexesIdentical } from 'geometry/index';
+import actionUtil from './util';
 
 export class HistoryAction {
   constructor(data) {
@@ -11,16 +12,22 @@ export class HistoryAction {
 }
 
 export class InitAction extends HistoryAction {
-  get displayTitle() {
-    return 'Initialize Document';
+  displayTitle(doc) {
+    return 'Initialize document';
   }
 
   perform(doc) {}
 }
 
 export class NudgeAction extends HistoryAction {
-  get displayTitle() {
-    return 'Move';
+  displayTitle(doc) {
+    let noun = actionUtil.getNoun(
+      this.data.indexes.map(x => {
+        return doc.getFromIndex(x);
+      })
+    );
+
+    return 'Move ' + noun;
   }
 
   perform(doc) {
@@ -51,8 +58,14 @@ export class NudgeAction extends HistoryAction {
 }
 
 export class ScaleAction extends HistoryAction {
-  get displayTitle() {
-    return 'Scale';
+  displayTitle() {
+    let noun = actionUtil.getNoun(
+      this.data.indexes.map(x => {
+        return doc.getFromIndex(x);
+      })
+    );
+
+    return 'Scale ' + noun;
   }
 
   perform(doc) {
@@ -80,8 +93,14 @@ export class ScaleAction extends HistoryAction {
 }
 
 export class RotateAction extends HistoryAction {
-  get displayTitle() {
-    return 'Rotate';
+  displayTitle() {
+    let noun = actionUtil.getNoun(
+      this.data.indexes.map(x => {
+        return doc.getFromIndex(x);
+      })
+    );
+
+    return 'Rotate ' + noun;
   }
 
   perform(doc) {
@@ -109,8 +128,8 @@ export class RotateAction extends HistoryAction {
 }
 
 export class NudgeHandleAction extends HistoryAction {
-  get displayTitle() {
-    return 'Move Handle';
+  displayTitle(doc) {
+    return 'Move handle';
   }
 
   perform(doc) {
@@ -146,8 +165,8 @@ export class NudgeHandleAction extends HistoryAction {
 }
 
 export class AddHandleAction extends HistoryAction {
-  get displayTitle() {
-    return 'Add Handle';
+  displayTitle(doc) {
+    return 'Add handle';
   }
 
   perform(doc) {
@@ -169,8 +188,8 @@ export class AddHandleAction extends HistoryAction {
 }
 
 export class RemoveHandleAction extends HistoryAction {
-  get displayTitle() {
-    return 'Remove Handle';
+  displayTitle(doc) {
+    return 'Remove handle';
   }
 
   perform(doc) {
@@ -185,7 +204,7 @@ export class RemoveHandleAction extends HistoryAction {
 }
 
 export class InsertAction extends HistoryAction {
-  get displayTitle() {
+  displayTitle(doc) {
     return 'Insert Shapes';
   }
 
@@ -222,8 +241,14 @@ export class InsertAction extends HistoryAction {
 }
 
 export class DeleteAction extends HistoryAction {
-  get displayTitle() {
-    return 'Remove Shapes';
+  displayTitle(doc) {
+    let noun = actionUtil.getNoun(
+      this.data.items.map(x => {
+        return x.item;
+      })
+    );
+
+    return 'Delete ' + noun;
   }
 
   constructor(data) {
@@ -249,7 +274,7 @@ export class DeleteAction extends HistoryAction {
 }
 
 export class ToggleMetadataBoolAction extends HistoryAction {
-  get displayTitle() {
+  displayTitle(doc) {
     return 'Toggle Metadata';
   }
 

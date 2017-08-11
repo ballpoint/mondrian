@@ -1,6 +1,9 @@
 import bool from 'lib/bool';
 import 'toolbar/toolbar.scss';
 
+import HistoryFrame from 'history/Frame';
+import * as actions from 'history/actions/actions';
+
 let ToolbarGroup = React.createClass({
   render() {
     return (
@@ -17,8 +20,7 @@ let ToolbarButton = React.createClass({
       <a
         className="toolbar-button"
         onClick={this.props.onClick}
-        title={this.props.title}
-      >
+        title={this.props.title}>
         {this.props.children}
       </a>
     );
@@ -46,14 +48,12 @@ let Toolbar = React.createClass({
       <ToolbarGroup>
         <ToolbarButton
           onClick={this.props.editor.undo.bind(this.props.editor)}
-          title="Undo"
-        >
+          title="Undo">
           UN
         </ToolbarButton>
         <ToolbarButton
           onClick={this.props.editor.redo.bind(this.props.editor)}
-          title="Redo"
-        >
+          title="Redo">
           RE
         </ToolbarButton>
       </ToolbarGroup>
@@ -66,8 +66,26 @@ let Toolbar = React.createClass({
     let boolOp = function(op) {
       return function() {
         let result = bool[op](this.state.selection.slice(0));
-        editor.deleteSelection();
-        editor.insertElements([result]);
+
+        let index = this.state.selection[0].index;
+
+        let frame = new HistoryFrame(
+          [
+            new actions.DeleteAction({
+              items: editor.state.selection.slice(0).map(item => {
+                return { item, index: item.index };
+              })
+            }),
+            new actions.InsertAction({
+              items: [{ item: result, index }]
+            })
+          ],
+          'Boolean ' + op
+        );
+
+        frame.seal;
+
+        editor.perform(frame);
       }.bind(this);
     }.bind(this);
 

@@ -13,13 +13,12 @@ let HistoryUtil = React.createClass({
         })}
         onClick={() => {
           this.props.editor.jumpToHistoryDepth(frame.depth);
-        }}
-      >
+        }}>
         <div className="history-util__frame__depth">
           {frame.depth}
         </div>
         <div className="history-util__frame__title">
-          {frame.displayTitle}
+          {frame.displayTitle(this.props.editor.doc)}
         </div>
       </div>
     );

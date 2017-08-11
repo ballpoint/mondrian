@@ -52,7 +52,7 @@ export default class Rect extends Tool {
             origin: this.scaleOrigin
           })
         ],
-        'Draw Rectangle'
+        'Draw rectangle'
       );
 
       this.editor.perform(frame);

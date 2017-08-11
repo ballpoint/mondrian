@@ -6,6 +6,7 @@ import Path from 'geometry/path';
 import PathPoint from 'geometry/path-point';
 import LineSegment from 'geometry/line-segment';
 import CubicBezier from 'geometry/cubic-bezier-line-segment';
+
 import HistoryFrame from 'history/Frame';
 import * as actions from 'history/actions/actions';
 
@@ -75,7 +76,7 @@ export default class Pen extends Tool {
     }
 
     // If we're not focusing on adding a point to an existing shape, start a new shape
-    let frame = new HistoryFrame();
+    let frame = new HistoryFrame([], 'Add point');
 
     let pathIndex;
 
@@ -112,8 +113,6 @@ export default class Pen extends Tool {
       })
     );
 
-    //frame.seal();
-
     this.editor.perform(frame);
     this.editor.setSelection([pp]);
   }
@@ -148,27 +147,30 @@ export default class Pen extends Tool {
       let startIndex = this.closest.pathPoint.prec.index;
 
       // Insert new PathPoint
-      let frame = new HistoryFrame([
-        new actions.DeleteAction({
-          items: [
-            {
-              item: this.closest.pathPoint.prec,
-              index: this.closest.pathPoint.prec.index
-            },
-            {
-              item: this.closest.pathPoint,
-              index: this.closest.pathPoint.index
-            }
-          ]
-        }),
-        new actions.InsertAction({
-          items: [
-            { item: n1, index: startIndex },
-            { item: n2, index: startIndex.plus(1) },
-            { item: n3, index: startIndex.plus(2) }
-          ]
-        })
-      ]);
+      let frame = new HistoryFrame(
+        [
+          new actions.DeleteAction({
+            items: [
+              {
+                item: this.closest.pathPoint.prec,
+                index: this.closest.pathPoint.prec.index
+              },
+              {
+                item: this.closest.pathPoint,
+                index: this.closest.pathPoint.index
+              }
+            ]
+          }),
+          new actions.InsertAction({
+            items: [
+              { item: n1, index: startIndex },
+              { item: n2, index: startIndex.plus(1) },
+              { item: n3, index: startIndex.plus(2) }
+            ]
+          })
+        ],
+        'Add point'
+      );
 
       frame.seal();
 
