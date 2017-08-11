@@ -60,15 +60,7 @@ export default class PathPoint extends Posn {
   }
 
   static fromString(string, prec) {
-    // Given a string like "M 10.2 502.19"
-    // return the corresponding Point.
-    // Returns one of:
-    //   MoveTo
-    //   CurveTo
-    //   SmoothTo
-    //   LineTo
-    //   HorizTo
-    //   VertiTo
+    // Given a string like "M 10.2 502.19" return the corresponding PathPoint.
 
     let patterns = {
       moveTo: /M[^A-Za-z]+/i,
@@ -115,7 +107,7 @@ export default class PathPoint extends Posn {
           .filter(p => p.length > 0)
           .map(parseFloat);
 
-        let relative = string.substring(0, 1).match(/[mlcshv]/) !== null; // Is it lower-case? So it's relative? Shit!
+        let relative = string.substring(0, 1).match(/[mlcshv]/) !== null;
 
         //
         //TODO debug with chipotle logo

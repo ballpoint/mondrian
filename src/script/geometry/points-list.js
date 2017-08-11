@@ -28,7 +28,7 @@ export default class PointsList {
 
     for (let i = 0; i < string.length; i++) {
       let char = string[i];
-      if (/[A-Z]/i.test(char)) {
+      if (/[mlcshv]/i.test(char)) {
         if (currentMatch) {
           commands.push(currentMatch);
         }
