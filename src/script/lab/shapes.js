@@ -1,6 +1,7 @@
 import Posn from 'geometry/posn';
 import Polynomial from 'geometry/polynomial';
 import Bounds from 'geometry/bounds';
+import Group from 'geometry/group';
 import Circle from 'geometry/circle';
 import CubicBezier from 'geometry/cubic-bezier-line-segment';
 
@@ -10,8 +11,18 @@ export const INSIDE = Symbol('INSIDE');
 
 export default {
   contains(shape, posn) {
-    let result = this.relationship(shape, posn);
-    return result === INSIDE;
+    if (shape instanceof Group) {
+      // For a group, preform a recursive OR on its children
+      for (let child of shape.children) {
+        let result = this.contains(child, posn);
+        if (result === true) {
+          return true;
+        }
+      }
+      return false;
+    } else {
+      return this.relationship(shape, posn) === INSIDE;
+    }
   },
 
   relationship(shape, posn, check) {

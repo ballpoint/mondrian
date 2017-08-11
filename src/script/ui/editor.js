@@ -450,16 +450,13 @@ export default class Editor extends EventEmitter {
       return;
     }
 
-    let frame = new HistoryFrame(
-      [
-        new actions.DeleteAction({
-          items: this.state.selection.slice(0).map(item => {
-            return { item, index: item.index };
-          })
+    let frame = new HistoryFrame([
+      new actions.DeleteAction({
+        items: this.state.selection.slice(0).map(item => {
+          return { item, index: item.index };
         })
-      ],
-      'Delete selection'
-    );
+      })
+    ]);
 
     this.perform(frame);
 

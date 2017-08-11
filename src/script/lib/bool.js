@@ -327,8 +327,6 @@ function doBoolean(a, b, op) {
   logger.verbose('xns', xns);
 
   function wasIntersection(pt, other) {
-    //let rel = shapes.relationship(other, pt);
-    //return rel == INCIDENT;
     for (let xn of xns) {
       if (xn.equal(pt)) return true;
     }
