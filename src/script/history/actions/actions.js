@@ -1,6 +1,7 @@
 import Path from 'geometry/path';
 import PathPoint from 'geometry/path-point';
 import Item from 'geometry/item';
+import Group from 'geometry/group';
 import { indexesIdentical } from 'geometry/index';
 import actionUtil from './util';
 
@@ -58,7 +59,7 @@ export class NudgeAction extends HistoryAction {
 }
 
 export class ScaleAction extends HistoryAction {
-  displayTitle() {
+  displayTitle(doc) {
     let noun = actionUtil.getNoun(
       this.data.indexes.map(x => {
         return doc.getFromIndex(x);
@@ -93,7 +94,7 @@ export class ScaleAction extends HistoryAction {
 }
 
 export class RotateAction extends HistoryAction {
-  displayTitle() {
+  displayTitle(doc) {
     let noun = actionUtil.getNoun(
       this.data.indexes.map(x => {
         return doc.getFromIndex(x);
@@ -218,25 +219,134 @@ export class InsertAction extends HistoryAction {
   }
 
   perform(doc) {
-    let indexes = [];
     for (let pair of this.data.items) {
       let { item, index } = pair;
-      let parent = doc;
-      // Traverse the object tree to find the item's immediate parent
-      for (let pi of index.parts.slice(0, -1)) {
-        parent = parent.child(pi);
-      }
-
+      let parent = doc.getFromIndex(index.parent);
       parent.insert(item, index.last);
-
-      indexes.push(index);
-
       doc.cacheIndexes();
     }
   }
 
   opposite() {
     return new DeleteAction({ items: this.data.items });
+  }
+}
+
+export class UngroupAction extends HistoryAction {
+  static forGroup(doc, group) {
+    // Constructor helper which pre-determines the resulting
+    // childIndexes for us, given an existing group.
+
+    let groupIndex = group.index;
+    let childIndexes = [];
+
+    let childIndex = group.index.clone();
+    for (let i = 0; i < group.children.length; i++) {
+      childIndexes.push(childIndex);
+      childIndex = childIndex.plus(1);
+    }
+
+    return new UngroupAction({
+      groupIndex,
+      childIndexes
+    });
+  }
+
+  displayTitle(doc) {
+    return 'Ungroup';
+  }
+
+  perform(doc) {
+    let { groupIndex, childIndexes } = this.data;
+    let item = doc.getFromIndex(groupIndex);
+
+    if (!(item instanceof Group)) {
+      console.warn('Warning: UngroupAction on non-group', item);
+    } else {
+      let parent = doc.getFromIndex(item.index.parent);
+      parent.remove(item);
+
+      let children = item.children.slice(0).reverse();
+
+      if (childIndexes) {
+        childIndexes = childIndexes.slice(0).reverse();
+
+        for (let i = 0; i < children.length; i++) {
+          let child = children[i];
+          let index = childIndexes[i];
+          let parent = doc.getFromIndex(index.parent);
+          parent.insert(child, index.last);
+        }
+      } else {
+        // Unload in default order
+        let parent = doc.getFromIndex(item.index.parent);
+        for (let child of children) {
+          parent.insert(child, item.index.last);
+        }
+      }
+
+      doc.cacheIndexes();
+    }
+  }
+
+  opposite() {
+    return new GroupAction({
+      childIndexes: this.data.childIndexes,
+      groupIndex: this.data.groupIndex
+    });
+  }
+}
+
+export class GroupAction extends HistoryAction {
+  displayTitle(doc) {
+    return 'Group';
+  }
+
+  perform(doc) {
+    let indexes = this.sortedIndexes();
+
+    let items = indexes.map(index => {
+      return doc.getFromIndex(index);
+    });
+
+    let group = new Group(items);
+
+    doc.removeIndexes(indexes);
+
+    let resultingIndex = this.resultingIndex();
+
+    let parent = doc.getFromIndex(resultingIndex.parent);
+    parent.insert(group, resultingIndex.last);
+
+    doc.cacheIndexes();
+  }
+
+  sortedIndexes() {
+    return this.data.childIndexes.sort((a, b) => {
+      return a.compare(b);
+    });
+  }
+
+  resultingIndex() {
+    // Use data.childIndexes to calculate the resulting index where we would
+    // insert the final group.
+
+    let indexes = this.sortedIndexes();
+
+    let finalIndex = indexes.last();
+
+    for (let index of indexes.slice(0, -1)) {
+      finalIndex = finalIndex.plusAt(-1, index.length - 1);
+    }
+
+    return finalIndex;
+  }
+
+  opposite() {
+    return new UngroupAction({
+      groupIndex: this.resultingIndex(),
+      childIndexes: this.data.childIndexes
+    });
   }
 }
 
@@ -266,6 +376,7 @@ export class DeleteAction extends HistoryAction {
     });
 
     doc.removeIndexes(indexes);
+    doc.cacheIndexes();
   }
 
   opposite() {

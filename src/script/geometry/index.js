@@ -71,6 +71,12 @@ export default class Index {
     parts[parts.length - 1] += n;
     return new Index(parts);
   }
+
+  plusAt(n, depth) {
+    let parts = this.parts.slice(0);
+    parts[depth] += n;
+    return new Index(parts);
+  }
 }
 
 export function sortIndexes(indexes) {

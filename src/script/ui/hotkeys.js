@@ -181,11 +181,7 @@ let hotkeys = {
       if (e.shiftKey === false) this.registerModifierUp('shift');
 
       fullKeystroke = this.fullKeystroke(keystroke);
-      //console.log "FULL: #{fullKeystroke}"
-
-      if (fullKeystroke === 'cmd-O') {
-        e.preventDefault();
-      }
+      console.log(fullKeystroke);
 
       if (
         (this.listeners.down != null

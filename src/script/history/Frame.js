@@ -80,17 +80,17 @@ export default class HistoryFrame {
     this.sealed = true;
   }
 
-  perform(editor) {
+  perform(doc) {
     for (let i = 0; i < this.actions.length; i++) {
       let a = this.actions[i];
-      a.perform(editor);
+      a.perform(doc);
     }
   }
 
-  undo(editor) {
+  undo(doc) {
     for (let i = this.actions.length - 1; i >= 0; i--) {
       let a = this.actions[i].opposite();
-      a.perform(editor);
+      a.perform(doc);
     }
   }
 }

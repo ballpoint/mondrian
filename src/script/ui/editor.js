@@ -49,7 +49,6 @@ export default class Editor extends EventEmitter {
 
   load(doc) {
     this.doc = doc;
-    window.doc = doc;
 
     window.h = this.doc.history;
 
@@ -169,6 +168,16 @@ export default class Editor extends EventEmitter {
     });
     hotkeys.on('down', 'shift-leftArrow', () => {
       this.nudgeSelected(-10, 0);
+    });
+
+    hotkeys.on('down', 'ctrl-shift-G', e => {
+      e.preventDefault();
+      this.ungroupSelection();
+    });
+
+    hotkeys.on('down', 'ctrl-G', e => {
+      e.preventDefault();
+      this.groupSelection();
     });
 
     hotkeys.on('down', 'V', () => {
@@ -505,6 +514,50 @@ export default class Editor extends EventEmitter {
     }
   }
 
+  ungroupSelection() {
+    let groupsSelected = this.state.selection.filter(item => {
+      return item instanceof Group;
+    });
+
+    if (groupsSelected.length === 0) {
+      return;
+    }
+
+    groupsSelected = groupsSelected.sort((a, b) => {
+      return a.index.compare(b.index);
+    });
+
+    let frame = new HistoryFrame(
+      groupsSelected.map(g => {
+        return actions.UngroupAction.forGroup(this.doc, g);
+      })
+    );
+
+    frame.seal();
+
+    this.perform(frame);
+  }
+
+  groupSelection() {
+    if (this.state.selection.length === 0) return;
+
+    let frame = new HistoryFrame([
+      new actions.GroupAction({
+        ungroupedChildIndexes: this.selectedIndexes()
+      })
+    ]);
+
+    frame.seal();
+
+    this.perform(frame);
+
+    let newIndex = frame.actions[0].resultingIndex();
+
+    console.log(newIndex.toString());
+
+    this.selectFromIndexes([newIndex]);
+  }
+
   insertElements(elems) {
     let items = [];
     let parent = this.doc.getFromIndex(this.state.scope);
@@ -523,11 +576,11 @@ export default class Editor extends EventEmitter {
   updateSelection() {
     // Filter out deleted items
     this.state.selection = this.state.selection.filter(item => {
-      return doc.getFromIndex(item.index) === item;
+      return this.doc.getFromIndex(item.index) === item;
     });
 
     this.state.hovering = this.state.hovering.filter(item => {
-      return doc.getFromIndex(item.index) === item;
+      return this.doc.getFromIndex(item.index) === item;
     });
   }
 
