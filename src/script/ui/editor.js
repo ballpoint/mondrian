@@ -534,27 +534,26 @@ export default class Editor extends EventEmitter {
     );
 
     frame.seal();
-
     this.perform(frame);
+
+    // Select new group
+    let newIndexes = frame.actions.reduce((a, b) => {
+      return a.concat(b.data.childIndexes);
+    }, []);
+    this.selectFromIndexes(newIndexes);
   }
 
   groupSelection() {
     if (this.state.selection.length === 0) return;
 
     let frame = new HistoryFrame([
-      new actions.GroupAction({
-        ungroupedChildIndexes: this.selectedIndexes()
-      })
+      actions.GroupAction.forChildren(this.doc, this.state.selection)
     ]);
-
     frame.seal();
-
     this.perform(frame);
 
-    let newIndex = frame.actions[0].resultingIndex();
-
-    console.log(newIndex.toString());
-
+    // Select new group
+    let newIndex = frame.actions[0].data.groupIndex;
     this.selectFromIndexes([newIndex]);
   }
 

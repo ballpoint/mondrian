@@ -15,6 +15,10 @@ export default class Index {
     return this.parts.length;
   }
 
+  get depth() {
+    return this.length - 1;
+  }
+
   toString() {
     return this.parts.join(':');
   }

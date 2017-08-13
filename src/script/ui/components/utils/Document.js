@@ -236,7 +236,9 @@ let DocumentUtilChild = React.createClass({
 let DocumentUtil = React.createClass({
   getInitialState() {
     return {
-      expandedIndexes: {}
+      expandedIndexes: {
+        '0': true
+      }
     };
   },
 

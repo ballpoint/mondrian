@@ -278,6 +278,7 @@ export default class Doc {
   }
 
   cacheIndexes(root = this, accum = []) {
+    //console.time('cacheIndexes');
     for (let i = 0; i < root.children.length; i++) {
       let child = root.children[i];
       child.index = new Index(accum.concat([i]));
@@ -285,6 +286,7 @@ export default class Doc {
         this.cacheIndexes(child, accum.concat([i]));
       }
     }
+    //console.timeEnd('cacheIndexes');
   }
 
   getFromIndex(index) {

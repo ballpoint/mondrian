@@ -266,44 +266,56 @@ export class UngroupAction extends HistoryAction {
       let parent = doc.getFromIndex(item.index.parent);
       parent.remove(item);
 
-      let children = item.children.slice(0).reverse();
+      let children = item.children.slice(0);
+      childIndexes = childIndexes.slice(0);
 
-      if (childIndexes) {
-        childIndexes = childIndexes.slice(0).reverse();
+      for (let i = 0; i < children.length; i++) {
+        let child = children[i];
+        let index = childIndexes[i];
+        let parent = doc.getFromIndex(index.parent);
+        parent.insert(child, index.last);
 
-        for (let i = 0; i < children.length; i++) {
-          let child = children[i];
-          let index = childIndexes[i];
-          let parent = doc.getFromIndex(index.parent);
-          parent.insert(child, index.last);
-        }
-      } else {
-        // Unload in default order
-        let parent = doc.getFromIndex(item.index.parent);
-        for (let child of children) {
-          parent.insert(child, item.index.last);
-        }
+        // TODO optimize this:
+        doc.cacheIndexes();
       }
-
-      doc.cacheIndexes();
     }
   }
 
   opposite() {
     return new GroupAction({
-      childIndexes: this.data.childIndexes,
-      groupIndex: this.data.groupIndex
+      groupIndex: this.data.groupIndex,
+      childIndexes: this.data.childIndexes
     });
   }
 }
 
 export class GroupAction extends HistoryAction {
+  static forChildren(doc, children) {
+    let childIndexes = children
+      .map(child => {
+        return child.index;
+      })
+      .sort((a, b) => {
+        return a.compare(b);
+      });
+
+    let groupIndex = childIndexes.last();
+    for (let index of childIndexes.slice(0, -1)) {
+      groupIndex = groupIndex.plusAt(-1, index.depth);
+    }
+
+    return new GroupAction({
+      childIndexes,
+      groupIndex
+    });
+  }
+
   displayTitle(doc) {
     return 'Group';
   }
 
   perform(doc) {
-    let indexes = this.sortedIndexes();
+    let indexes = this.data.childIndexes;
 
     let items = indexes.map(index => {
       return doc.getFromIndex(index);
@@ -313,10 +325,8 @@ export class GroupAction extends HistoryAction {
 
     doc.removeIndexes(indexes);
 
-    let resultingIndex = this.resultingIndex();
-
-    let parent = doc.getFromIndex(resultingIndex.parent);
-    parent.insert(group, resultingIndex.last);
+    let parent = doc.getFromIndex(this.data.groupIndex.parent);
+    parent.insert(group, this.data.groupIndex.last);
 
     doc.cacheIndexes();
   }
@@ -327,24 +337,9 @@ export class GroupAction extends HistoryAction {
     });
   }
 
-  resultingIndex() {
-    // Use data.childIndexes to calculate the resulting index where we would
-    // insert the final group.
-
-    let indexes = this.sortedIndexes();
-
-    let finalIndex = indexes.last();
-
-    for (let index of indexes.slice(0, -1)) {
-      finalIndex = finalIndex.plusAt(-1, index.length - 1);
-    }
-
-    return finalIndex;
-  }
-
   opposite() {
     return new UngroupAction({
-      groupIndex: this.resultingIndex(),
+      groupIndex: this.data.groupIndex,
       childIndexes: this.data.childIndexes
     });
   }
