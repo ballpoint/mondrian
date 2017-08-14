@@ -124,4 +124,48 @@ export default class Cursor extends Tool {
       layer.drawRect(bounds, { stroke: 'black' });
     }
   }
+
+  snapHandler(e, posn, cursor) {
+    if (cursor.down) {
+      if (e.shiftKey) {
+        let lastDown = cursor.lastDown;
+        // Snap to 45 deg
+        let a = posn.angle360(lastDown);
+
+        for (let as = 0; as < 360; as += 45) {
+          let min = as - 45 / 2;
+          let max = as + 45 / 2;
+
+          let matches = false;
+          if (min < 0 && a >= 360 - 45) {
+            matches = a - 360 > min && a - 360 < max;
+          } else {
+            matches = a > min && a < max;
+          }
+
+          if (matches) {
+            // Found the correct snapping angle
+            switch (as) {
+              case 0:
+              case 180:
+                posn.x = lastDown.x;
+                break;
+              case 90:
+              case 270:
+                posn.y = lastDown.y;
+                break;
+              default:
+                let d = posn.distanceFrom(lastDown);
+                let xp = lastDown.clone().nudge(0, -d * 2).rotate(as, lastDown);
+                let xls = new LineSegment(lastDown, xp);
+                let cp = xls.closestPosn(posn);
+                return cp;
+            }
+            break;
+          }
+        }
+      }
+    }
+    return posn;
+  }
 }

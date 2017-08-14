@@ -15,6 +15,8 @@ export default class CursorTracking extends EventEmitter {
     super();
     this.root = root;
     this.setup(root);
+
+    this.clearSnapHandler();
   }
 
   setup(root) {
@@ -91,7 +93,13 @@ export default class CursorTracking extends EventEmitter {
     let rx = px - this._clientBounds.left;
     let ry = py - this._clientBounds.top;
 
-    return new Posn(rx, ry);
+    let p = new Posn(rx, ry);
+
+    if (this.snapHandler) {
+      p = this.snapHandler(e, p, this);
+    }
+
+    return p;
   }
 
   _click(e) {
@@ -193,5 +201,13 @@ export default class CursorTracking extends EventEmitter {
     if (e.deltaX !== 0) {
       this.trigger('scroll:x', e, e.deltaX);
     }
+  }
+
+  setSnapHandler(handler) {
+    this.snapHandler = handler;
+  }
+
+  clearSnapHandler(handler) {
+    delete this.snapHandler;
   }
 }

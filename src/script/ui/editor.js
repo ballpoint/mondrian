@@ -42,8 +42,8 @@ export default class Editor extends EventEmitter {
 
     if (root) {
       this.root = root;
-      this.initState();
       this.initCanvas();
+      this.initState();
     }
   }
 
@@ -64,11 +64,8 @@ export default class Editor extends EventEmitter {
 
   initCanvas() {
     this.canvas = new Canvas(this.root);
-
     this.cursor = new CursorTracking(this.root);
-
     this.cursorHandler = new CursorHandler(this.cursor);
-    window.$ch = this.cursorHandler;
 
     // UIElements
     let uiElems = [
@@ -286,6 +283,8 @@ export default class Editor extends EventEmitter {
         stroke: new SelectedStrokeStyle()
       };
     }
+
+    this.selectTool(new tools.Cursor(this));
   }
 
   cacheState() {
@@ -449,7 +448,12 @@ export default class Editor extends EventEmitter {
       this.state.lastTool = this.state.tool;
     }
     this.state.tool = tool;
-    this.canvas.refreshAll();
+
+    if (tool.snapHandler) {
+      this.cursor.setSnapHandler(tool.snapHandler);
+    } else {
+      this.cursor.clearSnapHandler();
+    }
 
     this.trigger('change:tool');
   }
