@@ -1,3 +1,4 @@
+import proto from 'proto/schema';
 import math from 'lib/math';
 
 /*
@@ -54,33 +55,6 @@ export default class Posn {
 
   // Rounding an you know
 
-  cleanUp() {
-    // TODO
-    // This was giving me NaN bullshit. Don't enable again until the app is stable
-    // and we can test it properly
-    return;
-    this.x = cleanUpNumber(this.x);
-    return (this.y = cleanUpNumber(this.y));
-  }
-
-  // Helper:
-
-  alterValues(fun) {
-    // Do something to all the values this Posn has. Kind of like map, but return is immediately applied.
-    //
-    // Since Posns get superclassed into Points which get superclassed into CurvePoints,
-    // they may have x2, y2, x3, y3 attributes. This checks which ones it has and alters all of them.
-    //
-    // I/P: fun: one-argument function to be called on each of this Posn's values.
-    //
-    // O/P: self
-
-    for (let a of ['x', 'y', 'x2', 'y2', 'x3', 'y3']) {
-      this[a] = this[a] != null ? fun(this[a]) : this[a];
-    }
-    return this;
-  }
-
   toString() {
     return `${this.x},${this.y}`;
   }
@@ -96,8 +70,12 @@ export default class Posn {
     };
   }
 
-  toConstructorString() {
-    return `new Posn(${this.x},${this.y})`;
+  toProto() {
+    return proto.geometry.Posn.fromObject(this.toJSON());
+  }
+
+  static fromProto(posn) {
+    return new Posn({ x: posn.x, y: posn.y });
   }
 
   nudge(x, y) {

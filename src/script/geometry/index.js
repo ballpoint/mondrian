@@ -1,3 +1,5 @@
+import proto from 'proto/schema';
+
 export default class Index {
   constructor(parts) {
     if (!parts) {
@@ -5,6 +7,20 @@ export default class Index {
       return;
     }
     this.parts = parts;
+  }
+
+  toProto() {
+    return proto.geometry.Index.fromObject({
+      parts: this.parts
+    });
+  }
+
+  static fromProto(index) {
+    return new Index(
+      index.parts.map(x => {
+        return x.toNumber();
+      })
+    );
   }
 
   clone() {

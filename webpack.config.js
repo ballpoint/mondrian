@@ -1,4 +1,4 @@
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const webpack = require('webpack');
 const path = require('path');
 
@@ -14,21 +14,22 @@ module.exports = {
       path.resolve(__dirname, 'node_modules'),
       path.join(__dirname, 'src/script'),
       path.join(__dirname, 'src/svg'),
-      path.join(__dirname, 'src/styles')
+      path.join(__dirname, 'src/styles'),
+      path.join(__dirname, 'src/proto')
     ],
-    extensions: ['.js', '.svg', '.scss']
+    extensions: ['.js', '.svg', '.scss', '.proto']
   },
 
   entry: {
-    'bundles/app':    'main.js',
+    'bundles/app': 'main.js',
     'bundles/vendor': 'vendor.js',
-    'bundles/test':   'test.js',
-    'bundles/testbool':   'testbool.js'
+    'bundles/test': 'test.js',
+    'bundles/testbool': 'testbool.js'
   },
 
   output: {
     path: path.join(__dirname, './build'),
-    filename: '[name].bundle.js',
+    filename: '[name].bundle.js'
   },
 
   plugins: [
@@ -48,19 +49,23 @@ module.exports = {
       {
         test: /test.js$/,
         use: 'mocha-loader',
-        exclude: /node_modules/,
+        exclude: /node_modules/
       },
       {
         test: /\.svg$/,
         loader: 'raw-loader'
       },
       {
+        test: /\.json$/,
+        loader: 'json-loader'
+      },
+      {
         test: /\.scss$/,
         use: ExtractTextPlugin.extract({
-          fallback: "style-loader",
+          fallback: 'style-loader',
           use: ['css-loader', 'sass-loader']
         })
       }
-    ],
+    ]
   }
 };

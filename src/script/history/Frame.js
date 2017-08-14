@@ -10,13 +10,13 @@ export default class HistoryFrame {
     this.merges = 0;
   }
 
-  displayTitle(doc) {
+  get displayTitle() {
     if (this.title) {
       return this.title;
     } else {
       return this.actions
         .map(a => {
-          return a.displayTitle(doc) || a.constructor.name;
+          return a.displayTitle || a.constructor.name;
         })
         .join('; ');
     }

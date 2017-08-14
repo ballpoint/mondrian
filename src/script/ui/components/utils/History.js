@@ -18,7 +18,7 @@ let HistoryUtil = React.createClass({
           {frame.depth}
         </div>
         <div className="history-util__frame__title">
-          {frame.displayTitle(this.props.editor.doc)}
+          {frame.displayTitle}
         </div>
       </div>
     );
