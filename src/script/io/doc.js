@@ -164,14 +164,18 @@ export default class Doc {
     return doc;
   }
 
+  stageFrame(frame) {
+    this.history.stageFrame(frame, this);
+  }
+
+  commitFrame(frame) {
+    this.history.commitFrame();
+  }
+
   perform(h) {
     if (h instanceof HistoryFrame) {
-      for (let action of h.actions) {
-        action.perform(this);
-      }
       this.history.stageFrame(h, this);
     } else if (h instanceof actions.HistoryAction) {
-      h.perform(this);
       this.history.pushAction(h, this);
     }
   }

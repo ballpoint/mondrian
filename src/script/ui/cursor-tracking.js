@@ -11,12 +11,10 @@ function isDefaultQuarantined() {
 }
 
 export default class CursorTracking extends EventEmitter {
-  constructor(root, snapHandler) {
+  constructor(root) {
     super();
     this.root = root;
     this.setup(root);
-
-    this.snapHandler = snapHandler;
   }
 
   setup(root) {
@@ -84,12 +82,6 @@ export default class CursorTracking extends EventEmitter {
     let ry = py - this._clientBounds.top;
 
     let p = new Posn(rx, ry);
-
-    /*
-    if (this.snapHandler) {
-      p = this.snapHandler(e, p, this);
-    }
-    */
 
     return p;
   }

@@ -23,6 +23,10 @@ export default class DocHistory {
       frame.depth = 0;
     }
 
+    for (let action of frame.actions) {
+      action.perform(doc);
+    }
+
     frame.setPrev(this.head);
     this.setHead(frame);
   }
@@ -35,18 +39,9 @@ export default class DocHistory {
     }
   }
 
-  pushFrame(frame) {
-    if (this.head) {
-      frame.depth = this.head.depth + 1;
-    } else {
-      frame.depth = 0;
-    }
+  pushAction(action, doc) {
+    action.perform(doc);
 
-    frame.setPrev(this.head);
-    this.setHead(frame);
-  }
-
-  pushAction(action) {
     if (!this.head.committed) {
       this.head.actions.push(action);
     } else {

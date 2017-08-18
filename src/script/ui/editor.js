@@ -31,7 +31,6 @@ import RulersUIElement from 'ui/editor/rulers';
 import TransformerUIElement from 'ui/editor/transformer';
 import DocumentPointsUIElement from 'ui/editor/doc_pts';
 import DocumentElemsUIElement from 'ui/editor/doc_elems';
-import CursorSnapperUIElement from 'ui/editor/cursor_snapper';
 
 const UTILS_WIDTH = 350 + 220;
 
@@ -65,11 +64,7 @@ export default class Editor extends EventEmitter {
 
   initCanvas() {
     this.canvas = new Canvas(this.root);
-    this.cursorSnapper = new CursorSnapperUIElement(this, 'cursor-snapper');
-    this.cursor = new CursorTracking(
-      this.root,
-      this.cursorSnapper.handle.bind(this.cursorSnapper)
-    );
+    this.cursor = new CursorTracking(this.root);
     this.cursorHandler = new CursorHandler(this.cursor);
 
     // UIElements
@@ -77,8 +72,7 @@ export default class Editor extends EventEmitter {
       new DocumentPointsUIElement(this, 'doc-pts'),
       new DocumentElemsUIElement(this, 'doc-elems'),
       new TransformerUIElement(this, 'transformer'),
-      new RulersUIElement(this, 'rulers'),
-      this.cursorSnapper
+      new RulersUIElement(this, 'rulers')
     ];
 
     this.canvas.createLayer('background', this.refreshBackground.bind(this));
@@ -153,27 +147,35 @@ export default class Editor extends EventEmitter {
 
     hotkeys.on('down', 'downArrow', () => {
       this.nudgeSelected(0, 1);
+      this.doc.commitFrame();
     });
     hotkeys.on('down', 'upArrow', () => {
       this.nudgeSelected(0, -1);
+      this.doc.commitFrame();
     });
     hotkeys.on('down', 'leftArrow', () => {
       this.nudgeSelected(-1, 0);
+      this.doc.commitFrame();
     });
     hotkeys.on('down', 'rightArrow', () => {
       this.nudgeSelected(1, 0);
+      this.doc.commitFrame();
     });
     hotkeys.on('down', 'shift-downArrow', () => {
       this.nudgeSelected(0, 10);
+      this.doc.commitFrame();
     });
     hotkeys.on('down', 'shift-rightArrow', () => {
       this.nudgeSelected(10, 0);
+      this.doc.commitFrame();
     });
     hotkeys.on('down', 'shift-upArrow', () => {
       this.nudgeSelected(0, -10);
+      this.doc.commitFrame();
     });
     hotkeys.on('down', 'shift-leftArrow', () => {
       this.nudgeSelected(-10, 0);
+      this.doc.commitFrame();
     });
 
     hotkeys.on('down', 'ctrl-shift-G', e => {
@@ -769,7 +771,7 @@ export default class Editor extends EventEmitter {
       })
     ]);
 
-    this.perform(frame);
+    this.stageFrame(frame);
   }
 
   nudgeHandle(index, handle, xd, yd) {
@@ -792,14 +794,16 @@ export default class Editor extends EventEmitter {
       return;
     }
 
-    let action = new actions.ScaleAction({
-      indexes: this.selectedIndexes(),
-      x,
-      y,
-      origin
-    });
+    let frame = new HistoryFrame([
+      new actions.ScaleAction({
+        indexes: this.selectedIndexes(),
+        x,
+        y,
+        origin
+      })
+    ]);
 
-    this.perform(action);
+    this.stageFrame(frame);
   }
 
   rotateSelected(angle, origin) {
@@ -807,13 +811,22 @@ export default class Editor extends EventEmitter {
       return;
     }
 
-    let action = new actions.RotateAction({
-      indexes: this.selectedIndexes(),
-      a: angle,
-      origin
-    });
+    let frame = new HistoryFrame([
+      new actions.RotateAction({
+        indexes: this.selectedIndexes(),
+        a: angle,
+        origin
+      })
+    ]);
 
-    this.perform(action);
+    this.stageFrame(frame);
+  }
+
+  stageFrame(frame) {
+    this.doc.stageFrame(frame);
+    this.calculateSelectionBounds();
+    this.canvas.refreshAll();
+    this.trigger('change');
   }
 
   perform(h) {

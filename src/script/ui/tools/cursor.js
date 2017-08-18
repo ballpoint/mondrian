@@ -56,6 +56,7 @@ export default class Cursor extends Tool {
   }
 
   handleMousedown(e, cursor) {
+    delete this.annotation;
     let posn = cursor.posnCurrent;
     let selected;
 
@@ -89,6 +90,7 @@ export default class Cursor extends Tool {
   }
 
   handleDrag(e, cursor) {
+    delete this.annotation;
     let posn = this.posnForDrag(e, cursor);
 
     let delta = posn.delta(cursor.posnDown);
@@ -120,6 +122,7 @@ export default class Cursor extends Tool {
       this.dragSelectStart = null;
       this.dragSelectEnd = null;
     } else {
+      // Commit ongoing nudge
       this.editor.doc.history.commitFrame();
     }
   }

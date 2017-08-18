@@ -268,27 +268,31 @@ export default class TransformerUIElement extends UIElement {
       tr: 'nesw-resize'
     }[which];
 
+    let startBounds;
+
     let elem = new Element(
       id,
       ctrlBounds,
       {
         mousedown: (e, posn) => {
           e.stopPropagation();
+
+          startBounds = this.editor.state.selectionBounds;
         },
         click: function(e, posn) {
           e.stopPropagation();
         },
-        drag: (e, posn, lastPosn) => {
+        drag: (e, cursor) => {
           e.stopPropagation();
-
-          let bounds = this.editor.state.selectionBounds.bounds;
+          let posn = cursor.posnCurrent;
+          let posnDown = cursor.posnDown;
 
           let scaleOrigin;
           let scaleMode;
 
-          let { angle, center } = this.editor.state.selectionBounds;
+          let { bounds, angle, center } = startBounds;
 
-          if (this.editor.cursor.downEvent.altKey) {
+          if (e.altKey) {
             scaleOrigin = center;
             scaleMode = 'CENTER';
           } else {
@@ -298,11 +302,11 @@ export default class TransformerUIElement extends UIElement {
 
           if (angle !== 0) {
             posn = posn.clone().rotate(-angle, center);
-            lastPosn = lastPosn.clone().rotate(-angle, center);
+            posnDown = posnDown.clone().rotate(-angle, center);
           }
 
-          let diffY = posn.y - lastPosn.y;
-          let diffX = posn.x - lastPosn.x;
+          let diffX = posn.x - posnDown.x;
+          let diffY = posn.y - posnDown.y;
 
           // NOTE: When it comes time to do snapping, we may want to switch this code
           // to be operating on bounds on the doc level (rather than the UI level)
@@ -380,9 +384,9 @@ export default class TransformerUIElement extends UIElement {
             }
           }
         },
-        'drag:stop': (e, posn, startPosn) => {
+        'drag:stop': (e, cursor) => {
           e.stopPropagation();
-          this.editor.doc.history.head.seal();
+          this.editor.doc.history.commitFrame();
         }
       },
       {
@@ -412,16 +416,16 @@ export default class TransformerUIElement extends UIElement {
     */
 
     let elem = new Element(id, ctrlPt, {
-      mousedown: function(e, posn) {
+      mousedown: function(e, cursor) {
         e.stopPropagation();
       },
 
-      drag: (e, posn, lastPosn) => {
+      drag: (e, cursor) => {
         e.stopPropagation();
         let center = this.editor.state.selectionBounds.center;
 
-        let lineBefore = new LineSegment(lastPosn, center);
-        let lineAfter = new LineSegment(posn, center);
+        let lineBefore = new LineSegment(cursor.posnDown, center);
+        let lineAfter = new LineSegment(cursor.posnCurrent, center);
 
         let angleDelta = lineAfter.angle360 - lineBefore.angle360;
 
@@ -430,7 +434,7 @@ export default class TransformerUIElement extends UIElement {
 
       'drag:stop': e => {
         e.stopPropagation();
-        this.editor.doc.history.head.seal();
+        this.editor.doc.history.commitFrame();
       }
     });
 
