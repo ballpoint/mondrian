@@ -31,6 +31,7 @@ import RulersUIElement from 'ui/editor/rulers';
 import TransformerUIElement from 'ui/editor/transformer';
 import DocumentPointsUIElement from 'ui/editor/doc_pts';
 import DocumentElemsUIElement from 'ui/editor/doc_elems';
+import CursorSnapperUIElement from 'ui/editor/cursor_snapper';
 
 const UTILS_WIDTH = 350 + 220;
 
@@ -64,7 +65,11 @@ export default class Editor extends EventEmitter {
 
   initCanvas() {
     this.canvas = new Canvas(this.root);
-    this.cursor = new CursorTracking(this.root);
+    this.cursorSnapper = new CursorSnapperUIElement(this, 'cursor-snapper');
+    this.cursor = new CursorTracking(
+      this.root,
+      this.cursorSnapper.handle.bind(this.cursorSnapper)
+    );
     this.cursorHandler = new CursorHandler(this.cursor);
 
     // UIElements
@@ -72,7 +77,8 @@ export default class Editor extends EventEmitter {
       new DocumentPointsUIElement(this, 'doc-pts'),
       new DocumentElemsUIElement(this, 'doc-elems'),
       new TransformerUIElement(this, 'transformer'),
-      new RulersUIElement(this, 'rulers')
+      new RulersUIElement(this, 'rulers'),
+      this.cursorSnapper
     ];
 
     this.canvas.createLayer('background', this.refreshBackground.bind(this));
@@ -449,12 +455,9 @@ export default class Editor extends EventEmitter {
     }
     this.state.tool = tool;
 
-    if (tool.snapHandler) {
-      this.cursor.setSnapHandler(tool.snapHandler);
-    } else {
-      this.cursor.clearSnapHandler();
-    }
-
+    this.canvas.refreshAll();
+    this.calculateSelectionBounds();
+    this.trigger('change');
     this.trigger('change:tool');
   }
 
@@ -810,29 +813,40 @@ export default class Editor extends EventEmitter {
 
   perform(h) {
     this.doc.perform(h);
-    this.canvas.refreshAll();
     this.calculateSelectionBounds();
+    this.canvas.refreshAll();
     this.trigger('change');
   }
 
   undo() {
     this.doc.undo();
-    this.canvas.refreshAll();
     this.calculateSelectionBounds();
+    this.canvas.refreshAll();
     this.trigger('change');
   }
 
   redo() {
     this.doc.redo();
-    this.canvas.refreshAll();
     this.calculateSelectionBounds();
+    this.canvas.refreshAll();
+    this.trigger('change');
+  }
+
+  replace(h) {
+    // Replace existing history head with new head
+    // Existing head must not be sealed
+    this.doc.undo();
+    this.doc.perform(h);
+
+    this.calculateSelectionBounds();
+    this.canvas.refreshAll();
     this.trigger('change');
   }
 
   jumpToHistoryDepth(depth) {
     this.doc.jumpToHistoryDepth(depth);
-    this.canvas.refreshAll();
     this.calculateSelectionBounds();
+    this.canvas.refreshAll();
     this.trigger('change');
   }
 

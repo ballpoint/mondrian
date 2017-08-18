@@ -11,12 +11,12 @@ function isDefaultQuarantined() {
 }
 
 export default class CursorTracking extends EventEmitter {
-  constructor(root) {
+  constructor(root, snapHandler) {
     super();
     this.root = root;
     this.setup(root);
 
-    this.clearSnapHandler();
+    this.snapHandler = snapHandler;
   }
 
   setup(root) {
@@ -112,7 +112,6 @@ export default class CursorTracking extends EventEmitter {
   }
 
   _mousedown(e) {
-    // Quarantine check, and return if so
     if (insideOf(e.target, this.root)) {
       e.stopPropagation();
 
@@ -140,6 +139,8 @@ export default class CursorTracking extends EventEmitter {
     // End dragging sequence if it was occurring
     if (this.dragging && !this.draggingJustBegan) {
       this.trigger('drag:stop', e, this.currentPosn, this.dragStartPosn);
+      delete this.dragStartPosn;
+      delete this.dragDeltaTotal;
     } else {
       if (this.doubleclickArmed) {
         this.doubleclickArmed = false;
@@ -166,29 +167,35 @@ export default class CursorTracking extends EventEmitter {
     this.lastPosn = this.currentPosn;
     this.currentPosn = this._posnForEvent(e);
 
-    if (true) {
-      this.trigger('mousemove', e, this.currentPosn);
-      e.preventDefault();
+    this.trigger('mousemove', e, this.currentPosn);
+    e.preventDefault();
 
-      // Set some tracking variables
-      this.wasDownLast = this.down;
-      this.lastEvent = e;
-      this.currentPosn = this._posnForEvent(e);
+    // Set some tracking variables
+    this.wasDownLast = this.down;
+    this.lastEvent = e;
+    this.currentPosn = this._posnForEvent(e);
 
-      // Initiate dragging, or continue it if it's been initiated.
-      if (this.down) {
-        if (this.dragging) {
-          this.draggingJustBegan = false;
-          // Allow for slight movement without triggering drag
-        } else if (
-          this.currentPosn.distanceFrom(this.lastDown) > DRAG_THRESHOLD
-        ) {
-          this.dragStartPosn = this.lastDown;
-          this.trigger('drag:start', e, this.currentPosn, this.lastPosn);
-          this.dragging = this.draggingJustBegan = true;
-        }
-        this.trigger('drag', e, this.currentPosn, this.lastPosn);
+    // Initiate dragging, or continue it if it's been initiated.
+    if (this.down) {
+      if (this.dragging) {
+        this.draggingJustBegan = false;
+        // Allow for slight movement without triggering drag
+      } else if (
+        this.currentPosn.distanceFrom(this.lastDown) > DRAG_THRESHOLD
+      ) {
+        this.dragStartPosn = this.lastDown;
+        this.trigger('drag:start', e, this.currentPosn, this.lastPosn);
+        this.dragging = this.draggingJustBegan = true;
       }
+
+      if (this.lastDown) {
+        this.dragDeltaTotal = {
+          x: this.currentPosn.x - this.lastDown.x,
+          y: this.currentPosn.y - this.lastDown.y
+        };
+      }
+
+      this.trigger('drag', e, this.currentPosn, this.lastPosn);
     }
   }
 
@@ -201,13 +208,5 @@ export default class CursorTracking extends EventEmitter {
     if (e.deltaX !== 0) {
       this.trigger('scroll:x', e, e.deltaX);
     }
-  }
-
-  setSnapHandler(handler) {
-    this.snapHandler = handler;
-  }
-
-  clearSnapHandler(handler) {
-    delete this.snapHandler;
   }
 }
