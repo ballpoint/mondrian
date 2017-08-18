@@ -1,7 +1,9 @@
+import consts from 'consts';
 import shapes from 'lab/shapes';
 import Tool from 'ui/tools/tool';
 import Bounds from 'geometry/bounds';
 import Circle from 'geometry/circle';
+import Posn from 'geometry/posn';
 
 export default class Cursor extends Tool {
   constructor(editor) {
@@ -18,10 +20,12 @@ export default class Cursor extends Tool {
     return 'cursor';
   }
 
-  handleMousemove(e, posn) {
-    if (this.editor.cursor.dragging) return;
+  handleMousemove(e, cursor) {
+    if (cursor.dragging) return;
     if (this.dragSelectStart) return;
     if (!this.editor.doc) return;
+
+    let posn = cursor.posnCurrent;
 
     let z3 = this.editor.projection.zInvert(3);
     let posnPadded = Bounds.centeredOnPosn(posn, z3, z3);
@@ -51,7 +55,8 @@ export default class Cursor extends Tool {
     }
   }
 
-  handleMousedown(e, posn) {
+  handleMousedown(e, cursor) {
+    let posn = cursor.posnCurrent;
     let selected;
 
     if (this.hovering.length > 0) {
@@ -73,28 +78,31 @@ export default class Cursor extends Tool {
     }
   }
 
-  handleClick(e, posn) {
+  handleClick(e, cursor) {
     this.skipClick++;
   }
 
-  handleDragStart(e, posn, lastPosn) {
+  handleDragStart(e, cursor) {
     if (this.editor.state.selection.length === 0) {
-      this.dragSelectStart = lastPosn;
+      this.dragSelectStart = cursor.posnDown;
     }
   }
 
-  handleDrag(e, posn, lastPosn) {
+  handleDrag(e, cursor) {
+    let posn = this.posnForDrag(e, cursor);
+
+    let delta = posn.delta(cursor.posnDown);
+
     if (this.dragSelectStart) {
-      this.dragSelectEnd = posn;
+      this.dragSelectEnd = cursor.posnCurrent;
     } else if (this.editor.state.selection.length > 0) {
-      let xd = posn.x - lastPosn.x;
-      let yd = posn.y - lastPosn.y;
-
-      this.editor.nudgeSelected(xd, yd);
+      this.editor.nudgeSelected(delta.x, delta.y);
     }
   }
 
-  handleDragStop(e, posn, startPosn) {
+  handleDragStop(e, cursor) {
+    let posn = cursor.posnCurrent;
+
     if (this.dragSelectStart) {
       let bounds = Bounds.fromPosns([this.dragSelectStart, this.dragSelectEnd]);
 
@@ -112,7 +120,7 @@ export default class Cursor extends Tool {
       this.dragSelectStart = null;
       this.dragSelectEnd = null;
     } else {
-      this.editor.doc.history.head.seal();
+      this.editor.doc.history.commitFrame();
     }
   }
 
@@ -123,5 +131,78 @@ export default class Cursor extends Tool {
       layer.setLineWidth(1);
       layer.drawRect(bounds, { stroke: 'black' });
     }
+
+    let ann = this.annotation;
+
+    if (ann) {
+      switch (ann.type) {
+        case 'line':
+          let sb = this.editor.state.selectionBounds.bounds;
+          let center = this.editor.projection.posn(sb.center());
+          let centerDown = this.editor.projection.posn(
+            sb.center().nudge(-ann.delta.x, -ann.delta.y)
+          );
+
+          layer.drawLineSegment(center, centerDown, {
+            stroke: consts.blue
+          });
+      }
+    }
+  }
+
+  posnForDrag(e, cursor) {
+    let posn = cursor.posnCurrent;
+
+    if (e.shiftKey) {
+      // Snap to 45 deg
+      let a = posn.angle360(cursor.posnDown);
+
+      for (let as = 0; as < 360; as += 45) {
+        let min = as - 45 / 2;
+        let max = as + 45 / 2;
+
+        let matches = false;
+        if (min < 0 && a >= 360 - 45) {
+          matches = a - 360 > min && a - 360 < max;
+        } else {
+          matches = a > min && a < max;
+        }
+
+        if (matches) {
+          // Found the correct snapping angle
+          switch (as) {
+            case 0:
+            case 180:
+              posn.x = cursor.posnDown.x;
+              break;
+            case 90:
+            case 270:
+              posn.y = cursor.posnDown.y;
+              break;
+            default:
+              let d = posn.distanceFrom(cursor.posnDown);
+              let xp = cursor.posnDown
+                .clone()
+                .nudge(0, -d * 2)
+                .rotate(as, cursor.posnDown);
+              let xls = new LineSegment(cursor.posnDown, xp);
+              posn = xls.closestPosn(posn);
+          }
+
+          let delta = posn.delta(cursor.posnDown);
+
+          this.annotation = {
+            type: 'line',
+            delta
+          };
+
+          return posn;
+
+          break;
+        }
+      }
+    }
+
+    return posn;
   }
 }

@@ -91,38 +91,41 @@ export default class Editor extends EventEmitter {
     });
     this.canvas.createLayer('debug', () => {});
 
-    this.cursorHandler.on('mousemove', (e, posn) => {
-      if (e.propagateToTool) this.state.tool.handleMousemove(e, posn);
+    this.cursorHandler.on('mousemove', (e, posn, cursor) => {
+      if (e.propagateToTool) this.state.tool.handleMousemove(e, posn, cursor);
       this.canvas.refresh('tool');
       this.canvas.refresh('ui');
     });
 
-    this.cursorHandler.on('mousedown', (e, posn) => {
-      if (e.propagateToTool) this.state.tool.handleMousedown(e, posn);
+    this.cursorHandler.on('mousedown', (e, posn, cursor) => {
+      if (e.propagateToTool) this.state.tool.handleMousedown(e, posn, cursor);
       this.canvas.refresh('tool');
       this.canvas.refresh('ui');
     });
 
-    this.cursorHandler.on('click', (e, posn) => {
-      if (e.propagateToTool) this.state.tool.handleClick(e, posn);
+    this.cursorHandler.on('click', (e, posn, cursor) => {
+      if (e.propagateToTool) this.state.tool.handleClick(e, posn, cursor);
       this.canvas.refresh('tool');
       this.canvas.refresh('ui');
     });
 
-    this.cursorHandler.on('drag:start', (e, posn, lastPosn) => {
-      if (e.propagateToTool) this.state.tool.handleDragStart(e, posn, lastPosn);
+    this.cursorHandler.on('drag:start', (e, posn, lastPosn, cursor) => {
+      if (e.propagateToTool)
+        this.state.tool.handleDragStart(e, posn, lastPosn, cursor);
       this.canvas.refresh('tool');
       this.canvas.refresh('ui');
     });
 
-    this.cursorHandler.on('drag', (e, posn, lastPosn) => {
-      if (e.propagateToTool) this.state.tool.handleDrag(e, posn, lastPosn);
+    this.cursorHandler.on('drag', (e, posn, lastPosn, cursor) => {
+      if (e.propagateToTool)
+        this.state.tool.handleDrag(e, posn, lastPosn, cursor);
       this.canvas.refresh('tool');
       this.canvas.refresh('ui');
     });
 
-    this.cursorHandler.on('drag:stop', (e, posn, startPosn) => {
-      if (e.propagateToTool) this.state.tool.handleDragStop(e, posn, startPosn);
+    this.cursorHandler.on('drag:stop', (e, posn, startPosn, cursor) => {
+      if (e.propagateToTool)
+        this.state.tool.handleDragStop(e, posn, startPosn, cursor);
       this.canvas.refresh('tool');
       this.canvas.refresh('ui');
     });
@@ -758,13 +761,15 @@ export default class Editor extends EventEmitter {
       return;
     }
 
-    let action = new actions.NudgeAction({
-      indexes: this.selectedIndexes(),
-      xd,
-      yd
-    });
+    let frame = new HistoryFrame([
+      new actions.NudgeAction({
+        indexes: this.selectedIndexes(),
+        xd,
+        yd
+      })
+    ]);
 
-    this.perform(action);
+    this.perform(frame);
   }
 
   nudgeHandle(index, handle, xd, yd) {
@@ -827,17 +832,6 @@ export default class Editor extends EventEmitter {
 
   redo() {
     this.doc.redo();
-    this.calculateSelectionBounds();
-    this.canvas.refreshAll();
-    this.trigger('change');
-  }
-
-  replace(h) {
-    // Replace existing history head with new head
-    // Existing head must not be sealed
-    this.doc.undo();
-    this.doc.perform(h);
-
     this.calculateSelectionBounds();
     this.canvas.refreshAll();
     this.trigger('change');

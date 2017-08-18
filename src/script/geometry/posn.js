@@ -354,6 +354,13 @@ export default class Posn {
     this.x = parseInt(this.x, 10);
     this.y = parseInt(this.y, 10);
   }
+
+  delta(op) {
+    return {
+      x: this.x - op.x,
+      y: this.y - op.y
+    };
+  }
 }
 
 Posn.fromJSON = json => new Posn(json.x, json.y);

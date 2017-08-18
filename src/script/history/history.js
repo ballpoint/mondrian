@@ -7,8 +7,32 @@ export default class DocHistory {
     let initFrame = new HistoryFrame([
       new actions.InitAction() // TODO shove doc in here
     ]);
-    initFrame.seal();
-    this.pushFrame(initFrame);
+    this.stageFrame(initFrame);
+    this.commitFrame();
+  }
+
+  stageFrame(frame, doc) {
+    if (this.head && !this.head.committed) {
+      // Undo staged but uncommitted frame
+      this.undo(doc);
+    }
+
+    if (this.head) {
+      frame.depth = this.head.depth + 1;
+    } else {
+      frame.depth = 0;
+    }
+
+    frame.setPrev(this.head);
+    this.setHead(frame);
+  }
+
+  commitFrame() {
+    this.head.commit();
+
+    if (this.head.prev) {
+      this.head.prev.registerSucc(this.head);
+    }
   }
 
   pushFrame(frame) {
@@ -23,15 +47,12 @@ export default class DocHistory {
   }
 
   pushAction(action) {
-    if (!this.head.isSealed()) {
-      if (this.head.canMerge(action)) {
-        this.head.merge(action);
-      } else {
-        this.head.actions.push(action);
-      }
+    if (!this.head.committed) {
+      this.head.actions.push(action);
     } else {
       let nf = new HistoryFrame([action]);
-      this.pushFrame(nf);
+      // TODO maybe pushing an action when no unstaged head is an error
+      this.stageFrame(nf);
     }
   }
 

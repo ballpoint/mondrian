@@ -57,17 +57,7 @@ export default class CursorTracking extends EventEmitter {
 
     this.doubleclickArmed = false;
 
-    this.snapChangeAccum = { x: 0, y: 0 };
-
     return true;
-  }
-
-  resetSnapChangeAccumX() {
-    return (this.snapChangeAccum.x = 0);
-  }
-
-  resetSnapChangeAccumY() {
-    return (this.snapChangeAccum.y = 0);
   }
 
   dragAccum() {
@@ -95,9 +85,11 @@ export default class CursorTracking extends EventEmitter {
 
     let p = new Posn(rx, ry);
 
+    /*
     if (this.snapHandler) {
       p = this.snapHandler(e, p, this);
     }
+    */
 
     return p;
   }
@@ -124,31 +116,31 @@ export default class CursorTracking extends EventEmitter {
       e.preventDefault();
 
       // Send the event to ui, which will dispatch it to the appropriate places
-      this.trigger('mousedown', e, this.currentPosn);
+      this.trigger('mousedown', e, this);
 
       // Set tracking variables
       this.down = true;
       this.lastDown = this._posnForEvent(e);
+      this.downEvent = e;
       this.downOn = e.target;
       return (this.lastDownTarget = e.target);
     }
   }
 
   _mouseup(e) {
-    this.trigger('mouseup', e, this.currentPosn);
+    this.trigger('mouseup', e, this);
     // End dragging sequence if it was occurring
     if (this.dragging && !this.draggingJustBegan) {
-      this.trigger('drag:stop', e, this.currentPosn, this.dragStartPosn);
+      this.trigger('drag:stop', e, this);
       delete this.dragStartPosn;
-      delete this.dragDeltaTotal;
     } else {
       if (this.doubleclickArmed) {
         this.doubleclickArmed = false;
-        this.trigger('doubleclick', e, this.currentPosn);
+        this.trigger('doubleclick', e, this);
       } else {
         // It's a static click, meaning the cursor didn't move
         // between mousedown and mouseup so no drag occurred.
-        this.trigger('click', e, this.currentPosn);
+        this.trigger('click', e, this);
         // HACK
         this.armDoubleClick();
       }
@@ -167,7 +159,7 @@ export default class CursorTracking extends EventEmitter {
     this.lastPosn = this.currentPosn;
     this.currentPosn = this._posnForEvent(e);
 
-    this.trigger('mousemove', e, this.currentPosn);
+    this.trigger('mousemove', e, this);
     e.preventDefault();
 
     // Set some tracking variables
@@ -184,18 +176,11 @@ export default class CursorTracking extends EventEmitter {
         this.currentPosn.distanceFrom(this.lastDown) > DRAG_THRESHOLD
       ) {
         this.dragStartPosn = this.lastDown;
-        this.trigger('drag:start', e, this.currentPosn, this.lastPosn);
+        this.trigger('drag:start', e, this);
         this.dragging = this.draggingJustBegan = true;
       }
 
-      if (this.lastDown) {
-        this.dragDeltaTotal = {
-          x: this.currentPosn.x - this.lastDown.x,
-          y: this.currentPosn.y - this.lastDown.y
-        };
-      }
-
-      this.trigger('drag', e, this.currentPosn, this.lastPosn);
+      this.trigger('drag', e, this);
     }
   }
 
@@ -203,10 +188,10 @@ export default class CursorTracking extends EventEmitter {
 
   _scroll(e) {
     if (e.deltaY !== 0) {
-      this.trigger('scroll:y', e, e.deltaY);
+      this.trigger('scroll:y', e, e.deltaY, this);
     }
     if (e.deltaX !== 0) {
-      this.trigger('scroll:x', e, e.deltaX);
+      this.trigger('scroll:x', e, e.deltaX, this);
     }
   }
 }

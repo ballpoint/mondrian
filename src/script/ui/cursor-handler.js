@@ -9,51 +9,59 @@ export default class CursorHandler extends EventEmitter {
     super();
     this.resetElements();
 
-    cursor.on('mousemove', (e, posn) => {
+    cursor.on('mousemove', (e, cursor) => {
       if (!cursor.down) {
-        this.checkForActive(posn);
+        this.checkForActive(cursor.currentPosn);
       }
-      this._lastPosn = posn;
-      this.handleEvent('mousemove', e, posn);
+      this.handleEvent('mousemove', e, cursor);
     });
 
-    cursor.on('mousedown', (e, posn) => {
-      this.handleEvent('mousedown', e, posn);
+    cursor.on('mousedown', (e, cursor) => {
+      this.handleEvent('mousedown', e, cursor);
     });
 
-    cursor.on('click', (e, posn) => {
-      this.handleEvent('click', e, posn);
+    cursor.on('click', (e, cursor) => {
+      this.handleEvent('click', e, cursor);
     });
 
-    cursor.on('drag:start', (e, posn, lastPosn) => {
-      this.handleEvent('drag:start', e, posn, lastPosn);
+    cursor.on('drag:start', (e, cursor) => {
+      this.handleEvent('drag:start', e, cursor);
     });
 
-    cursor.on('drag', (e, posn, lastPosn) => {
-      this.handleEvent('drag', e, posn, lastPosn);
+    cursor.on('drag', (e, cursor) => {
+      this.handleEvent('drag', e, cursor);
     });
 
-    cursor.on('drag:stop', (e, posn, startPosn) => {
-      this.handleEvent('drag:stop', e, posn, startPosn);
+    cursor.on('drag:stop', (e, cursor) => {
+      this.handleEvent('drag:stop', e, cursor);
     });
 
-    cursor.on('scroll:y', (e, delta) => {
-      this.handleEvent('scroll:y', e, delta);
+    cursor.on('scroll:y', (e, delta, cursor) => {
+      this.handleEvent('scroll:y', e, delta, cursor);
     });
 
-    cursor.on('scroll:x', (e, delta) => {
-      this.handleEvent('scroll:x', e, delta);
+    cursor.on('scroll:x', (e, delta, cursor) => {
+      this.handleEvent('scroll:x', e, delta, cursor);
     });
   }
 
-  handleEvent(name, event, ...args) {
-    args = args.map(arg => {
-      if (arg instanceof Posn) {
-        return this.projection.posnInvert(arg);
-      } else {
-        return arg;
-      }
-    });
+  handleEvent(name, event, cursor) {
+    let data = {
+      // Bool values
+      dragging: cursor.dragging,
+      down: cursor.down,
+      // Posn values
+      posnCurrent: this.projection.posnInvert(cursor.currentPosn)
+      // Delta values
+    };
+
+    if (cursor.lastPosn) {
+      data.posnLast = this.projection.posnInvert(cursor.lastPosn);
+    }
+    if (cursor.lastDown) {
+      data.posnDown = this.projection.posnInvert(cursor.lastDown);
+      data.deltaDrag = data.posnCurrent.delta(data.posnDown);
+    }
 
     event.propagateToTool = true;
 
@@ -64,11 +72,11 @@ export default class CursorHandler extends EventEmitter {
     if (this.active) {
       let handler = this.active.handlers[name];
       if (handler) {
-        handler(event, ...args);
+        handler(event, data);
       }
     }
 
-    this.trigger(name, event, ...args);
+    this.trigger(name, event, data);
   }
 
   checkForActive(posn) {

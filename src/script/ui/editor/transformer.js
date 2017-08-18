@@ -239,8 +239,6 @@ export default class TransformerUIElement extends UIElement {
   registerCtrlPoint(which, layer, origin) {
     let id = 'transformer:scale:' + which;
 
-    let opposite;
-
     let ctrlBounds = Bounds.centeredOnPosn(
       origin.sharp(),
       CTRL_PT_DIMEN,
@@ -285,9 +283,18 @@ export default class TransformerUIElement extends UIElement {
 
           let bounds = this.editor.state.selectionBounds.bounds;
 
-          opposite = this.oppositeForPoint(which, bounds);
+          let scaleOrigin;
+          let scaleMode;
 
           let { angle, center } = this.editor.state.selectionBounds;
+
+          if (this.editor.cursor.downEvent.altKey) {
+            scaleOrigin = center;
+            scaleMode = 'CENTER';
+          } else {
+            scaleOrigin = this.oppositeForPoint(which, bounds);
+            scaleMode = 'OPPOSITE';
+          }
 
           if (angle !== 0) {
             posn = posn.clone().rotate(-angle, center);
@@ -300,6 +307,11 @@ export default class TransformerUIElement extends UIElement {
           // NOTE: When it comes time to do snapping, we may want to switch this code
           // to be operating on bounds on the doc level (rather than the UI level)
           let resultBounds = bounds.clone();
+
+          if (scaleMode === 'CENTER') {
+            diffY *= 2;
+            diffX *= 2;
+          }
 
           switch (which) {
             case 'tl':
@@ -345,7 +357,7 @@ export default class TransformerUIElement extends UIElement {
             if (flipX) xScale *= -1;
             if (flipY) yScale *= -1;
 
-            this.editor.scaleSelected(xScale, yScale, opposite);
+            this.editor.scaleSelected(xScale, yScale, scaleOrigin);
 
             if (flipX) {
               this.editor.cursorHandler.setActive(

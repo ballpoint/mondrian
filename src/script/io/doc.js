@@ -169,10 +169,10 @@ export default class Doc {
       for (let action of h.actions) {
         action.perform(this);
       }
-      this.history.pushFrame(h);
+      this.history.stageFrame(h, this);
     } else if (h instanceof actions.HistoryAction) {
       h.perform(this);
-      this.history.pushAction(h);
+      this.history.pushAction(h, this);
     }
   }
 

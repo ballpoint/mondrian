@@ -6,7 +6,7 @@ export default class HistoryFrame {
     this.succ = [];
     this.timestamp = new Date();
 
-    this.sealed = false;
+    this.committed = false;
     this.merges = 0;
   }
 
@@ -24,10 +24,6 @@ export default class HistoryFrame {
 
   setPrev(prev) {
     this.prev = prev;
-
-    if (prev) {
-      prev.registerSucc(this);
-    }
   }
 
   hasPrev() {
@@ -52,10 +48,6 @@ export default class HistoryFrame {
     this.actions.push(action);
   }
 
-  isSealed() {
-    return this.sealed;
-  }
-
   get last() {
     return this.actions[this.actions.length - 1];
   }
@@ -76,8 +68,8 @@ export default class HistoryFrame {
     }
   }
 
-  seal() {
-    this.sealed = true;
+  commit() {
+    this.committed = true;
   }
 
   perform(doc) {

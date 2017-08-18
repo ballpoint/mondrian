@@ -34,6 +34,11 @@ export default class CursorSnapperUIElement extends UIElement {
           // Dragging UI element
           if (e.shiftKey) {
             switch (id) {
+              case 'transformer:scale:br':
+              case 'transformer:scale:tr':
+              case 'transformer:scale:bl':
+              case 'transformer:scale:tl':
+                console.log(id);
             }
           }
         } else if (this.editor.state.selection.length > 0) {
