@@ -12,7 +12,8 @@ export default class SubCursor extends Tool {
     return 'subcursor';
   }
 
-  handleMousemove(e, posn) {
+  handleMousemove(e, cursor) {
+    let posn = cursor.posnCurrent;
     if (this.dragSelectStart) return;
 
     let pointsToCheck = [];
@@ -47,25 +48,27 @@ export default class SubCursor extends Tool {
     this.hovering = closestPoint;
   }
 
-  handleMousedown(e, posn) {
+  handleMousedown(e, cursor) {
     if (!this.hovering) {
       this.editor.setSelection([]);
     }
   }
 
-  handleClick(e, posn) {}
+  handleMouseup(e, cursor) {}
 
-  handleDragStart(e, posn, lastPosn) {
-    this.dragSelectStart = lastPosn;
+  handleClick(e, cursor) {}
+
+  handleDragStart(e, cursor) {
+    this.dragSelectStart = cursor.posnDown;
   }
 
-  handleDrag(e, posn, lastPosn) {
+  handleDrag(e, cursor) {
     if (this.dragSelectStart) {
-      this.dragSelectEnd = posn;
+      this.dragSelectEnd = cursor.posnCurrent;
     }
   }
 
-  handleDragStop(e, posn) {
+  handleDragStop(e, cursor) {
     if (this.dragSelectStart) {
       let bounds = Bounds.fromPosns([this.dragSelectStart, this.dragSelectEnd]);
 

@@ -16,6 +16,8 @@ export default class Rect extends Tool {
 
   handleMousedown(e, posn) {}
 
+  handleMouseup(e, cursor) {}
+
   handleClick(e, posn) {}
 
   handleDragStart(e, posn, lastPosn) {}

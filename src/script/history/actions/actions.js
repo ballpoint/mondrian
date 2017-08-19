@@ -37,11 +37,6 @@ export class NudgeAction extends HistoryAction {
     }
   }
 
-  merge(action) {
-    this.data.xd += action.data.xd;
-    this.data.yd += action.data.yd;
-  }
-
   opposite() {
     return new NudgeAction({
       indexes: this.data.indexes,
@@ -73,11 +68,6 @@ export class ScaleAction extends HistoryAction {
       y: 1 / this.data.y
     });
   }
-
-  merge(action) {
-    this.data.x *= action.data.x;
-    this.data.y *= action.data.y;
-  }
 }
 
 export class RotateAction extends HistoryAction {
@@ -90,14 +80,6 @@ export class RotateAction extends HistoryAction {
       let item = doc.getFromIndex(index);
       item.rotate(this.data.a, this.data.origin);
     }
-  }
-
-  merge(action) {
-    this.data.a += action.data.a;
-    if (this.data.a < 0) {
-      this.data.a += 360;
-    }
-    this.data.a %= 360;
   }
 
   opposite() {
@@ -125,15 +107,6 @@ export class NudgeHandleAction extends HistoryAction {
         point.path.clearCachedObjects();
       }
     }
-  }
-
-  merge(action) {
-    this.data.xd += action.data.xd;
-    this.data.yd += action.data.yd;
-  }
-
-  canMerge(action) {
-    return indexesIdentical(this.data.indexes, action.data.indexes);
   }
 
   opposite() {

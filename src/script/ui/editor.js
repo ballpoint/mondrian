@@ -85,41 +85,44 @@ export default class Editor extends EventEmitter {
     });
     this.canvas.createLayer('debug', () => {});
 
-    this.cursorHandler.on('mousemove', (e, posn, cursor) => {
-      if (e.propagateToTool) this.state.tool.handleMousemove(e, posn, cursor);
+    this.cursorHandler.on('mousemove', (e, cursor) => {
+      if (e.propagateToTool) this.state.tool.handleMousemove(e, cursor);
       this.canvas.refresh('tool');
       this.canvas.refresh('ui');
     });
 
-    this.cursorHandler.on('mousedown', (e, posn, cursor) => {
-      if (e.propagateToTool) this.state.tool.handleMousedown(e, posn, cursor);
+    this.cursorHandler.on('mouseup', (e, cursor) => {
+      if (e.propagateToTool) this.state.tool.handleMouseup(e, cursor);
       this.canvas.refresh('tool');
       this.canvas.refresh('ui');
     });
 
-    this.cursorHandler.on('click', (e, posn, cursor) => {
-      if (e.propagateToTool) this.state.tool.handleClick(e, posn, cursor);
+    this.cursorHandler.on('mousedown', (e, cursor) => {
+      if (e.propagateToTool) this.state.tool.handleMousedown(e, cursor);
       this.canvas.refresh('tool');
       this.canvas.refresh('ui');
     });
 
-    this.cursorHandler.on('drag:start', (e, posn, lastPosn, cursor) => {
-      if (e.propagateToTool)
-        this.state.tool.handleDragStart(e, posn, lastPosn, cursor);
+    this.cursorHandler.on('click', (e, cursor) => {
+      if (e.propagateToTool) this.state.tool.handleClick(e, cursor);
       this.canvas.refresh('tool');
       this.canvas.refresh('ui');
     });
 
-    this.cursorHandler.on('drag', (e, posn, lastPosn, cursor) => {
-      if (e.propagateToTool)
-        this.state.tool.handleDrag(e, posn, lastPosn, cursor);
+    this.cursorHandler.on('drag:start', (e, cursor) => {
+      if (e.propagateToTool) this.state.tool.handleDragStart(e, cursor);
       this.canvas.refresh('tool');
       this.canvas.refresh('ui');
     });
 
-    this.cursorHandler.on('drag:stop', (e, posn, startPosn, cursor) => {
-      if (e.propagateToTool)
-        this.state.tool.handleDragStop(e, posn, startPosn, cursor);
+    this.cursorHandler.on('drag', (e, cursor) => {
+      if (e.propagateToTool) this.state.tool.handleDrag(e, cursor);
+      this.canvas.refresh('tool');
+      this.canvas.refresh('ui');
+    });
+
+    this.cursorHandler.on('drag:stop', (e, cursor) => {
+      if (e.propagateToTool) this.state.tool.handleDragStop(e, cursor);
       this.canvas.refresh('tool');
       this.canvas.refresh('ui');
     });
@@ -779,14 +782,16 @@ export default class Editor extends EventEmitter {
       return;
     }
 
-    let action = new actions.NudgeHandleAction({
-      indexes: [index],
-      xd,
-      yd,
-      handle
-    });
+    let frame = new HistoryFrame([
+      new actions.NudgeHandleAction({
+        indexes: [index],
+        xd,
+        yd,
+        handle
+      })
+    ]);
 
-    this.perform(action);
+    this.perform(frame);
   }
 
   scaleSelected(x, y, origin) {
@@ -829,6 +834,10 @@ export default class Editor extends EventEmitter {
     this.trigger('change');
   }
 
+  commitFrame(frame) {
+    this.doc.commitFrame();
+  }
+
   perform(h) {
     this.doc.perform(h);
     this.calculateSelectionBounds();
@@ -841,6 +850,7 @@ export default class Editor extends EventEmitter {
     this.calculateSelectionBounds();
     this.canvas.refreshAll();
     this.trigger('change');
+    this.trigger('history:step');
   }
 
   redo() {
@@ -848,6 +858,7 @@ export default class Editor extends EventEmitter {
     this.calculateSelectionBounds();
     this.canvas.refreshAll();
     this.trigger('change');
+    this.trigger('history:step');
   }
 
   jumpToHistoryDepth(depth) {
@@ -855,6 +866,7 @@ export default class Editor extends EventEmitter {
     this.calculateSelectionBounds();
     this.canvas.refreshAll();
     this.trigger('change');
+    this.trigger('history:step');
   }
 
   cut(e) {

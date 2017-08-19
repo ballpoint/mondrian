@@ -79,6 +79,8 @@ export default class Cursor extends Tool {
     }
   }
 
+  handleMouseup(e, cursor) {}
+
   handleClick(e, cursor) {
     this.skipClick++;
   }

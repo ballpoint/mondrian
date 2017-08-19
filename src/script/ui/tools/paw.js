@@ -5,10 +5,7 @@ export default class Paw extends Tool {
     super(editor);
   }
 
-  handleDrag(e, posn, lastPosn) {
-    let xd = posn.x - lastPosn.x;
-    let yd = posn.y - lastPosn.y;
-
-    this.editor.nudge(-xd, -yd);
+  handleDrag(e, cursor) {
+    this.editor.nudge(-cursor.deltaDragStep.x, -cursor.deltaDragStep.y);
   }
 }

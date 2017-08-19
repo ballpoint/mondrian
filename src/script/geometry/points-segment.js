@@ -201,9 +201,13 @@ export default class PointsSegment {
   }
 
   remove(x) {
-    // Relink things
-    x.prec.succ = x.succ;
-    x.succ.prec = x.prec;
+    if (x.prec) {
+      // Relink things
+      x.prec.succ = x.succ;
+    }
+    if (x.succ) {
+      x.succ.prec = x.prec;
+    }
     this.points = this.points.remove(x);
   }
 

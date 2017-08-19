@@ -12,9 +12,20 @@ let Utils = React.createClass({
     };
   },
   componentDidMount() {
+    let nextFrame = null;
+
+    window.utilCounter = { cancel: 0, ok: 0 };
+
     this.props.editor.on('change', () => {
-      window.requestAnimationFrame(() => {
+      if (nextFrame !== null) {
+        return;
+      }
+
+      nextFrame = window.requestAnimationFrame(() => {
+        nextFrame = null;
+
         let editor = this.props.editor;
+        window.utilCounter.ok++;
 
         this.setState({
           selection: editor.state.selection,

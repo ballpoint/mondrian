@@ -20,6 +20,10 @@ export default class CursorHandler extends EventEmitter {
       this.handleEvent('mousedown', e, cursor);
     });
 
+    cursor.on('mouseup', (e, cursor) => {
+      this.handleEvent('mouseup', e, cursor);
+    });
+
     cursor.on('click', (e, cursor) => {
       this.handleEvent('click', e, cursor);
     });
@@ -57,6 +61,7 @@ export default class CursorHandler extends EventEmitter {
 
     if (cursor.lastPosn) {
       data.posnLast = this.projection.posnInvert(cursor.lastPosn);
+      data.deltaDragStep = data.posnCurrent.delta(data.posnLast);
     }
     if (cursor.lastDown) {
       data.posnDown = this.projection.posnInvert(cursor.lastDown);

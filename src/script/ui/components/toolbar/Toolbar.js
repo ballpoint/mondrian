@@ -85,7 +85,8 @@ let Toolbar = React.createClass({
 
         frame.seal;
 
-        editor.perform(frame);
+        editor.stageFrame(frame);
+        editor.commitFrame();
       }.bind(this);
     }.bind(this);
 

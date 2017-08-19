@@ -23,7 +23,7 @@ export default class Pen extends Tool {
     return 'pen';
   }
 
-  handleMousemove(e, posn) {
+  handleMousemove(e, cursor) {
     if (this.editor.cursor.dragging) {
       return;
     }
@@ -35,6 +35,8 @@ export default class Pen extends Tool {
     delete this.closest;
 
     let elemsToScan = [];
+
+    let posn = cursor.posnCurrent;
 
     let p = this.editor.projection.posn(posn);
     let threshold = this.editor.projection.zInvert(PEN_POINT_THRESHOLD);
@@ -70,54 +72,11 @@ export default class Pen extends Tool {
     }
   }
 
-  handleMousedown(e, posn) {
-    if (this.closest) {
-      return;
-    }
-
-    // If we're not focusing on adding a point to an existing shape, start a new shape
-    let frame = new HistoryFrame([], 'Add point');
-
-    let pathIndex;
-
-    if (!this.pathItem) {
-      this.pathItem = new Path({
-        fill: this.editor.state.colors.fill,
-        stroke: this.editor.state.colors.stroke
-      });
-
-      pathIndex = this.editor.state.layer.nextChildIndex();
-
-      frame.push(
-        new actions.InsertAction({
-          items: [{ item: this.pathItem, index: pathIndex }]
-        })
-      );
-    } else {
-      pathIndex = this.pathItem.index;
-    }
-
-    let pp = new PathPoint(posn.x, posn.y);
-
-    frame.push(
-      new actions.InsertAction({
-        items: [
-          {
-            item: pp,
-            index: pathIndex.concat([
-              0,
-              this.pathItem.points.segments[0].points.length
-            ])
-          }
-        ]
-      })
-    );
-
-    this.editor.perform(frame);
-    this.editor.setSelection([pp]);
+  handleMousedown(e, cursor) {
+    this.handleNewPoint(e, cursor);
   }
 
-  handleClick(e, posn) {
+  handleClick(e, cursor) {
     if (this.closest) {
       let splits = this.closest.splits;
       let d1 = this.closest.pathPoint.prec;
@@ -183,40 +142,65 @@ export default class Pen extends Tool {
     }
   }
 
-  handleDragStart(e, posn, lastPosn) {}
-
-  handleDrag(e, posn, lastPosn) {
-    let currentPoint = this.pathItem.points.last;
-    let action;
-
-    if (currentPoint.sHandle) {
-      // Already exists; move it
-
-      let xd = posn.x - lastPosn.x;
-      let yd = posn.y - lastPosn.y;
-
-      action = new actions.NudgeHandleAction({
-        indexes: [currentPoint.index],
-        handle: 'sHandle',
-        reflect: true,
-        xd,
-        yd
-      });
-    } else {
-      // Set it for the first time
-      action = new actions.AddHandleAction({
-        indexes: [currentPoint.index],
-        handle: 'sHandle',
-        reflect: true,
-        posn
-      });
+  handleMouseup(e, cursor) {
+    if (!this.closest) {
+      this.handleNewPoint(e, cursor);
+      this.editor.commitFrame();
+      this.pathItemCommitted = true;
+      this.pathItemPointIndex++;
     }
-
-    this.editor.perform(action);
   }
 
-  handleDragStop(e, posn) {
-    this.editor.doc.history.head.seal();
+  handleDragStart(e, cursor) {}
+
+  handleDrag(e, cursor) {
+    this.handleNewPoint(e, cursor);
+  }
+
+  handleDragStop(e, cursor) {}
+
+  handleNewPoint(e, cursor) {
+    // If we're not focusing on adding a point to an existing shape, start a new shape
+    let frame = new HistoryFrame([], 'Add point');
+
+    if (!this.pathItem) {
+      this.pathItem = new Path({
+        fill: this.editor.state.colors.fill,
+        stroke: this.editor.state.colors.stroke
+      });
+      this.pathIndex = this.editor.state.layer.nextChildIndex();
+      this.pathItemCommitted = false;
+      this.pathItemPointIndex = 0;
+    }
+
+    if (!this.pathItemCommitted) {
+      frame.push(
+        new actions.InsertAction({
+          items: [{ item: this.pathItem, index: this.pathIndex }]
+        })
+      );
+    }
+
+    let pp = new PathPoint(cursor.posnDown.x, cursor.posnDown.y);
+
+    if (!cursor.posnCurrent.equal(cursor.posnDown)) {
+      pp.setSHandle(cursor.posnCurrent);
+      pp.setPHandle(cursor.posnCurrent.reflect(cursor.posnDown));
+    }
+
+    frame.push(
+      new actions.InsertAction({
+        items: [
+          {
+            item: pp,
+            index: this.pathIndex.concat([0, this.pathItemPointIndex])
+          }
+        ]
+      })
+    );
+
+    this.editor.perform(frame);
+    this.editor.setSelection([pp]);
   }
 
   refresh(layer, context) {

@@ -268,8 +268,6 @@ export default class TransformerUIElement extends UIElement {
       tr: 'nesw-resize'
     }[which];
 
-    let startBounds;
-
     let elem = new Element(
       id,
       ctrlBounds,
@@ -277,7 +275,7 @@ export default class TransformerUIElement extends UIElement {
         mousedown: (e, posn) => {
           e.stopPropagation();
 
-          startBounds = this.editor.state.selectionBounds;
+          this.startBounds = this.editor.state.selectionBounds;
         },
         click: function(e, posn) {
           e.stopPropagation();
@@ -290,7 +288,9 @@ export default class TransformerUIElement extends UIElement {
           let scaleOrigin;
           let scaleMode;
 
-          let { bounds, angle, center } = startBounds;
+          console.log(which, this.startBounds);
+
+          let { bounds, angle, center } = this.startBounds;
 
           if (e.altKey) {
             scaleOrigin = center;
@@ -364,9 +364,11 @@ export default class TransformerUIElement extends UIElement {
             this.editor.scaleSelected(xScale, yScale, scaleOrigin);
 
             if (flipX) {
+              /*
               this.editor.cursorHandler.setActive(
                 'transformer:scale:' + this.oppositeX(which)
               );
+              */
               //which = this.oppositeX(which);
               // Take new opposite from editor-calculated bounds so that it's perfect
               // Taking it from resultBounds in here is imperfect by at least 0.00001
@@ -374,9 +376,11 @@ export default class TransformerUIElement extends UIElement {
             }
 
             if (flipY) {
+              /*
               this.editor.cursorHandler.setActive(
                 'transformer:scale:' + this.oppositeY(which)
               );
+              */
               //which = this.oppositeY(which);
               // Take new opposite from editor-calculated bounds so that it's perfect
               // Taking it from resultBounds in here is imperfect by at least 0.00001

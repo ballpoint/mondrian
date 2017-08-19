@@ -107,15 +107,15 @@ export default class CursorTracking extends EventEmitter {
       // Prevent the text selection cursor when dragging
       e.preventDefault();
 
-      // Send the event to ui, which will dispatch it to the appropriate places
-      this.trigger('mousedown', e, this);
-
       // Set tracking variables
       this.down = true;
       this.lastDown = this._posnForEvent(e);
       this.downEvent = e;
       this.downOn = e.target;
-      return (this.lastDownTarget = e.target);
+      this.lastDownTarget = e.target;
+
+      // Send the event to ui, which will dispatch it to the appropriate places
+      this.trigger('mousedown', e, this);
     }
   }
 

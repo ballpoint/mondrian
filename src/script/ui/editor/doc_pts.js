@@ -70,10 +70,16 @@ export default class DocumentPointsUIElement extends UIElement {
           e => {
             // noop on down
           },
-          (e, posn, lastPosn) => {
-            let xd = posn.x - lastPosn.x;
-            let yd = posn.y - lastPosn.y;
-            this.editor.nudgeHandle(pt.index, name, xd, yd);
+          (e, cursor) => {
+            this.editor.nudgeHandle(
+              pt.index,
+              name,
+              cursor.deltaDrag.x,
+              cursor.deltaDrag.y
+            );
+          },
+          e => {
+            this.editor.commitFrame();
           }
         );
       }
@@ -92,15 +98,16 @@ export default class DocumentPointsUIElement extends UIElement {
           this.editor.setSelection([pt]);
         }
       },
-      (e, posn, lastPosn) => {
-        let xd = posn.x - lastPosn.x;
-        let yd = posn.y - lastPosn.y;
-        this.editor.nudgeSelected(xd, yd);
+      (e, cursor) => {
+        this.editor.nudgeSelected(cursor.deltaDrag.x, cursor.deltaDrag.y);
+      },
+      e => {
+        this.editor.commitFrame();
       }
     );
   }
 
-  drawPoint(id, point, posn, layer, onDrag) {
+  drawPoint(id, point, posn, layer) {
     let style = { stroke: consts.point, fill: 'white' };
     let radius = 2.5;
     if (this.editor.isSelected(point)) {
@@ -113,7 +120,7 @@ export default class DocumentPointsUIElement extends UIElement {
     layer.drawCircle(posn, radius, style);
   }
 
-  registerPoint(id, posn, onDown, onDrag) {
+  registerPoint(id, posn, onDown, onDrag, onDragStop) {
     let hitArea = new Circle(posn, 12);
     let elem = new Element(id, hitArea, {
       mousedown: (e, posn) => {
@@ -129,6 +136,7 @@ export default class DocumentPointsUIElement extends UIElement {
       },
       'drag:stop': e => {
         e.stopPropagation();
+        onDragStop();
       }
     });
 

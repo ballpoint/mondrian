@@ -1,9 +1,10 @@
 import HistoryFrame from 'history/Frame';
 import * as actions from 'history/actions/actions';
+import EventEmitter from 'lib/events';
 
-export default class DocHistory {
-  // Linked list history data struct ,'>)
+export default class DocHistory extends EventEmitter {
   constructor() {
+    super();
     let initFrame = new HistoryFrame([
       new actions.InitAction() // TODO shove doc in here
     ]);
@@ -37,6 +38,8 @@ export default class DocHistory {
     if (this.head.prev) {
       this.head.prev.registerSucc(this.head);
     }
+
+    this.trigger('commit');
   }
 
   pushAction(action, doc) {
