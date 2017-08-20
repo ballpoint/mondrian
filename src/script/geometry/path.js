@@ -67,7 +67,8 @@ export default class Path extends Item {
       new PathPoint(r.x, r.y, r.x, r.y - ky, r.x, r.y + ky),
       new PathPoint(b.x, b.y, b.x + kx, b.y, b.x - kx, b.y),
       new PathPoint(l.x, l.y, l.x, l.y + ky, l.x, l.y - ky),
-      new PathPoint(t.x, t.y, t.x - kx, t.y, t.x + kx, t.y)
+      new PathPoint(t.x, t.y, t.x - kx, t.y, t.x + kx, t.y),
+      new PathPoint(r.x, r.y, r.x, r.y - ky, r.x, r.y + ky)
     ]);
     segment.close();
 

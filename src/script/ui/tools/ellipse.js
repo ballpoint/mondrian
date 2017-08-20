@@ -3,7 +3,7 @@ import Path from 'geometry/path';
 import HistoryFrame from 'history/Frame';
 import * as actions from 'history/actions/actions';
 
-export default class Rect extends Tool {
+export default class Ellipse extends Tool {
   constructor(editor) {
     super(editor);
   }
@@ -26,16 +26,39 @@ export default class Rect extends Tool {
 
   handleDrag(e, cursor) {
     let { posnCurrent, posnDown } = cursor;
-    let x = Math.min(posnCurrent.x, posnDown.x);
-    let y = Math.min(posnCurrent.y, posnDown.y);
-    let width = Math.abs(posnCurrent.x - posnDown.x);
-    let height = Math.abs(posnCurrent.y - posnDown.y);
+    let rx, ry, cx, cy;
 
-    this.rect = Path.rectangle({
-      x,
-      y,
-      width,
-      height,
+    let maxX = Math.max(posnCurrent.x, posnDown.x);
+    let minX = Math.min(posnCurrent.x, posnDown.x);
+    let maxY = Math.max(posnCurrent.y, posnDown.y);
+    let minY = Math.min(posnCurrent.y, posnDown.y);
+
+    if (e.shiftKey && e.altKey) {
+      rx = posnCurrent.distanceFrom(posnDown);
+      ry = rx;
+    } else {
+      rx = (maxX - minX) / 2;
+      ry = (maxY - minY) / 2;
+    }
+
+    if (e.altKey) {
+      cx = posnDown.x;
+      cy = posnDown.y;
+
+      if (!e.shiftKey) {
+        rx *= 2;
+        ry *= 2;
+      }
+    } else {
+      cx = minX + rx;
+      cy = minY + ry;
+    }
+
+    this.rect = Path.ellipse({
+      cx,
+      cy,
+      rx,
+      ry,
       fill: this.editor.state.colors.fill,
       stroke: this.editor.state.colors.stroke
     });
@@ -46,7 +69,7 @@ export default class Rect extends Tool {
           items: [{ item: this.rect, index: this.index }]
         })
       ],
-      'Draw rectangle'
+      'Draw ellipse'
     );
 
     this.editor.stageFrame(frame);

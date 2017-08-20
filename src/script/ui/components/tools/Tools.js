@@ -23,6 +23,10 @@ const config = [
   {
     label: 'Rect',
     constructor: tools.Rect
+  },
+  {
+    label: 'Ellipse',
+    constructor: tools.Ellipse
   }
 ];
 
@@ -63,8 +67,7 @@ let Tools = React.createClass({
                 this.props.editor.selectTool(
                   new t.constructor(this.props.editor)
                 );
-              }}
-            >
+              }}>
               {t.label}
             </div>
           );

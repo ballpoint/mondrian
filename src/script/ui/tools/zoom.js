@@ -13,21 +13,23 @@ export default class Zoom extends Tool {
     return 'zoom';
   }
 
-  handleMousemove(e, posn) {}
+  handleMousemove(e, cursor) {}
 
-  handleMousedown(e, posn) {}
+  handleMousedown(e, cursor) {}
 
-  handleClick(e, posn) {}
+  handleMouseup(e, cursor) {}
 
-  handleDragStart(e, posn, lastPosn) {
-    this.dragStart = lastPosn;
+  handleClick(e, cursor) {}
+
+  handleDragStart(e, cursor) {
+    this.dragStart = cursor.posnDown;
   }
 
-  handleDrag(e, posn, lastPosn) {
-    this.dragEnd = posn;
+  handleDrag(e, cursor) {
+    this.dragEnd = cursor.posnCurrent;
   }
 
-  handleDragStop(e, posn) {
+  handleDragStop(e, cursor) {
     let bounds = Bounds.fromPosns([this.dragStart, this.dragEnd]);
     let center = bounds.center();
 
