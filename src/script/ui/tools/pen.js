@@ -131,9 +131,8 @@ export default class Pen extends Tool {
         'Add point'
       );
 
-      frame.seal();
-
-      this.editor.perform(frame);
+      this.editor.stageFrame(frame);
+      this.editor.commitFrame();
 
       // Only select the new point
       this.editor.selectFromIndexes([startIndex.plus(1)]);

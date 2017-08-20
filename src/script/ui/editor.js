@@ -127,7 +127,8 @@ export default class Editor extends EventEmitter {
       this.canvas.refresh('ui');
     });
 
-    this.cursorHandler.on('scroll:x', (e, delta) => {
+    this.cursorHandler.on('scroll:x', (e, cursor) => {
+      let delta = e.deltaX;
       if (!this.canvas.owns(e.target)) return;
 
       if (this.state.tool.id === 'zoom') {
@@ -136,7 +137,8 @@ export default class Editor extends EventEmitter {
       }
     });
 
-    this.cursorHandler.on('scroll:y', (e, delta) => {
+    this.cursorHandler.on('scroll:y', (e, cursor) => {
+      let delta = e.deltaY;
       if (!this.canvas.owns(e.target)) return;
 
       if (this.state.tool.id === 'zoom') {
@@ -483,10 +485,8 @@ export default class Editor extends EventEmitter {
     ]);
 
     this.perform(frame);
-
     this.cleanUpEmptyItems(frame.actions[0]);
-
-    frame.seal();
+    this.commitFrame();
   }
 
   cleanUpEmptyItems(action) {
@@ -548,8 +548,8 @@ export default class Editor extends EventEmitter {
       })
     );
 
-    frame.seal();
-    this.perform(frame);
+    this.stageFrame(frame);
+    this.commitFrame();
 
     // Select new group
     let newIndexes = frame.actions.reduce((a, b) => {
@@ -564,8 +564,9 @@ export default class Editor extends EventEmitter {
     let frame = new HistoryFrame([
       actions.GroupAction.forChildren(this.doc, this.state.selection)
     ]);
-    frame.seal();
-    this.perform(frame);
+
+    this.stageFrame(frame);
+    this.commitFrame();
 
     // Select new group
     let newIndex = frame.actions[0].data.groupIndex;

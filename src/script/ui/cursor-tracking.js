@@ -180,10 +180,10 @@ export default class CursorTracking extends EventEmitter {
 
   _scroll(e) {
     if (e.deltaY !== 0) {
-      this.trigger('scroll:y', e, e.deltaY, this);
+      this.trigger('scroll:y', e, this);
     }
     if (e.deltaX !== 0) {
-      this.trigger('scroll:x', e, e.deltaX, this);
+      this.trigger('scroll:x', e, this);
     }
   }
 }

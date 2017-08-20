@@ -44,8 +44,8 @@ let ChildCtrlButton = React.createClass({
         break;
     }
 
-    frame.seal();
-    this.props.editor.perform(frame);
+    this.props.editor.stageFrame(frame);
+    this.props.editor.commitFrame();
   },
 
   render() {
@@ -55,8 +55,7 @@ let ChildCtrlButton = React.createClass({
           'doc-util__item__bar__ctrls__ctrl': true,
           disabled: this.props.disabled
         })}
-        onClick={this.onClick}
-      >
+        onClick={this.onClick}>
         {this.label()}
       </div>
     );
@@ -130,8 +129,7 @@ let DocumentUtilChild = React.createClass({
         <div
           className={classnames({
             'doc-util__item__children': true
-          })}
-        >
+          })}>
           {child.children.slice(0).reverse().map(child => {
             return (
               <DocumentUtilChild
@@ -158,13 +156,11 @@ let DocumentUtilChild = React.createClass({
           'doc-util__item--parent': child.children && child.children.length > 0,
           ['doc-util__item--' + child.constructor.name]: true,
           selected: isSelected
-        })}
-      >
+        })}>
         <div
           className={classnames({
             'doc-util__item__bar': true
-          })}
-        >
+          })}>
           <div
             className="doc-util__item__bar__label"
             onClick={e => {
@@ -192,8 +188,7 @@ let DocumentUtilChild = React.createClass({
               e.stopPropagation();
               if (!isAvailable) return;
               this.props.editor.setHovering([]);
-            }}
-          >
+            }}>
             <div className="doc-util__item__bar__thumb">
               <canvas ref="thumbnail" />
             </div>

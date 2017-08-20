@@ -15,8 +15,7 @@ let AlignUtilButton = React.createClass({
         })}
         onClick={() => {
           this.props.performAlign(this.props.which);
-        }}
-      >
+        }}>
         <div className="align-util-button__item" />
         <div className="align-util-button__item" />
       </div>
@@ -65,8 +64,7 @@ let AlignUtil = React.createClass({
       <a
         title={buttonHint}
         className="align-util-button align-util-mode-button"
-        onClick={this.toggleMode}
-      >
+        onClick={this.toggleMode}>
         {buttonIcon}
       </a>
     );
@@ -149,10 +147,10 @@ let AlignUtil = React.createClass({
       }
     }
 
-    let frame = new HistoryFrame(as);
-    frame.seal();
+    let frame = new HistoryFrame(as, 'Align');
 
-    this.props.editor.perform(frame);
+    this.props.editor.stageFrame(frame);
+    this.props.editor.commitFrame();
   },
 
   render() {

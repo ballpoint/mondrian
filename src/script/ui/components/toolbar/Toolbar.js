@@ -83,8 +83,6 @@ let Toolbar = React.createClass({
           'Boolean ' + op
         );
 
-        frame.seal;
-
         editor.stageFrame(frame);
         editor.commitFrame();
       }.bind(this);
