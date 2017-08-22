@@ -288,8 +288,6 @@ export default class TransformerUIElement extends UIElement {
           let scaleOrigin;
           let scaleMode;
 
-          console.log(which, this.startBounds);
-
           let { bounds, angle, center } = this.startBounds;
 
           if (e.altKey) {

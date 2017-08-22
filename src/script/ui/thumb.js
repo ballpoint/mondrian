@@ -19,16 +19,8 @@ export default class Thumb {
     let bounds = Bounds.fromBounds(boundsList);
     let maxWidth = this.opts.maxWidth || 100;
     let maxHeight = this.opts.maxHeight || 100;
-    let fb = bounds.fitToDimensions(maxWidth, maxHeight);
-    layer.setDimensions(fb.width, fb.height);
-    let x = scaleLinear()
-      .domain([bounds.x, bounds.width + bounds.x])
-      .range([0, fb.width]);
-    let y = scaleLinear()
-      .domain([bounds.y, bounds.height + bounds.y])
-      .range([0, fb.height]);
-    let z = fb.width / bounds.width;
-    this.projection = new Projection(x, y, z);
+    this.projection = Projection.forBoundsFit(bounds, maxWidth, maxHeight);
+    layer.setDimensions(this.projection.width, this.projection.height);
 
     for (let elem of this.elems) {
       elem.drawToCanvas(layer, layer.context, this.projection);

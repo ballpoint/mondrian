@@ -23,22 +23,31 @@ let ChildCtrlButton = React.createClass({
     if (this.props.disabled) return;
 
     let frame;
+    let label;
     switch (this.props.type) {
       case 'visibility':
-        frame = new HistoryFrame([
-          new actions.ToggleMetadataBoolAction({
-            indexes: [this.props.child.index],
-            key: 'visible'
-          })
-        ]);
+        label = this.props.child.metadata.visible ? 'Hide' : 'Show';
+        frame = new HistoryFrame(
+          [
+            new actions.ToggleMetadataBoolAction({
+              indexes: [this.props.child.index],
+              key: 'visible'
+            })
+          ],
+          label
+        );
         break;
       case 'lock':
-        frame = new HistoryFrame([
-          new actions.ToggleMetadataBoolAction({
-            indexes: [this.props.child.index],
-            key: 'locked'
-          })
-        ]);
+        label = this.props.child.metadata.locked ? 'Unlock' : 'Lock';
+        frame = new HistoryFrame(
+          [
+            new actions.ToggleMetadataBoolAction({
+              indexes: [this.props.child.index],
+              key: 'locked'
+            })
+          ],
+          label
+        );
         break;
       case 'delete':
         break;

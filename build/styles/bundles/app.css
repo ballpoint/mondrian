@@ -183,6 +183,18 @@ html {
               .sel-util .sel-util__main .sel-util__top .sel-util__thumb .sel-util__thumb__img .sel-util__thumb__origin-buttons .sel-util__thumb__origin-button.sel-util__thumb__origin-button--active {
                 border-color: #0072d1;
                 background-color: #66aae3; }
+        .sel-util .sel-util__main .sel-util__top .sel-util__thumb .sel-util__thumb__point-container {
+          position: relative;
+          padding: 5px; }
+          .sel-util .sel-util__main .sel-util__top .sel-util__thumb .sel-util__thumb__point-container .sel-util__thumb__point {
+            width: 6px;
+            height: 6px;
+            border-radius: 6px;
+            border: 1px solid #0072d1; }
+            .sel-util .sel-util__main .sel-util__top .sel-util__thumb .sel-util__thumb__point-container .sel-util__thumb__point.is-main {
+              width: 8px;
+              height: 8px;
+              border-radius: 8px; }
         .sel-util .sel-util__main .sel-util__top .sel-util__thumb .sel-util__thumb__height-bracket {
           position: absolute;
           top: 0;

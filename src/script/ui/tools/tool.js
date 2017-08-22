@@ -11,6 +11,8 @@ export default class Tool {
 
   handleMousedown(e, posn) {}
 
+  handleMouseup(e, posn) {}
+
   handleClick(e, posn) {}
 
   handleDragStart(e, posn, lastPosn) {}

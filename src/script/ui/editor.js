@@ -828,6 +828,12 @@ export default class Editor extends EventEmitter {
     this.stageFrame(frame);
   }
 
+  setDocDimens(width, height) {
+    this.doc.setDimens(width, height);
+    this.canvas.refreshAll();
+    this.trigger('change');
+  }
+
   stageFrame(frame) {
     this.doc.stageFrame(frame);
     this.calculateSelectionBounds();

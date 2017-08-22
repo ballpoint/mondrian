@@ -1,8 +1,10 @@
 import classnames from 'classnames';
+import Bounds from 'geometry/bounds';
 import Thumb from 'ui/thumb';
 import Layer from 'ui/layer';
 import 'utils/selection.scss';
 import Util from 'ui/components/utils/Util';
+import Projection from 'ui/projection';
 import TextInput from 'ui/components/utils/TextInput';
 
 const THUMB_IMG_MAX_WIDTH = 120;
@@ -90,6 +92,7 @@ let TransformUtil = React.createClass({
       }
       if (xd !== 0 || yd !== 0) {
         this.props.editor.nudgeSelected(xd, yd);
+        this.props.editor.commitFrame();
       }
     }
   },
@@ -139,6 +142,7 @@ let TransformUtil = React.createClass({
 
   renderThumb() {
     let { state, doc } = this.props.editor;
+    let bounds = state.selectionBounds.bounds;
 
     let img;
     let brackets;
@@ -154,6 +158,8 @@ let TransformUtil = React.createClass({
       return (
         <div className="sel-util__thumb">
           <div className="sel-util__thumb__img">
+            <div className="sel-util__thumb__height-bracket" />
+            <div className="sel-util__thumb__width-bracket" />
             <div
               className="sel-util__thumb__img--doc"
               style={{
@@ -185,12 +191,87 @@ let TransformUtil = React.createClass({
           </div>
         );
       } else if (state.selectionType === 'POINTS') {
+        // If we have more than one point, we draw their thumbnail
+        // Otherwise, we render point + handle circle controls
+
         return (
           <div className="sel-util__thumb">
-            <div className="sel-util__thumb__img" />
+            {this.renderPoints(state.selection)}
+
+            {bounds.height > 0
+              ? <div className="sel-util__thumb__height-bracket" />
+              : null}
+            {bounds.width > 0
+              ? <div className="sel-util__thumb__width-bracket" />
+              : null}
           </div>
         );
       }
+    }
+  },
+
+  renderPoints(points) {
+    let { state, doc } = this.props.editor;
+    let bounds = state.selectionBounds.bounds;
+
+    if (points.length === 1) {
+      let point = points[0];
+      let width = Math.max(bounds.width, 5);
+      let height = Math.max(bounds.height, 5);
+
+      let posns = [point];
+      if (point.pHandle) {
+        posns.push(point.pHandle);
+      }
+      if (point.sHandle) {
+        posns.push(point.sHandle);
+      }
+
+      let projection = Projection.forBoundsFit(
+        Bounds.fromPosns(posns),
+        THUMB_IMG_MAX_WIDTH,
+        THUMB_IMG_MAX_HEIGHT
+      );
+
+      console.log(projection.width, projection.height);
+
+      let mainHandle, pHandle, sHandle;
+
+      function drawPosn(posn, isMain = false) {
+        return (
+          <div
+            className={classnames({
+              'sel-util__thumb__point': true,
+              'is-main': isMain
+            })}
+            style={{
+              position: 'absolute',
+              left: projection.x(posn.x),
+              top: projection.y(posn.y)
+            }}
+          />
+        );
+      }
+
+      mainHandle = drawPosn(point, true);
+      if (point.pHandle) {
+        pHandle = drawPosn(point.pHandle);
+      }
+      if (point.sHandle) {
+        sHandle = drawPosn(point.sHandle);
+      }
+
+      return (
+        <div
+          className="sel-util__thumb__point-container"
+          style={{ width: projection.width, height: projection.height }}>
+          {pHandle}
+          {mainHandle}
+          {sHandle}
+        </div>
+      );
+    } else {
+      // lol
     }
   },
 
@@ -243,59 +324,83 @@ let TransformUtil = React.createClass({
       }
     }
 
-    return null;
+    return <div className="sel-util__coords"> </div>;
   },
 
   renderHeight() {
     let { state, doc } = this.props.editor;
     if (!doc) return;
 
-    if (state.selectionBounds) {
+    let value, onSubmit;
+
+    if (state.selection.length === 0) {
+      value = doc.height;
+
+      onSubmit = val => {
+        if (val > 0) {
+          this.props.editor.setDocDimens(doc.width, val);
+        }
+      };
+    } else if (state.selectionBounds) {
       let bounds = state.selectionBounds.bounds;
 
       if (bounds) {
-        return (
-          <div className="sel-util__height">
-            <div className="sel-util__height__input">
-              <TextInput
-                id="selection-h"
-                value={bounds.height}
-                onSubmit={val => {
-                  this.onChangeScale(val, 'h');
-                }}
-              />
-            </div>
-          </div>
-        );
+        onSubmit = val => {
+          this.onChangeScale(val, 'h');
+        };
+        value = bounds.height;
       }
     }
-    return null;
+
+    if (value === 0) {
+      return null;
+    }
+
+    return (
+      <div className="sel-util__height">
+        <div className="sel-util__height__input">
+          <TextInput id="selection-h" value={value} onSubmit={onSubmit} />
+        </div>
+      </div>
+    );
   },
 
   renderWidth() {
     let { state, doc } = this.props.editor;
     if (!doc) return;
 
-    if (state.selectionBounds) {
+    let value, onSubmit;
+
+    if (state.selection.length === 0) {
+      value = doc.width;
+
+      onSubmit = val => {
+        if (val > 0) {
+          this.props.editor.setDocDimens(val, doc.height);
+        }
+      };
+    } else if (state.selectionBounds) {
       let bounds = state.selectionBounds.bounds;
 
       if (bounds) {
-        return (
-          <div className="sel-util__width">
-            <div className="sel-util__width__input">
-              <TextInput
-                id="selection-w"
-                value={bounds.width}
-                onSubmit={val => {
-                  this.onChangeScale(val, 'w');
-                }}
-              />
-            </div>
-          </div>
-        );
+        onSubmit = val => {
+          this.onChangeScale(val, 'w');
+        };
+        value = bounds.width;
       }
     }
-    return null;
+
+    if (value === 0) {
+      return null;
+    }
+
+    return (
+      <div className="sel-util__width">
+        <div className="sel-util__width__input">
+          <TextInput id="selection-w" value={value} onSubmit={onSubmit} />
+        </div>
+      </div>
+    );
   },
 
   render() {

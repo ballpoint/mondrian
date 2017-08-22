@@ -21,10 +21,12 @@ export default class Ellipse extends Tool {
   handleClick(e, cursor) {}
 
   handleDragStart(e, cursor) {
+    console.log('drag start');
     this.index = this.editor.state.layer.nextChildIndex();
   }
 
   handleDrag(e, cursor) {
+    console.log('drag');
     let { posnCurrent, posnDown } = cursor;
     let rx, ry, cx, cy;
 

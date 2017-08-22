@@ -2,6 +2,7 @@ import Posn from 'geometry/posn';
 import Bounds from 'geometry/bounds';
 import LineSegment from 'geometry/line-segment';
 import CubicBezier from 'geometry/cubic-bezier-line-segment';
+import { scaleLinear } from 'd3-scale';
 import math from 'lib/math';
 
 export default class Projection {
@@ -16,6 +17,19 @@ export default class Projection {
     this.zInvert = n => {
       return n / zoomLevel;
     };
+  }
+
+  static forBoundsFit(bounds, width, height) {
+    let fb = bounds.fitToDimensions(width, height);
+    let x = scaleLinear()
+      .domain([bounds.x, bounds.width + bounds.x])
+      .range([0, fb.width]);
+    let y = scaleLinear()
+      .domain([bounds.y, bounds.height + bounds.y])
+      .range([0, fb.height]);
+    let z = fb.width / bounds.width;
+
+    return new Projection(x, y, z);
   }
 
   posn(posn) {
@@ -45,5 +59,13 @@ export default class Projection {
         this.posn(line.p4)
       );
     }
+  }
+
+  get width() {
+    return this.x.range()[1] - this.x.range()[0];
+  }
+
+  get height() {
+    return this.y.range()[1] - this.y.range()[0];
   }
 }

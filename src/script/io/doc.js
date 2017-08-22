@@ -21,11 +21,8 @@ const CHARSET = 'utf-8';
 export default class Doc {
   constructor(attrs) {
     this.layers = attrs.layers;
-    this.width = attrs.width;
-    this.height = attrs.height;
+    this.setDimens(attrs.width, attrs.height);
     this.name = attrs.name;
-
-    this.bounds = new Bounds(0, 0, this.width, this.height);
 
     this.cacheIndexes(this);
 
@@ -74,6 +71,12 @@ export default class Doc {
       height,
       name
     });
+  }
+
+  setDimens(w, h) {
+    this.width = w;
+    this.height = h;
+    this.bounds = new Bounds(0, 0, this.width, this.height);
   }
 
   clone() {
@@ -252,21 +255,6 @@ export default class Doc {
     }
 
     this.cacheIndexes(this);
-  }
-
-  removeItem(elem) {
-    let layer = this.getLayerWithElement(elem);
-    if (layer) {
-      layer.remove(elem);
-    }
-  }
-
-  getLayerWithElement(elem) {
-    for (let layer of this.layers) {
-      if (layer.children.indexOf(elem) !== -1) {
-        return layer;
-      }
-    }
   }
 
   center() {
