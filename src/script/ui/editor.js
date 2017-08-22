@@ -45,6 +45,19 @@ export default class Editor extends EventEmitter {
       this.initCanvas();
       this.initState();
     }
+
+    // Handle print view
+    this.on(
+      'change',
+      _.debounce(() => {
+        // TODO handle this only when going into print mode
+        // with cross-browser solution
+        let printView = document.getElementById('print-view');
+        if (printView) {
+          printView.innerHTML = this.doc.toSVG();
+        }
+      }, 1000)
+    );
   }
 
   load(doc) {
@@ -61,6 +74,8 @@ export default class Editor extends EventEmitter {
     this.trigger('change');
     this.trigger('change:doc');
   }
+
+  save() {}
 
   initCanvas() {
     this.canvas = new Canvas(this.root);

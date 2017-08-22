@@ -67,6 +67,15 @@ body#app {
       flex-grow: 1;
       height: 100%; }
 
+#print-view {
+  display: none; }
+
+@media print {
+  #app-main {
+    display: none; }
+  #print-view {
+    display: block; } }
+
 * {
   box-sizing: border-box; }
 
@@ -507,6 +516,16 @@ html {
       padding: 5px 10px;
       position: relative;
       display: flex; }
+      .app-menus-row .app-menu-body .app-menu-item a {
+        color: black;
+        text-decoration: none;
+        cursor: default; }
+        .app-menus-row .app-menu-body .app-menu-item a.menu-item__cover {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: 0;
+          right: 0; }
       .app-menus-row .app-menu-body .app-menu-item + .app-menu-item {
         border-top: 1px solid #bbc4c9; }
       .app-menus-row .app-menu-body .app-menu-item.disabled {

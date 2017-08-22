@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import 'menus.scss';
+import 'menus/menus.scss';
 
 let MenuItem = React.createClass({
   render() {
@@ -11,7 +11,7 @@ let MenuItem = React.createClass({
           [this.props.className]: true
         })}
         onClick={this.props.action}
-      >
+        href={this.props.href}>
         <div className="app-menu-item__label">
           {this.props.label || this.props.children}
         </div>

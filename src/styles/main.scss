@@ -1,6 +1,7 @@
 @import 'vars.scss';
 @import 'canvas.scss';
 @import 'ui.scss';
+@import 'print.scss';
 
 * {
   box-sizing: border-box;
@@ -9,5 +10,3 @@
 html {
   font-family: 'Roboto', sans-serif;
 }
-
-

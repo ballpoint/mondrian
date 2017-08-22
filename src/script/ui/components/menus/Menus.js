@@ -4,7 +4,7 @@ import FileMenu from 'ui/components/menus/FileMenu';
 import EditMenu from 'ui/components/menus/EditMenu';
 import ViewMenu from 'ui/components/menus/ViewMenu';
 import HistoryMenu from 'ui/components/menus/HistoryMenu';
-import 'menus.scss';
+import 'menus/menus.scss';
 
 const menus = [
   {

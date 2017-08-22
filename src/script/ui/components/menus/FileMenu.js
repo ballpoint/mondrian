@@ -1,7 +1,7 @@
 import MenuBody from 'ui/components/menus/MenuBody';
 import MenuItem from 'ui/components/menus/MenuItem';
 import Doc from 'io/doc';
-import 'menus.scss';
+import 'menus/menus.scss';
 import 'menus/file-menu.scss';
 
 let FileMenu = React.createClass({
@@ -28,14 +28,27 @@ let FileMenu = React.createClass({
     }
   },
 
+  docSVGHref() {
+    return (
+      'data:image/svg+xml;charset=utf-8;base64,' +
+      btoa(this.props.editor.doc.toSVG())
+    );
+  },
+
   render() {
     return (
       <MenuBody
         absoluteTop={this.props.absoluteTop}
-        absoluteLeft={this.props.absoluteLeft}
-      >
+        absoluteLeft={this.props.absoluteLeft}>
         <MenuItem label="New" />
-        <MenuItem label="Save" />
+        <MenuItem>
+          <a
+            className="menu-item__cover"
+            href={this.docSVGHref()}
+            download={this.props.editor.doc.name}
+          />
+          Save
+        </MenuItem>
         <MenuItem className="menu-item--file-input">
           <input ref="fileInput" type="file" onChange={this.openFile} />
           Open

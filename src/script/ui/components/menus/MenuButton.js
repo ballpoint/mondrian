@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import 'menus.scss';
+import 'menus/menus.scss';
 
 let MenuButton = React.createClass({
   render() {
@@ -10,8 +10,7 @@ let MenuButton = React.createClass({
           active: this.props.active
         })}
         onClick={this.props.onClick}
-        onMouseEnter={this.props.onMouseEnter}
-      >
+        onMouseEnter={this.props.onMouseEnter}>
         {this.props.name}
       </div>
     );
