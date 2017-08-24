@@ -2,6 +2,7 @@ import Posn from 'geometry/posn';
 import Index from 'geometry/index';
 import LineSegment from 'geometry/line-segment';
 import CubicBezier from 'geometry/cubic-bezier-line-segment';
+import a2c from 'lib/a2c';
 
 // PathPoint
 
@@ -68,7 +69,8 @@ export default class PathPoint extends Posn {
       curveTo: /C[^A-Za-z]+/i,
       smoothTo: /S[^A-Za-z]+/i,
       horizTo: /H[^A-Za-z]+/i,
-      vertiTo: /V[^A-Za-z]+/i
+      vertiTo: /V[^A-Za-z]+/i,
+      arcTo: /A[^A-Za-z]+/i
     };
 
     let lengths = {
@@ -77,7 +79,8 @@ export default class PathPoint extends Posn {
       curveTo: 6,
       smoothTo: 4,
       horizTo: 1,
-      vertiTo: 1
+      vertiTo: 1,
+      arcTo: 7
     };
 
     let pairs = /[-+]?\d*\.?\d*(e\-)?\d*/g;
@@ -107,7 +110,7 @@ export default class PathPoint extends Posn {
           .filter(p => p.length > 0)
           .map(parseFloat);
 
-        let relative = string.substring(0, 1).match(/[mlcshv]/) !== null;
+        let relative = string.substring(0, 1).match(/[amlcshv]/) !== null;
 
         //
         //TODO debug with chipotle logo
@@ -131,6 +134,40 @@ export default class PathPoint extends Posn {
             asc ? i++ : i--
           ) {
             let set = coords.slice(sliceAt, sliceAt + elen);
+
+            if (key === 'arcTo') {
+              if (relative) {
+                // arcTo is weird, because most of the numbers are not x,y coordinates;
+                // The last two numbers are the x,y.
+                set[5] += prec.x;
+                set[6] += prec.y;
+                relative = false;
+              }
+
+              console.log(set);
+
+              let curves = a2c({
+                px: prec.x,
+                py: prec.y,
+                cx: set[5],
+                cy: set[6],
+                rx: set[0],
+                ry: set[1],
+                xAxisRotation: set[2],
+                largeArcFlag: set[3],
+                sweepFlag: set[4]
+              });
+
+              set = [];
+
+              for (let c of curves) {
+                set = set.concat([c.x1, c.y1, c.x2, c.y2, c.x, c.y]);
+              }
+
+              console.log(string, set, curves);
+
+              key = 'curveTo';
+            }
 
             // Never represent points as relative internally
             if (relative) {
@@ -158,6 +195,10 @@ export default class PathPoint extends Posn {
             }
 
             let values = set;
+
+            if (key === 'arcTo') {
+              console.log(set, string);
+            }
 
             if (values.join(' ').mentions('NaN')) {
               debugger;

@@ -12,7 +12,6 @@ let FileMenu = React.createClass({
     if (files) {
       let reader = new FileReader();
       let fn = files[0].name;
-      console.log(files);
 
       reader.onload = e => {
         let text = e.target.result;
@@ -49,7 +48,7 @@ let FileMenu = React.createClass({
           />
           Save
         </MenuItem>
-        <MenuItem className="menu-item--file-input">
+        <MenuItem className="menu-item--file-input" hotkey="Ctrl-O">
           <input ref="fileInput" type="file" onChange={this.openFile} />
           Open
         </MenuItem>
