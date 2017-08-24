@@ -2,31 +2,38 @@ import * as tools from 'ui/tools/tools';
 import classnames from 'classnames';
 import 'tools/tools.scss';
 import CurrentColors from 'ui/components/tools/CurrentColors';
+import icons from 'ui/components/icons';
 
 const config = [
   {
     label: 'Cursor',
-    constructor: tools.Cursor
+    constructor: tools.Cursor,
+    icon: icons.cursor
   },
   {
     label: 'Subcursor',
-    constructor: tools.SubCursor
+    constructor: tools.SubCursor,
+    icon: icons.cursor
   },
   {
     label: 'Zoom',
-    constructor: tools.Zoom
+    constructor: tools.Zoom,
+    icon: icons.zoom
   },
   {
     label: 'Pen',
-    constructor: tools.Pen
+    constructor: tools.Pen,
+    icon: icons.pen
   },
   {
     label: 'Rect',
-    constructor: tools.Rect
+    constructor: tools.Rect,
+    icon: icons.rect
   },
   {
     label: 'Ellipse',
-    constructor: tools.Ellipse
+    constructor: tools.Ellipse,
+    icon: icons.ellipse
   }
 ];
 
@@ -58,7 +65,7 @@ let Tools = React.createClass({
             this.state.selected &&
             this.props.editor.state.tool.constructor === t.constructor;
           return (
-            <div
+            <a
               className={classnames({
                 'app-tool': true,
                 selected: isSelected
@@ -67,9 +74,10 @@ let Tools = React.createClass({
                 this.props.editor.selectTool(
                   new t.constructor(this.props.editor)
                 );
-              }}>
-              {t.label}
-            </div>
+              }}
+              dangerouslySetInnerHTML={{ __html: t.icon || icons.todo }}
+              title={t.label}
+            />
           );
         })}
 

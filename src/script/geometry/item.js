@@ -134,24 +134,46 @@ export default class Item {
   }
 
   setStrokeWidth(val) {
-    return (this.data['stroke-width'] = val);
+    this.data['stroke-width'] = val;
+  }
+
+  setStrokeLineCap(val) {
+    this.data['stroke-linecap'] = val;
+  }
+
+  setStrokeLineJoin(val) {
+    this.data['stroke-linejoin'] = val;
   }
 
   finishToCanvas(context, projection) {
+    let fill = 'black';
     if (this.data.fill) {
-      context.fillStyle = this.data.fill.toRGBString();
+      fill = this.data.fill.toRGBString();
+    }
+    if (fill && fill !== 'none') {
+      context.fillStyle = fill;
       context.fill();
     }
 
     if (this.data.stroke) {
       context.strokeStyle = this.data.stroke.toRGBString();
-      let lw = 1;
+      let lineWidth = 1;
+      let lineCap = 'butt'; // lol
+      let lineJoin = 'miter';
       if (this.data['stroke-width'] !== undefined) {
-        lw = parseFloat(this.data['stroke-width']);
+        lineWidth = parseFloat(this.data['stroke-width']);
+      }
+      if (this.data['stroke-linecap'] !== undefined) {
+        lineCap = this.data['stroke-linecap'];
+      }
+      if (this.data['stroke-linejoin'] !== undefined) {
+        lineJoin = this.data['stroke-linejoin'];
       }
 
-      if (lw !== 0) {
-        context.lineWidth = projection.z(lw);
+      if (lineWidth !== 0) {
+        context.lineWidth = projection.z(lineWidth);
+        context.lineCap = lineCap;
+        context.lineJoin = lineJoin;
         context.stroke();
       }
     }

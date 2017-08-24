@@ -437,14 +437,20 @@ html {
   border-right: 1px solid #b2b2b2;
   font-size: 14px; }
   #app-tools .app-tool {
+    display: block;
     width: 100%;
-    padding: 10px;
+    padding: 6px 0;
     border-bottom: 1px solid #bbc4c9;
     cursor: default; }
-    #app-tools .app-tool.selected {
+    #app-tools .app-tool svg {
+      stroke: black;
+      fill: white;
+      margin: 0 auto;
+      display: block; }
+    #app-tools .app-tool.selected, #app-tools .app-tool:hover {
       color: #0072d1; }
-    #app-tools .app-tool:hover {
-      color: #0072d1; }
+      #app-tools .app-tool.selected svg, #app-tools .app-tool:hover svg {
+        stroke: #0072d1 !important; }
     #app-tools .app-tool:active {
       background-color: #f2f2f2; }
   #app-tools #current-colors {

@@ -82,20 +82,30 @@ export default class Path extends Item {
   }
 
   static polyline(data) {
-    let segment = new PointsSegment(
-      data.points
-        .split(' ')
-        .filter(p => {
-          return p !== '';
-        })
-        .map((p, i) => {
-          let parts = p.split(',');
-          let x = parseFloat(parts[0]);
-          let y = parseFloat(parts[1]);
-          return new PathPoint(x, y);
-        })
-    );
+    let points = [];
 
+    let rawPoints = data.points.split(/[\ ,]/).filter(p => {
+      return p !== '';
+    });
+
+    for (let i = 0; i < rawPoints.length; i += 2) {
+      let x = parseFloat(rawPoints[i]);
+      let y = parseFloat(rawPoints[i + 1]);
+      points.push(new PathPoint(x, y));
+    }
+
+    let segment = new PointsSegment(points);
+    data.d = new PointsList([segment]);
+    delete data.points;
+
+    return new Path(data);
+  }
+
+  static line(data) {
+    let segment = new PointsSegment([
+      new PathPoint(data.x1, data.y1),
+      new PathPoint(data.x2, data.y2)
+    ]);
     data.d = new PointsList([segment]);
     delete data.points;
 

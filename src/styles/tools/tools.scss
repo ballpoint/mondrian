@@ -7,18 +7,27 @@
   font-size: 14px;
 
   .app-tool {
+    display: block;
     width: 100%;
-    padding: 10px;
+    padding: 6px 0;
     border-bottom: 1px solid $blue-grey;
     cursor: default;
 
-    &.selected {
-      color: $blue;
+    svg {
+      stroke: black;
+      fill: white;
+      margin: 0 auto;
+      display: block;
     }
 
+    &.selected,
     &:hover {
       color: $blue;
+      svg {
+        stroke: $blue !important;
+      }
     }
+
     &:active {
       background-color: $bg-grey;
     }
@@ -29,12 +38,9 @@
   #current-colors {
     margin: $color-swatch-margin;
 
-
     .color-indicator {
       width: $app-toolbar-width - ($color-swatch-margin*2);
       height: $app-toolbar-width - ($color-swatch-margin*2);
     }
   }
 }
-
-

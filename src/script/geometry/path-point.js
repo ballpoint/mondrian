@@ -144,8 +144,6 @@ export default class PathPoint extends Posn {
                 relative = false;
               }
 
-              console.log(set);
-
               let curves = a2c({
                 px: prec.x,
                 py: prec.y,
@@ -163,8 +161,6 @@ export default class PathPoint extends Posn {
               for (let c of curves) {
                 set = set.concat([c.x1, c.y1, c.x2, c.y2, c.x, c.y]);
               }
-
-              console.log(string, set, curves);
 
               key = 'curveTo';
             }

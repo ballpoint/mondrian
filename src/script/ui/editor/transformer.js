@@ -1,10 +1,13 @@
 import consts from 'consts';
+import math from 'lib/math';
 import Posn from 'geometry/posn';
 import LineSegment from 'geometry/line-segment';
 import Bounds from 'geometry/bounds';
 import Circle from 'geometry/circle';
 import Element from 'ui/element';
 import UIElement from 'ui/editor/ui_element';
+import snapping from 'lib/snapping';
+import { degs_45 } from 'lib/snapping';
 
 const CTRL_PT_DIMEN = 7;
 
@@ -345,14 +348,22 @@ export default class TransformerUIElement extends UIElement {
           let flipX = resultBounds.flipped('x') != bounds.flipped('x');
           let flipY = resultBounds.flipped('y') != bounds.flipped('y');
 
-          let xScale = 1,
-            yScale = 1;
+          let xScale = 1;
+          let yScale = 1;
 
           if (resultBounds.height !== bounds.height) {
             yScale = 1 + (resultBounds.height - bounds.height) / bounds.height;
           }
           if (resultBounds.width !== bounds.width) {
             xScale = 1 + (resultBounds.width - bounds.width) / bounds.width;
+          }
+
+          if (e.shiftKey) {
+            if (xScale > yScale) {
+              xScale = yScale;
+            } else if (yScale > xScale) {
+              yScale = xScale;
+            }
           }
 
           if (xScale !== 1 || yScale !== 1) {
@@ -426,10 +437,17 @@ export default class TransformerUIElement extends UIElement {
         e.stopPropagation();
         let center = this.editor.state.selectionBounds.center;
 
+        let posn = cursor.posnCurrent;
+        if (e.shiftKey) {
+          posn = snapping.toDegs(cursor.posnDown, posn, degs_45);
+        }
+
         let lineBefore = new LineSegment(cursor.posnDown, center);
         let lineAfter = new LineSegment(cursor.posnCurrent, center);
 
         let angleDelta = lineAfter.angle360 - lineBefore.angle360;
+
+        angleDelta = math.roundTo(angleDelta, 45);
 
         this.editor.rotateSelected(angleDelta, center);
       },

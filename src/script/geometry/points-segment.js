@@ -244,7 +244,11 @@ export default class PointsSegment {
   }
 
   lineSegments() {
-    return this.points
+    let points = this.points;
+    if (!this.closed) {
+      points = points.slice(1);
+    }
+    return points
       .map(p => {
         return p.toLineSegment();
       })

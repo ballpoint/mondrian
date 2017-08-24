@@ -4,6 +4,8 @@ import Tool from 'ui/tools/tool';
 import Bounds from 'geometry/bounds';
 import Circle from 'geometry/circle';
 import Posn from 'geometry/posn';
+import snapping from 'lib/snapping';
+import { degs_45_90 } from 'lib/snapping';
 
 export default class Cursor extends Tool {
   constructor(editor) {
@@ -127,6 +129,8 @@ export default class Cursor extends Tool {
       // Commit ongoing nudge
       this.editor.doc.history.commitFrame();
     }
+
+    delete this.annotation;
   }
 
   refresh(layer, context) {
@@ -159,53 +163,14 @@ export default class Cursor extends Tool {
     let posn = cursor.posnCurrent;
 
     if (e.shiftKey) {
-      // Snap to 45 deg
-      let a = posn.angle360(cursor.posnDown);
+      posn = snapping.toDegs(cursor.posnDown, posn, degs_45_90);
 
-      for (let as = 0; as < 360; as += 45) {
-        let min = as - 45 / 2;
-        let max = as + 45 / 2;
+      let delta = posn.delta(cursor.posnDown);
 
-        let matches = false;
-        if (min < 0 && a >= 360 - 45) {
-          matches = a - 360 > min && a - 360 < max;
-        } else {
-          matches = a > min && a < max;
-        }
-
-        if (matches) {
-          // Found the correct snapping angle
-          switch (as) {
-            case 0:
-            case 180:
-              posn.x = cursor.posnDown.x;
-              break;
-            case 90:
-            case 270:
-              posn.y = cursor.posnDown.y;
-              break;
-            default:
-              let d = posn.distanceFrom(cursor.posnDown);
-              let xp = cursor.posnDown
-                .clone()
-                .nudge(0, -d * 2)
-                .rotate(as, cursor.posnDown);
-              let xls = new LineSegment(cursor.posnDown, xp);
-              posn = xls.closestPosn(posn);
-          }
-
-          let delta = posn.delta(cursor.posnDown);
-
-          this.annotation = {
-            type: 'line',
-            delta
-          };
-
-          return posn;
-
-          break;
-        }
-      }
+      this.annotation = {
+        type: 'line',
+        delta
+      };
     }
 
     return posn;

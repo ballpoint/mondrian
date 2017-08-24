@@ -114,6 +114,7 @@ let TransformUtil = React.createClass({
       }
       if (xs !== 1 || ys !== 1) {
         this.props.editor.scaleSelected(xs, ys, origin);
+        this.props.editor.commitFrame();
       }
     }
   },

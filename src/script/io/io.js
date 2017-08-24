@@ -118,52 +118,61 @@ let io = {
   },
 
   applyStyles(node, elem) {
-    let styles = node.getAttribute('style');
-    if (!styles) return;
-
     let blacklist = ['display', 'transform'];
 
-    styles = styles.split(';');
-    for (let style of Array.from(styles)) {
-      if (style.strip() === '') continue;
+    for (let attr of node.attributes) {
+      let key = attr.name;
+      let val = attr.value;
 
-      style = style.split(':');
-      let key = style[0].strip();
-      let val = style[1].strip();
+      if (key === 'style') {
+        let styles = val.split(';');
+        for (let style of styles) {
+          if (style.strip() === '') continue;
 
-      if (blacklist.has(key)) continue;
+          style = style.split(':');
+          let key = style[0].strip();
+          let val = style[1].strip();
 
-      switch (key) {
-        case 'fill':
-          elem.setFill(val);
-          break;
-        case 'stroke':
-          elem.setStroke(val);
-          break;
-        case 'stroke-width':
-          elem.setStrokeWidth(val);
-          break;
-        default:
-          //console.warn('TODO handle style', key, val);
-          break;
+          if (blacklist.has(key)) continue;
+
+          this.applyStyle(elem, key, val);
+        }
+      } else {
+        this.applyStyle(elem, key, val);
       }
     }
   },
 
-  applyRootAttrs(root, elems) {
-    let keys = ['fill', 'stroke'];
+  applyStyle(elem, key, val) {
+    switch (key) {
+      case 'fill':
+        elem.setFill(val);
+        break;
+      case 'stroke':
+        elem.setStroke(val);
+        break;
+      case 'stroke-width':
+        elem.setStrokeWidth(val);
+        break;
+      case 'stroke-linecap':
+        elem.setStrokeLineCap(val);
+        break;
+      case 'stroke-linejoin':
+        elem.setStrokeLineJoin(val);
+        break;
+      default:
+        //console.warn('TODO handle style', key, val);
+        break;
+    }
+  },
 
-    for (let key of keys) {
-      let val = root.getAttribute(key);
-      if (val) {
-        switch (key) {
-          case 'fill':
-            for (let elem of elems) elem.setFill(val);
-            break;
-          case 'stroke':
-            for (let elem of elems) elem.setStroke(val);
-            break;
-        }
+  applyRootAttrs(root, elems) {
+    for (let attr of root.attributes) {
+      let key = attr.name;
+      let val = attr.value;
+
+      for (let elem of elems) {
+        this.applyStyle(elem, key, val);
       }
     }
   },
@@ -197,6 +206,9 @@ let io = {
         break;
       case 'polyline':
         result = Path.polyline(data);
+        break;
+      case 'line':
+        result = Path.line(data);
         break;
       case 'polygon':
         result = Path.polygon(data);

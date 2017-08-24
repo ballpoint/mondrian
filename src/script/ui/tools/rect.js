@@ -2,6 +2,8 @@ import Tool from 'ui/tools/tool';
 import Path from 'geometry/path';
 import HistoryFrame from 'history/Frame';
 import * as actions from 'history/actions/actions';
+import snapping from 'lib/snapping';
+import { degs_45 } from 'lib/snapping';
 
 export default class Rect extends Tool {
   constructor(editor) {
@@ -26,6 +28,13 @@ export default class Rect extends Tool {
 
   handleDrag(e, cursor) {
     let { posnCurrent, posnDown } = cursor;
+
+    posnCurrent = posnCurrent.clone();
+
+    if (e.shiftKey) {
+      posnCurrent = snapping.toDegs(posnDown, posnCurrent, degs_45);
+    }
+
     let x = Math.min(posnCurrent.x, posnDown.x);
     let y = Math.min(posnCurrent.y, posnDown.y);
     let width = Math.abs(posnCurrent.x - posnDown.x);
