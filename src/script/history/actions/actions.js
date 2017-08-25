@@ -228,9 +228,7 @@ export class DeleteAction extends HistoryAction {
 export class ShiftSegmentAction extends HistoryAction {
   perform(doc) {
     let segment = doc.getFromIndex(this.data.index);
-    console.log(segment);
     segment.shift(this.data.n);
-
     doc.cacheIndexes();
   }
 

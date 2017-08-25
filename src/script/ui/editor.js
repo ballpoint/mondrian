@@ -532,8 +532,6 @@ export default class Editor extends EventEmitter {
           let point = selection[i];
           let index = point.index;
 
-          console.log('DEL', index.toString());
-
           let segmentIndex = index.parent;
           let segment = this.doc.getFromIndex(segmentIndex);
           let path = this.doc.getFromIndex(segmentIndex.parent);
@@ -557,7 +555,6 @@ export default class Editor extends EventEmitter {
             as.push(actions.SplitSegmentAction.forPoint(this.doc, point));
           }
           frame = new HistoryFrame(as.slice(0), 'Remove points');
-          console.log('stage', frame.actions.length);
           this.stageFrame(frame);
         }
     }
