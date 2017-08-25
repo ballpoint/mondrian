@@ -108,6 +108,7 @@ export default class CursorTracking extends EventEmitter {
       e.preventDefault();
 
       // Set tracking variables
+      this.currentPosn = this._posnForEvent(e);
       this.down = true;
       this.lastDown = this._posnForEvent(e);
       this.downEvent = e;

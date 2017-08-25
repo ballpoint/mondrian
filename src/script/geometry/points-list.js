@@ -221,6 +221,12 @@ export default class PointsList {
     this.replaceSegment(segment, newSegments);
   }
 
+  join(i1, i2) {
+    let joined = this.segments[i1].concat(this.segments[i2]);
+    this.segments[i1] = joined;
+    this.segments = this.segments.removeIndex(i2);
+  }
+
   filter(fun) {
     return this.all().filter(fun);
   }

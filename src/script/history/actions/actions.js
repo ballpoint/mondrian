@@ -230,6 +230,8 @@ export class ShiftSegmentAction extends HistoryAction {
     let segment = doc.getFromIndex(this.data.index);
     console.log(segment);
     segment.shift(this.data.n);
+
+    doc.cacheIndexes();
   }
 
   opposite() {
@@ -259,6 +261,50 @@ export class OpenSegmentAction extends HistoryAction {
 
   opposite() {
     return new CloseSegmentAction(this.data);
+  }
+}
+
+export class SplitSegmentAction extends HistoryAction {
+  static forPoint(doc, point) {
+    let segment = doc.getFromIndex(point.index.parent);
+    return new SplitSegmentAction({
+      splitIndex: point.index,
+      segIndexA: segment.index,
+      segIndexB: segment.index.plus(1)
+    });
+  }
+
+  perform(doc) {
+    let path = doc.getFromIndex(this.data.splitIndex.parent.parent);
+    path.points.split(
+      this.data.splitIndex.parent.last,
+      this.data.splitIndex.last
+    );
+  }
+
+  opposite() {
+    return new JoinSegmentsAction({
+      splitIndex: this.data.splitIndex,
+      segIndexA: this.data.segIndexA,
+      segIndexB: this.data.segIndexB
+    });
+  }
+}
+
+export class JoinSegmentsAction extends HistoryAction {
+  perform(doc) {
+    let pathIndex = this.data.splitIndex.parent.parent;
+    let path = doc.getFromIndex(pathIndex);
+
+    path.points.join(this.data.segIndexA.last, this.data.segIndexB.last);
+  }
+
+  opposite() {
+    return new SplitSegmentAction({
+      splitIndex: this.data.splitIndex,
+      segIndexA: this.data.segIndexA,
+      segIndexB: this.data.segIndexB
+    });
   }
 }
 

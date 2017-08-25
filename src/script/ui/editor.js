@@ -524,13 +524,15 @@ export default class Editor extends EventEmitter {
       case 'POINTS':
         // If we're removing points that's harder. We have to open and split
         // PointsSegments to handle this properly.
-        frame = new HistoryFrame([], 'Remove points');
-
         let selection = this.state.selection.slice(0);
+
+        let as = [];
 
         for (let i = 0; i < selection.length; i++) {
           let point = selection[i];
           let index = point.index;
+
+          console.log('DEL', index.toString());
 
           let segmentIndex = index.parent;
           let segment = this.doc.getFromIndex(segmentIndex);
@@ -538,23 +540,25 @@ export default class Editor extends EventEmitter {
 
           if (segment.closed) {
             // If we have a closed segment, we just remove the point and open it
-            frame.push(actions.DeleteAction.forItems([point]));
-            frame.push(
+            as.push(actions.DeleteAction.forItems([point]));
+            as.push(
               new actions.ShiftSegmentAction({
                 index: segmentIndex,
                 n: index.last
               })
             );
 
-            frame.push(new actions.OpenSegmentAction({ index: segmentIndex }));
-
-            this.stageFrame(frame);
+            as.push(new actions.OpenSegmentAction({ index: segmentIndex }));
+          } else if (point === segment.first || point === segment.last) {
+            as.push(actions.DeleteAction.forItems([point]));
           } else {
-            frame.push(actions.DeleteAction.forItems([point]));
             // If the segment is already open, we split it into two segments
-            segment.remove(point);
-            path.points.split(index.parent.last, index.last);
+            as.push(actions.DeleteAction.forItems([point]));
+            as.push(actions.SplitSegmentAction.forPoint(this.doc, point));
           }
+          frame = new HistoryFrame(as.slice(0), 'Remove points');
+          console.log('stage', frame.actions.length);
+          this.stageFrame(frame);
         }
     }
 

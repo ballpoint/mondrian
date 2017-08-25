@@ -233,6 +233,13 @@ export default class PointsSegment {
     this.points = this.points.slice(n).concat(this.points.slice(0, n));
   }
 
+  concat(seg) {
+    let r = new PointsSegment(this.points.concat(seg.points));
+    r.relink();
+    r.list = this.list;
+    return r;
+  }
+
   fixLinks() {
     this.first.prec = this.last;
     this.last.succ = this.first;
