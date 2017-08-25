@@ -120,6 +120,8 @@ export default class CursorTracking extends EventEmitter {
   }
 
   _mouseup(e) {
+    if (!this.down) return;
+
     this.trigger('mouseup', e, this);
     // End dragging sequence if it was occurring
     if (this.dragging && !this.draggingJustBegan) {
