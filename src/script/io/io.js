@@ -272,6 +272,15 @@ let io = {
         elem.setAttribute(key, item.data[key]);
       }
       return elem;
+    } else if (item instanceof Group) {
+      let g = this.createSVGElement('g');
+      for (let child of item.children) {
+        let childElem = this.itemToElement(child);
+        if (childElem) {
+          g.appendChild(childElem);
+        }
+      }
+      return g;
     } else {
       console.warn('Cannot transform to element:', item);
     }

@@ -241,7 +241,12 @@ export default class Editor extends EventEmitter {
 
     hotkeys.on('down', 'ctrl-S', e => {
       e.preventDefault();
-      console.log('save lol');
+      this.trigger('hotkey:save');
+    });
+
+    hotkeys.on('down', 'ctrl-E', e => {
+      e.preventDefault();
+      this.trigger('hotkey:export');
     });
 
     hotkeys.on('down', '1', () => {
@@ -438,6 +443,10 @@ export default class Editor extends EventEmitter {
     this.canvas.refreshAll();
   }
 
+  hasSelection() {
+    return this.state.selection.length > 0;
+  }
+
   setHovering(items) {
     let oldHovering = this.state.hovering;
     this.state.hovering = items;
@@ -491,7 +500,7 @@ export default class Editor extends EventEmitter {
   }
 
   deleteSelection() {
-    if (this.state.selection.length === 0) {
+    if (!this.hasSelection()) {
       return;
     }
 
@@ -578,7 +587,7 @@ export default class Editor extends EventEmitter {
   }
 
   groupSelection() {
-    if (this.state.selection.length === 0) return;
+    if (!this.hasSelection()) return;
 
     let frame = new HistoryFrame([
       actions.GroupAction.forChildren(this.doc, this.state.selection)
@@ -623,7 +632,7 @@ export default class Editor extends EventEmitter {
 
     this.updateSelection();
 
-    if (this.state.selection.length > 0) {
+    if (this.hasSelection()) {
       let bounds;
       let angle = 0;
       let center;
@@ -782,7 +791,7 @@ export default class Editor extends EventEmitter {
   }
 
   nudgeSelected(xd, yd) {
-    if (this.state.selection.length === 0) {
+    if (!this.hasSelection()) {
       return;
     }
 
@@ -798,7 +807,7 @@ export default class Editor extends EventEmitter {
   }
 
   nudgeHandle(index, handle, xd, yd) {
-    if (this.state.selection.length === 0) {
+    if (!this.hasSelection()) {
       return;
     }
 
@@ -815,7 +824,7 @@ export default class Editor extends EventEmitter {
   }
 
   scaleSelected(x, y, origin) {
-    if (this.state.selection.length === 0) {
+    if (!this.hasSelection()) {
       return;
     }
 
@@ -832,7 +841,7 @@ export default class Editor extends EventEmitter {
   }
 
   rotateSelected(angle, origin) {
-    if (this.state.selection.length === 0) {
+    if (!this.hasSelection()) {
       return;
     }
 

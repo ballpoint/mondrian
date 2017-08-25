@@ -447,7 +447,9 @@ export default class TransformerUIElement extends UIElement {
 
         let angleDelta = lineAfter.angle360 - lineBefore.angle360;
 
-        angleDelta = math.roundTo(angleDelta, 45);
+        if (e.shiftKey) {
+          angleDelta = math.roundTo(angleDelta, 45);
+        }
 
         this.editor.rotateSelected(angleDelta, center);
       },

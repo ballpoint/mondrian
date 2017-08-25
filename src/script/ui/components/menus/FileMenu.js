@@ -39,19 +39,24 @@ let FileMenu = React.createClass({
       <MenuBody
         absoluteTop={this.props.absoluteTop}
         absoluteLeft={this.props.absoluteLeft}>
-        <MenuItem label="New" />
-        <MenuItem>
+        <MenuItem label="New" hotkey="Ctrl-N" />
+
+        <MenuItem className="menu-item--file-input" hotkey="Ctrl-O">
+          <input ref="fileInput" type="file" onChange={this.openFile} />
+          Open...
+        </MenuItem>
+
+        <MenuItem hotkey="Ctrl-S">
           <a
             className="menu-item__cover"
+            ref="downloadAnchor"
             href={this.docSVGHref()}
             download={this.props.editor.doc.name}
           />
-          Save
+          Save as SVG
         </MenuItem>
-        <MenuItem className="menu-item--file-input" hotkey="Ctrl-O">
-          <input ref="fileInput" type="file" onChange={this.openFile} />
-          Open
-        </MenuItem>
+
+        <MenuItem hotkey="Ctrl-E">Save as PNG</MenuItem>
       </MenuBody>
     );
   }

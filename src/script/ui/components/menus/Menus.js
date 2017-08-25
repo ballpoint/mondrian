@@ -57,6 +57,18 @@ let Menus = React.createClass({
         }
       }, 100);
     });
+
+    this.props.editor.on('hotkey:save', e => {
+      this.activateMenu(fileMenu);
+      setTimeout(() => {
+        let anchorNode = ReactDOM.findDOMNode(
+          this.refs.activeMenu.refs.downloadAnchor
+        );
+        if (anchorNode) {
+          anchorNode.click();
+        }
+      }, 100);
+    });
   },
 
   closeActive() {
