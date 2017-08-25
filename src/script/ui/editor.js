@@ -20,7 +20,7 @@ import HistoryFrame from 'history/Frame';
 import * as actions from 'history/actions/actions';
 
 import Projection from 'ui/projection';
-import hotkeys from 'ui/hotkeys';
+import HotkeyTracking from 'ui/hotkeys';
 import Bounds from 'geometry/bounds';
 import Element from 'ui/element';
 import CursorTracking from 'ui/cursor-tracking';
@@ -164,6 +164,8 @@ export default class Editor extends EventEmitter {
         this.nudge(0, this.projection.zInvert(delta));
       }
     });
+
+    let hotkeys = new HotkeyTracking();
 
     hotkeys.on('down', 'downArrow', () => {
       this.nudgeSelected(0, 1);

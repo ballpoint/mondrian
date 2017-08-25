@@ -40,6 +40,13 @@ export default class Rect extends Tool {
     let width = Math.abs(posnCurrent.x - posnDown.x);
     let height = Math.abs(posnCurrent.y - posnDown.y);
 
+    if (e.altKey) {
+      x -= width;
+      y -= height;
+      width *= 2;
+      height *= 2;
+    }
+
     this.rect = Path.rectangle({
       x,
       y,
