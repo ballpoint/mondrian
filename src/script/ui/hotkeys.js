@@ -2,8 +2,9 @@ import Range from 'geometry/range';
 import EventEmitter from 'lib/events';
 
 const ACCEPTED = [
-  new Range(9, 9), // Enter
+  new Range(8, 9), // Backspace, Enter
   new Range(13, 13), // Enter
+  new Range(46, 46), // Delete
   new Range(65, 90), // a-z
   new Range(32, 32), // Space
   new Range(37, 40), // Arrow keys
@@ -13,6 +14,8 @@ const ACCEPTED = [
 ];
 
 const REMAPS = {
+  [8]: 'backspace',
+  [46]: 'delete',
   [13]: 'enter',
   [32]: 'space',
   [37]: 'leftArrow',
@@ -90,6 +93,10 @@ export default class HotkeyTracking extends EventEmitter {
 
   onKeydown(e) {
     let stroke = this.fullKeystrokeFor(e);
+    if (stroke === undefined) {
+      console.log(e.which);
+      return;
+    }
     this.handle('down', stroke, e);
   }
 
