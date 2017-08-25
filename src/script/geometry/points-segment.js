@@ -155,15 +155,16 @@ export default class PointsSegment {
         }
         // Remove last redundant point
         this.points = this.points.slice(0, this.points.length - 1);
-        this.closed = true;
       }
-
-      firstPoint = this.points[0];
-      lastPoint = this.points[this.points.length - 1];
     }
 
-    firstPoint.prec = lastPoint;
-    lastPoint.succ = firstPoint;
+    this.closed = true;
+
+    this.fixLinks();
+  }
+
+  open() {
+    this.closed = false;
   }
 
   get empty() {
@@ -197,7 +198,18 @@ export default class PointsSegment {
   }
 
   i(n) {
+    // TODO remove this shit i think?
     return this.points[n - this.points[0].i];
+  }
+
+  split(i) {
+    let segA = new PointsSegment(this.points.slice(0, i));
+    let segB = new PointsSegment(this.points.slice(i));
+
+    segA.fixLinks();
+    segB.fixLinks();
+
+    return [segA, segB];
   }
 
   remove(x) {
@@ -211,36 +223,19 @@ export default class PointsSegment {
     this.points = this.points.remove(x);
   }
 
-  replace(old, replacement) {
-    if (replacement instanceof Point) {
-      replacement.inheritPosition(old);
-      this.points = this.points.replace(old, replacement);
-    } else if (replacement instanceof Array) {
-      let replen = replacement.length;
-      let { i } = old;
-      let { prec } = old;
-      let { succ } = old;
-      old.succ.prec = replacement[replen - 1];
-      // Sus
-      for (let np of Array.from(replacement)) {
-        np.owner = this.owner;
+  shift(n) {
+    // Shifts beginning index forward n amount
+    // Before:
+    // a b c d e f g
+    // After shift(2):
+    // c d e f g a b
 
-        np.i = i;
-        np.prec = prec;
-        np.succ = succ;
-        prec.succ = np;
-        prec = np;
-        i += 1;
-      }
+    this.points = this.points.slice(n).concat(this.points.slice(0, n));
+  }
 
-      this.points = this.points.replace(old, replacement);
-
-      for (let p of Array.from(this.points.slice(i))) {
-        p.i += replen - 1;
-      }
-    }
-
-    return replacement;
+  fixLinks() {
+    this.first.prec = this.last;
+    this.last.succ = this.first;
   }
 
   lineSegments() {

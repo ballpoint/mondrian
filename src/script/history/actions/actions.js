@@ -191,6 +191,17 @@ export class DeleteAction extends HistoryAction {
     return 'Delete';
   }
 
+  static forItems(items) {
+    return new DeleteAction({
+      items: items.map(item => {
+        return {
+          index: item.index,
+          item
+        };
+      })
+    });
+  }
+
   constructor(data) {
     super(data);
 
@@ -211,6 +222,43 @@ export class DeleteAction extends HistoryAction {
 
   opposite() {
     return new InsertAction({ items: this.data.items });
+  }
+}
+
+export class ShiftSegmentAction extends HistoryAction {
+  perform(doc) {
+    let segment = doc.getFromIndex(this.data.index);
+    console.log(segment);
+    segment.shift(this.data.n);
+  }
+
+  opposite() {
+    return new ShiftSegmentAction({
+      index: this.data.index,
+      n: -this.data.n
+    });
+  }
+}
+
+export class CloseSegmentAction extends HistoryAction {
+  perform(doc) {
+    let segment = doc.getFromIndex(this.data.index);
+    segment.close();
+  }
+
+  opposite() {
+    return new OpenSegmentAction(this.data);
+  }
+}
+
+export class OpenSegmentAction extends HistoryAction {
+  perform(doc) {
+    let segment = doc.getFromIndex(this.data.index);
+    segment.open();
+  }
+
+  opposite() {
+    return new CloseSegmentAction(this.data);
   }
 }
 

@@ -13,7 +13,7 @@ import google from 'google.svg';
 import pioneer from 'Pioneer_plaque.svg';
 import bool from 'booltest/overlapcircle.svg';
 import tesla from 'Tesla_Motors.svg';
-import rects from 'rects.svg';
+import points from 'points.svg';
 import shoppingCart from 'shopping-cart.svg';
 import nikon from 'Nikon_Logo.svg';
 
@@ -52,5 +52,5 @@ ReactDOM.render(
   document.getElementById('app-toolbar')
 );
 
-let doc = Doc.fromSVG(rects, 'rects.svg');
+let doc = Doc.fromSVG(points, 'points.svg');
 editor.load(doc);

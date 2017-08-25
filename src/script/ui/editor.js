@@ -504,15 +504,62 @@ export default class Editor extends EventEmitter {
       return;
     }
 
-    let frame = new HistoryFrame([
-      new actions.DeleteAction({
-        items: this.state.selection.slice(0).map(item => {
-          return { item, index: item.index };
-        })
-      })
-    ]);
+    let frame;
 
-    this.perform(frame);
+    switch (this.state.selectionType) {
+      case 'ELEMENTS':
+        // Simple when removing elements; remove them whole
+        frame = new HistoryFrame(
+          [
+            new actions.DeleteAction({
+              items: this.state.selection.slice(0).map(item => {
+                return { item, index: item.index };
+              })
+            })
+          ],
+          'Remove elements'
+        );
+        this.stageFrame(frame);
+        break;
+      case 'POINTS':
+        // If we're removing points that's harder. We have to open and split
+        // PointsSegments to handle this properly.
+        frame = new HistoryFrame([], 'Remove points');
+
+        let selection = this.state.selection.slice(0);
+
+        for (let i = 0; i < selection.length; i++) {
+          let point = selection[i];
+          let index = point.index;
+
+          let segmentIndex = index.parent;
+          let segment = this.doc.getFromIndex(segmentIndex);
+          let path = this.doc.getFromIndex(segmentIndex.parent);
+
+          if (segment.closed) {
+            // If we have a closed segment, we just remove the point and open it
+            frame.push(actions.DeleteAction.forItems([point]));
+            frame.push(
+              new actions.ShiftSegmentAction({
+                index: segmentIndex,
+                n: index.last
+              })
+            );
+
+            frame.push(new actions.OpenSegmentAction({ index: segmentIndex }));
+
+            this.stageFrame(frame);
+          } else {
+            frame.push(actions.DeleteAction.forItems([point]));
+            // If the segment is already open, we split it into two segments
+            segment.remove(point);
+            path.points.split(index.parent.last, index.last);
+          }
+        }
+    }
+
+    this.setSelection([]);
+
     this.cleanUpEmptyItems(frame.actions[0]);
     this.commitFrame();
   }
@@ -712,6 +759,9 @@ export default class Editor extends EventEmitter {
         } else {
           return true;
         }
+      })
+      .sort((a, b) => {
+        return a.compare(b);
       });
   }
 

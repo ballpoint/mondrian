@@ -144,10 +144,6 @@ export default class PointsList {
     }
   }
 
-  replace(old, replacement) {
-    return this.segmentContaining(old).replace(old, replacement);
-  }
-
   reverse() {
     // Reverse the order of the points, while maintaining the exact same shape.
     return new PointsList([], this.segments.map(s => s.reverse()));
@@ -203,14 +199,30 @@ export default class PointsList {
     }
   }
 
-  filter(fun) {
-    return this.all().filter(fun);
+  replaceSegment(old, replacements) {
+    let i = this.segments.indexOf(old);
+    if (i === -1) return;
+
+    this.segments = this.segments
+      .slice(0, i)
+      .concat(replacements)
+      .concat(this.segments.slice(i + 1));
   }
 
-  filterSegments(fun) {
-    return this.segments.map(
-      segment => new PointsSegment(segment.points.filter(fun))
-    );
+  split(segmentIndex, pointIndex) {
+    // Given segment index and point index, split segment
+    // at that index and replace it with the result
+    let segment = this.segments[segmentIndex];
+    let newSegments = segment.split(pointIndex);
+
+    newSegments[0].list = this;
+    newSegments[1].list = this;
+
+    this.replaceSegment(segment, newSegments);
+  }
+
+  filter(fun) {
+    return this.all().filter(fun);
   }
 
   fetch(cl) {

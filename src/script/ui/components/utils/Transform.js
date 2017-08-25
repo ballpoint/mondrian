@@ -234,7 +234,7 @@ let TransformUtil = React.createClass({
         THUMB_IMG_MAX_HEIGHT
       );
 
-      console.log(projection.width, projection.height);
+      //console.log(projection.width, projection.height);
 
       let mainHandle, pHandle, sHandle;
 
