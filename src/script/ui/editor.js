@@ -264,10 +264,12 @@ export default class Editor extends EventEmitter {
       this.deleteSelection();
     });
 
-    hotkeys.on('down', 'ctrl-Z', () => {
+    hotkeys.on('down', 'ctrl-Z', e => {
+      e.preventDefault();
       this.undo();
     });
-    hotkeys.on('down', 'ctrl-shift-Z', () => {
+    hotkeys.on('down', 'ctrl-shift-Z', e => {
+      e.preventDefault();
       this.redo();
     });
 
@@ -846,7 +848,13 @@ export default class Editor extends EventEmitter {
   }
 
   setDocDimens(width, height) {
-    this.doc.setDimens(width, height);
+    let frame = new HistoryFrame([
+      actions.SetDocDimensionsAction.forDoc(this.doc, width, height)
+    ]);
+
+    this.stageFrame(frame);
+    this.commitFrame();
+
     this.canvas.refreshAll();
     this.trigger('change');
   }

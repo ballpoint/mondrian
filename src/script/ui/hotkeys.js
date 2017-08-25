@@ -54,6 +54,10 @@ export default class HotkeyTracking extends EventEmitter {
   }
 
   handle(direction, hotkey, e) {
+    if (e.target.nodeName.toLowerCase() === 'input') {
+      return;
+    }
+
     let handlers = this.listeners[direction][hotkey];
     if (handlers) {
       for (let h of handlers) {
@@ -62,19 +66,24 @@ export default class HotkeyTracking extends EventEmitter {
     }
   }
 
-  keystrokeFor(e) {
-    return REMAPS[e.which] || String.fromCharCode(e.which);
-  }
-
-  fullKeystrokeFor(e) {
+  whitelistedChar(e) {
     let accepted = false;
     for (let range of ACCEPTED) {
       if (range.containsInclusive(e.which)) {
         accepted = true;
       }
     }
+    return accepted;
+  }
 
-    if (!accepted) return;
+  keystrokeFor(e) {
+    if (!this.whitelistedChar(e)) return null;
+
+    return REMAPS[e.which] || String.fromCharCode(e.which);
+  }
+
+  fullKeystrokeFor(e) {
+    if (!this.whitelistedChar(e)) return null;
 
     let parts = [];
     if (e.ctrlKey || e.metaKey) {
@@ -97,6 +106,7 @@ export default class HotkeyTracking extends EventEmitter {
       console.log(e.which);
       return;
     }
+    console.log(stroke);
     this.handle('down', stroke, e);
   }
 

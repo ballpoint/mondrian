@@ -332,10 +332,6 @@ export class ToggleMetadataBoolAction extends HistoryAction {
     return 'Toggle Metadata';
   }
 
-  constructor(data) {
-    super(data);
-  }
-
   perform(doc) {
     for (let index of this.data.indexes) {
       let item = doc.getFromIndex(index);
@@ -346,5 +342,33 @@ export class ToggleMetadataBoolAction extends HistoryAction {
   opposite() {
     // This will inverse itself
     return this;
+  }
+}
+
+export class SetDocDimensionsAction extends HistoryAction {
+  get displayTitle() {
+    return 'Resize document';
+  }
+
+  static forDoc(doc, width, height) {
+    return new SetDocDimensionsAction({
+      width,
+      height,
+      prevWidth: doc.width,
+      prevHeight: doc.height
+    });
+  }
+
+  perform(doc) {
+    doc.setDimens(this.data.width, this.data.height);
+  }
+
+  opposite() {
+    return new SetDocDimensionsAction({
+      width: this.data.prevWidth,
+      height: this.data.prevHeight,
+      prevWidth: this.data.width,
+      prevHeight: this.data.height
+    });
   }
 }
