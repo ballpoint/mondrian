@@ -54,6 +54,11 @@ export default class Pen extends Tool {
     for (let elem of elemsToScan) {
       let points = elem.getPoints();
       for (let pt of points) {
+        let segment = pt.segment;
+        if ((!segment.closed && pt === segment.first) || pt === segment.last) {
+          // Check if we're close to opening or closing point
+        }
+
         let ls = pt.toLineSegment();
 
         let closestPosn = ls.closestPosn(posn);

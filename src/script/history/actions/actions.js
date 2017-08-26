@@ -262,46 +262,60 @@ export class OpenSegmentAction extends HistoryAction {
   }
 }
 
-export class SplitSegmentAction extends HistoryAction {
+export class SplitPathAction extends HistoryAction {
   static forPoint(doc, point) {
     let segment = doc.getFromIndex(point.index.parent);
-    return new SplitSegmentAction({
-      splitIndex: point.index,
-      segIndexA: segment.index,
-      segIndexB: segment.index.plus(1)
+    return new SplitPathAction({
+      splitIndex: point.index
     });
   }
 
   perform(doc) {
     let path = doc.getFromIndex(this.data.splitIndex.parent.parent);
-    path.points.split(
+
+    let pl = path.points.popSlice(
       this.data.splitIndex.parent.last,
       this.data.splitIndex.last
     );
+
+    let p2 = path.clone();
+    p2.setPoints(pl);
+
+    let pathParent = doc.getFromIndex(path.index.parent);
+    pathParent.insert(p2, path.index.last + 1);
+
+    doc.cacheIndexes();
   }
 
   opposite() {
-    return new JoinSegmentsAction({
-      splitIndex: this.data.splitIndex,
-      segIndexA: this.data.segIndexA,
-      segIndexB: this.data.segIndexB
+    return new UnsplitPathAction({
+      splitIndex: this.data.splitIndex
     });
   }
 }
 
-export class JoinSegmentsAction extends HistoryAction {
+export class UnsplitPathAction extends HistoryAction {
   perform(doc) {
     let pathIndex = this.data.splitIndex.parent.parent;
+    let newPathIndex = pathIndex.plus(1);
     let path = doc.getFromIndex(pathIndex);
+    let newPath = doc.getFromIndex(newPathIndex);
 
-    path.points.join(this.data.segIndexA.last, this.data.segIndexB.last);
+    // Append contents of newPath to the segment containing splitIndex
+
+    let segment = doc.getFromIndex(this.data.splitIndex.parent);
+
+    path.points.replaceSegment(
+      segment,
+      segment.concat(newPath.points.segments[0])
+    );
+
+    doc.removeIndexes([newPathIndex]);
   }
 
   opposite() {
-    return new SplitSegmentAction({
-      splitIndex: this.data.splitIndex,
-      segIndexA: this.data.segIndexA,
-      segIndexB: this.data.segIndexB
+    return new SplitPathAction({
+      splitIndex: this.data.splitIndex
     });
   }
 }

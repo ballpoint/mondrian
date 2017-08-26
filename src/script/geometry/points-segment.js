@@ -212,6 +212,20 @@ export default class PointsSegment {
     return [segA, segB];
   }
 
+  popSlice(i) {
+    // Removes & returns point slice starting at i
+    let slice = this.points.slice(i);
+    this.points = this.points.slice(0, i);
+
+    let newSeg = new PointsSegment(slice);
+    newSeg.list = this.list;
+
+    this.fixLinks();
+    newSeg.fixLinks();
+
+    return newSeg;
+  }
+
   remove(x) {
     if (x.prec) {
       // Relink things

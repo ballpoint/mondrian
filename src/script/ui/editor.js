@@ -552,7 +552,7 @@ export default class Editor extends EventEmitter {
           } else {
             // If the segment is already open, we split it into two segments
             as.push(actions.DeleteAction.forItems([point]));
-            as.push(actions.SplitSegmentAction.forPoint(this.doc, point));
+            as.push(actions.SplitPathAction.forPoint(this.doc, point));
           }
           frame = new HistoryFrame(as.slice(0), 'Remove points');
           this.stageFrame(frame);

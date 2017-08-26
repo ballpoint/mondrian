@@ -19,6 +19,11 @@ export default class Path extends Item {
     return 'path';
   }
 
+  setPoints(points) {
+    this.points = points;
+    points.path = this;
+  }
+
   // Constructors
   static rectangle(data) {
     let { x, y, width, height } = data;
