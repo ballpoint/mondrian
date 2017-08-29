@@ -182,7 +182,9 @@ export class InsertAction extends HistoryAction {
   }
 
   opposite() {
-    return new DeleteAction({ items: this.data.items });
+    return new DeleteAction({
+      items: this.data.items
+    });
   }
 }
 
@@ -207,7 +209,7 @@ export class DeleteAction extends HistoryAction {
 
     // Ensure items are sorted by index
     data.items.sort((a, b) => {
-      return a.index.compare(b.index);
+      return b.index.compare(a.index);
     });
   }
 
@@ -237,6 +239,19 @@ export class ShiftSegmentAction extends HistoryAction {
       index: this.data.index,
       n: -this.data.n
     });
+  }
+}
+
+export class ReverseSegmentAction extends HistoryAction {
+  perform(doc) {
+    let segment = doc.getFromIndex(this.data.index);
+    console.log('reverse', segment);
+    segment.reverse();
+    doc.cacheIndexes();
+  }
+
+  opposite() {
+    return this;
   }
 }
 

@@ -36,6 +36,14 @@ export default class PointsSegment {
     }
   }
 
+  clone() {
+    return new PointsSegment(
+      this.points.map(p => {
+        return p.clone();
+      })
+    );
+  }
+
   get length() {
     return this.points.length;
   }
@@ -66,6 +74,7 @@ export default class PointsSegment {
   relink() {
     for (let i = 0; i < this.points.length; i++) {
       let point = this.points[i];
+      point.segment = this;
       let prec, succ;
       if (i === 0) {
         prec = this.last;
@@ -138,8 +147,20 @@ export default class PointsSegment {
     point.segment = this;
   }
 
+  reverse() {
+    this.points = this.points.reverse().map(p => {
+      return p.reverse();
+    });
+
+    this.relink();
+  }
+
   indexOf(point) {
     return this.points.indexOf(point);
+  }
+
+  firstPointLastPointEqual() {
+    return this.first.distanceFrom(this.last) < 0.1;
   }
 
   close() {
@@ -274,7 +295,7 @@ export default class PointsSegment {
   }
 
   nextChildIndex() {
-    return this.index.concat([this.children.length]);
+    return this.index.concat([this.points.length]);
   }
 
   drawPointToCanvas(point, prec, layer, projection) {

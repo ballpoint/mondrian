@@ -22,6 +22,10 @@ export default class HistoryFrame {
     }
   }
 
+  get empty() {
+    return this.actions.length === 0;
+  }
+
   setPrev(prev) {
     this.prev = prev;
   }

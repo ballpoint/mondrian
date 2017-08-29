@@ -490,6 +490,7 @@ export default class Editor extends EventEmitter {
   selectTool(tool) {
     if (tool.constructor !== this.state.tool.constructor) {
       this.state.lastTool = this.state.tool;
+      this.state.tool.cleanup();
     }
     this.state.tool = tool;
 

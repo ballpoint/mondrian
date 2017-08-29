@@ -71,7 +71,9 @@ export default class PointsList {
       }
     }
 
-    list.closeSegment();
+    if (list.lastSegment.firstPointLastPointEqual()) {
+      list.closeSegment();
+    }
 
     return list;
   }
@@ -100,6 +102,12 @@ export default class PointsList {
 
   pushSegment(segment) {
     this.segments.push(segment);
+  }
+
+  nonEmptySegments() {
+    return this.segments.filter(seg => {
+      return !seg.empty;
+    });
   }
 
   movePointToFront(point) {

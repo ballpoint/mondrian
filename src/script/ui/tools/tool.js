@@ -7,6 +7,8 @@ export default class Tool {
     return 'unknown';
   }
 
+  cleanup() {}
+
   handleMousemove(e, posn) {}
 
   handleMousedown(e, posn) {}

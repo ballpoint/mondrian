@@ -13,6 +13,8 @@ export default class DocHistory extends EventEmitter {
   }
 
   stageFrame(frame, doc) {
+    if (frame.empty) return;
+
     if (this.head && !this.head.committed) {
       // Undo staged but uncommitted frame
       this.undo(doc);

@@ -2,10 +2,12 @@ import consts from 'consts';
 import shapes from 'lab/shapes';
 import Tool from 'ui/tools/tool';
 import Bounds from 'geometry/bounds';
+import Circle from 'geometry/circle';
 import Path from 'geometry/path';
 import PathPoint from 'geometry/path-point';
 import LineSegment from 'geometry/line-segment';
 import CubicBezier from 'geometry/cubic-bezier-line-segment';
+import Element from 'ui/element';
 
 import HistoryFrame from 'history/Frame';
 import * as actions from 'history/actions/actions';
@@ -17,22 +19,35 @@ const PEN_SCAN_PRECISION = 0.1;
 export default class Pen extends Tool {
   constructor(editor) {
     super(editor);
+
+    this.resetState();
+  }
+
+  resetState() {
+    this.pathItemCommitted = false;
+    this.rootSegment = null;
+    this.pointModifying = null;
+    this.lastPointModified = null;
   }
 
   get id() {
     return 'pen';
   }
 
+  cleanup() {
+    this.editor.cursorHandler.unregisterElement(/endpoint.*/);
+  }
+
   handleMousemove(e, cursor) {
+    delete this.closest;
+
     if (this.editor.cursor.dragging) {
       return;
     }
 
-    if (this.pathItem) {
+    if (this.rootSegment) {
       return;
     }
-
-    delete this.closest;
 
     let elemsToScan = [];
 
@@ -53,18 +68,18 @@ export default class Pen extends Tool {
 
     for (let elem of elemsToScan) {
       let points = elem.getPoints();
-      for (let pt of points) {
+      pointLoop: for (let pt of points) {
         let segment = pt.segment;
-        if ((!segment.closed && pt === segment.first) || pt === segment.last) {
-          // Check if we're close to opening or closing point
-        }
-
         let ls = pt.toLineSegment();
 
         let closestPosn = ls.closestPosn(posn);
         let d = closestPosn.distanceFrom(posn);
 
-        if (d < threshold && (!this.closest || d < this.closest.d)) {
+        if (
+          d < threshold &&
+          (!this.closest || d < this.closest.d) &&
+          (!this.closest || !this.closest.endpoint)
+        ) {
           this.closest = {
             posn: closestPosn,
             pathPoint: pt,
@@ -148,10 +163,11 @@ export default class Pen extends Tool {
 
   handleMouseup(e, cursor) {
     if (!this.closest) {
-      this.handleNewPoint(e, cursor);
       this.editor.commitFrame();
+      this.lastPointModified = this.rootSegment.last;
+      this.lastPointModifiedIndex = this.rootSegment.last.index;
       this.pathItemCommitted = true;
-      this.pathItemPointIndex++;
+      this.nextPointIndex = this.nextPointIndex.plus(1);
     }
   }
 
@@ -166,50 +182,151 @@ export default class Pen extends Tool {
   handleNewPoint(e, cursor) {
     // If we're not focusing on adding a point to an existing shape, start a new shape
     let frame = new HistoryFrame([], 'Add point');
+    let path;
+    let nextPointIndex;
 
-    if (!this.pathItem) {
-      this.pathItem = new Path({
+    if (!this.pathItemCommitted) {
+      path = new Path({
         fill: this.editor.state.colors.fill,
         stroke: this.editor.state.colors.stroke
       });
-      this.pathIndex = this.editor.state.layer.nextChildIndex();
-      this.pathItemCommitted = false;
-      this.pathItemPointIndex = 0;
-    }
 
-    if (!this.pathItemCommitted) {
+      if (!this.pathIndex) {
+        this.pathIndex = this.editor.state.layer.nextChildIndex();
+      }
+      this.nextPointIndex = this.pathIndex.concat([0, 0]);
+
+      this.rootSegment = path.points.lastSegment;
+
       frame.push(
         new actions.InsertAction({
-          items: [{ item: this.pathItem, index: this.pathIndex }]
+          items: [{ item: path, index: this.pathIndex }]
         })
       );
     }
 
-    let pp = new PathPoint(cursor.posnDown.x, cursor.posnDown.y);
+    let pointToSelect;
 
-    if (!cursor.posnCurrent.equal(cursor.posnDown)) {
-      pp.setSHandle(cursor.posnCurrent);
-      pp.setPHandle(cursor.posnCurrent.reflect(cursor.posnDown));
+    if (this.pointModifying) {
+      let pm = this.pointModifying;
+      // If we're modifying an existing endpoint, push an AddHandleAction action
+
+      if (
+        !this.lastPointModified ||
+        pm.segment === this.lastPointModified.segment
+      ) {
+        // If starting to drag first endpoint or closing on same segment
+        if (!cursor.posnCurrent.equal(cursor.posnDown)) {
+          frame.push(
+            new actions.AddHandleAction({
+              indexes: [pm.index],
+              handle: 'sHandle',
+              reflect: true,
+              posn: cursor.posnCurrent
+            })
+          );
+        }
+      }
+
+      if (this.lastPointModified && pm !== this.lastPointModified) {
+        if (pm.segment === this.lastPointModified.segment) {
+          // Close segment
+          frame.push(
+            new actions.CloseSegmentAction({ index: this.rootSegment.index })
+          );
+
+          pointToSelect = this.pointModifying;
+
+          this._closedSegment = true;
+        } else {
+          // Join segments
+          let pt1 = this.lastPointModified;
+          let pt2 = this.pointModifying;
+
+          let removeItem;
+          if (pt2.segment.list.nonEmptySegments().length === 1) {
+            removeItem = pt2.segment.list.path;
+          } else {
+            removeItem = pt2.segment;
+          }
+
+          if (pt1 === pt1.segment.first) {
+            frame.push(new actions.ReverseSegmentAction({ index: pt1.index }));
+          }
+
+          let newSeg = pt2.segment.clone();
+
+          if (pt2 === pt2.segment.last) {
+            newSeg.reverse();
+          }
+
+          newSeg.first.setSHandle(cursor.posnCurrent);
+          newSeg.first.reflectHandle('sHandle');
+
+          let insertions = [];
+
+          for (let i = 0; i < newSeg.length; i++) {
+            insertions.push({
+              index: this.lastPointModifiedIndex.plus(i + 1),
+              item: newSeg.points[i]
+            });
+          }
+
+          frame.push(new actions.InsertAction({ items: insertions }));
+
+          frame.push(actions.DeleteAction.forItems([removeItem]));
+
+          pointToSelect = newSeg.first;
+
+          this._closedSegment = true;
+        }
+      } else {
+        pointToSelect = pm;
+      }
+    } else {
+      if (
+        this.lastPointModified &&
+        this.lastPointModified === this.lastPointModified.segment.first
+      ) {
+        // Re-orient segment
+        frame.push(
+          new actions.ReverseSegmentAction({
+            index: this.lastPointModified.segment.index
+          })
+        );
+      }
+
+      // Else, push an InsertAction with a new point
+
+      let pp = new PathPoint(cursor.posnDown.x, cursor.posnDown.y);
+
+      if (!cursor.posnCurrent.equal(cursor.posnDown)) {
+        pp.setSHandle(cursor.posnCurrent);
+        pp.setPHandle(cursor.posnCurrent.reflect(cursor.posnDown));
+      }
+
+      frame.push(
+        new actions.InsertAction({
+          items: [
+            {
+              item: pp,
+              index: this.nextPointIndex
+            }
+          ]
+        })
+      );
+
+      pointToSelect = pp;
     }
 
-    frame.push(
-      new actions.InsertAction({
-        items: [
-          {
-            item: pp,
-            index: this.pathIndex.concat([0, this.pathItemPointIndex])
-          }
-        ]
-      })
-    );
-
     this.editor.perform(frame);
-    this.editor.setSelection([pp]);
+
+    this.editor.setSelection([pointToSelect]);
   }
 
   refresh(layer, context) {
+    let proj = this.editor.projection;
     if (this.closest) {
-      let proj = this.editor.projection;
       let splits = this.closest.splits;
       let pointStyles = { stroke: consts.point, fill: 'white' };
 
@@ -259,6 +376,59 @@ export default class Pen extends Tool {
         layer.drawCircle(proj.posn(splits[0].a), 3.5, pointStyles);
         layer.drawCircle(proj.posn(splits[0].b), 3.5, pointStyles);
         layer.drawCircle(proj.posn(splits[1].b), 3.5, pointStyles);
+      }
+    }
+
+    let handleEndpoint = pt => {
+      let id = 'endpoint:' + pt.index.toString();
+      let posn = proj.posn(pt);
+
+      let elem = new Element(id, new Circle(posn, 5), {
+        mouseover: e => {
+          delete this.closest;
+          e.stopPropagation();
+        },
+        mousedown: (e, cursor) => {
+          this.pointModifying = pt;
+          this.rootSegment = pt.segment;
+          this.pathItemCommitted = true;
+          this.nextPointIndex = pt.index;
+        },
+        mouseup: (e, cursor) => {
+          this.editor.commitFrame();
+          delete this.pointModifying;
+          if (this._closedSegment) {
+            delete this.lastPointModified;
+            delete this.rootSegment;
+            this.pathItemCommitted = false;
+            this._closedSegment = false;
+          } else {
+            this.lastPointModified = pt;
+            this.nextPointIndex = pt.segment.nextChildIndex();
+          }
+          e.stopPropagation();
+        },
+        click: e => {
+          e.stopPropagation();
+        }
+      });
+      this.editor.cursorHandler.registerElement(elem);
+
+      let r = 3.5;
+
+      if (this.editor.cursorHandler.isActive(id)) {
+        r += 2;
+      }
+
+      layer.drawCircle(posn, r, { stroke: consts.point, fill: 'white' });
+    };
+
+    for (let elem of this.editor.doc.elementsFlat) {
+      for (let seg of elem.points.segments) {
+        if (!seg.empty && !seg.closed) {
+          handleEndpoint(seg.first);
+          handleEndpoint(seg.last);
+        }
       }
     }
   }
