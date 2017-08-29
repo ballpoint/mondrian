@@ -49,6 +49,12 @@ export default class Pen extends Tool {
       return;
     }
 
+    let active = this.editor.cursorHandler.active;
+    if (active && /endpoint/.test(active.id)) {
+      console.log('ab1');
+      return;
+    }
+
     let elemsToScan = [];
 
     let posn = cursor.posnCurrent;
@@ -164,10 +170,14 @@ export default class Pen extends Tool {
   handleMouseup(e, cursor) {
     if (!this.closest) {
       this.editor.commitFrame();
-      this.lastPointModified = this.rootSegment.last;
-      this.lastPointModifiedIndex = this.rootSegment.last.index;
+      //this.lastPointModified = this.rootSegment.last;
+      //this.lastPointModifiedIndex = this.rootSegment.last.index;
       this.pathItemCommitted = true;
-      this.nextPointIndex = this.nextPointIndex.plus(1);
+      this.currentPointIndex = this.currentPointIndex.plus(1);
+
+      delete this._endpointStart;
+      delete this._endpointEnd;
+      delete this._endpointBwd;
     }
   }
 
@@ -183,9 +193,10 @@ export default class Pen extends Tool {
     // If we're not focusing on adding a point to an existing shape, start a new shape
     let frame = new HistoryFrame([], 'Add point');
     let path;
-    let nextPointIndex;
+    let currentPointIndex;
 
     if (!this.pathItemCommitted) {
+      // In this case we're starting a new path item
       path = new Path({
         fill: this.editor.state.colors.fill,
         stroke: this.editor.state.colors.stroke
@@ -194,7 +205,7 @@ export default class Pen extends Tool {
       if (!this.pathIndex) {
         this.pathIndex = this.editor.state.layer.nextChildIndex();
       }
-      this.nextPointIndex = this.pathIndex.concat([0, 0]);
+      this.currentPointIndex = this.pathIndex.concat([0, 0]);
 
       this.rootSegment = path.points.lastSegment;
 
@@ -207,25 +218,83 @@ export default class Pen extends Tool {
 
     let pointToSelect;
 
-    if (this.pointModifying) {
-      let pm = this.pointModifying;
-      // If we're modifying an existing endpoint, push an AddHandleAction action
+    if (this._endpointStart) {
+      // Starting to draw from existing endpoint
+      console.log('need to reverse endpoint start');
 
-      if (
-        !this.lastPointModified ||
-        pm.segment === this.lastPointModified.segment
-      ) {
-        // If starting to drag first endpoint or closing on same segment
-        if (!cursor.posnCurrent.equal(cursor.posnDown)) {
-          frame.push(
-            new actions.AddHandleAction({
-              indexes: [pm.index],
-              handle: 'sHandle',
-              reflect: true,
-              posn: cursor.posnCurrent
-            })
-          );
-        }
+      // Need to reverse segment so that we're continuing from the end
+      if (this._endpointBwd) {
+        frame.push(
+          new actions.ReverseSegmentAction({
+            index: this.rootSegment.index
+          })
+        );
+      }
+
+      // Need to upate sHandle and pHandle for the existing endpoint
+      if (!cursor.posnCurrent.equal(cursor.posnDown)) {
+        frame.push(
+          new actions.AddHandleAction({
+            indexes: [this._endpointIndex],
+            handle: 'sHandle',
+            reflect: true,
+            posn: cursor.posnCurrent
+          })
+        );
+      }
+    } else if (this._endpointEnd) {
+      // Closing segment to existing endpoint
+      // If we're closing on the same segment, then that's easy
+
+      frame.push(
+        new actions.AddHandleAction({
+          indexes: [this._endpointIndex],
+          handle: 'sHandle',
+          reflect: true,
+          posn: cursor.posnCurrent
+        })
+      );
+
+      if (this._endpointEnd.segment === this.rootSegment) {
+        frame.push(
+          new actions.CloseSegmentAction({ index: this.rootSegment.index })
+        );
+      } else {
+      }
+    } else {
+      // Continuing to draw segment freely
+
+      // Else, push an InsertAction with a new point
+      let pp = new PathPoint(cursor.posnDown.x, cursor.posnDown.y);
+
+      if (!cursor.posnCurrent.equal(cursor.posnDown)) {
+        pp.setSHandle(cursor.posnCurrent);
+        pp.setPHandle(cursor.posnCurrent.reflect(cursor.posnDown));
+      }
+
+      frame.push(
+        new actions.InsertAction({
+          items: [
+            {
+              item: pp,
+              index: this.currentPointIndex
+            }
+          ]
+        })
+      );
+
+      pointToSelect = pp;
+    }
+
+    if (false && this.pointModifying) {
+      let pm = this.pointModifying;
+
+      if (this.segmentModifyingBackwards) {
+        frame.push(
+          new actions.ReverseSegmentAction({
+            index: this.pointModifying.segment.index
+          })
+        );
       }
 
       if (this.lastPointModified && pm !== this.lastPointModified) {
@@ -234,6 +303,19 @@ export default class Pen extends Tool {
           frame.push(
             new actions.CloseSegmentAction({ index: this.rootSegment.index })
           );
+
+          if (!cursor.posnCurrent.equal(cursor.posnDown)) {
+            frame.push(
+              new actions.AddHandleAction({
+                indexes: [
+                  pm.segment.index.concat([pm.segment.points.length - 1])
+                ],
+                handle: 'sHandle',
+                reflect: true,
+                posn: cursor.posnCurrent
+              })
+            );
+          }
 
           pointToSelect = this.pointModifying;
 
@@ -248,10 +330,6 @@ export default class Pen extends Tool {
             removeItem = pt2.segment.list.path;
           } else {
             removeItem = pt2.segment;
-          }
-
-          if (pt1 === pt1.segment.first) {
-            frame.push(new actions.ReverseSegmentAction({ index: pt1.index }));
           }
 
           let newSeg = pt2.segment.clone();
@@ -280,48 +358,18 @@ export default class Pen extends Tool {
 
           this._closedSegment = true;
         }
-      } else {
+      } else if (!this.lastPointModified) {
+        // If starting to drag first endpoint or closing on same segment
         pointToSelect = pm;
       }
     } else {
-      if (
-        this.lastPointModified &&
-        this.lastPointModified === this.lastPointModified.segment.first
-      ) {
-        // Re-orient segment
-        frame.push(
-          new actions.ReverseSegmentAction({
-            index: this.lastPointModified.segment.index
-          })
-        );
-      }
-
-      // Else, push an InsertAction with a new point
-
-      let pp = new PathPoint(cursor.posnDown.x, cursor.posnDown.y);
-
-      if (!cursor.posnCurrent.equal(cursor.posnDown)) {
-        pp.setSHandle(cursor.posnCurrent);
-        pp.setPHandle(cursor.posnCurrent.reflect(cursor.posnDown));
-      }
-
-      frame.push(
-        new actions.InsertAction({
-          items: [
-            {
-              item: pp,
-              index: this.nextPointIndex
-            }
-          ]
-        })
-      );
-
-      pointToSelect = pp;
     }
 
     this.editor.perform(frame);
 
-    this.editor.setSelection([pointToSelect]);
+    if (pointToSelect) {
+      this.editor.setSelection([pointToSelect]);
+    }
   }
 
   refresh(layer, context) {
@@ -389,12 +437,30 @@ export default class Pen extends Tool {
           e.stopPropagation();
         },
         mousedown: (e, cursor) => {
-          this.pointModifying = pt;
+          if (!this.rootSegment) {
+            this._endpointStart = pt;
+
+            this._endpointIndex = pt.segment.index.concat([
+              pt.segment.length - 1
+            ]);
+            this.rootSegment = pt.segment;
+            this._endpointBwd = pt === pt.segment.first;
+          } else {
+            this._endpointEnd = pt;
+            this._endpointBwd = pt === pt.segment.last;
+
+            this._endpointIndex = pt.index;
+          }
+
           this.rootSegment = pt.segment;
           this.pathItemCommitted = true;
-          this.nextPointIndex = pt.index;
+          this.currentPointIndex = this._endpointIndex;
+
+          console.log('backwards', this.segmentModifyingBackwards);
         },
         mouseup: (e, cursor) => {
+          return;
+
           this.editor.commitFrame();
           delete this.pointModifying;
           if (this._closedSegment) {
@@ -404,7 +470,7 @@ export default class Pen extends Tool {
             this._closedSegment = false;
           } else {
             this.lastPointModified = pt;
-            this.nextPointIndex = pt.segment.nextChildIndex();
+            this.currentPointIndex = pt.segment.nextChildIndex();
           }
           e.stopPropagation();
         },

@@ -245,7 +245,6 @@ export class ShiftSegmentAction extends HistoryAction {
 export class ReverseSegmentAction extends HistoryAction {
   perform(doc) {
     let segment = doc.getFromIndex(this.data.index);
-    console.log('reverse', segment);
     segment.reverse();
     doc.cacheIndexes();
   }
