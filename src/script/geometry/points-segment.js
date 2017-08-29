@@ -153,6 +153,8 @@ export default class PointsSegment {
     });
 
     this.relink();
+
+    return this;
   }
 
   indexOf(point) {
