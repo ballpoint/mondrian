@@ -1,9 +1,11 @@
+import { PIXEL_RATIO } from 'lib/math';
+
 let CurrentColors = React.createClass({
   render() {
     let { fill, stroke } = this.props.editor.state.colors;
     let strokeWidth = Math.min(
-      2,
-      Math.max(6, this.props.editor.state.stroke.width)
+      6,
+      this.props.editor.state.stroke.width * PIXEL_RATIO
     );
 
     return (
