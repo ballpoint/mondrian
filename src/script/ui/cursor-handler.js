@@ -22,6 +22,11 @@ export default class CursorHandler extends EventEmitter {
 
     cursor.on('mouseup', (e, cursor) => {
       this.handleEvent('mouseup', e, cursor);
+
+      let focused = document.querySelector(':focus');
+      if (focused) {
+        focused.blur();
+      }
     });
 
     cursor.on('click', (e, cursor) => {

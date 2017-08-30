@@ -487,6 +487,34 @@ export default class Editor extends EventEmitter {
     }, 1);
   }
 
+  ensureSelectedLayer() {
+    if (this.doc.layers.length === 0) {
+      // No layer!
+      let layer = this.createLayer();
+      this.setCurrentLayer(layer);
+    } else if (this.doc.layers.indexOf(this.state.layer) === -1) {
+      // Layer was removed;
+      this.setCurrentLayer(this.layers[0]);
+    }
+  }
+
+  createLayer(id, children = []) {
+    let layer = new Layer({
+      id: id || 'layer' + this.doc.layers.length,
+      children
+    });
+
+    let frame = new HistoryFrame(
+      [actions.InsertAction.forItem(this.doc, layer)],
+      'Create layer'
+    );
+
+    this.stageFrame(frame);
+    this.commitFrame();
+
+    return layer;
+  }
+
   selectTool(tool) {
     if (tool.constructor !== this.state.tool.constructor) {
       this.state.lastTool = this.state.tool;
@@ -662,7 +690,10 @@ export default class Editor extends EventEmitter {
 
     let action = new actions.InsertAction({ items });
 
-    this.perform(action);
+    let frame = new HistoryFrame([action], 'Insert elements');
+
+    this.stageFrame(frame);
+    this.commitFrame();
   }
 
   updateSelection() {
@@ -913,7 +944,8 @@ export default class Editor extends EventEmitter {
         new actions.ScaleAction({
           indexes: this.selectedIndexes(),
           x,
-          y
+          y,
+          origin: this.state.selectionBounds.center
         })
       ],
       title

@@ -24,6 +24,8 @@ let ChildCtrlButton = React.createClass({
 
     let frame;
     let label;
+    let cleanup;
+
     switch (this.props.type) {
       case 'visibility':
         label = this.props.child.metadata.visible ? 'Hide' : 'Show';
@@ -54,11 +56,20 @@ let ChildCtrlButton = React.createClass({
           [actions.DeleteAction.forItems([this.props.child])],
           'Remove element'
         );
+
+        if (this.props.child instanceof Layer) {
+          cleanup = () => {
+            this.props.editor.ensureSelectedLayer();
+          };
+        }
+
         break;
     }
 
     this.props.editor.stageFrame(frame);
     this.props.editor.commitFrame();
+
+    if (cleanup) cleanup();
   },
 
   render() {
@@ -283,21 +294,7 @@ let DocumentUtil = React.createClass({
   },
 
   createLayer() {
-    console.log('wtf');
-    let layer = new Layer({
-      id: 'layer' + this.props.editor.doc.layers.length,
-      children: []
-    });
-
-    let frame = new HistoryFrame(
-      [actions.InsertAction.forItem(this.props.editor.doc, layer)],
-      'Create layer'
-    );
-
-    console.log(frame);
-
-    this.props.editor.stageFrame(frame);
-    this.props.editor.commitFrame();
+    this.props.editor.createLayer();
   },
 
   render() {
