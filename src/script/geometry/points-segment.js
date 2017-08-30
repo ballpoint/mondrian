@@ -107,31 +107,6 @@ export default class PointsSegment {
     this.path.clearCachedObjects();
 
     point.segment = this;
-
-    return;
-
-    let head = this.points.slice(0, index);
-    let tail = this.points.slice(index);
-
-    if (point instanceof Array) {
-      tail.forEach(p => (p.index += point.length));
-
-      point.segment = this;
-
-      return (head = head.concat(point));
-    } else if (point instanceof PathPoint) {
-      debugger;
-      tail.forEach(p => (p.index += 1));
-
-      head[head.length - 1].setSucc(point);
-      tail[0].setPrec(point);
-
-      point.segment = this;
-
-      return head.push(point);
-    } else {
-      throw new Error(`PointsList: don't know how to insert ${point}.`);
-    }
   }
 
   push(point) {

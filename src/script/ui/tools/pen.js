@@ -181,6 +181,7 @@ export default class Pen extends Tool {
       delete this._endpointEnd;
       delete this._endpointBwd;
       delete this._endpointSegment;
+      delete this._endpointCleanupAction;
     }
   }
 
@@ -339,6 +340,8 @@ export default class Pen extends Tool {
   }
 
   refresh(layer, context) {
+    this.editor.cursorHandler.unregisterElement(/endpoint.*/);
+
     let proj = this.editor.projection;
     if (this.closest) {
       let splits = this.closest.splits;
@@ -410,6 +413,7 @@ export default class Pen extends Tool {
               pt.segment.length - 1
             ]);
             this.rootSegment = pt.segment;
+
             this._endpointBwd = pt === pt.segment.first;
           } else {
             this._endpointEnd = pt;
