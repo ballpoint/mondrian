@@ -46,6 +46,10 @@ let Menus = React.createClass({
       }
     });
 
+    this.props.editor.on('change', () => {
+      this.forceUpdate();
+    });
+
     this.props.editor.on('hotkey:open', e => {
       this.activateMenu(fileMenu);
       setTimeout(() => {

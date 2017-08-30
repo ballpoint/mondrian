@@ -50,6 +50,10 @@ let ChildCtrlButton = React.createClass({
         );
         break;
       case 'delete':
+        frame = new HistoryFrame(
+          [actions.DeleteAction.forItems([this.props.child])],
+          'Remove element'
+        );
         break;
     }
 
@@ -188,10 +192,19 @@ let DocumentUtilChild = React.createClass({
                 this.props.expand(this.props.child);
               }
             }}
-            onMouseMove={e => {
+            onMouseEnter={e => {
               e.stopPropagation();
               if (!isAvailable) return;
-              this.props.editor.setHovering([child]);
+
+              let hovering;
+
+              if (child instanceof Layer) {
+                hovering = child.children;
+              } else {
+                hovering = [child];
+              }
+
+              this.props.editor.setHovering(hovering);
             }}
             onMouseOut={e => {
               e.stopPropagation();
@@ -269,6 +282,24 @@ let DocumentUtil = React.createClass({
     return !!this.state.expandedIndexes[child.index.toString()];
   },
 
+  createLayer() {
+    console.log('wtf');
+    let layer = new Layer({
+      id: 'layer' + this.props.editor.doc.layers.length,
+      children: []
+    });
+
+    let frame = new HistoryFrame(
+      [actions.InsertAction.forItem(this.props.editor.doc, layer)],
+      'Create layer'
+    );
+
+    console.log(frame);
+
+    this.props.editor.stageFrame(frame);
+    this.props.editor.commitFrame();
+  },
+
   render() {
     return (
       <Util title="Document">
@@ -288,7 +319,9 @@ let DocumentUtil = React.createClass({
             );
           })}
         </div>
-        <div className="doc-util__ctrls">+</div>
+        <div className="doc-util__ctrls">
+          <a onClick={this.createLayer}> +</a>
+        </div>
       </Util>
     );
   }

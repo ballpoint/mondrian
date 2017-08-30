@@ -159,6 +159,17 @@ export class RemoveHandleAction extends HistoryAction {
 }
 
 export class InsertAction extends HistoryAction {
+  static forItem(parent, item) {
+    return new InsertAction({
+      items: [
+        {
+          index: parent.nextChildIndex(),
+          item
+        }
+      ]
+    });
+  }
+
   get displayTitle() {
     return 'Insert Shapes';
   }

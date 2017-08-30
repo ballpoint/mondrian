@@ -83,6 +83,10 @@ export default class Doc {
     return Doc.fromSVG(this.toSVG());
   }
 
+  nextChildIndex() {
+    return new Index([this.layers.length]);
+  }
+
   static parseDimensions(root) {
     let width, height, transform;
 
@@ -247,14 +251,25 @@ export default class Doc {
   }
 
   removeIndexes(indexes) {
-    let marked = indexes.map(this.getFromIndex.bind(this));
+    for (let index of indexes) {
+      let parent = this;
 
-    for (let item of marked) {
-      let parent = this.getFromIndex(item.index.parent);
+      if (index.length > 1) {
+        // length of 1 is a layer
+        parent = this.getFromIndex(index.parent);
+      }
+
+      let item = this.getFromIndex(index);
       parent.remove(item);
     }
 
     this.cacheIndexes(this);
+  }
+
+  remove(rm) {
+    this.layers = this.layers.filter(layer => {
+      return layer !== rm;
+    });
   }
 
   center() {

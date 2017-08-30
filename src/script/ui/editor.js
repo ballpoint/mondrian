@@ -892,6 +892,37 @@ export default class Editor extends EventEmitter {
     this.stageFrame(frame);
   }
 
+  flipSelected(axis) {
+    let x = 1;
+    let y = 1;
+    let title;
+
+    switch (axis) {
+      case 'x':
+        x = -1;
+        title = 'Flip horizontally';
+        break;
+      case 'y':
+        y = -1;
+        title = 'Flip vertically';
+        break;
+    }
+
+    let frame = new HistoryFrame(
+      [
+        new actions.ScaleAction({
+          indexes: this.selectedIndexes(),
+          x,
+          y
+        })
+      ],
+      title
+    );
+
+    this.stageFrame(frame);
+    this.commitFrame();
+  }
+
   rotateSelected(angle, origin) {
     if (!this.hasSelection()) {
       return;
