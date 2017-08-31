@@ -2,7 +2,6 @@ import consts from 'consts';
 import Bounds from 'geometry/bounds';
 import Posn from 'geometry/posn';
 import Path from 'geometry/path';
-import Text from 'geometry/text';
 import Item from 'geometry/item';
 import Group from 'geometry/group';
 import UUIDV4 from 'uuid/v4';
