@@ -250,9 +250,7 @@ export default class Editor extends EventEmitter {
     });
 
     hotkeys.on('down', '1', () => {
-      let center = this.doc.bounds.center();
-      this.setPosition(center);
-      this.setZoom(1);
+      this.actualSize();
     });
     hotkeys.on('down', '0', () => {
       this.fitToScreen();
@@ -382,6 +380,12 @@ export default class Editor extends EventEmitter {
 
     this.canvas.refreshAll();
     this.cacheState();
+  }
+
+  actualSize() {
+    let center = this.doc.bounds.center();
+    this.setPosition(center);
+    this.setZoom(1);
   }
 
   fitToScreen() {

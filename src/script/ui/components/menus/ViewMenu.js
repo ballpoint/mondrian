@@ -24,6 +24,11 @@ let ViewMenu = React.createClass({
           action={editor.fitToScreen.bind(editor)}
           hotkey="0"
         />
+        <MenuItem
+          label="Actual size"
+          action={editor.actualSize.bind(editor)}
+          hotkey="1"
+        />
       </MenuBody>
     );
   }

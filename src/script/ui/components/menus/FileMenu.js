@@ -16,7 +16,7 @@ let FileMenu = React.createClass({
       reader.onload = e => {
         let text = e.target.result;
 
-        let doc = Doc.fromSVG(text, fn);
+        let doc = Doc.fromSVG(text, fn.split('.')[0]);
 
         this.props.editor.load(doc);
       };
