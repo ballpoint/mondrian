@@ -503,3 +503,40 @@ export class SetDocDimensionsAction extends HistoryAction {
     });
   }
 }
+
+export class SetAttributeAction extends HistoryAction {
+  static forItems(items, key, value) {
+    let d = [];
+    for (let item of items) {
+      d.push({
+        index: item.index,
+        oldValue: item.data[key],
+        value
+      });
+    }
+
+    return new SetAttributeAction({ items: d, key });
+  }
+
+  perform(doc) {
+    for (let group of this.data.items) {
+      let item = doc.getFromIndex(group.index);
+      item.data[this.data.key] = group.value;
+      console.log(item.data[this.data.key]);
+      if (item.clearCache) item.clearCache();
+    }
+  }
+
+  opposite() {
+    return new SetAttributeAction({
+      key: this.data.key,
+      items: this.data.items.map(item => {
+        return {
+          index: item.index,
+          value: item.oldValue,
+          oldValue: item.value
+        };
+      })
+    });
+  }
+}

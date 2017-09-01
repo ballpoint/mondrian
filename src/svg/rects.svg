@@ -1,5 +1,5 @@
 <!-- Made in Mondrian.io -->
-<svg xmlns="http://www.w3.org/2000/svg" width="278.67201" height="360.43799" xmlns:mondrian="http://mondrian.io/xml">
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" xmlns:mondrian="http://mondrian.io/xml">
 <path fill="rgba(255, 255, 255, 1)" stroke="rgba(0, 0, 0, 1)" d="M21.43824929,26.97889147 L63.52531998,26.97889147 L63.52531998,53.95778293 L21.43824929,53.95778293 L21.43824929,26.97889147" stroke-width="1"/>
 <path fill="rgba(255, 255, 255, 1)" stroke="rgba(0, 0, 0, 1)" d="M89.42505579,38.84960371 L117.48310291,38.84960371 L117.48310291,57.19524991 L89.42505579,57.19524991 L89.42505579,38.84960371" stroke-width="1"/>
 <path fill="rgba(255, 255, 255, 1)" stroke="rgba(0, 0, 0, 1)" d="M136.90790477,32.37466976 L162.80764058,32.37466976 L162.80764058,50.72031596 L136.90790477,50.72031596 L136.90790477,32.37466976" stroke-width="1"/>
@@ -15,4 +15,8 @@
 <path fill="rgba(255, 255, 255, 1)" stroke="rgba(0, 0, 0, 1)" d="M143.38283872,125.18205641 L164.96595189,125.18205641 L164.96595189,141.36939129 L143.38283872,141.36939129 L143.38283872,125.18205641" stroke-width="1"/>
 <path fill="rgba(255, 255, 255, 1)" stroke="rgba(0, 0, 0, 1)" d="M197.34062165,128.41952338 L215.68626785,128.41952338 L215.68626785,144.60685826 L197.34062165,144.60685826 L197.34062165,128.41952338" stroke-width="1"/>
 <path fill="rgba(255, 255, 255, 1)" stroke="rgba(0, 0, 0, 1)" d="M230.79444707,123.02374509 L252.37756025,123.02374509 L252.37756025,138.13192431 L230.79444707,138.13192431 L230.79444707,123.02374509" stroke-width="1"/>
+
+<text x="100" y="100">
+<tspan>hello,</tspan> world duba duba hello duba 1 2 3 4 5 the examples above we are already making use of the font property to make the text a bit larger than the default size. There are some more properties which let you adjust the way the text gets displayed on the canvas
+</text>
 </svg>

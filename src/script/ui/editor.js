@@ -784,6 +784,19 @@ export default class Editor extends EventEmitter {
     this.state.selectionBounds = selectionBounds;
   }
 
+  selectionFlat() {
+    let selection = [];
+    for (let item of this.state.selection) {
+      if (item instanceof Group) {
+        selection = selection.concat(item.childrenFlat);
+      } else {
+        selection.push(item);
+      }
+    }
+
+    return selection;
+  }
+
   selectedIndexes() {
     return this.state.selection
       .map(item => {
@@ -800,6 +813,12 @@ export default class Editor extends EventEmitter {
       .sort((a, b) => {
         return a.compare(b);
       });
+  }
+
+  selectedIndexesFlat() {
+    return this.selectionFlat().map(item => {
+      return item.index;
+    });
   }
 
   selectFromIndexes(indexes) {

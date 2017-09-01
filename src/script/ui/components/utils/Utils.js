@@ -46,6 +46,7 @@ let Utils = React.createClass({
 
     if (!this.props.editor.doc) return w;
 
+    /*
     w.push(
       <ColorUtil
         key="color"
@@ -54,6 +55,7 @@ let Utils = React.createClass({
         selectionBounds={this.state.selectionBounds}
       />
     );
+    */
 
     w.push(
       <AlignUtil

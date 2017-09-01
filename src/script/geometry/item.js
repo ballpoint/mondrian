@@ -6,19 +6,11 @@ import Posn from 'geometry/posn';
 import Thumb from 'ui/thumb';
 import UUIDV4 from 'uuid/v4';
 
-/*
-
-    Mondrian SVG library
-
-    Artur Sapek 2012 - 2017
-
-*/
-
 export default class Item {
   constructor(data = {}, metadata = {}) {
     this.data = data;
 
-    this.points = [];
+    //this.points = [];
     this.transform = {};
     this.boundsCached = null;
 
@@ -40,24 +32,6 @@ export default class Item {
     this.__id__ = UUIDV4();
     this.__nonce__ = 1;
   }
-
-  /*
-   * TODO move this into an external SVG serialization lib
-  toSVG() {
-    // Return the SVG DOM element that this Item object represents
-    // We need to use the svg namespace for the element to behave properly
-    let elem = document.createElementNS('http://www.w3.org/2000/svg', this.type);
-    for (let key in this.data) {
-      let val = this.data[key];
-      if (key !== "") { elem.setAttribute(key, val); }
-    }
-    return elem;
-  }
-
-  toSVGString() {
-    return new XMLSerializer().serializeToString(this.toSVG());
-  }
-  */
 
   validateColors() {
     // Convert color strings to Color objects

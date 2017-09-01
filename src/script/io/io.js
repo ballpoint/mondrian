@@ -4,6 +4,8 @@ import Posn from 'geometry/posn';
 import Path from 'geometry/path';
 import Item from 'geometry/item';
 import Group from 'geometry/group';
+import Text from 'geometry/text';
+import { Tspan } from 'geometry/text';
 import UUIDV4 from 'uuid/v4';
 
 let io = {
@@ -29,6 +31,28 @@ let io = {
         } else {
           results.push(group);
         }
+      } else if (node.nodeName === 'text') {
+        let value = '';
+        for (let child of node.childNodes) {
+          console.log(child, child.nodeName);
+          let data = {};
+          let childValue = '';
+          switch (child.nodeName) {
+            case 'tspan':
+              // <tspan>
+              childValue = child.innerHTML;
+              data = this.makeData(child);
+            case '#text':
+              // Text node
+              if (child.textContent === '\n') continue;
+              childValue = child.textContent;
+          }
+          value += childValue.replace('\n', '');
+        }
+        let data = this.makeData(node);
+        data.value = value;
+
+        results.push(new Text(data));
       } else {
         // Otherwise it must be a shape node we have a class for.
         let parsed = this.parseElement(node);
@@ -182,12 +206,6 @@ let io = {
     let result;
 
     switch (type) {
-      /*
-      case 'text':
-        result = new Text(data);
-        result.setContent(elem.textContent);
-        break;
-      */
       case 'path':
         result = new Path(data);
         break;
@@ -266,8 +284,8 @@ let io = {
   itemToElement(item) {
     if (item instanceof Path) {
       let elem = this.createSVGElement('path');
+      item.commitData();
       for (let key in item.data) {
-        item.commitData();
         elem.setAttribute(key, item.data[key]);
       }
       return elem;
@@ -280,6 +298,28 @@ let io = {
         }
       }
       return g;
+    } else if (item instanceof Text) {
+      let spans = item.spans();
+
+      let text = this.createSVGElement('text');
+      for (let key in item.data) {
+        text.setAttribute(key, item.data[key]);
+      }
+
+      for (let span of spans) {
+        let spanElem = this.createSVGElement('tspan');
+        for (let key of ['x', 'y']) {
+          spanElem.setAttribute(key, span.data[key]);
+        }
+        spanElem.style['font-size'] = item.fontSize(1);
+        spanElem.style['font-family'] = item.fontFamily(1);
+        spanElem.style['text-align'] = item.data.textAlign;
+        spanElem.innerHTML = span.data.value;
+
+        text.appendChild(spanElem);
+      }
+
+      return text;
     } else {
       console.warn('Cannot transform to element:', item);
     }

@@ -12,17 +12,24 @@
   .toolbar-group {
     display: flex;
 
-    .toolbar-button {
-      width: $toolbar-dimen;
+    .toolbar-item {
       height: 100%;
-      @include no-select;
-      cursor: default;
       padding-left: 5px;
       padding-right: 5px;
-
       display: flex;
       align-items: center;
       justify-content: center;
+
+      select {
+        margin-left: 10px;
+      }
+    }
+
+    .toolbar-button {
+      width: $toolbar-dimen;
+      @extend .toolbar-item;
+      @include no-select;
+      cursor: default;
 
       &:hover {
         color: $blue;
