@@ -51,7 +51,7 @@ let FileMenu = React.createClass({
             className="menu-item__cover"
             ref="downloadAnchor"
             href={this.docSVGHref()}
-            download={this.props.editor.doc.name}
+            download={this.props.editor.doc.filename('svg')}
           />
           Save as SVG
         </MenuItem>

@@ -5,7 +5,6 @@ import Path from 'geometry/path';
 import Item from 'geometry/item';
 import Group from 'geometry/group';
 import Text from 'geometry/text';
-import { Tspan } from 'geometry/text';
 import UUIDV4 from 'uuid/v4';
 
 let io = {
@@ -19,40 +18,43 @@ let io = {
         // This is like whitespace and shit
         continue;
       } else if (node.nodeName === 'g') {
-        let group = new Group(this.parse(node));
-        this.applyTransform(node, group);
-        this.applyStyles(node, group);
-
-        if (group.children.length === 0) {
-          // Omit empty group
-        } else if (group.children.length === 1) {
-          // Expand unnecessary group
-          results.push(group.children[0]);
+        if (node.getAttribute('mondrian:type') === 'text') {
+          // Special handling of text groups (multi-line Text class)
+          results.push(this.parseTextGroup(node));
         } else {
-          results.push(group);
+          let group = new Group(this.parse(node));
+          this.applyTransform(node, group);
+          this.applyStyles(node, group);
+
+          if (group.children.length === 0) {
+            // Omit empty group
+          } else if (group.children.length === 1) {
+            // Expand unnecessary group
+            results.push(group.children[0]);
+          } else {
+            results.push(group);
+          }
         }
       } else if (node.nodeName === 'text') {
-        let value = '';
-        for (let child of node.childNodes) {
-          console.log(child, child.nodeName);
-          let data = {};
-          let childValue = '';
-          switch (child.nodeName) {
-            case 'tspan':
-              // <tspan>
-              childValue = child.innerHTML;
-              data = this.makeData(child);
-            case '#text':
-              // Text node
-              if (child.textContent === '\n') continue;
-              childValue = child.textContent;
-          }
-          value += childValue.replace('\n', '');
-        }
-        let data = this.makeData(node);
-        data.value = value;
+        // TODO handle tspan
+        let d = {
+          x: parseFloat(node.getAttribute('x')),
+          y: parseFloat(node.getAttribute('y')),
+          width: 200,
+          height: 50,
+          value: this.innerTextValue(node)
+        };
 
-        results.push(new Text(data));
+        let mWidth = node.getAttribute('mondrian:width');
+        let mHeight = node.getAttribute('mondrian:height');
+
+        if (mWidth && mHeight) {
+          d.width = parseFloat(mWidth);
+          d.height = parseFloat(mHeight);
+        }
+
+        console.log(d);
+        results.push(new Text(d));
       } else {
         // Otherwise it must be a shape node we have a class for.
         let parsed = this.parseElement(node);
@@ -77,6 +79,58 @@ let io = {
     }
 
     return results;
+  },
+
+  parseTextGroup(node) {
+    console.log(node);
+
+    let d = {
+      x: parseFloat(node.getAttribute('mondrian:x')),
+      y: parseFloat(node.getAttribute('mondrian:y')),
+      width: parseFloat(node.getAttribute('mondrian:width')),
+      height: parseFloat(node.getAttribute('mondrian:height')),
+      spacing: parseFloat(node.getAttribute('mondrian:spacing')),
+      size: parseFloat(node.style['font-size']),
+      value: ''
+    };
+
+    console.log(d);
+
+    let lines = [];
+
+    for (let child of node.childNodes) {
+      if (child.nodeName.toLowerCase() === 'text') {
+        lines.push(this.innerTextValue(child));
+      }
+    }
+
+    d.value = lines.join(' ');
+
+    return new Text(d);
+  },
+
+  innerTextValue(node) {
+    let value = '';
+
+    for (let child of node.childNodes) {
+      switch (child.nodeName) {
+        case 'tspan':
+          // <tspan>
+          value += child.innerHTML;
+          break;
+        case '#text':
+          // Text node
+          if (child.textContent === '\n') continue;
+          value += child.textContent;
+          break;
+      }
+    }
+
+    if (value[0] === '\n') {
+      value = value.slice(1);
+    }
+
+    return value;
   },
 
   applyTransform(node, elem) {
@@ -291,6 +345,7 @@ let io = {
       return elem;
     } else if (item instanceof Group) {
       let g = this.createSVGElement('g');
+
       for (let child of item.children) {
         let childElem = this.itemToElement(child);
         if (childElem) {
@@ -299,27 +354,54 @@ let io = {
       }
       return g;
     } else if (item instanceof Text) {
-      let spans = item.spans();
+      let lines = item.lines();
 
-      let text = this.createSVGElement('text');
-      for (let key in item.data) {
-        text.setAttribute(key, item.data[key]);
-      }
-
-      for (let span of spans) {
-        let spanElem = this.createSVGElement('tspan');
+      let lineToElem = (item, line, opts = {}) => {
+        let textElem = this.createSVGElement('text');
         for (let key of ['x', 'y']) {
-          spanElem.setAttribute(key, span.data[key]);
+          textElem.setAttribute(key, line.data[key]);
         }
-        spanElem.style['font-size'] = item.fontSize(1);
-        spanElem.style['font-family'] = item.fontFamily(1);
-        spanElem.style['text-align'] = item.data.textAlign;
-        spanElem.innerHTML = span.data.value;
 
-        text.appendChild(spanElem);
+        textElem.setAttribute('mondrian:width', item.data.width);
+        textElem.setAttribute('mondrian:height', item.data.height);
+
+        if (!opts.partOfGroup) {
+          textElem.style['font-size'] = item.fontSize();
+          textElem.style['font-family'] = item.fontFamily();
+        }
+        textElem.innerHTML = line.data.value;
+
+        textElem.setAttribute(
+          'text-anchor',
+          {
+            left: 'start',
+            center: 'middle',
+            right: 'end'
+          }[item.data.align]
+        );
+
+        return textElem;
+      };
+
+      // Multi-line text is handled as a group of <text> nodes
+      let groupElem = this.createSVGElement('g');
+
+      groupElem.setAttribute('mondrian:type', 'text');
+
+      groupElem.setAttribute('mondrian:x', item.data.x);
+      groupElem.setAttribute('mondrian:y', item.data.y);
+      groupElem.setAttribute('mondrian:width', item.data.width);
+      groupElem.setAttribute('mondrian:height', item.data.height);
+      groupElem.setAttribute('mondrian:spacing', item.data.height);
+
+      groupElem.style['font-size'] = item.fontSize();
+      groupElem.style['font-family'] = item.fontFamily();
+
+      for (let line of lines) {
+        let textElem = lineToElem(item, line, { partOfGroup: true });
+        groupElem.appendChild(textElem);
       }
-
-      return text;
+      return groupElem;
     } else {
       console.warn('Cannot transform to element:', item);
     }

@@ -821,6 +821,12 @@ export default class Editor extends EventEmitter {
     });
   }
 
+  selectedOfType(type) {
+    return this.selectionFlat().filter(item => {
+      return item instanceof type;
+    });
+  }
+
   selectFromIndexes(indexes) {
     let sel = indexes.map(index => {
       return this.doc.getFromIndex(index);

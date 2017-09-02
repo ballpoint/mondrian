@@ -67,6 +67,20 @@ body#app {
       flex-grow: 1;
       height: 100%; }
 
+.icon svg {
+  stroke: black;
+  fill: white;
+  margin: 0 auto;
+  display: block; }
+
+.icon.selected, .icon:hover {
+  color: #0072d1; }
+  .icon.selected svg, .icon:hover svg {
+    stroke: #0072d1 !important; }
+
+.icon:active {
+  background-color: #f2f2f2; }
+
 #print-view {
   display: none; }
 
@@ -442,17 +456,6 @@ html {
     padding: 6px 0;
     border-bottom: 1px solid #bbc4c9;
     cursor: default; }
-    #app-tools .app-tool svg {
-      stroke: black;
-      fill: white;
-      margin: 0 auto;
-      display: block; }
-    #app-tools .app-tool.selected, #app-tools .app-tool:hover {
-      color: #0072d1; }
-      #app-tools .app-tool.selected svg, #app-tools .app-tool:hover svg {
-        stroke: #0072d1 !important; }
-    #app-tools .app-tool:active {
-      background-color: #f2f2f2; }
   #app-tools #current-colors {
     margin: 12px; }
     #app-tools #current-colors .color-indicator {
@@ -475,8 +478,6 @@ html {
       display: flex;
       align-items: center;
       justify-content: center; }
-      #app-toolbar .toolbar-group .toolbar-item select, #app-toolbar .toolbar-group .toolbar-button select {
-        margin-left: 10px; }
     #app-toolbar .toolbar-group .toolbar-button {
       width: 36px;
       -webkit-user-select: none;

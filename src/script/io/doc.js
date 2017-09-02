@@ -73,6 +73,10 @@ export default class Doc {
     });
   }
 
+  filename(extension) {
+    return this.name.split('.')[0] + '.' + extension;
+  }
+
   setDimens(w, h) {
     this.width = w;
     this.height = h;
@@ -201,7 +205,7 @@ export default class Doc {
 
   toSVG() {
     let doc = this.toDocument();
-    doc.setAttribute('xmlns:mondrian', 'http://mondrian.io/xml');
+    doc.setAttribute('xmlns:mondrian', 'https://mondrian.io/xml');
 
     let str = new XMLSerializer().serializeToString(doc);
     // Make better whitespace management happen later

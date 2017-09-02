@@ -5,7 +5,7 @@ import Item from 'geometry/item';
 import LineSegment from 'geometry/line-segment';
 import { measure } from 'lib/text';
 
-export class Tspan {
+export class TextLine {
   constructor(data) {
     this.data = data;
   }
@@ -40,25 +40,25 @@ export class Tspan {
 
 export default class Text extends Item {
   constructor(data) {
-    if (data.x === undefined) data.x = 0;
-    if (data.y === undefined) data.y = 0;
+    if (data.x === undefined) data.x = 100;
+    if (data.y === undefined) data.y = 100;
     if (data.size === undefined) data.size = 12;
+
     data.x = parseFloat(data.x);
     data.y = parseFloat(data.y);
-
-    data.width = 100;
-    data.height = 50;
+    data.width = parseFloat(data.width);
+    data.height = parseFloat(data.height);
 
     data.spacing = 1.2;
 
-    data.align = 'center';
-    data.valign = 'bottom';
+    if (data.align === undefined) data.align = 'left';
+    if (data.valign === undefined) data.valign = 'top';
 
     super(data);
   }
 
-  fontStyle(z) {
-    return `${this.fontSize(z)} ${this.fontFamily()}`;
+  fontStyle() {
+    return `${this.fontSize()} ${this.fontFamily()}`;
   }
 
   fontFamily(z) {
@@ -66,18 +66,18 @@ export default class Text extends Item {
     return family;
   }
 
-  fontSize(z) {
-    return `${this.data.size * z}pt`;
+  fontSize() {
+    return `${this.data.size}pt`;
   }
 
-  spans() {
-    // Get cached spans or generate them
-    if (this._cachedSpans !== undefined) return this._cachedSpans;
+  lines() {
+    // Get cached lines or generate them
+    if (this._cachedLines !== undefined) return this._cachedLines;
 
-    let spans = [];
+    let lines = [];
     let words = this.data.value.split(' ');
     let cursor = new Posn(this.data.x, this.data.y);
-    let fontStyle = this.fontStyle(1);
+    let fontStyle = this.fontStyle();
     let spaceWidth = measure(' ', fontStyle).width;
 
     let currentSpan = [];
@@ -97,8 +97,8 @@ export default class Text extends Item {
           break;
       }
       // line break
-      spans.push(
-        new Tspan({
+      lines.push(
+        new TextLine({
           x,
           y: cursor.y + this.data.size,
           value: currentSpan.join(' '),
@@ -128,11 +128,11 @@ export default class Text extends Item {
 
     commitSpan();
 
-    // Fix vertical align now that we know # of spans
+    // Fix vertical align now that we know # of lines
     if (this.data.valign !== 'top') {
       let extraV =
-        this.data.height - spans.length * this.data.size * this.data.spacing;
-      for (let span of spans) {
+        this.data.height - lines.length * this.data.size * this.data.spacing;
+      for (let span of lines) {
         switch (this.data.valign) {
           case 'center':
             span.data.y += extraV / 2;
@@ -144,9 +144,9 @@ export default class Text extends Item {
       }
     }
 
-    this._cachedSpans = spans;
+    this._cachedLines = lines;
 
-    return spans;
+    return lines;
   }
 
   drawToCanvas(layer, context, projection) {
@@ -154,18 +154,21 @@ export default class Text extends Item {
 
     let cursor = new Posn(this.data.x, this.data.y);
 
-    context.font = this.fontStyle(projection.z(1));
+    context.font = this.fontStyle();
 
-    for (let span of this.spans()) {
+    for (let span of this.lines()) {
       context.fillStyle = 'black';
 
       context.textAlign = this.data.align;
 
-      context.fillText(
-        span.data.value,
-        projection.x(span.data.x),
-        projection.y(span.data.y)
-      );
+      context.save();
+
+      context.translate(projection.x(span.data.x), projection.y(span.data.y));
+      context.scale(projection.z(1), projection.z(1));
+
+      context.fillText(span.data.value, 0, 0);
+
+      context.restore();
     }
   }
 
@@ -207,6 +210,6 @@ export default class Text extends Item {
   }
 
   clearCache() {
-    delete this._cachedSpans;
+    delete this._cachedLines;
   }
 }

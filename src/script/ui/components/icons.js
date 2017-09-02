@@ -5,11 +5,41 @@ import zoom from 'icons/zoom.svg';
 import pen from 'icons/pen.svg';
 import todo from 'icons/todo.svg';
 
-export default {
+import undo from 'icons/undo.svg';
+import redo from 'icons/redo.svg';
+
+import alignLeft from 'icons/align_left.svg';
+import alignCenter from 'icons/align_center.svg';
+import alignRight from 'icons/align_right.svg';
+
+import valignTop from 'icons/valign_top.svg';
+import valignCenter from 'icons/valign_center.svg';
+import valignBottom from 'icons/valign_bottom.svg';
+
+const ICONS = {
   cursor,
   ellipse,
   rect,
   zoom,
   pen,
-  todo
+  todo,
+
+  undo,
+  redo,
+
+  alignLeft,
+  alignCenter,
+  alignRight,
+
+  valignTop,
+  valignCenter,
+  valignBottom
 };
+
+export default ICONS;
+
+export function renderIcon(name) {
+  return (
+    <span className="icon" dangerouslySetInnerHTML={{ __html: ICONS[name] }} />
+  );
+}

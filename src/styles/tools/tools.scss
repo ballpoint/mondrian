@@ -12,25 +12,6 @@
     padding: 6px 0;
     border-bottom: 1px solid $blue-grey;
     cursor: default;
-
-    svg {
-      stroke: black;
-      fill: white;
-      margin: 0 auto;
-      display: block;
-    }
-
-    &.selected,
-    &:hover {
-      color: $blue;
-      svg {
-        stroke: $blue !important;
-      }
-    }
-
-    &:active {
-      background-color: $bg-grey;
-    }
   }
 
   $color-swatch-margin: 12px;

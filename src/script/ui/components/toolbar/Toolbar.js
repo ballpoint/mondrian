@@ -1,6 +1,8 @@
 import bool from 'lib/bool';
 import Text from 'geometry/text';
 import 'toolbar/toolbar.scss';
+import icons from 'ui/components/icons';
+import { renderIcon } from 'ui/components/icons';
 
 import HistoryFrame from 'history/Frame';
 import * as actions from 'history/actions/actions';
@@ -85,12 +87,12 @@ let Toolbar = React.createClass({
         <ToolbarButton
           onClick={this.props.editor.undo.bind(this.props.editor)}
           title="Undo">
-          UN
+          {renderIcon('undo')}
         </ToolbarButton>
         <ToolbarButton
           onClick={this.props.editor.redo.bind(this.props.editor)}
           title="Redo">
-          RE
+          {renderIcon('redo')}
         </ToolbarButton>
       </ToolbarGroup>
     );
@@ -110,6 +112,8 @@ let Toolbar = React.createClass({
   },
 
   renderTextGroup() {
+    if (this.props.editor.selectedOfType(Text).length === 0) return null;
+
     const fonts = [
       'sans-serif',
       'serif',
@@ -122,7 +126,6 @@ let Toolbar = React.createClass({
     return (
       <ToolbarGroup>
         <ToolbarDropdown
-          label="Font"
           options={fonts.map(f => {
             return {
               label: f,
@@ -139,7 +142,6 @@ let Toolbar = React.createClass({
             let items = this.props.editor.selectionFlat().filter(item => {
               return item instanceof Text;
             });
-            console.log(items);
             let frame = new HistoryFrame([
               actions.SetAttributeAction.forItems(
                 items,
@@ -158,21 +160,21 @@ let Toolbar = React.createClass({
           onClick={() => {
             this.changeSelectionAttribute('align', 'left');
           }}>
-          HL
+          {renderIcon('alignLeft')}
         </ToolbarButton>
         <ToolbarButton
           title="Align center"
           onClick={() => {
             this.changeSelectionAttribute('align', 'center');
           }}>
-          HC
+          {renderIcon('alignCenter')}
         </ToolbarButton>
         <ToolbarButton
           title="Align right"
           onClick={() => {
             this.changeSelectionAttribute('align', 'right');
           }}>
-          HR
+          {renderIcon('alignRight')}
         </ToolbarButton>
 
         <ToolbarButton
@@ -180,21 +182,21 @@ let Toolbar = React.createClass({
           onClick={() => {
             this.changeSelectionAttribute('valign', 'top');
           }}>
-          VT
+          {renderIcon('valignTop')}
         </ToolbarButton>
         <ToolbarButton
           title="Vertical align center"
           onClick={() => {
             this.changeSelectionAttribute('valign', 'center');
           }}>
-          VC
+          {renderIcon('valignCenter')}
         </ToolbarButton>
         <ToolbarButton
           title="Vertical align bottom"
           onClick={() => {
             this.changeSelectionAttribute('valign', 'bottom');
           }}>
-          VB
+          {renderIcon('valignBottom')}
         </ToolbarButton>
       </ToolbarGroup>
     );
