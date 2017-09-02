@@ -17,6 +17,8 @@ export default class Tool {
 
   handleClick(e, posn) {}
 
+  handleDoubleClick(e, posn) {}
+
   handleDragStart(e, posn, lastPosn) {}
 
   handleDrag(e, posn, lastPosn) {}

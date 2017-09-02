@@ -522,7 +522,6 @@ export class SetAttributeAction extends HistoryAction {
     for (let group of this.data.items) {
       let item = doc.getFromIndex(group.index);
       item.data[this.data.key] = group.value;
-      console.log(item.data[this.data.key]);
       if (item.clearCache) item.clearCache();
     }
   }

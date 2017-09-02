@@ -125,6 +125,7 @@ let io = {
           break;
       }
     }
+    console.log(value, value.split(' '));
 
     if (value[0] === '\n') {
       value = value.slice(1);

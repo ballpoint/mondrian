@@ -54,8 +54,11 @@ export default class HotkeyTracking extends EventEmitter {
   }
 
   handle(direction, hotkey, e) {
-    if (e.target.nodeName.toLowerCase() === 'input') {
-      return;
+    let nodename = e.target.nodeName.toLowerCase();
+    switch (nodename) {
+      case 'input':
+      case 'textarea':
+        return;
     }
 
     let handlers = this.listeners[direction][hotkey];

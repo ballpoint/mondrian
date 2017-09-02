@@ -25,12 +25,14 @@ import Bounds from 'geometry/bounds';
 import Element from 'ui/element';
 import CursorTracking from 'ui/cursor-tracking';
 import CursorHandler from 'ui/cursor-handler';
+import { TextEditHandler } from 'lib/text';
 
 import * as tools from 'ui/tools/tools';
 import RulersUIElement from 'ui/editor/rulers';
 import TransformerUIElement from 'ui/editor/transformer';
 import DocumentPointsUIElement from 'ui/editor/doc_pts';
 import DocumentElemsUIElement from 'ui/editor/doc_elems';
+import TextEditUIElement from 'ui/editor/text_edit';
 
 const UTILS_WIDTH = 350 + 220;
 
@@ -86,6 +88,7 @@ export default class Editor extends EventEmitter {
     let uiElems = [
       new DocumentPointsUIElement(this, 'doc-pts'),
       new DocumentElemsUIElement(this, 'doc-elems'),
+      new TextEditUIElement(this, 'text-edit'),
       new TransformerUIElement(this, 'transformer'),
       new RulersUIElement(this, 'rulers')
     ];
@@ -120,6 +123,12 @@ export default class Editor extends EventEmitter {
 
     this.cursorHandler.on('click', (e, cursor) => {
       if (e.propagateToTool) this.state.tool.handleClick(e, cursor);
+      this.canvas.refresh('tool');
+      this.canvas.refresh('ui');
+    });
+
+    this.cursorHandler.on('doubleclick', (e, cursor) => {
+      if (e.propagateToTool) this.state.tool.handleDoubleClick(e, cursor);
       this.canvas.refresh('tool');
       this.canvas.refresh('ui');
     });
@@ -998,6 +1007,44 @@ export default class Editor extends EventEmitter {
     ]);
 
     this.stageFrame(frame);
+  }
+
+  editText(item, position) {
+    let handler = new TextEditHandler(item);
+
+    handler.setCursorPosition(position);
+
+    let oldValue = item.data.value;
+
+    handler.on('change', (e, value) => {
+      let frame = new HistoryFrame(
+        [
+          new actions.SetAttributeAction({
+            key: 'value',
+            items: [{ index: item.index, oldValue, value }]
+          })
+        ],
+        'Change text'
+      );
+
+      this.stageFrame(frame);
+
+      item.clearCache();
+    });
+
+    handler.on('blur', (e, value) => {
+      delete this.state.textEditHandler;
+      this.commitFrame();
+    });
+
+    handler.on('change:selection', (e, sel) => {
+      console.log(sel.start, sel.end);
+    });
+
+    this.state.textEditHandler = handler;
+
+    this.canvas.refreshAll();
+    this.trigger('change');
   }
 
   setDocDimens(width, height) {

@@ -1,9 +1,15 @@
 import consts from 'consts';
 import shapes from 'lab/shapes';
 import Tool from 'ui/tools/tool';
+
+import Posn from 'geometry/posn';
 import Bounds from 'geometry/bounds';
 import Circle from 'geometry/circle';
-import Posn from 'geometry/posn';
+import Text from 'geometry/text';
+
+import HistoryFrame from 'history/Frame';
+import * as actions from 'history/actions/actions';
+
 import snapping from 'lib/snapping';
 import { degs_45_90 } from 'lib/snapping';
 
@@ -85,6 +91,18 @@ export default class Cursor extends Tool {
 
   handleClick(e, cursor) {
     this.skipClick++;
+  }
+
+  handleDoubleClick(e, cursor) {
+    if (this.hovering.length === 1 && this.hovering[0] instanceof Text) {
+      let item = this.hovering[0];
+
+      let position = item.positionAtPosn(cursor.posnCurrent);
+
+      this.editor.editText(item, position);
+    }
+
+    // TODO group drill-down handling
   }
 
   handleDragStart(e, cursor) {

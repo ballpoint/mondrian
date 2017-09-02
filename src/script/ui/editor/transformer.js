@@ -105,6 +105,8 @@ export default class TransformerUIElement extends UIElement {
       return;
     }
 
+    if (this.editor.state.textEditHandler !== undefined) return;
+
     //if (this.editor.state.selectionType !== 'ELEMENTS') {
     // return;
     //}

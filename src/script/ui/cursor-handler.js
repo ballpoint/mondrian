@@ -33,6 +33,10 @@ export default class CursorHandler extends EventEmitter {
       this.handleEvent('click', e, cursor);
     });
 
+    cursor.on('doubleclick', (e, cursor) => {
+      this.handleEvent('doubleclick', e, cursor);
+    });
+
     cursor.on('drag:start', (e, cursor) => {
       this.handleEvent('drag:start', e, cursor);
     });

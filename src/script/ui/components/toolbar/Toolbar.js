@@ -98,14 +98,17 @@ let Toolbar = React.createClass({
     );
   },
 
-  changeSelectionAttribute(key, value) {
-    let frame = new HistoryFrame([
-      actions.SetAttributeAction.forItems(
-        this.props.editor.state.selection,
-        key,
-        value
-      )
-    ]);
+  changeSelectionAttribute(key, value, title) {
+    let frame = new HistoryFrame(
+      [
+        actions.SetAttributeAction.forItems(
+          this.props.editor.state.selection,
+          key,
+          value
+        )
+      ],
+      title
+    );
 
     this.props.editor.stageFrame(frame);
     this.props.editor.commitFrame();
@@ -158,21 +161,21 @@ let Toolbar = React.createClass({
         <ToolbarButton
           title="Align left"
           onClick={() => {
-            this.changeSelectionAttribute('align', 'left');
+            this.changeSelectionAttribute('align', 'left', 'Align left');
           }}>
           {renderIcon('alignLeft')}
         </ToolbarButton>
         <ToolbarButton
           title="Align center"
           onClick={() => {
-            this.changeSelectionAttribute('align', 'center');
+            this.changeSelectionAttribute('align', 'center', 'Align center');
           }}>
           {renderIcon('alignCenter')}
         </ToolbarButton>
         <ToolbarButton
           title="Align right"
           onClick={() => {
-            this.changeSelectionAttribute('align', 'right');
+            this.changeSelectionAttribute('align', 'right', 'Align right');
           }}>
           {renderIcon('alignRight')}
         </ToolbarButton>
@@ -180,21 +183,33 @@ let Toolbar = React.createClass({
         <ToolbarButton
           title="Vertical align top"
           onClick={() => {
-            this.changeSelectionAttribute('valign', 'top');
+            this.changeSelectionAttribute(
+              'valign',
+              'top',
+              'Vertical align top'
+            );
           }}>
           {renderIcon('valignTop')}
         </ToolbarButton>
         <ToolbarButton
           title="Vertical align center"
           onClick={() => {
-            this.changeSelectionAttribute('valign', 'center');
+            this.changeSelectionAttribute(
+              'valign',
+              'center',
+              'Vertical align center'
+            );
           }}>
           {renderIcon('valignCenter')}
         </ToolbarButton>
         <ToolbarButton
           title="Vertical align bottom"
           onClick={() => {
-            this.changeSelectionAttribute('valign', 'bottom');
+            this.changeSelectionAttribute(
+              'valign',
+              'bottom',
+              'Vertical align bottom'
+            );
           }}>
           {renderIcon('valignBottom')}
         </ToolbarButton>

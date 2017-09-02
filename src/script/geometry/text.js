@@ -9,33 +9,6 @@ export class TextLine {
   constructor(data) {
     this.data = data;
   }
-
-  /*
-  getRanges() {}
-
-  bounds(anchor) {
-    let metrics = this.metrics();
-    //let anchor = new Posn(this.container.data.x, this.container.data.y);
-    if (this.data.x !== undefined) anchor.x = this.data.x;
-    if (this.data.y !== undefined) anchor.y = this.data.y;
-
-    let textAnchor = 'start';
-    if (this.container.data['text-anchor']) {
-      textAnchor = this.container.data['text-anchor'];
-    }
-
-    switch (textAnchor) {
-      case 'start':
-      default:
-        return new Bounds(
-          anchor.x,
-          anchor.y - this.data.size,
-          metrics.width,
-          this.data.size
-        );
-    }
-  }
-  */
 }
 
 export default class Text extends Item {
@@ -74,15 +47,25 @@ export default class Text extends Item {
     // Get cached lines or generate them
     if (this._cachedLines !== undefined) return this._cachedLines;
 
-    let lines = [];
-    let words = this.data.value.split(' ');
+    let words = [];
+    let textLines = this.data.value.split('\n');
+
+    for (let line of textLines) {
+      words = words.concat(line.split(' '));
+      words.push('\n');
+    }
+
     let cursor = new Posn(this.data.x, this.data.y);
     let fontStyle = this.fontStyle();
     let spaceWidth = measure(' ', fontStyle).width;
 
-    let currentSpan = [];
+    let lines = [];
 
-    let commitSpan = () => {
+    let currentLine = [];
+
+    let newline = () => {
+      if (currentLine.length === 0) return;
+
       let textAlign = this.data.align;
       let x;
       switch (textAlign) {
@@ -101,32 +84,38 @@ export default class Text extends Item {
         new TextLine({
           x,
           y: cursor.y + this.data.size,
-          value: currentSpan.join(' '),
+          value: currentLine.join(' '),
           size: this.data.size
         })
       );
 
       cursor.x = this.data.x;
       cursor.y += this.data.spacing * this.data.size;
-      currentSpan = [];
+      currentLine = [];
     };
 
     for (let word of words) {
+      // TODO add option to ignore this
+      if (word === '\n') {
+        newline();
+        continue;
+      }
+
       let w = measure(word, fontStyle).width;
 
       if (
         cursor.x + w > this.data.x + this.data.width &&
-        currentSpan.length > 0
+        currentLine.length > 0
       ) {
-        commitSpan();
+        newline();
       }
 
       // same line
-      currentSpan.push(word);
+      currentLine.push(word);
       cursor.x += spaceWidth + w;
     }
 
-    commitSpan();
+    newline();
 
     // Fix vertical align now that we know # of lines
     if (this.data.valign !== 'top') {
@@ -205,11 +194,85 @@ export default class Text extends Item {
     );
   }
 
+  lineBounds(line) {
+    let w = measure(line.data.value, this.fontStyle()).width;
+    let h = this.data.size;
+
+    switch (this.data.align) {
+      case 'left':
+        return new Bounds(line.data.x, line.data.y - h, w, h);
+      case 'center':
+        return new Bounds(line.data.x - w / 2, line.data.y - h, w, h);
+      case 'right':
+        return new Bounds(line.data.x - w, line.data.y - h, w, h);
+    }
+  }
+
   lineSegments() {
-    return this.bounds().lineSegments();
+    if (this._cachedLineSegments !== undefined) return this._cachedLineSegments;
+
+    let lss = [];
+    // For each TextLine append its bounds' line segments
+
+    for (let line of this.lines()) {
+      let b = this.lineBounds(line);
+      lss = lss.concat(b.lineSegments());
+    }
+
+    this._cachedLineSegments = lss;
+
+    return lss;
+  }
+
+  positionAtPosn(posn) {
+    // Return character position at posn
+
+    let cursorPosition = 0;
+
+    for (let line of this.lines()) {
+      let v = line.data.value;
+      let b = this.lineBounds(line);
+      if (b.contains(posn)) {
+        // Y value is correct, so now find x value
+
+        let accum = '';
+        let lastX = this.data.x;
+
+        for (let i = 0; i < v.length; i++) {
+          let char = v[i];
+          accum += char;
+
+          let w = measure(accum, this.fontStyle()).width;
+          let newX = this.data.x + w;
+
+          console.log(i, char, accum, w, lastX, newX, posn.x);
+
+          if (lastX < posn.x && newX > posn.x) {
+            // We found the magic char
+            if (posn.x - lastX > newX - posn.x) {
+              cursorPosition += i + 1;
+              break;
+            } else {
+              cursorPosition += i;
+              break;
+            }
+          }
+
+          lastX = newX;
+        }
+
+        break;
+      }
+
+      cursorPosition += v.length;
+      cursorPosition += 1; // newline
+    }
+
+    return cursorPosition;
   }
 
   clearCache() {
     delete this._cachedLines;
+    delete this._cachedLineSegments;
   }
 }
