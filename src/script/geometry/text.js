@@ -120,7 +120,10 @@ export default class Text extends Item {
     // Fix vertical align now that we know # of lines
     if (this.data.valign !== 'top') {
       let extraV =
-        this.data.height - lines.length * this.data.size * this.data.spacing;
+        this.data.height -
+        (this.data.size +
+          (lines.length - 1) * this.data.size * this.data.spacing);
+
       for (let span of lines) {
         switch (this.data.valign) {
           case 'center':
@@ -232,15 +235,23 @@ export default class Text extends Item {
       if (b.y2 > posn.y) {
         // Y value is correct, so now find x value
 
-        let accum = '';
+        let lineWidth = measure(v, this.fontStyle()).width;
         let lastX = this.data.x;
+
+        switch (this.data.align) {
+          case 'center':
+            lastX += (this.data.width - lineWidth) / 2;
+            break;
+          case 'right':
+            lastX += this.data.width - lineWidth;
+            break;
+        }
 
         for (let i = 0; i < v.length; i++) {
           let char = v[i];
-          accum += char;
 
-          let w = measure(accum, this.fontStyle()).width;
-          let newX = this.data.x + w;
+          let w = measure(char, this.fontStyle()).width;
+          let newX = lastX + w;
 
           if (lastX < posn.x && newX > posn.x) {
             // We found the magic char
@@ -281,8 +292,19 @@ export default class Text extends Item {
         accum += v.length + 1;
       } else {
         // Found the correct line
+        let lineWidth = measure(v, this.fontFamily()).width;
         let w = measure(v.slice(0, position - accum), this.fontFamily()).width;
-        return new Posn(this.data.x + w, line.data.y);
+        let x = this.data.x;
+
+        switch (this.data.align) {
+          case 'right':
+            x += this.data.width - lineWidth;
+            break;
+          case 'center':
+            x += (this.data.width - lineWidth) / 2;
+            break;
+        }
+        return new Posn(x + w, line.data.y);
       }
     }
 
