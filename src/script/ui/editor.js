@@ -1038,7 +1038,7 @@ export default class Editor extends EventEmitter {
     });
 
     handler.on('change:selection', (e, sel) => {
-      console.log(sel.start, sel.end);
+      this.canvas.refreshAll();
     });
 
     this.state.textEditHandler = handler;

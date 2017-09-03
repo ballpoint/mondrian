@@ -34,8 +34,14 @@ export class TextEditHandler extends EventEmitter {
       this.trigger('change', e, textarea.value);
     };
 
-    let selectionHandler = e => {
-      console.log(e);
+    textarea.style.width = '1000px';
+    textarea.style.height = '1000px';
+    textarea.style.fontFamily = item.fontFamily();
+    textarea.style.position = 'absolute';
+    textarea.style.left = '-10000px';
+    textarea.style.top = '-10000px';
+
+    this.selectionHandler = e => {
       this.selection = {
         start: textarea.selectionStart,
         end: textarea.selectionEnd
@@ -43,14 +49,16 @@ export class TextEditHandler extends EventEmitter {
       this.trigger('change:selection', e, this.selection);
     };
 
-    textarea.addEventListener('keydown', selectionHandler);
-    textarea.addEventListener('keyup', selectionHandler);
-    textarea.addEventListener('input', selectionHandler);
+    textarea.addEventListener('keydown', this.selectionHandler);
+    textarea.addEventListener('keyup', this.selectionHandler);
+    textarea.addEventListener('input', this.selectionHandler);
   }
 
   setCursorPosition(position) {
     this.textarea.focus();
     this.textarea.selectionStart = position;
     this.textarea.selectionEnd = position;
+
+    this.selectionHandler();
   }
 }

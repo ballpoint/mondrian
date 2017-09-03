@@ -22,7 +22,7 @@ export default class Text extends Item {
     data.width = parseFloat(data.width);
     data.height = parseFloat(data.height);
 
-    data.spacing = 1.2;
+    data.spacing = 1.5;
 
     if (data.align === undefined) data.align = 'left';
     if (data.valign === undefined) data.valign = 'top';
@@ -146,15 +146,12 @@ export default class Text extends Item {
     context.font = this.fontStyle();
 
     for (let span of this.lines()) {
-      context.fillStyle = 'black';
-
-      context.textAlign = this.data.align;
-
       context.save();
 
+      context.fillStyle = 'black';
+      context.textAlign = this.data.align;
       context.translate(projection.x(span.data.x), projection.y(span.data.y));
       context.scale(projection.z(1), projection.z(1));
-
       context.fillText(span.data.value, 0, 0);
 
       context.restore();
@@ -224,7 +221,7 @@ export default class Text extends Item {
     return lss;
   }
 
-  positionAtPosn(posn) {
+  cursorPositionAtPosn(posn) {
     // Return character position at posn
 
     let cursorPosition = 0;
@@ -244,8 +241,6 @@ export default class Text extends Item {
 
           let w = measure(accum, this.fontStyle()).width;
           let newX = this.data.x + w;
-
-          console.log(i, char, accum, w, lastX, newX, posn.x);
 
           if (lastX < posn.x && newX > posn.x) {
             // We found the magic char
@@ -269,6 +264,33 @@ export default class Text extends Item {
     }
 
     return cursorPosition;
+  }
+
+  posnAtCursorPosition(position, equalFlag = false) {
+    // Opposite of the above. Y value is baseline.
+    let accum = 0;
+    let lines = this.lines();
+
+    for (let line of lines) {
+      let v = line.data.value;
+
+      let skip = equalFlag
+        ? accum + v.length <= position
+        : accum + v.length < position;
+      if (skip) {
+        accum += v.length + 1;
+      } else {
+        // Found the correct line
+        let w = measure(v.slice(0, position - accum), this.fontFamily()).width;
+        return new Posn(this.data.x + w, line.data.y);
+      }
+    }
+
+    // Edge case: last position
+
+    let lastLine = lines[lines.length - 1];
+    let w = measure(lastLine.data.value, this.fontFamily());
+    return new Posn(this.data.x + w, lastLine.data.y);
   }
 
   clearCache() {

@@ -97,7 +97,7 @@ export default class Cursor extends Tool {
     if (this.hovering.length === 1 && this.hovering[0] instanceof Text) {
       let item = this.hovering[0];
 
-      let position = item.positionAtPosn(cursor.posnCurrent);
+      let position = item.cursorPositionAtPosn(cursor.posnCurrent);
 
       this.editor.editText(item, position);
     }

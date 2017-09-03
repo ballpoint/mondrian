@@ -85,7 +85,9 @@ export default class Layer {
       this.setFill(opts.fill);
     }
     if (opts.stroke) {
-      this.context.lineWidth = math.PIXEL_RATIO;
+      let strokeWidth = 1;
+      if (opts.strokeWidth !== undefined) strokeWidth = opts.strokeWidth;
+      this.setLineWidth(strokeWidth);
       this.setStroke(opts.stroke);
     }
 
@@ -136,6 +138,7 @@ export default class Layer {
 
   drawText(posn, text, opts) {
     this.context.textAlign = opts.align || 'left';
+    if (opts.font) this.context.font = opts.font;
 
     if (opts.rotate) {
       this.context.save();
