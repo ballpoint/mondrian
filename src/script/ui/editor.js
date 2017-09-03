@@ -1012,7 +1012,7 @@ export default class Editor extends EventEmitter {
   editText(item, position) {
     let handler = new TextEditHandler(item);
 
-    handler.setCursorPosition(position);
+    handler.setCursorPosition(position, position);
 
     let oldValue = item.data.value;
 
@@ -1033,8 +1033,8 @@ export default class Editor extends EventEmitter {
     });
 
     handler.on('blur', (e, value) => {
-      delete this.state.textEditHandler;
-      this.commitFrame();
+      //delete this.state.textEditHandler;
+      //this.commitFrame();
     });
 
     handler.on('change:selection', (e, sel) => {
@@ -1045,6 +1045,12 @@ export default class Editor extends EventEmitter {
 
     this.canvas.refreshAll();
     this.trigger('change');
+  }
+
+  finishEditingText() {
+    this.state.textEditHandler.finish();
+    delete this.state.textEditHandler;
+    this.commitFrame();
   }
 
   setDocDimens(width, height) {

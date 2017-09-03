@@ -7,6 +7,7 @@ const body = document.querySelector('body');
 export default class CursorHandler extends EventEmitter {
   constructor(cursor) {
     super();
+    this.cursor = cursor;
     this.resetElements();
 
     cursor.on('mousemove', (e, cursor) => {
@@ -18,15 +19,15 @@ export default class CursorHandler extends EventEmitter {
 
     cursor.on('mousedown', (e, cursor) => {
       this.handleEvent('mousedown', e, cursor);
+
+      let focused = document.querySelector(':focus');
+      if (focused && !focused.getAttribute('data-keepfocus')) {
+        focused.blur();
+      }
     });
 
     cursor.on('mouseup', (e, cursor) => {
       this.handleEvent('mouseup', e, cursor);
-
-      let focused = document.querySelector(':focus');
-      if (focused) {
-        focused.blur();
-      }
     });
 
     cursor.on('click', (e, cursor) => {
@@ -79,6 +80,7 @@ export default class CursorHandler extends EventEmitter {
 
     event.propagateToTool = true;
 
+    // Replace with method to stop propagation to selected tool
     event.stopPropagation = function() {
       event.propagateToTool = false;
     };
@@ -96,14 +98,18 @@ export default class CursorHandler extends EventEmitter {
   checkForActive(posn) {
     for (let elem of this.elements) {
       if (elem.shape && shapes.contains(elem.shape, posn)) {
-        this.active = elem;
-        this.updateCursor();
+        this.setActive(elem);
         return true;
       }
     }
     delete this.active;
     this.updateCursor();
     return false;
+  }
+
+  setActive(elem) {
+    this.active = elem;
+    this.updateCursor();
   }
 
   updateCursor() {
@@ -123,10 +129,10 @@ export default class CursorHandler extends EventEmitter {
     return this.active.id === id;
   }
 
-  setActive(id) {
+  setActiveById(id) {
     for (let elem of this.elements) {
       if (elem.id === id) {
-        this.active = elem;
+        this.setActive(elem);
         return;
       }
     }
@@ -141,6 +147,12 @@ export default class CursorHandler extends EventEmitter {
     this.removeId(elem.id);
     this.elementsMap[elem.id] = elem;
     this.elements.push(elem);
+
+    if (!this.active) {
+      if (elem.shape && shapes.contains(elem.shape, this.cursor.currentPosn)) {
+        this.setActive(elem);
+      }
+    }
   }
 
   unregisterElement(query) {

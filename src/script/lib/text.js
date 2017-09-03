@@ -25,8 +25,6 @@ export class TextEditHandler extends EventEmitter {
     textarea.onblur = e => {
       e.stopPropagation();
       this.trigger('blur', e, textarea.value);
-
-      document.querySelector('body').removeChild(textarea);
     };
 
     textarea.oninput = e => {
@@ -34,12 +32,15 @@ export class TextEditHandler extends EventEmitter {
       this.trigger('change', e, textarea.value);
     };
 
-    textarea.style.width = '1000px';
-    textarea.style.height = '1000px';
+    textarea.style.width = item.data.width + 'px';
+    textarea.style.height = item.data.height + 'px';
+    textarea.style.overflow = 'hidden';
     textarea.style.fontFamily = item.fontFamily();
+    textarea.style.fontSize = item.fontSize();
     textarea.style.position = 'absolute';
     textarea.style.left = '-10000px';
     textarea.style.top = '-10000px';
+    textarea.setAttribute('data-keepfocus', 'true');
 
     this.selectionHandler = e => {
       this.selection = {
@@ -54,11 +55,14 @@ export class TextEditHandler extends EventEmitter {
     textarea.addEventListener('input', this.selectionHandler);
   }
 
-  setCursorPosition(position) {
+  setCursorPosition(start, end) {
     this.textarea.focus();
-    this.textarea.selectionStart = position;
-    this.textarea.selectionEnd = position;
-
+    this.textarea.selectionStart = start;
+    this.textarea.selectionEnd = end;
     this.selectionHandler();
+  }
+
+  finish() {
+    document.querySelector('body').removeChild(this.textarea);
   }
 }

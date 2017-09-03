@@ -27,6 +27,8 @@ body#app {
     cursor: nesw-resize; }
   body#app[cursor="nwse-resize"] {
     cursor: nwse-resize; }
+  body#app[cursor="text"] {
+    cursor: text; }
 
 #app-main {
   flex-grow: 1;

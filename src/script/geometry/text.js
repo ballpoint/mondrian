@@ -229,7 +229,7 @@ export default class Text extends Item {
     for (let line of this.lines()) {
       let v = line.data.value;
       let b = this.lineBounds(line);
-      if (b.contains(posn)) {
+      if (b.y2 > posn.y) {
         // Y value is correct, so now find x value
 
         let accum = '';

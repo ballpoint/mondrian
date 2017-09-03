@@ -6,7 +6,7 @@ body#app {
   display: flex;
   height: 100%;
 
-  $cursor-list: ne-resize nw-resize se-resize sw-resize ew-resize ns-resize nesw-resize nwse-resize;
+  $cursor-list: ne-resize nw-resize se-resize sw-resize ew-resize ns-resize nesw-resize nwse-resize text;
 
   @each $cursor in $cursor-list {
     &[cursor="#{$cursor}"] {

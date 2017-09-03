@@ -68,6 +68,11 @@ export default class Cursor extends Tool {
     let posn = cursor.posnCurrent;
     let selected;
 
+    if (this.editor.state.textEditHandler) {
+      // We're in text edit mode
+      this.editor.finishEditingText();
+    }
+
     if (this.hovering.length > 0) {
       let skipClick = this.skipClick % this.hovering.length;
 

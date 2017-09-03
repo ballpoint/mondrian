@@ -104,7 +104,11 @@ export default class Layer {
       }
 
       if (opts.fill) {
+        if (opts.fillAlpha) {
+          this.context.globalAlpha = opts.fillAlpha;
+        }
         this.context.fillRect(x, y, width, height);
+        this.context.globalAlpha = 1;
       }
 
       if (opts.stroke) {
