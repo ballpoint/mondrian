@@ -3,7 +3,7 @@ import Bounds from 'geometry/bounds';
 import UIElement from 'ui/editor/ui_element';
 import Element from 'ui/element';
 
-const VERTICAL_HL_PADDING = 5;
+const HL_BLUE = consts.blue.mix(consts.white, 0.3);
 
 export default class TextEditUIElement extends UIElement {
   reset() {
@@ -66,17 +66,25 @@ export default class TextEditUIElement extends UIElement {
 
         let p1 = this.editor.projection.posn(posnStart);
         let p2 = this.editor.projection.posn(
-          posnEnd.clone().nudge(0, -handler.item.data.size)
+          posnEnd
+            .clone()
+            .nudge(0, -handler.item.data.size * handler.item.data.spacing)
         );
 
         layer.drawRect(
           Bounds.fromPosns([
-            p1.clone().nudge(0, VERTICAL_HL_PADDING),
-            p2.clone().nudge(0, -VERTICAL_HL_PADDING)
+            this.editor.projection.posn(
+              posnStart
+                .clone()
+                .nudge(
+                  0,
+                  handler.item.data.size * (handler.item.data.spacing - 1)
+                )
+            ),
+            p2
           ]),
           {
-            fill: consts.blue,
-            fillAlpha: 0.8
+            fill: HL_BLUE
           }
         );
 
@@ -99,12 +107,14 @@ export default class TextEditUIElement extends UIElement {
       // Draw cursor
       layer.drawLineSegment(
         this.editor.projection.posn(
-          posnEnd.clone().clone().nudge(0, VERTICAL_HL_PADDING)
+          posnEnd
+            .clone()
+            .nudge(0, -handler.item.data.size * handler.item.data.spacing)
         ),
         this.editor.projection.posn(
           posnEnd
             .clone()
-            .nudge(0, -(handler.item.data.size + VERTICAL_HL_PADDING))
+            .nudge(0, handler.item.data.size * (handler.item.data.spacing - 1))
         ),
         {
           stroke: consts.blue,

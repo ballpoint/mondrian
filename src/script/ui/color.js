@@ -88,18 +88,6 @@ export default class Color {
     return new Color(this.r, this.g, this.b);
   }
 
-  absorb(color) {
-    this.r = color.r;
-    this.g = color.g;
-    this.b = color.b;
-    this.a = color.a;
-    this.hex = color.hex;
-    if (typeof this.refresh === 'function') {
-      this.refresh();
-    }
-    return this;
-  }
-
   min() {
     return [this.r, this.g, this.b].sort((a, b) => a - b)[0];
   }
@@ -189,6 +177,18 @@ export default class Color {
     this.b = Math.min(255, this.b + amt);
     this.hex = this.rgbToHex(this.r, this.g, this.b);
     return this;
+  }
+
+  mix(color, percentage) {
+    let rdiff = color.r - this.r;
+    let gdiff = color.g - this.g;
+    let bdiff = color.b - this.b;
+
+    return new Color(
+      this.r + Math.round(percentage * rdiff),
+      this.g + Math.round(percentage * gdiff),
+      this.b + Math.round(percentage * bdiff)
+    );
   }
 
   toRGBString() {
