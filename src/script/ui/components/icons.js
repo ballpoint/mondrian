@@ -1,3 +1,4 @@
+import classnames from 'classnames';
 import cursor from 'icons/cursor.svg';
 import ellipse from 'icons/ellipse.svg';
 import rect from 'icons/rect.svg';
@@ -11,6 +12,9 @@ import redo from 'icons/redo.svg';
 
 import visible from 'icons/visible.svg';
 import invisible from 'icons/invisible.svg';
+import locked from 'icons/locked.svg';
+import unlocked from 'icons/unlocked.svg';
+import del from 'icons/delete.svg';
 
 import alignLeft from 'icons/align_left.svg';
 import alignCenter from 'icons/align_center.svg';
@@ -34,6 +38,9 @@ const ICONS = {
 
   visible,
   invisible,
+  locked,
+  unlocked,
+  del,
 
   alignLeft,
   alignCenter,
@@ -46,8 +53,12 @@ const ICONS = {
 
 export default ICONS;
 
-export function renderIcon(name) {
+export function renderIcon(name, opts={}) {
   return (
-    <span className="icon" dangerouslySetInnerHTML={{ __html: ICONS[name] }} />
+    <span className={classnames({
+      "icon": true,
+      "weak": opts.weak,
+
+    })} dangerouslySetInnerHTML={{ __html: ICONS[name] }} />
   );
 }

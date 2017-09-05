@@ -17,4 +17,10 @@
   &:active {
     background-color: $bg-grey;
   }
+
+  &.weak {
+    svg {
+      stroke: $blue-grey-strong;
+    }
+  }
 }

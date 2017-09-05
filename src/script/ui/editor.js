@@ -307,6 +307,10 @@ export default class Editor extends EventEmitter {
       this.paste(e);
     });
 
+    this.canvas.on('resize', e => {
+      this.calculateScales()
+    });
+
     this.canvas.refreshAll();
   }
 
