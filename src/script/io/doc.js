@@ -259,6 +259,10 @@ export default class Doc {
   }
 
   removeIndexes(indexes) {
+    indexes = indexes.slice(0).sort((a, b) => {
+      return b.compare(a);
+    });
+
     for (let index of indexes) {
       let parent = this;
 

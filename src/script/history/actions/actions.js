@@ -412,10 +412,12 @@ export class GroupAction extends HistoryAction {
         return a.compare(b);
       });
 
+
     let groupIndex = childIndexes.last();
     for (let index of childIndexes.slice(0, -1)) {
       groupIndex = groupIndex.plusAt(-1, index.depth);
     }
+
 
     return new GroupAction({
       childIndexes,
