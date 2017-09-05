@@ -271,6 +271,9 @@ export default class Pen extends Tool {
         frame.push(
           new actions.CloseSegmentAction({ index: this.rootSegment.index })
         );
+
+
+        pointToSelect = this._endpointEnd;
       } else {
         let removeIndex;
 
@@ -455,10 +458,12 @@ export default class Pen extends Tool {
     };
 
     for (let elem of this.editor.doc.elementsFlat) {
-      for (let seg of elem.points.segments) {
-        if (!seg.empty && !seg.closed) {
-          handleEndpoint(seg.first);
-          handleEndpoint(seg.last);
+      if (elem.points) {
+        for (let seg of elem.points.segments) {
+          if (!seg.empty && !seg.closed) {
+            handleEndpoint(seg.first);
+            handleEndpoint(seg.last);
+          }
         }
       }
     }

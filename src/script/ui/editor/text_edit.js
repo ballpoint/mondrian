@@ -161,6 +161,8 @@ export default class TextEditUIElement extends UIElement {
       }
     );
 
-    this.editor.cursorHandler.registerElement(textEditArea);
+    this.editor.cursorHandler.registerElement(textEditArea, {
+      canActivateImmediately: true
+    });
   }
 }

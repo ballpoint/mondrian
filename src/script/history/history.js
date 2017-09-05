@@ -44,6 +44,17 @@ export default class DocHistory extends EventEmitter {
     this.trigger('commit');
   }
 
+  abandonFrame(doc) {
+    if (this.head.committed) {
+      throw new Error('Tried to abandon committed frame');
+    }
+
+    let oldHead = this.head;
+    this.undo(doc);
+    this.head.succ = [];
+    delete this.head.newestSucc;
+  }
+
   pushAction(action, doc) {
     action.perform(doc);
 

@@ -143,12 +143,12 @@ export default class CursorHandler extends EventEmitter {
     this.elementsMap = {};
   }
 
-  registerElement(elem) {
+  registerElement(elem, opts = {}) {
     this.removeId(elem.id);
     this.elementsMap[elem.id] = elem;
     this.elements.push(elem);
 
-    if (!this.active) {
+    if (!this.active && opts.canActivateImmediately) {
       if (elem.shape && shapes.contains(elem.shape, this.cursor.currentPosn)) {
         this.setActive(elem);
       }

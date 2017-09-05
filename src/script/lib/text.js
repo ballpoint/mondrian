@@ -15,6 +15,7 @@ export class TextEditHandler extends EventEmitter {
     super();
 
     this.item = item;
+    this.originalValue = item.data.value;
     let textarea = document.createElement('textarea');
     this.textarea = textarea;
 
@@ -31,6 +32,8 @@ export class TextEditHandler extends EventEmitter {
       e.stopPropagation();
       this.trigger('change', e, textarea.value);
     };
+
+    this.trigger('change', null, textarea.value);
 
     textarea.style.width = item.data.width + 'px';
     textarea.style.height = item.data.height + 'px';

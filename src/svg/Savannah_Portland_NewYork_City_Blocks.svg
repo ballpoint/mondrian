@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="325" height="575" viewBox="0 0 325 575">
+<style type="text/css">
+	.st0{fill:#FEDF93;stroke:#000;}
+	.st1{fill:#FAC138;stroke:#000;}
+	.st2{fill:#03C51E;stroke:#000;}
+	.st3{font-family:Liberation Sans,Arial;}
+	.st4{font-size:20px;}
+</style>
+<g id="diagram">
+	<rect x="21.6" y="18.2" class="st0" width="38" height="38"/>
+	<rect x="72.2" y="18.2" class="st0" width="38" height="38"/>
+	<rect x="122.2" y="18.2" class="st0" width="38" height="38"/>
+	<rect x="172.2" y="18.2" class="st0" width="38" height="38"/>
+	<rect x="222.2" y="18.2" class="st0" width="38" height="38"/>
+	<rect x="21.6" y="68.2" class="st0" width="38" height="38"/>
+	<rect x="72.2" y="68.2" class="st0" width="38" height="38"/>
+	<rect x="122.2" y="68.2" class="st0" width="38" height="38"/>
+	<rect x="172.2" y="68.2" class="st0" width="38" height="38"/>
+	<rect x="222.2" y="68.2" class="st0" width="38" height="38"/>
+	<rect x="21.6" y="118.2" class="st0" width="38" height="38"/>
+	<rect x="21.6" y="205.2" class="st0" width="59" height="38"/>
+	<rect x="21.6" y="298" class="st0" width="59" height="38"/>
+	<rect x="21.6" y="384.7" class="st1" width="180" height="41"/>
+	<rect x="21.6" y="434.7" class="st1" width="180" height="41"/>
+	<rect x="92.7" y="205.2" class="st0" width="59" height="38"/>
+	<rect x="72.2" y="118.2" class="st0" width="38" height="38"/>
+	<rect x="67.7" y="251.6" class="st2" width="38" height="38"/>
+	<rect x="122.2" y="118.2" class="st0" width="38" height="38"/>
+	<rect x="172.2" y="118.2" class="st0" width="38" height="38"/>
+	<rect x="222.2" y="118.2" class="st0" width="38" height="38"/>
+	<rect x="21.6" y="251" class="st0" width="40" height="12"/>
+	<rect x="21.6" y="277" class="st0" width="40" height="12"/>
+	<rect x="92.7" y="298" class="st0" width="59" height="38"/>
+	<rect x="111.7" y="251" class="st0" width="40" height="12"/>
+	<rect x="111.7" y="277" class="st0" width="40" height="12"/>
+	<rect x="163.7" y="205.2" class="st0" width="59" height="38"/>
+	<rect x="163.7" y="298" class="st0" width="59" height="38"/>
+	<rect x="234.8" y="205.2" class="st0" width="59" height="38"/>
+	<rect x="209.8" y="251.6" class="st2" width="38" height="38"/>
+	<rect x="163.7" y="251" class="st0" width="40" height="12"/>
+	<rect x="163.7" y="277" class="st0" width="40" height="12"/>
+	<rect x="234.8" y="298" class="st0" width="59" height="38"/>
+	<rect x="253.8" y="251" class="st0" width="40" height="12"/>
+	<rect x="253.8" y="277" class="st0" width="40" height="12"/>
+	<rect x="21.6" y="484.7" class="st1" width="180" height="41"/>
+</g>
+<g id="text">
+	<text transform="matrix(1 0 0 1 22 186)" class="st3 st4">1 Portland typical blocks</text>
+	<text transform="matrix(1 0 0 1 22 366)" class="st3 st4">2 Savannah cellular units</text>
+	<text transform="matrix(1 0 0 1 22 556)" class="st3 st4">3 New York typical blocks</text>
+</g>
+</svg>

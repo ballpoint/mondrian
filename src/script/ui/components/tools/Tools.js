@@ -35,6 +35,11 @@ const config = [
     label: 'Ellipse',
     constructor: tools.Ellipse,
     icon: 'ellipse'
+  },
+  {
+    label: 'Type',
+    constructor: tools.Type,
+    icon: 'type'
   }
 ];
 

@@ -7,63 +7,11 @@ import { renderIcon } from 'ui/components/icons';
 import HistoryFrame from 'history/Frame';
 import * as actions from 'history/actions/actions';
 
-let ToolbarGroup = React.createClass({
-  render() {
-    return (
-      <div className="toolbar-group">
-        {this.props.children}
-      </div>
-    );
-  }
-});
-
-let ToolbarButton = React.createClass({
-  render() {
-    return (
-      <a
-        className="toolbar-button"
-        onClick={this.props.onClick}
-        title={this.props.title}>
-        {this.props.children}
-      </a>
-    );
-  }
-});
-
-let ToolbarDropdown = React.createClass({
-  render() {
-    return (
-      <div className="toolbar-item" title={this.props.title}>
-        {this.props.label}
-        <select>
-          {this.props.options.map(opt => {
-            return (
-              <option style={opt.style} value={opt.value}>
-                {opt.label}
-              </option>
-            );
-          })}
-        </select>
-      </div>
-    );
-  }
-});
-
-let ToolbarNumberInput = React.createClass({
-  render() {
-    return (
-      <div className="toolbar-item" title={this.props.title}>
-        {this.props.label}
-        <input
-          type="number"
-          onChange={this.props.onChange}
-          onBlur={this.props.onBlur}
-          style={{ width: this.props.width }}
-        />
-      </div>
-    );
-  }
-});
+import ToolbarGroup from 'ui/components/toolbar/ToolbarGroup';
+import ToolbarButton from 'ui/components/toolbar/ToolbarButton';
+import ToolbarDropdown from 'ui/components/toolbar/ToolbarDropdown';
+import ToolbarNumberInput from 'ui/components/toolbar/ToolbarNumberInput';
+import TypeToolbarGroup from 'ui/components/toolbar/TypeToolbarGroup';
 
 let Toolbar = React.createClass({
   getInitialState() {
@@ -98,11 +46,11 @@ let Toolbar = React.createClass({
     );
   },
 
-  changeSelectionAttribute(key, value, title) {
+  changeSelectionAttribute(type, key, value, title) {
     let frame = new HistoryFrame(
       [
         actions.SetAttributeAction.forItems(
-          this.props.editor.state.selection,
+          this.props.editor.selectedOfType(type),
           key,
           value
         )
@@ -112,109 +60,6 @@ let Toolbar = React.createClass({
 
     this.props.editor.stageFrame(frame);
     this.props.editor.commitFrame();
-  },
-
-  renderTextGroup() {
-    if (this.props.editor.selectedOfType(Text).length === 0) return null;
-
-    const fonts = [
-      'sans-serif',
-      'serif',
-      'Arial',
-      'Times New Roman',
-      'Norasi',
-      'Ubuntu Mono'
-    ];
-
-    return (
-      <ToolbarGroup>
-        <ToolbarDropdown
-          options={fonts.map(f => {
-            return {
-              label: f,
-              value: f,
-              style: { fontFamily: f }
-            };
-          })}
-        />
-
-        <ToolbarNumberInput
-          label=""
-          width={50}
-          onBlur={e => {
-            let items = this.props.editor.selectionFlat().filter(item => {
-              return item instanceof Text;
-            });
-            let frame = new HistoryFrame([
-              actions.SetAttributeAction.forItems(
-                items,
-                'size',
-                parseFloat(e.target.value)
-              )
-            ]);
-
-            this.props.editor.stageFrame(frame);
-            this.props.editor.commitFrame();
-          }}
-        />
-
-        <ToolbarButton
-          title="Align left"
-          onClick={() => {
-            this.changeSelectionAttribute('align', 'left', 'Align left');
-          }}>
-          {renderIcon('alignLeft')}
-        </ToolbarButton>
-        <ToolbarButton
-          title="Align center"
-          onClick={() => {
-            this.changeSelectionAttribute('align', 'center', 'Align center');
-          }}>
-          {renderIcon('alignCenter')}
-        </ToolbarButton>
-        <ToolbarButton
-          title="Align right"
-          onClick={() => {
-            this.changeSelectionAttribute('align', 'right', 'Align right');
-          }}>
-          {renderIcon('alignRight')}
-        </ToolbarButton>
-
-        <ToolbarButton
-          title="Vertical align top"
-          onClick={() => {
-            this.changeSelectionAttribute(
-              'valign',
-              'top',
-              'Vertical align top'
-            );
-          }}>
-          {renderIcon('valignTop')}
-        </ToolbarButton>
-        <ToolbarButton
-          title="Vertical align center"
-          onClick={() => {
-            this.changeSelectionAttribute(
-              'valign',
-              'center',
-              'Vertical align center'
-            );
-          }}>
-          {renderIcon('valignCenter')}
-        </ToolbarButton>
-        <ToolbarButton
-          title="Vertical align bottom"
-          onClick={() => {
-            this.changeSelectionAttribute(
-              'valign',
-              'bottom',
-              'Vertical align bottom'
-            );
-          }}>
-          {renderIcon('valignBottom')}
-        </ToolbarButton>
-      </ToolbarGroup>
-    );
   },
 
   renderBooleanGroup() {
@@ -268,7 +113,10 @@ let Toolbar = React.createClass({
         <div className="toolbar-group">
           {this.renderHistoryGroup()}
           {this.renderBooleanGroup()}
-          {this.renderTextGroup()}
+          <TypeToolbarGroup
+            changeSelectionAttribute={this.changeSelectionAttribute}
+            {...this.props}
+          />
         </div>
       </div>
     );

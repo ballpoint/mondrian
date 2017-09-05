@@ -16,6 +16,8 @@ export default class Text extends Item {
     if (data.x === undefined) data.x = 100;
     if (data.y === undefined) data.y = 100;
     if (data.size === undefined) data.size = 12;
+    if (data.value === undefined) data.value = '';
+    if (data.fontFamily === undefined) data.fontFamily = 'Times New Roman';
 
     data.x = parseFloat(data.x);
     data.y = parseFloat(data.y);
@@ -34,9 +36,8 @@ export default class Text extends Item {
     return `${this.fontSize()} ${this.fontFamily()}`;
   }
 
-  fontFamily(z) {
-    let family = 'sans-serif';
-    return family;
+  fontFamily() {
+    return this.data.fontFamily;
   }
 
   fontSize() {
@@ -318,5 +319,9 @@ export default class Text extends Item {
   clearCache() {
     delete this._cachedLines;
     delete this._cachedLineSegments;
+  }
+
+  getPoints() {
+    return [];
   }
 }

@@ -231,6 +231,9 @@ export default class Editor extends EventEmitter {
     hotkeys.on('down', 'P', () => {
       this.selectTool(new tools.Pen(this));
     });
+    hotkeys.on('down', 'T', () => {
+      this.selectTool(new tools.Type(this));
+    });
     hotkeys.on('down', 'space', () => {
       this.selectTool(new tools.Paw(this));
     });
@@ -1048,9 +1051,25 @@ export default class Editor extends EventEmitter {
   }
 
   finishEditingText() {
+    let handler = this.state.textEditHandler;
+    let finalValue = handler.item.data.value;
+
+    if (finalValue === '') {
+      // Delete instead
+
+      let frame = new HistoryFrame([
+        actions.DeleteAction.forItems([handler.item])
+      ]);
+      this.stageFrame(frame);
+      this.commitFrame();
+    } else if (finalValue === handler.originalValue) {
+      this.abandonFrame();
+    } else {
+      this.commitFrame();
+    }
+
     this.state.textEditHandler.finish();
     delete this.state.textEditHandler;
-    this.commitFrame();
   }
 
   setDocDimens(width, height) {
@@ -1074,6 +1093,11 @@ export default class Editor extends EventEmitter {
 
   commitFrame(frame) {
     this.doc.commitFrame();
+  }
+
+  abandonFrame() {
+    this.doc.abandonFrame();
+    this.trigger('change');
   }
 
   perform(h) {

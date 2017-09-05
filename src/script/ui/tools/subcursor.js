@@ -29,7 +29,7 @@ export default class SubCursor extends Tool {
       // through all of its points
       let bounds = elem.bounds().padded(10);
       if (shapes.contains(bounds, posn)) {
-        let points = elem.points.all();
+        let points = elem.getPoints();
         window.$p = points;
         pointsToCheck = pointsToCheck.concat(points);
       }
@@ -76,7 +76,7 @@ export default class SubCursor extends Tool {
 
       let elems = this.editor.doc.elementsFlat.slice(0).reverse();
       for (let elem of elems) {
-        for (let pt of elem.points.all()) {
+        for (let pt of elem.getPoints()) {
           if (shapes.contains(bounds, pt)) {
             newSelection.push(pt);
           }

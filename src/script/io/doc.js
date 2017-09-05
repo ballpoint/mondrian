@@ -183,6 +183,10 @@ export default class Doc {
     this.history.commitFrame();
   }
 
+  abandonFrame(frame) {
+    this.history.abandonFrame(this);
+  }
+
   perform(h) {
     if (h instanceof HistoryFrame) {
       this.history.stageFrame(h, this);

@@ -3,6 +3,7 @@ import ellipse from 'icons/ellipse.svg';
 import rect from 'icons/rect.svg';
 import zoom from 'icons/zoom.svg';
 import pen from 'icons/pen.svg';
+import type from 'icons/type.svg';
 import todo from 'icons/todo.svg';
 
 import undo from 'icons/undo.svg';
@@ -22,6 +23,7 @@ const ICONS = {
   rect,
   zoom,
   pen,
+  type,
   todo,
 
   undo,

@@ -25,11 +25,17 @@ let TextInput = React.createClass({
       );
     }
 
+    let style = {};
+    if (this.props.width) {
+      style.width = this.props.width;
+    }
+
     let input = (
       <input
         type="text"
         id={this.props.id}
         value={this.state.value}
+        style={style}
         onChange={e => {
           this.setState({ value: e.target.value });
         }}
