@@ -116,4 +116,8 @@ export default class Group {
       child[method](...args);
     }
   }
+
+  clone() {
+    return new Group(this.children.map(child => { return child.clone() }), this.metadata);
+  }
 }

@@ -324,4 +324,6 @@ export default class Text extends Item {
   getPoints() {
     return [];
   }
+
+  commitData() {}
 }

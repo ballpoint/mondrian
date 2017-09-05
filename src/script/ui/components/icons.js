@@ -9,6 +9,9 @@ import todo from 'icons/todo.svg';
 import undo from 'icons/undo.svg';
 import redo from 'icons/redo.svg';
 
+import visible from 'icons/visible.svg';
+import invisible from 'icons/invisible.svg';
+
 import alignLeft from 'icons/align_left.svg';
 import alignCenter from 'icons/align_center.svg';
 import alignRight from 'icons/align_right.svg';
@@ -28,6 +31,9 @@ const ICONS = {
 
   undo,
   redo,
+
+  visible,
+  invisible,
 
   alignLeft,
   alignCenter,

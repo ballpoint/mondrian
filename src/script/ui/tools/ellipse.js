@@ -9,7 +9,7 @@ export default class Ellipse extends Tool {
   }
 
   get id() {
-    return 'rect';
+    return 'ellipse';
   }
 
   handleMousemove(e, cursor) {}

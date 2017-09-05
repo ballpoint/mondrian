@@ -14,6 +14,10 @@ export default class Type extends Tool {
     this.nextIndex = this.editor.state.layer.nextChildIndex();
   }
 
+  get id() {
+    return 'type';
+  }
+
   handleDrag(e, cursor) {
     this.insertTextItem(cursor.posnCurrent, cursor.posnDown);
   }

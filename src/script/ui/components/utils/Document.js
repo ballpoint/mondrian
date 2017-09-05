@@ -6,16 +6,17 @@ import Thumb from 'ui/thumb';
 import CanvasLayer from 'ui/layer';
 import HistoryFrame from 'history/Frame';
 import * as actions from 'history/actions/actions';
+import { renderIcon } from 'ui/components/icons';
 
 let ChildCtrlButton = React.createClass({
-  label() {
+  icon() {
     switch (this.props.type) {
       case 'visibility':
-        return this.props.value ? 'V' : 'v';
+        return this.props.value ? renderIcon('visible') : renderIcon('invisible');
       case 'lock':
-        return this.props.value ? 'L' : 'l';
+        return this.props.value ? renderIcon('pen') : renderIcon('pen');
       case 'delete':
-        return 'D';
+        return renderIcon('pen');
     }
   },
 
@@ -80,7 +81,7 @@ let ChildCtrlButton = React.createClass({
           disabled: this.props.disabled
         })}
         onClick={this.onClick}>
-        {this.label()}
+        {this.icon()}
       </div>
     );
   }

@@ -231,6 +231,12 @@ export default class Editor extends EventEmitter {
     hotkeys.on('down', 'P', () => {
       this.selectTool(new tools.Pen(this));
     });
+    hotkeys.on('down', 'M', () => {
+      this.selectTool(new tools.Rect(this));
+    });
+    hotkeys.on('down', 'L', () => {
+      this.selectTool(new tools.Ellipse(this));
+    });
     hotkeys.on('down', 'T', () => {
       this.selectTool(new tools.Type(this));
     });
@@ -1063,7 +1069,10 @@ export default class Editor extends EventEmitter {
       this.stageFrame(frame);
       this.commitFrame();
     } else if (finalValue === handler.originalValue) {
-      this.abandonFrame();
+      if (!this.doc.history.head.committed) {
+        // TODO maybe remove this method entirely if we never use it anywhere else.
+        this.abandonFrame();
+      }
     } else {
       this.commitFrame();
     }
