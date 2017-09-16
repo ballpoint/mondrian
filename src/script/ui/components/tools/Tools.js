@@ -88,7 +88,6 @@ let Tools = React.createClass({
           );
         })}
 
-        {<CurrentColors editor={this.props.editor} />}
       </div>
     );
   }

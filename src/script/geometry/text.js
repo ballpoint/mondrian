@@ -152,7 +152,10 @@ export default class Text extends Item {
     for (let span of this.lines()) {
       context.save();
 
-      context.fillStyle = 'black';
+      let fill = 'black';
+      if (this.data.fill) fill = this.data.fill;
+
+      context.fillStyle = fill;
       context.textAlign = this.data.align;
       context.translate(projection.x(span.data.x), projection.y(span.data.y));
       context.scale(projection.z(1), projection.z(1));

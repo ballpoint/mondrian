@@ -1,15 +1,16 @@
-body#app { 
+body#app {
   margin: 0;
-  
+
   overflow: hidden;
 
   display: flex;
   height: 100%;
 
-  $cursor-list: ne-resize nw-resize se-resize sw-resize ew-resize ns-resize nesw-resize nwse-resize text;
+  $cursor-list: ne-resize nw-resize se-resize sw-resize ew-resize ns-resize
+    nesw-resize nwse-resize text;
 
   @each $cursor in $cursor-list {
-    &[cursor="#{$cursor}"] {
+    &[cursor='#{$cursor}'] {
       cursor: $cursor;
     }
   }
@@ -20,7 +21,6 @@ body#app {
   display: flex;
   flex-direction: column;
   height: 100%;
-
 
   header#app-header {
     height: $app-header-height;
@@ -35,15 +35,19 @@ body#app {
       width: $app-toolbar-width;
       height: $app-header-height;
       background-color: $blue-grey;
-      border-right: 1px solid darken($blue-grey,  20%);
+      border-right: 1px solid darken($blue-grey, 20%);
       border-bottom: 1px solid darken($blue-grey, 20%);
 
-      rect.logo-bg {
-        fill: #212121;
-      }
+      svg {
+        display: none;
 
-      rect.logo-fg {
-        fill: #fff;
+        rect.logo-bg {
+          fill: #212121;
+        }
+
+        rect.logo-fg {
+          fill: #fff;
+        }
       }
     }
 
@@ -70,4 +74,3 @@ body#app {
     }
   }
 }
-

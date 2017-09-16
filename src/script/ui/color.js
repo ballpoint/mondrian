@@ -134,8 +134,11 @@ export default class Color {
   }
 
   darken(amt) {
-    let macro = val => val / amt;
-    return new Color(macro(this.r), macro(this.g), macro(this.b));
+    return new Color(
+      Math.round(this.r * (1.0 - amt)),
+      Math.round(this.g * (1.0 - amt)),
+      Math.round(this.b * (1.0 - amt))
+    );
   }
 
   lightness() {
@@ -160,11 +163,12 @@ export default class Color {
       amt = 1.0;
     }
     let mpt = this.midpoint();
-    this.r -= (this.r - mpt) * amt;
-    this.g -= (this.g - mpt) * amt;
-    this.b -= (this.b - mpt) * amt;
-    this.hex = this.rgbToHex(this.r, this.g, this.b);
-    return this;
+
+    return new Color(
+      this.r - (this.r - mpt) * amt,
+      this.g - (this.g - mpt) * amt,
+      this.b - (this.b - mpt) * amt
+    );
   }
 
   lighten(amt) {

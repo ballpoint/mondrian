@@ -109,6 +109,7 @@ export default class CursorTracking extends EventEmitter {
 
       // Set tracking variables
       this.currentPosn = this._posnForEvent(e);
+
       this.down = true;
       this.lastDown = this._posnForEvent(e);
       this.downEvent = e;
@@ -117,6 +118,8 @@ export default class CursorTracking extends EventEmitter {
 
       // Send the event to ui, which will dispatch it to the appropriate places
       this.trigger('mousedown', e, this);
+    } else {
+      delete this.lastDownTarget;
     }
   }
 
@@ -149,36 +152,38 @@ export default class CursorTracking extends EventEmitter {
   }
 
   _mousemove(e) {
-    this.doubleclickArmed = false;
+    if (insideOf(this.lastDownTarget, this.root)) {
+      this.doubleclickArmed = false;
 
-    this.lastPosn = this.currentPosn;
-    this.currentPosn = this._posnForEvent(e);
+      this.lastPosn = this.currentPosn;
+      this.currentPosn = this._posnForEvent(e);
 
-    this.trigger('mousemove', e, this);
-    e.preventDefault();
+      this.trigger('mousemove', e, this);
+      e.preventDefault();
 
-    // Set some tracking variables
-    this.wasDownLast = this.down;
-    this.lastEvent = e;
-    this.currentPosn = this._posnForEvent(e);
+      // Set some tracking variables
+      this.wasDownLast = this.down;
+      this.lastEvent = e;
+      this.currentPosn = this._posnForEvent(e);
 
-    // Initiate dragging, or continue it if it's been initiated.
-    if (this.down) {
-      if (
-        this.dragging ||
-        this.currentPosn.distanceFrom(this.lastDown) > DRAG_THRESHOLD
-      ) {
-        if (this.dragging) {
-          this.draggingJustBegan = false;
-          // Allow for slight movement without triggering drag
-        } else {
-          this.dragStartPosn = this.lastDown;
-          this.trigger('drag:start', e, this);
-          this.dragging = true;
-          this.draggingJustBegan = true;
+      // Initiate dragging, or continue it if it's been initiated.
+      if (this.down) {
+        if (
+          this.dragging ||
+          this.currentPosn.distanceFrom(this.lastDown) > DRAG_THRESHOLD
+        ) {
+          if (this.dragging) {
+            this.draggingJustBegan = false;
+            // Allow for slight movement without triggering drag
+          } else {
+            this.dragStartPosn = this.lastDown;
+            this.trigger('drag:start', e, this);
+            this.dragging = true;
+            this.draggingJustBegan = true;
+          }
+
+          this.trigger('drag', e, this);
         }
-
-        this.trigger('drag', e, this);
       }
     }
   }

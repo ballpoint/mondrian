@@ -12,9 +12,13 @@ let ChildCtrlButton = React.createClass({
   icon() {
     switch (this.props.type) {
       case 'visibility':
-        return this.props.value ? renderIcon('visible', { weak: true }) : renderIcon('invisible');
+        return this.props.value
+          ? renderIcon('visible')
+          : renderIcon('invisible', { weak: true });
       case 'lock':
-        return this.props.value ? renderIcon('locked') : renderIcon('unlocked', { weak: true });
+        return this.props.value
+          ? renderIcon('locked', { weak: true })
+          : renderIcon('unlocked');
       case 'delete':
         return renderIcon('del');
     }

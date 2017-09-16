@@ -3,6 +3,7 @@ import TransformUtil from 'ui/components/utils/Transform';
 import DocumentUtil from 'ui/components/utils/Document';
 import HistoryUtil from 'ui/components/utils/History';
 import ColorUtil from 'ui/components/utils/Color';
+import StrokeUtil from 'ui/components/utils/Stroke';
 import AlignUtil from 'ui/components/utils/Align';
 
 let Utils = React.createClass({
@@ -46,7 +47,6 @@ let Utils = React.createClass({
 
     if (!this.props.editor.doc) return w;
 
-    /*
     w.push(
       <ColorUtil
         key="color"
@@ -55,7 +55,6 @@ let Utils = React.createClass({
         selectionBounds={this.state.selectionBounds}
       />
     );
-    */
 
     w.push(
       <AlignUtil
@@ -108,12 +107,8 @@ let Utils = React.createClass({
   render() {
     return (
       <div id="app-utils">
-        <div id="app-utils-left">
-          {this.getUtilsLeft()}
-        </div>
-        <div id="app-utils-right">
-          {this.getUtilsRight()}
-        </div>
+        <div id="app-utils-left">{this.getUtilsLeft()}</div>
+        <div id="app-utils-right">{this.getUtilsRight()}</div>
       </div>
     );
   }

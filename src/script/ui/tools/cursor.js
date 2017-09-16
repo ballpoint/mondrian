@@ -66,7 +66,7 @@ export default class Cursor extends Tool {
   handleMousedown(e, cursor) {
     delete this.annotation;
     let posn = cursor.posnCurrent;
-    let selected;
+    let target;
 
     if (this.editor.state.textEditHandler) {
       // We're in text edit mode
@@ -77,15 +77,19 @@ export default class Cursor extends Tool {
       let skipClick = this.skipClick % this.hovering.length;
 
       if (this.hovering.length > skipClick) {
-        selected = this.hovering[skipClick];
+        target = this.hovering[skipClick];
       } else {
-        selected = this.hovering.last();
+        target = this.hovering.last();
       }
     }
 
-    if (selected) {
-      if (!this.editor.isSelected(selected)) {
-        this.editor.setSelection([selected]);
+    if (target) {
+      if (e.shiftKey) {
+        this.editor.toggleInSelection([target]);
+      } else {
+        if (!this.editor.isSelected(target)) {
+          this.editor.setSelection([target]);
+        }
       }
     } else {
       this.editor.setSelection([]);

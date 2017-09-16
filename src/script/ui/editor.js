@@ -34,7 +34,7 @@ import DocumentPointsUIElement from 'ui/editor/doc_pts';
 import DocumentElemsUIElement from 'ui/editor/doc_elems';
 import TextEditUIElement from 'ui/editor/text_edit';
 
-const UTILS_WIDTH = 350 + 220;
+const UTILS_WIDTH = 360 + 275;
 
 export default class Editor extends EventEmitter {
   constructor(root) {
@@ -308,7 +308,7 @@ export default class Editor extends EventEmitter {
     });
 
     this.canvas.on('resize', e => {
-      this.calculateScales()
+      this.calculateScales();
     });
 
     this.canvas.refreshAll();
@@ -355,6 +355,17 @@ export default class Editor extends EventEmitter {
         position: this.state.position
       })
     );
+  }
+
+  setColor(which, color) {
+    this.state.colors[which] = color;
+
+    let frame = new HistoryFrame(
+      [actions.SetAttributeAction.forItems(this.state.selection, which, color)],
+      'Change color'
+    );
+
+    this.stageFrame(frame);
   }
 
   setPosition(posn) {
@@ -467,6 +478,19 @@ export default class Editor extends EventEmitter {
     }
 
     this.canvas.refreshAll();
+  }
+
+  toggleInSelection(items) {
+    let sel = this.state.selection.slice(0);
+    for (let item of items) {
+      let i = sel.indexOf(item);
+      if (i === -1) {
+        sel.push(item);
+      } else {
+        sel = sel.removeIndex(i);
+      }
+    }
+    this.setSelection(sel);
   }
 
   hasSelection() {

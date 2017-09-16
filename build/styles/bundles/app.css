@@ -11,23 +11,23 @@ body#app {
   overflow: hidden;
   display: flex;
   height: 100%; }
-  body#app[cursor="ne-resize"] {
+  body#app[cursor='ne-resize'] {
     cursor: ne-resize; }
-  body#app[cursor="nw-resize"] {
+  body#app[cursor='nw-resize'] {
     cursor: nw-resize; }
-  body#app[cursor="se-resize"] {
+  body#app[cursor='se-resize'] {
     cursor: se-resize; }
-  body#app[cursor="sw-resize"] {
+  body#app[cursor='sw-resize'] {
     cursor: sw-resize; }
-  body#app[cursor="ew-resize"] {
+  body#app[cursor='ew-resize'] {
     cursor: ew-resize; }
-  body#app[cursor="ns-resize"] {
+  body#app[cursor='ns-resize'] {
     cursor: ns-resize; }
-  body#app[cursor="nesw-resize"] {
+  body#app[cursor='nesw-resize'] {
     cursor: nesw-resize; }
-  body#app[cursor="nwse-resize"] {
+  body#app[cursor='nwse-resize'] {
     cursor: nwse-resize; }
-  body#app[cursor="text"] {
+  body#app[cursor='text'] {
     cursor: text; }
 
 #app-main {
@@ -49,10 +49,12 @@ body#app {
       background-color: #bbc4c9;
       border-right: 1px solid #82939c;
       border-bottom: 1px solid #82939c; }
-      #app-main header#app-header #logo rect.logo-bg {
-        fill: #212121; }
-      #app-main header#app-header #logo rect.logo-fg {
-        fill: #fff; }
+      #app-main header#app-header #logo svg {
+        display: none; }
+        #app-main header#app-header #logo svg rect.logo-bg {
+          fill: #212121; }
+        #app-main header#app-header #logo svg rect.logo-fg {
+          fill: #fff; }
     #app-main header#app-header #app-controls {
       flex-grow: 1;
       display: flex;
@@ -109,7 +111,7 @@ html {
   #app-windows #app-utils {
     display: flex; }
     #app-windows #app-utils #app-utils-left {
-      width: 200px; }
+      width: 266px; }
     #app-windows #app-utils #app-utils-right {
       width: 360px; }
 
@@ -133,7 +135,7 @@ html {
 .text-input label {
   margin-right: 5px; }
 
-.text-input input[type="text"] {
+.text-input input[type='text'] {
   width: 64px; }
 .sel-util {
   height: 200px; }
@@ -345,6 +347,62 @@ html {
       color: #66aae3; }
   .history-util__frame:active {
     background-color: #f2f2f2; }
+.color-util .color-util__selected {
+  width: 100%;
+  padding: 10px;
+  display: flex; }
+  .color-util .color-util__selected .color-swatch {
+    width: 40px;
+    height: 40px;
+    background: black; }
+
+.color-util .color-util__row {
+  width: 100%;
+  padding: 5px;
+  display: flex; }
+  .color-util .color-util__row:not(:first-child) {
+    border-top: 1px solid #bbc4c9; }
+  .color-util .color-util__row .color-util__row__label {
+    line-height: 32px; }
+  .color-util .color-util__row .color-util__row__value {
+    display: flex;
+    margin-left: auto; }
+    .color-util .color-util__row .color-util__row__value .color-util__row__swatch {
+      width: 32px;
+      height: 32px; }
+    .color-util .color-util__row .color-util__row__value select {
+      margin: auto 10px auto 0; }
+
+.color-util .color-util__picker .color-util__picker__slider {
+  display: flex;
+  justify-content: center;
+  padding: 5px;
+  border-bottom: 1px solid #bbc4c9; }
+  .color-util .color-util__picker .color-util__picker__slider input,
+  .color-util .color-util__picker .color-util__picker__slider label {
+    margin: auto 0; }
+  .color-util .color-util__picker .color-util__picker__slider label {
+    margin-right: 10px; }
+  .color-util .color-util__picker .color-util__picker__slider input[type='text'] {
+    margin-left: 10px;
+    text-align: right; }
+  .color-util .color-util__picker .color-util__picker__slider label,
+  .color-util .color-util__picker .color-util__picker__slider input[type='text'] {
+    width: 40px; }
+  .color-util .color-util__picker .color-util__picker__slider input[type='range'] {
+    flex-grow: 1; }
+
+.color-util .color-util__picker .color-util__picker__rgb {
+  display: flex;
+  padding: 5px; }
+  .color-util .color-util__picker .color-util__picker__rgb input[type='text'] {
+    width: 30px;
+    margin: auto 0; }
+    .color-util .color-util__picker .color-util__picker__rgb input[type='text'] + label {
+      margin-left: 8px; }
+  .color-util .color-util__picker .color-util__picker__rgb label {
+    margin: auto 0;
+    margin-right: 4px; }
 .align-util-button {
   display: block;
   width: 30px;

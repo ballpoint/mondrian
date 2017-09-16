@@ -151,6 +151,14 @@ export default class PointsSegment {
         if (lastPoint.pHandle) {
           firstPoint.setPHandle(lastPoint.pHandle.x, lastPoint.pHandle.y);
         }
+        /*
+        if (firstPoint.sHandle) {
+          this.points[this.points.length - 2].setSHandle(
+            firstPoint.sHandle.x,
+            firstPoint.sHandle.y
+          );
+        }
+        */
         // Remove last redundant point
         this.points = this.points.slice(0, this.points.length - 1);
       }

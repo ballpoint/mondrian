@@ -1,0 +1,94 @@
+@import '~vars.scss';
+
+.color-util {
+  .color-util__selected {
+    width: 100%;
+    padding: 10px;
+
+    display: flex;
+
+    .color-swatch {
+      width: 40px;
+      height: 40px;
+      background: black;
+    }
+  }
+
+  .color-util__row {
+    width: 100%;
+    padding: 5px;
+    display: flex;
+
+    &:not(:first-child) {
+      border-top: 1px solid $blue-grey;
+    }
+
+    .color-util__row__label {
+      line-height: 32px;
+    }
+
+    .color-util__row__value {
+      display: flex;
+      margin-left: auto;
+
+      .color-util__row__swatch {
+        width: 32px;
+        height: 32px;
+      }
+
+      select {
+        margin: auto 10px auto 0;
+      }
+    }
+  }
+
+  .color-util__picker {
+    .color-util__picker__slider {
+      display: flex;
+      justify-content: center;
+      padding: 5px;
+      border-bottom: 1px solid $blue-grey;
+
+      input,
+      label {
+        margin: auto 0;
+      }
+
+      label {
+        margin-right: 10px;
+      }
+      input[type='text'] {
+        margin-left: 10px;
+        text-align: right;
+      }
+
+      label,
+      input[type='text'] {
+        width: 40px;
+      }
+
+      input[type='range'] {
+        flex-grow: 1;
+      }
+    }
+
+    .color-util__picker__rgb {
+      display: flex;
+      padding: 5px;
+
+      input[type='text'] {
+        width: 30px;
+        margin: auto 0;
+
+        + label {
+          margin-left: 8px;
+        }
+      }
+
+      label {
+        margin: auto 0;
+        margin-right: 4px;
+      }
+    }
+  }
+}

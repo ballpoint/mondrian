@@ -22,17 +22,23 @@ let TypeToolbarGroup = React.createClass({
 
     let selectedFonts = {};
     let selectedSizes = {};
+    let selectedSpacings = {};
     for (let item of selectedTextItems) {
       selectedFonts[item.fontFamily()] = true;
       selectedSizes[item.data.size] = true;
+      selectedSpacings[item.data.spacing] = true;
     }
     selectedFonts = Object.keys(selectedFonts);
     selectedSizes = Object.keys(selectedSizes).map(s => {
       return parseInt(s, 10);
     });
+    selectedSpacings = Object.keys(selectedSpacings).map(s => {
+      return parseFloat(s, 10);
+    });
 
     let selectedFont = null;
     let selectedSize = null;
+    let selectedSpacing = null;
 
     if (selectedFonts.length === 1) {
       selectedFont = selectedFonts[0];
@@ -40,6 +46,11 @@ let TypeToolbarGroup = React.createClass({
     if (selectedSizes.length === 1) {
       selectedSize = selectedSizes[0];
     }
+    if (selectedSpacings.length === 1) {
+      selectedSpacing = selectedSpacings[0];
+    }
+
+    console.log(selectedFont, selectedSize, selectedSpacing);
 
     return (
       <ToolbarGroup>
@@ -70,7 +81,22 @@ let TypeToolbarGroup = React.createClass({
             this.props.changeSelectionAttribute(
               Text,
               'size',
-              parseInt(val, 10)
+              parseInt(val, 10),
+              'Change font size'
+            );
+          }}
+        />
+
+        <ToolbarNumberInput
+          label=""
+          value={selectedSpacing}
+          width={40}
+          onSubmit={val => {
+            this.props.changeSelectionAttribute(
+              Text,
+              'spacing',
+              parseInt(val, 10),
+              'Change font spacing'
             );
           }}
         />

@@ -1,5 +1,5 @@
 @import '~vars.scss';
-@import "~mixins.scss";
+@import '~mixins.scss';
 
 $util-grey: darken($bg-grey, 13%);
 
@@ -14,12 +14,11 @@ $util-grey: darken($bg-grey, 13%);
     display: flex;
 
     #app-utils-left {
-      width: 200px;
+      width: 266px;
     }
     #app-utils-right {
       width: 360px;
     }
-
   }
 }
 
@@ -52,7 +51,7 @@ $util-grey: darken($bg-grey, 13%);
     margin-right: 5px;
   }
 
-  input[type="text"] {
+  input[type='text'] {
     width: 64px;
   }
 }

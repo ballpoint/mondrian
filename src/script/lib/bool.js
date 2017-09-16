@@ -455,15 +455,7 @@ function doBoolean(a, b, op) {
   for (let i = iters; i > 0; i--) {
     let seg = pl.lastSegment;
 
-    // Push current destination and go on to find the next
-    if (
-      seg.length > 0 &&
-      seg.first.equal(cursor.destination) &&
-      edgesUsed.indexOf(cursor.next) > -1
-    ) {
-      seg.push(cursor.destination);
-      pl.closeSegment();
-
+    function consolidateHandles() {
       if (seg.length > 1) {
         let lastPoint = seg.last;
         if (cursor.origin.sHandle) {
@@ -479,6 +471,17 @@ function doBoolean(a, b, op) {
           firstPoint.unsetHandle('pHandle');
         }
       }
+    }
+
+    // Push current destination and go on to find the next
+    if (
+      seg.length > 0 &&
+      seg.first.equal(cursor.destination) &&
+      edgesUsed.indexOf(cursor.next) > -1
+    ) {
+      seg.push(cursor.destination);
+      pl.closeSegment();
+      consolidateHandles();
     } else {
       seg.push(cursor.destination);
       logger.verbose(
@@ -531,6 +534,7 @@ function doBoolean(a, b, op) {
         // The current segment is closed and we need to pick an edge that's remaining
         // to continue in a new segment.
         logger.verbose('closing and moving on');
+        consolidateHandles();
         pl.closeSegment();
 
         cursor = edgesToUse[0];
