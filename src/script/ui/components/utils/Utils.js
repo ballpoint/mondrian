@@ -57,6 +57,15 @@ let Utils = React.createClass({
     );
 
     w.push(
+      <StrokeUtil
+        key="stroke"
+        editor={this.props.editor}
+        selection={this.state.selection}
+        selectionBounds={this.state.selectionBounds}
+      />
+    );
+
+    w.push(
       <AlignUtil
         key="align"
         editor={this.props.editor}

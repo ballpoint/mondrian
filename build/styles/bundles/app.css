@@ -116,7 +116,7 @@ html {
       width: 360px; }
 
 .util-window {
-  margin: 10px 5px;
+  margin: 10px 10px 10px auto;
   pointer-events: auto;
   box-shadow: 0 5px 12px rgba(0, 0, 0, 0.05), 0 4px 4px rgba(0, 0, 0, 0.03); }
   .util-window .util-header {
@@ -403,6 +403,18 @@ html {
   .color-util .color-util__picker .color-util__picker__rgb label {
     margin: auto 0;
     margin-right: 4px; }
+
+.color-util .color-util__picker .color-util__canvas-container {
+  width: 256;
+  height: 256;
+  position: relative; }
+  .color-util .color-util__picker .color-util__canvas-container canvas {
+    position: absolute;
+    top: 0;
+    left: 0; }
+#util-align {
+  width: 180px; }
+
 .align-util-button {
   display: block;
   width: 30px;

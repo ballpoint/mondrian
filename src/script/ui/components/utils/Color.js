@@ -1,11 +1,15 @@
 import { PIXEL_RATIO } from 'lib/math';
+import mathUtils from 'lib/math';
+import Posn from 'geometry/posn';
 import Util from 'ui/components/utils/Util';
 import CursorTracking from 'ui/cursor-tracking';
 import Color from 'ui/color';
+import CanvasLayer from 'ui/layer';
 import 'utils/color.scss';
 
 const PICKER_WIDTH = 256;
-const PICKER_HEIGHT = PICKER_WIDTH * 6;
+const PICKER_Y_SCALE = 2;
+const PICKER_HEIGHT = PICKER_WIDTH * 3 * PICKER_Y_SCALE;
 
 let ColorUtil = React.createClass({
   getInitialState() {
@@ -16,6 +20,16 @@ let ColorUtil = React.createClass({
     };
   },
 
+  componentDidMount() {
+    this.props.editor.on('change:selection', () => {
+      console.log('shit', this.state);
+      if (this.state.expanded) {
+        this.modify(this.state.modifying);
+      }
+    });
+    this.refreshPicker();
+  },
+
   renderPicker(which, color) {
     if (!this.state.expanded) return null;
 
@@ -24,7 +38,10 @@ let ColorUtil = React.createClass({
     return (
       <div className="color-util__modify">
         <div className="color-util__picker">
-          <canvas width={PICKER_WIDTH} height={PICKER_WIDTH} ref="canvas" />
+          <div className="color-util__canvas-container">
+            <canvas width={PICKER_WIDTH} height={PICKER_WIDTH} ref="canvas" />
+            <canvas width={PICKER_WIDTH} height={PICKER_WIDTH} ref="canvasUi" />
+          </div>
 
           <div className="color-util__picker__slider">
             <label htmlFor="saturation-slider">Sat</label>
@@ -63,16 +80,38 @@ let ColorUtil = React.createClass({
     );
   },
 
-  modify(which) {
-    if (this.state.expanded) {
-      this.setState({
-        expanded: false
-      });
+  toggle(which) {
+    if (this.state.modifying === which) {
+      this.setState({ expanded: !this.state.expanded });
     } else {
-      this.setState({
-        expanded: true,
-        modifying: which
-      });
+      this.setState({ expanded: true });
+    }
+  },
+
+  modify(which) {
+    let color = this.getColor(which);
+    // Jump offset
+    let offset = PICKER_HEIGHT * color.hue() - PICKER_WIDTH / 2;
+    if (offset < PICKER_WIDTH) offset += PICKER_HEIGHT;
+
+    this.setState({
+      modifying: which,
+      color,
+      pickerOffset: offset,
+      saturation: color.saturation()
+    });
+  },
+
+  colorModifying() {
+    return this.getColor(this.state.modifying);
+  },
+
+  getColor(which) {
+    let editor = this.props.editor;
+    if (editor.state.selection.length > 0) {
+      return editor.state.selection[0].data[which];
+    } else {
+      return editor.state.colors[which];
     }
   },
 
@@ -84,16 +123,24 @@ let ColorUtil = React.createClass({
 
   componentDidUpdate(prevProps, prevState) {
     let canvas = this.refs.canvas;
+    let canvasUi = this.refs.canvasUi;
+
     if (canvas && canvas !== this._canvas) {
+      this._layerGradient = new CanvasLayer('gradient', canvas);
+      this._layerUi = new CanvasLayer('ui', canvasUi);
+
       this._canvas = canvas;
-      this._context = canvas.getContext('2d');
-      this._cursor = new CursorTracking(canvas);
+      this._canvasUi = canvasUi;
+
+      this._cursor = new CursorTracking(canvasUi);
 
       this._cursor.on('scroll:y', this.onPickerScroll);
       this._cursor.on('drag', this.pickerSelect);
       this._cursor.on('mousedown', this.pickerSelect);
       this._cursor.on('mouseup', () => {
-        this.props.editor.commitFrame();
+        if (this.props.editor.state.selection.length > 0) {
+          this.props.editor.commitFrame();
+        }
       });
     }
 
@@ -110,15 +157,14 @@ let ColorUtil = React.createClass({
     }
   },
 
-  componentDidMount() {
-    this.refreshPicker();
-  },
-
   refreshPicker() {
     let canvas = this.refs.canvas;
     if (canvas) {
-      let context = this._context;
+      let context = this._layerGradient.context;
       context.clearRect(0, 0, PICKER_WIDTH, PICKER_WIDTH);
+
+      let selectedColor = this.colorModifying();
+      let selectedPosn = this.posnOfColor(selectedColor);
 
       let offset = this.state.pickerOffset;
 
@@ -165,20 +211,31 @@ let ColorUtil = React.createClass({
 
       let gradLightDark = context.createLinearGradient(0, 0, PICKER_WIDTH, 0);
 
-      const lightDarkMargin = 0;
-
-      gradLightDark.addColorStop(0 + lightDarkMargin, 'rgba(255,255,255,1)');
-      gradLightDark.addColorStop(0.5 - lightDarkMargin, 'rgba(255,255,255,0)');
-      gradLightDark.addColorStop(0.5 + lightDarkMargin, 'rgba(0,0,0,0)');
-      gradLightDark.addColorStop(1 - lightDarkMargin, 'rgba(0,0,0,1)');
+      gradLightDark.addColorStop(0, 'rgba(255,255,255,1)');
+      gradLightDark.addColorStop(0.5, 'rgba(255,255,255,0)');
+      gradLightDark.addColorStop(0.5, 'rgba(0,0,0,0)');
+      gradLightDark.addColorStop(1, 'rgba(0,0,0,1)');
 
       context.fillStyle = gradLightDark;
       context.fillRect(0, 0, PICKER_WIDTH, PICKER_WIDTH);
+
+      this._layerUi.context.clearRect(0, 0, PICKER_WIDTH, PICKER_WIDTH);
+      this._layerUi.context.strokeStyle =
+        selectedColor.lightness() > 0.5 ? 'black' : 'white';
+
+      let rectDimen = 8;
+
+      this._layerUi.context.strokeRect(
+        mathUtils.sharpen(selectedPosn.x - rectDimen / 2),
+        mathUtils.sharpen(selectedPosn.y - rectDimen / 2),
+        rectDimen,
+        rectDimen
+      );
     }
   },
 
   onPickerScroll(e) {
-    let pickerOffset = this.state.pickerOffset + e.deltaY;
+    let pickerOffset = this.state.pickerOffset + e.deltaY / 2;
 
     pickerOffset %= PICKER_HEIGHT;
 
@@ -196,18 +253,32 @@ let ColorUtil = React.createClass({
     let x = Math.round(e.clientX - bounds.left);
     let y = Math.round(e.clientY - bounds.top);
 
-    let imgData = this._context.getImageData(x, y, 1, 1).data;
+    let imgData = this._layerGradient.context.getImageData(x, y, 1, 1).data;
     let color = new Color(imgData[0], imgData[1], imgData[2]);
     this.props.editor.setColor(this.state.modifying, color);
+
+    this.refreshPicker();
+  },
+
+  posnOfColor(color) {
+    let y = PICKER_HEIGHT * color.hue() - this.state.pickerOffset;
+    let x = PICKER_WIDTH * (1 - color.lightness());
+
+    if (y < 0) {
+      y += PICKER_HEIGHT;
+    }
+
+    return new Posn(x, y);
   },
 
   render() {
     let state = this.props.editor.state;
-    let { fill, stroke } = state.colors;
+    let fill = this.getColor('fill');
+    let stroke = this.getColor('stroke');
     let strokeWidth = Math.min(6, state.stroke.width * PIXEL_RATIO);
 
     return (
-      <Util title="Style">
+      <Util title="Color">
         <div className="color-util">
           <div className="color-util__row">
             <div className="color-util__row__label">Fill</div>
@@ -226,6 +297,7 @@ let ColorUtil = React.createClass({
                 }}
                 onClick={() => {
                   this.modify('fill');
+                  this.toggle('fill');
                 }}
               />
             </div>
@@ -250,6 +322,7 @@ let ColorUtil = React.createClass({
                 }}
                 onClick={() => {
                   this.modify('stroke');
+                  this.toggle('stroke');
                 }}
               />
             </div>

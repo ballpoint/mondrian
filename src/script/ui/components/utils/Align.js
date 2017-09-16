@@ -155,7 +155,7 @@ let AlignUtil = React.createClass({
 
   render() {
     return (
-      <Util title="Align">
+      <Util title="Align" id="align">
         <div id="align-util__main">
           <div id="align-util__2d-box">
             <svg className="align-util__guides">
@@ -193,9 +193,7 @@ let AlignUtil = React.createClass({
             <AlignUtilButton which="hc" performAlign={this.performAlign} />
             <AlignUtilButton which="hr" performAlign={this.performAlign} />
           </div>
-          <div id="align-util__scope-menu">
-            {this.renderModeButton()}
-          </div>
+          <div id="align-util__scope-menu">{this.renderModeButton()}</div>
         </div>
       </Util>
     );

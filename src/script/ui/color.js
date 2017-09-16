@@ -141,6 +141,41 @@ export default class Color {
     );
   }
 
+  hue() {
+    // returns float 0.0 - 1.0
+
+    let r = this.r / 255;
+    let g = this.g / 255;
+    let b = this.b / 255;
+    let max = Math.max(r, g, b);
+    let min = Math.min(r, g, b);
+
+    if (max === min) {
+      // grey
+      return 0;
+    }
+
+    let h;
+
+    let d = max - min;
+
+    switch (max) {
+      case r:
+        h = (g - b) / d + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = 2.0 + (b - r) / d;
+        break;
+      case b:
+        h = 4.0 + (r - g) / d;
+        break;
+    }
+
+    h /= 6;
+
+    return h;
+  }
+
   lightness() {
     // returns float 0.0 - 1.0
     return (this.min() + this.max()) / 2 / 255;

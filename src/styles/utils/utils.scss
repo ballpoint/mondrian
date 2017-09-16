@@ -23,7 +23,7 @@ $util-grey: darken($bg-grey, 13%);
 }
 
 .util-window {
-  margin: 10px 5px;
+  margin: 10px 10px 10px auto;
   pointer-events: auto;
   @include card-shadow-small;
 

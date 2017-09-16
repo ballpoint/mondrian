@@ -360,12 +360,22 @@ export default class Editor extends EventEmitter {
   setColor(which, color) {
     this.state.colors[which] = color;
 
-    let frame = new HistoryFrame(
-      [actions.SetAttributeAction.forItems(this.state.selection, which, color)],
-      'Change color'
-    );
+    if (this.state.selection.length > 0) {
+      let frame = new HistoryFrame(
+        [
+          actions.SetAttributeAction.forItems(
+            this.state.selection,
+            which,
+            color
+          )
+        ],
+        'Change color'
+      );
 
-    this.stageFrame(frame);
+      this.stageFrame(frame);
+    } else {
+      this.trigger('change');
+    }
   }
 
   setPosition(posn) {

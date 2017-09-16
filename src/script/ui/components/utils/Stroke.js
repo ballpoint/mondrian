@@ -4,11 +4,10 @@ let StrokeUtil = React.createClass({
   render() {
     return (
       <Util title="Stroke">
-        <div className="">stroke lol</div>
+        <div className="">stroke</div>
       </Util>
     );
   }
 });
 
 export default StrokeUtil;
-

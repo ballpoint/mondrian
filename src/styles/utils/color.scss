@@ -90,5 +90,16 @@
         margin-right: 4px;
       }
     }
+
+    .color-util__canvas-container {
+      width: 256;
+      height: 256;
+      position: relative;
+      canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    }
   }
 }

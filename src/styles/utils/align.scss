@@ -1,9 +1,13 @@
-@import "~vars.scss";
+@import '~vars.scss';
 
 $button-dimen: 30px;
 $button-margin: 4px;
 $section-margin: 8px;
 $button-item-dimen: 13px;
+
+#util-align {
+  width: 180px;
+}
 
 .align-util-button {
   display: block;
@@ -53,23 +57,41 @@ $button-item-dimen: 13px;
 
   // 1d alignment
   &.align-util-button--vt {
-    .align-util-button__item { top: -1px; left: ($button-dimen/2)-($button-item-dimen/2); }
+    .align-util-button__item {
+      top: -1px;
+      left: ($button-dimen/2)-($button-item-dimen/2);
+    }
   }
   &.align-util-button--vc {
-    .align-util-button__item { top: ($button-dimen/2)-($button-item-dimen/2); left: ($button-dimen/2)-($button-item-dimen/2); }
+    .align-util-button__item {
+      top: ($button-dimen/2)-($button-item-dimen/2);
+      left: ($button-dimen/2)-($button-item-dimen/2);
+    }
   }
   &.align-util-button--vb {
-    .align-util-button__item { bottom: -1px; left: ($button-dimen/2)-($button-item-dimen/2); }
+    .align-util-button__item {
+      bottom: -1px;
+      left: ($button-dimen/2)-($button-item-dimen/2);
+    }
   }
 
   &.align-util-button--hl {
-    .align-util-button__item { left: -1px; top: ($button-dimen/2)-($button-item-dimen/2); }
+    .align-util-button__item {
+      left: -1px;
+      top: ($button-dimen/2)-($button-item-dimen/2);
+    }
   }
   &.align-util-button--hc {
-    .align-util-button__item { left: ($button-dimen/2)-($button-item-dimen/2); top: ($button-dimen/2)-($button-item-dimen/2); }
+    .align-util-button__item {
+      left: ($button-dimen/2)-($button-item-dimen/2);
+      top: ($button-dimen/2)-($button-item-dimen/2);
+    }
   }
   &.align-util-button--hr {
-    .align-util-button__item { right: -1px; top: ($button-dimen/2)-($button-item-dimen/2); }
+    .align-util-button__item {
+      right: -1px;
+      top: ($button-dimen/2)-($button-item-dimen/2);
+    }
   }
 }
 
@@ -89,33 +111,60 @@ $button-item-dimen: 13px;
 
     // 2d alignment
     .align-util-button--tl {
-      .align-util-button__item { top: -1px; left: -1px; }
+      .align-util-button__item {
+        top: -1px;
+        left: -1px;
+      }
     }
     .align-util-button--tc {
-      .align-util-button__item { top: -1px; left: ($button-dimen/2)-($button-item-dimen/2); }
+      .align-util-button__item {
+        top: -1px;
+        left: ($button-dimen/2)-($button-item-dimen/2);
+      }
     }
     .align-util-button--tr {
-      .align-util-button__item { top: -1px; right: -1px; }
+      .align-util-button__item {
+        top: -1px;
+        right: -1px;
+      }
     }
 
     .align-util-button--cl {
-      .align-util-button__item { top: ($button-dimen/2)-($button-item-dimen/2); left: -1px; }
+      .align-util-button__item {
+        top: ($button-dimen/2)-($button-item-dimen/2);
+        left: -1px;
+      }
     }
     .align-util-button--c {
-      .align-util-button__item { top: ($button-dimen/2)-($button-item-dimen/2); left: ($button-dimen/2)-($button-item-dimen/2); }
+      .align-util-button__item {
+        top: ($button-dimen/2)-($button-item-dimen/2);
+        left: ($button-dimen/2)-($button-item-dimen/2);
+      }
     }
     .align-util-button--cr {
-      .align-util-button__item { top: ($button-dimen/2)-($button-item-dimen/2); right: -1px; }
+      .align-util-button__item {
+        top: ($button-dimen/2)-($button-item-dimen/2);
+        right: -1px;
+      }
     }
 
     .align-util-button--bl {
-      .align-util-button__item { bottom: -1px; left: -1px; }
+      .align-util-button__item {
+        bottom: -1px;
+        left: -1px;
+      }
     }
     .align-util-button--bc {
-      .align-util-button__item { bottom: -1px; left: ($button-dimen/2)-($button-item-dimen/2); }
+      .align-util-button__item {
+        bottom: -1px;
+        left: ($button-dimen/2)-($button-item-dimen/2);
+      }
     }
     .align-util-button--br {
-      .align-util-button__item { bottom: -1px; right: -1px; }
+      .align-util-button__item {
+        bottom: -1px;
+        right: -1px;
+      }
     }
   }
 
