@@ -1,3 +1,4 @@
+import consts from 'consts';
 import Color from 'ui/color';
 import Bounds from 'geometry/bounds';
 import Metadata from 'geometry/metadata';
@@ -34,12 +35,13 @@ export default class Item {
   }
 
   validateColors() {
+    console.log(this.data.fill, this.data.stroke);
     // Convert color strings to Color objects
-    if (this.data.fill != null && !(this.data.fill instanceof Color)) {
-      this.data.fill = new Color(this.data.fill);
+    if (this.data.fill && !(this.data.fill instanceof Color)) {
+      this.data.fill = Color.fromString(this.data.fill);
     }
-    if (this.data.stroke != null && !(this.data.stroke instanceof Color)) {
-      this.data.stroke = new Color(this.data.stroke);
+    if (this.data.stroke && !(this.data.stroke instanceof Color)) {
+      this.data.stroke = Color.fromString(this.data.stroke);
     }
     if (this.data['stroke-width'] == null) {
       return (this.data['stroke-width'] = 1);
@@ -122,15 +124,16 @@ export default class Item {
   finishToCanvas(context, projection) {
     let fill = 'black';
     if (this.data.fill) {
-      fill = this.data.fill.toRGBString();
+      fill = this.data.fill.toString();
     }
     if (fill && fill !== 'none') {
       context.fillStyle = fill;
       context.fill();
     }
 
-    if (this.data.stroke) {
-      context.strokeStyle = this.data.stroke.toRGBString();
+    let stroke = this.data.stroke;
+    if (stroke && stroke !== 'none') {
+      context.strokeStyle = this.data.stroke.toString();
       let lineWidth = 1;
       let lineCap = 'butt'; // lol
       let lineJoin = 'miter';

@@ -3,6 +3,7 @@ import { scaleLinear } from 'd3-scale';
 import consts from 'consts';
 import Color from 'ui/color';
 import SelectedColors from 'ui/SelectedColors';
+import { NONE } from 'ui/color';
 import SelectedStrokeStyle from 'ui/SelectedStrokeStyle';
 import EventEmitter from 'lib/events';
 import Canvas from 'ui/canvas';
@@ -357,11 +358,25 @@ export default class Editor extends EventEmitter {
     );
   }
 
-  setColor(which, color) {
-    this.state.colors[which] = color;
+  setColorState(which, color) {
+    console.log(which, color);
+    if (color === NONE) {
+      this.state.colors.setMode(which, 'none');
+    } else {
+      this.state.colors.setMode(which, 'solid');
+      this.state.colors.set(which, color);
+    }
+    this.trigger('change');
+  }
 
-    if (this.state.selection.length > 0) {
-      let frame = new HistoryFrame(
+  setColor(which, color) {
+    let frame;
+
+    if (
+      this.state.selection.length > 0 &&
+      this.state.selectionType === 'ELEMENTS'
+    ) {
+      frame = new HistoryFrame(
         [
           actions.SetAttributeAction.forItems(
             this.state.selection,
@@ -376,6 +391,8 @@ export default class Editor extends EventEmitter {
     } else {
       this.trigger('change');
     }
+
+    return frame;
   }
 
   setPosition(posn) {

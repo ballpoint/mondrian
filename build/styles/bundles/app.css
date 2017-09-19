@@ -381,11 +381,12 @@ html {
   .color-util .color-util__picker .color-util__picker__slider input,
   .color-util .color-util__picker .color-util__picker__slider label {
     margin: auto 0; }
-  .color-util .color-util__picker .color-util__picker__slider label {
-    margin-right: 10px; }
-  .color-util .color-util__picker .color-util__picker__slider input[type='text'] {
+  .color-util .color-util__picker .color-util__picker__slider .text-input {
+    display: block;
     margin-left: 10px;
     text-align: right; }
+  .color-util .color-util__picker .color-util__picker__slider label {
+    margin-right: 10px; }
   .color-util .color-util__picker .color-util__picker__slider label,
   .color-util .color-util__picker .color-util__picker__slider input[type='text'] {
     width: 40px; }
@@ -395,10 +396,10 @@ html {
 .color-util .color-util__picker .color-util__picker__rgb {
   display: flex;
   padding: 5px; }
-  .color-util .color-util__picker .color-util__picker__rgb input[type='text'] {
-    width: 30px;
+  .color-util .color-util__picker .color-util__picker__rgb .text-input {
+    display: block;
     margin: auto 0; }
-    .color-util .color-util__picker .color-util__picker__rgb input[type='text'] + label {
+    .color-util .color-util__picker .color-util__picker__rgb .text-input + label {
       margin-left: 8px; }
   .color-util .color-util__picker .color-util__picker__rgb label {
     margin: auto 0;

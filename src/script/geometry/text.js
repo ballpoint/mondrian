@@ -1,9 +1,11 @@
+import consts from 'consts';
 import Posn from 'geometry/posn';
 import Range from 'geometry/range';
 import Bounds from 'geometry/bounds';
 import Item from 'geometry/item';
 import LineSegment from 'geometry/line-segment';
 import { measure } from 'lib/text';
+import { NONE } from 'ui/color';
 
 export class TextLine {
   constructor(data) {
@@ -18,6 +20,9 @@ export default class Text extends Item {
     if (data.size === undefined) data.size = 12;
     if (data.value === undefined) data.value = '';
     if (data.fontFamily === undefined) data.fontFamily = 'Times New Roman';
+
+    if (data.fill === undefined) data.fill = consts.black;
+    if (data.stroke === undefined) data.stroke = NONE;
 
     data.x = parseFloat(data.x);
     data.y = parseFloat(data.y);

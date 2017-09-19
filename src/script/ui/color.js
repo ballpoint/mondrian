@@ -6,8 +6,10 @@
 
 */
 
+export const NONE = 'none';
+
 export default class Color {
-  constructor(r, g, b, a) {
+  constructor(r, g, b, a = 1.0) {
     if (r instanceof Color) {
       this.r = r.r;
       this.g = r.g;
@@ -27,33 +29,16 @@ export default class Color {
       return;
     }
 
-    if (a === null) a = 1.0;
-
     if (typeof r === 'string') {
-      if (r.charAt(0) === '#' || r.length === 6) {
-        // Convert hex to rgba
-        this.hex = r.toUpperCase().replace('#', '');
-        let rgb = this.hexToRGB(this.hex);
-        this.r = rgb.r;
-        this.g = rgb.g;
-        this.b = rgb.b;
-      } else if (r.match(/rgba?\(.*\)/gi) != null) {
-        // rgb(r,g,b)
-        let vals = r.match(/[\d\.]+/gi);
-        this.r = vals[0];
-        this.g = vals[1];
-        this.b = vals[2];
-        if (vals[3] != null) {
-          this.a = parseFloat(vals[3]);
-        }
-        this.hex = this.rgbToHex(r, this.g, this.b);
-      }
+      return Color.fromString(r);
     } else {
       // Numbers
       this.r = r;
       this.g = g;
       this.b = b;
       this.a = a;
+
+      if (isNaN(g)) debugger;
 
       if (this.g == null && this.b == null) {
         this.g = this.r;
@@ -84,6 +69,72 @@ export default class Color {
     this.b = Math.max(this.b, 0);
   }
 
+  static fromHSL(h, s, l) {
+    let r, g, b;
+
+    h /= 360;
+    s /= 100;
+    l /= 100;
+
+    function hue2rgb(p, q, t) {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1 / 6) return p + (q - p) * 6 * t;
+      if (t < 1 / 2) return q;
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+      return p;
+    }
+
+    if (s === 0) {
+      r = g = b = l; // achromatic
+    } else {
+      var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      var p = 2 * l - q;
+      r = hue2rgb(p, q, h + 1 / 3);
+      g = hue2rgb(p, q, h);
+      b = hue2rgb(p, q, h - 1 / 3);
+    }
+
+    return new Color(r * 255, g * 255, b * 255);
+  }
+
+  static fromString(str) {
+    if (str === 'none') {
+      return NONE;
+    } else if (str.charAt(0) === '#' || str.length === 6) {
+      return Color.fromHex(str);
+    } else if (str.match(/rgba?\(.*\)/gi) != null) {
+      return Color.fromRGBString(str);
+    } else {
+      throw new Error('cannot parse color ' + str);
+    }
+  }
+
+  static fromHex(hex) {
+    hex = hex.toUpperCase().replace('#', '');
+
+    let r = this.hexToVal(hex.substring(0, 2));
+    let g = this.hexToVal(hex.substring(2, 4));
+    let b = this.hexToVal(hex.substring(4, 6));
+
+    return new Color(r, g, b);
+  }
+
+  static fromRGBString(str) {
+    let vals = str.match(/[\d\.]+/gi).map(v => {
+      return parseInt(v, 10);
+    });
+    let r = vals[0];
+    let g = vals[1];
+    let b = vals[2];
+    let a = 1;
+
+    if (vals[3] != null) {
+      a = parseFloat(vals[3]);
+    }
+    return new Color(r, g, b, a);
+  }
+
   clone() {
     return new Color(this.r, this.g, this.b);
   }
@@ -109,24 +160,13 @@ export default class Color {
     return chars.charAt((val - val % 16) / 16) + chars.charAt(val % 16);
   }
 
-  hexToVal(hex) {
+  static hexToVal(hex) {
     let chars = '0123456789ABCDEF';
     return chars.indexOf(hex.charAt(0)) * 16 + chars.indexOf(hex.charAt(1));
   }
 
   rgbToHex(r, g, b) {
     return `${this.valToHex(r)}${this.valToHex(g)}${this.valToHex(b)}`;
-  }
-
-  hexToRGB(hex) {
-    let r = this.hexToVal(hex.substring(0, 2));
-    let g = this.hexToVal(hex.substring(2, 4));
-    let b = this.hexToVal(hex.substring(4, 6));
-    return {
-      r,
-      g,
-      b
-    };
   }
 
   recalculateHex() {
