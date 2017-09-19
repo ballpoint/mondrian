@@ -34,6 +34,24 @@ export default class SelectedColors {
     }
   }
 
+  get(which) {
+    switch (which) {
+      case 'fill':
+        return this.fill;
+      case 'stroke':
+        return this.stroke;
+    }
+  }
+
+  equal(which, color) {
+    let existing = this.get(which);
+    if (color === NONE || existing === NONE) {
+      return color === existing;
+    } else {
+      return color.equal(existing);
+    }
+  }
+
   setMode(which, mode) {
     switch (which) {
       case 'fill':

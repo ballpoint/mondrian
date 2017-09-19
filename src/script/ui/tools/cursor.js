@@ -33,9 +33,8 @@ export default class Cursor extends Tool {
     if (this.dragSelectStart) return;
     if (!this.editor.doc) return;
 
-    let posn = cursor.posnCurrent;
-
     let z3 = this.editor.projection.zInvert(3);
+    let posn = cursor.posnCurrent;
     let posnPadded = Bounds.centeredOnPosn(posn, z3, z3);
 
     let elems = this.editor.doc.elementsAvailable.reverse();

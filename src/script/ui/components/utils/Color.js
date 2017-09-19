@@ -30,6 +30,11 @@ let ColorUtil = React.createClass({
         this.modify(this.state.modifying);
       }
     });
+    this.props.editor.on('change:colors', () => {
+      if (this.state.expanded) {
+        this.modify(this.state.modifying);
+      }
+    });
     this.refreshPicker();
   },
 

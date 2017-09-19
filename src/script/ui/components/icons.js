@@ -5,6 +5,7 @@ import rect from 'icons/rect.svg';
 import zoom from 'icons/zoom.svg';
 import pen from 'icons/pen.svg';
 import type from 'icons/type.svg';
+import eyedropper from 'icons/eyedropper.svg';
 import todo from 'icons/todo.svg';
 
 import undo from 'icons/undo.svg';
@@ -31,6 +32,7 @@ const ICONS = {
   zoom,
   pen,
   type,
+  eyedropper,
   todo,
 
   undo,
@@ -53,12 +55,14 @@ const ICONS = {
 
 export default ICONS;
 
-export function renderIcon(name, opts={}) {
+export function renderIcon(name, opts = {}) {
   return (
-    <span className={classnames({
-      "icon": true,
-      "weak": opts.weak,
-
-    })} dangerouslySetInnerHTML={{ __html: ICONS[name] }} />
+    <span
+      className={classnames({
+        icon: true,
+        weak: opts.weak
+      })}
+      dangerouslySetInnerHTML={{ __html: ICONS[name] }}
+    />
   );
 }

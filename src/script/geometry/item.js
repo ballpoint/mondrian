@@ -1,5 +1,6 @@
 import consts from 'consts';
 import Color from 'ui/color';
+import { NONE } from 'ui/color';
 import Bounds from 'geometry/bounds';
 import Metadata from 'geometry/metadata';
 import Range from 'geometry/range';
@@ -35,14 +36,23 @@ export default class Item {
   }
 
   validateColors() {
-    console.log(this.data.fill, this.data.stroke);
     // Convert color strings to Color objects
-    if (this.data.fill && !(this.data.fill instanceof Color)) {
-      this.data.fill = Color.fromString(this.data.fill);
+    if (this.data.fill) {
+      if (!(this.data.fill instanceof Color)) {
+        this.data.fill = Color.fromString(this.data.fill);
+      }
+    } else {
+      this.data.fill = consts.black;
     }
-    if (this.data.stroke && !(this.data.stroke instanceof Color)) {
-      this.data.stroke = Color.fromString(this.data.stroke);
+
+    if (this.data.stroke) {
+      if (!(this.data.stroke instanceof Color)) {
+        this.data.stroke = Color.fromString(this.data.stroke);
+      }
+    } else {
+      this.data.stroke = NONE;
     }
+
     if (this.data['stroke-width'] == null) {
       return (this.data['stroke-width'] = 1);
     }

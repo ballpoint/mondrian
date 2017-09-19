@@ -359,14 +359,16 @@ export default class Editor extends EventEmitter {
   }
 
   setColorState(which, color) {
-    console.log(which, color);
-    if (color === NONE) {
-      this.state.colors.setMode(which, 'none');
-    } else {
-      this.state.colors.setMode(which, 'solid');
-      this.state.colors.set(which, color);
+    if (!this.state.colors.equal(which, color)) {
+      if (color === NONE) {
+        this.state.colors.setMode(which, 'none');
+      } else {
+        this.state.colors.setMode(which, 'solid');
+        this.state.colors.set(which, color);
+      }
+      this.trigger('change');
+      this.trigger('change:colors');
     }
-    this.trigger('change');
   }
 
   setColor(which, color) {

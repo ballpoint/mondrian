@@ -40,6 +40,11 @@ const config = [
     label: 'Type',
     constructor: tools.Type,
     icon: 'type'
+  },
+  {
+    label: 'Eyedropper',
+    constructor: tools.Eyedropper,
+    icon: 'eyedropper'
   }
 ];
 
@@ -87,7 +92,6 @@ let Tools = React.createClass({
             </a>
           );
         })}
-
       </div>
     );
   }

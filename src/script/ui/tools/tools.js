@@ -6,5 +6,6 @@ import Rect from 'ui/tools/rect';
 import Ellipse from 'ui/tools/ellipse';
 import Paw from 'ui/tools/paw';
 import Type from 'ui/tools/type';
+import Eyedropper from 'ui/tools/eyedropper';
 
-export { Cursor, SubCursor, Zoom, Pen, Rect, Ellipse, Paw, Type };
+export { Cursor, SubCursor, Zoom, Pen, Rect, Ellipse, Paw, Type, Eyedropper };
