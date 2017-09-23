@@ -27,12 +27,12 @@ let ColorUtil = React.createClass({
   componentDidMount() {
     this.props.editor.on('change:selection', () => {
       if (this.state.expanded) {
-        this.modify(this.state.modifying);
+        this.modify(this.state.modifying, true);
       }
     });
     this.props.editor.on('change:colors', () => {
       if (this.state.expanded) {
-        this.modify(this.state.modifying);
+        this.modify(this.state.modifying, false);
       }
     });
     this.refreshPicker();
@@ -123,18 +123,25 @@ let ColorUtil = React.createClass({
     }
   },
 
-  modify(which) {
+  modify(which, updateSaturation) {
     let color = this.getColor(which);
 
     if (this.state.color) {
-      if (which === this.state.modifying && color.equal(this.state.color)) {
-        // Nothing has changed
-        return;
+      if (which === this.state.modifying) {
+        if (
+          color === this.state.color ||
+          (color instanceof Color &&
+            this.state.color instanceof Color &&
+            color.equal(this.state.color))
+        ) {
+          // Nothing has changed
+          return;
+        }
       }
     }
 
     this.setState({ modifying: which });
-    this.setColor(which, color, null, { updateSaturation: true });
+    this.setColor(which, color, null, { updateSaturation });
   },
 
   colorModifying() {
@@ -180,8 +187,6 @@ let ColorUtil = React.createClass({
         saturation: color.saturation()
       });
     }
-
-    this.refreshPicker();
   },
 
   commitColor() {
@@ -208,6 +213,8 @@ let ColorUtil = React.createClass({
     this.setState({
       saturation: val
     });
+
+    e.stopPropagation();
   },
 
   onSaturationInputChange(val) {
@@ -273,6 +280,8 @@ let ColorUtil = React.createClass({
     let canvas = this.refs.canvas;
     let canvasUi = this.refs.canvasUi;
 
+    let needsRefresh = false;
+
     if (canvas && canvas !== this._canvas) {
       this._layerGradient = new CanvasLayer('gradient', canvas);
       this._layerUi = new CanvasLayer('ui', canvasUi);
@@ -291,17 +300,27 @@ let ColorUtil = React.createClass({
       this._cursor.on('mouseup', () => {
         this.commitColor();
       });
+
+      needsRefresh = true;
     }
 
     if (this.state.expanded && !prevState.expanded) {
-      this.refreshPicker();
+      needsRefresh = true;
     }
 
     if (this.state.pickerOffset !== prevState.pickerOffset) {
-      this.refreshPicker();
+      needsRefresh = true;
     }
 
     if (this.state.saturation !== prevState.saturation) {
+      needsRefresh = true;
+    }
+
+    if (this.state.color !== prevState.color) {
+      needsRefresh = true;
+    }
+
+    if (needsRefresh) {
       this.refreshPicker();
     }
   },
@@ -441,12 +460,11 @@ let ColorUtil = React.createClass({
   renderSwatch(which, color) {
     if (color === NONE) {
       return (
-        <div
-          className="color-util__row__swatch"
-          style={{
-            border: '1px solid #ccc'
-          }}
-        />
+        <div className="color-util__row__swatch color-util__row__swatch--empty">
+          <svg width="32" height="32">
+            <line x1={0} y1={30} x2={30} y2={0} />
+          </svg>
+        </div>
       );
     } else {
       return (
@@ -457,7 +475,7 @@ let ColorUtil = React.createClass({
             border: '1px solid ' + color.darken(0.2).toString()
           }}
           onClick={() => {
-            this.modify(which);
+            this.modify(which, true);
             this.toggle(which);
           }}
         />

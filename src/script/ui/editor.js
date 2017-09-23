@@ -897,9 +897,50 @@ export default class Editor extends EventEmitter {
   }
 
   selectedOfType(type) {
+    if (type === undefined) {
+      return this.selectionFlat();
+    }
     return this.selectionFlat().filter(item => {
       return item instanceof type;
     });
+  }
+
+  selectedAttributeValues(type, key) {
+    let vals = new Set();
+    let selection = this.selectedOfType(type);
+    for (let item of selection) {
+      let val = item.data[key];
+      if (val !== undefined) {
+        vals.add(val);
+      }
+    }
+
+    return Array.from(vals.values());
+  }
+
+  selectedAttributeValue(type, key) {
+    let values = this.selectedAttributeValues(type, key);
+    if (values.length === 1) {
+      return values[0];
+    } else {
+      return null;
+    }
+  }
+
+  changeSelectionAttribute(type, key, value, title) {
+    let frame = new HistoryFrame(
+      [
+        actions.SetAttributeAction.forItems(
+          this.selectedOfType(type),
+          key,
+          value
+        )
+      ],
+      title
+    );
+
+    this.stageFrame(frame);
+    this.commitFrame();
   }
 
   selectFromIndexes(indexes) {

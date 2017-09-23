@@ -1,5 +1,5 @@
-@import "~vars.scss";
-@import "~mixins.scss";
+@import '~vars.scss';
+@import '~mixins.scss';
 
 #app-toolbar {
   flex-grow: 0;
@@ -22,8 +22,11 @@
     }
 
     .toolbar-button {
-      width: $toolbar-dimen;
-      @extend .toolbar-item;
+      height: 100%;
+      .icon {
+        height: 100%;
+        width: $toolbar-dimen;
+      }
       @include no-select;
       cursor: default;
 

@@ -1,19 +1,6 @@
 @import '~vars.scss';
 
 .color-util {
-  .color-util__selected {
-    width: 100%;
-    padding: 10px;
-
-    display: flex;
-
-    .color-swatch {
-      width: 40px;
-      height: 40px;
-      background: black;
-    }
-  }
-
   .color-util__row {
     width: 100%;
     padding: 5px;
@@ -34,6 +21,14 @@
       .color-util__row__swatch {
         width: 32px;
         height: 32px;
+
+        &.color-util__row__swatch {
+          border: 1px solid $blue-grey;
+
+          svg line {
+            stroke: $blue-grey;
+          }
+        }
       }
 
       select {

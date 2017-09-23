@@ -25,6 +25,14 @@ import valignTop from 'icons/valign_top.svg';
 import valignCenter from 'icons/valign_center.svg';
 import valignBottom from 'icons/valign_bottom.svg';
 
+import linecapButt from 'icons/linecap_butt.svg';
+import linecapSquare from 'icons/linecap_square.svg';
+import linecapRound from 'icons/linecap_round.svg';
+
+import linejoinMiter from 'icons/linejoin_miter.svg';
+import linejoinBevel from 'icons/linejoin_bevel.svg';
+import linejoinRound from 'icons/linejoin_round.svg';
+
 const ICONS = {
   cursor,
   ellipse,
@@ -50,7 +58,15 @@ const ICONS = {
 
   valignTop,
   valignCenter,
-  valignBottom
+  valignBottom,
+
+  linecapButt,
+  linecapSquare,
+  linecapRound,
+
+  linejoinMiter,
+  linejoinBevel,
+  linejoinRound
 };
 
 export default ICONS;
@@ -60,7 +76,8 @@ export function renderIcon(name, opts = {}) {
     <span
       className={classnames({
         icon: true,
-        weak: opts.weak
+        weak: opts.weak,
+        selected: opts.selected
       })}
       dangerouslySetInnerHTML={{ __html: ICONS[name] }}
     />

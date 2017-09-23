@@ -20,21 +20,11 @@ let TypeToolbarGroup = React.createClass({
       'Ubuntu Mono'
     ];
 
-    let selectedFonts = {};
-    let selectedSizes = {};
-    let selectedSpacings = {};
-    for (let item of selectedTextItems) {
-      selectedFonts[item.fontFamily()] = true;
-      selectedSizes[item.data.size] = true;
-      selectedSpacings[item.data.spacing] = true;
-    }
-    selectedFonts = Object.keys(selectedFonts);
-    selectedSizes = Object.keys(selectedSizes).map(s => {
-      return parseInt(s, 10);
-    });
-    selectedSpacings = Object.keys(selectedSpacings).map(s => {
-      return parseFloat(s, 10);
-    });
+    let selectedFonts = this.props.editor.selectedAttributeValues(
+      'font-family'
+    );
+    let selectedSizes = this.props.editor.selectedAttributeValues('font-size');
+    let selectedSpacings = this.props.editor.selectedAttributeValues('spacing');
 
     let selectedFont = null;
     let selectedSize = null;
@@ -50,8 +40,6 @@ let TypeToolbarGroup = React.createClass({
       selectedSpacing = selectedSpacings[0];
     }
 
-    console.log(selectedFont, selectedSize, selectedSpacing);
-
     return (
       <ToolbarGroup>
         <ToolbarDropdown
@@ -64,9 +52,9 @@ let TypeToolbarGroup = React.createClass({
             };
           })}
           onChange={value => {
-            this.props.changeSelectionAttribute(
+            this.props.editor.changeSelectionAttribute(
               Text,
-              'fontFamily',
+              'font-family',
               value,
               'Change font'
             );
@@ -78,9 +66,9 @@ let TypeToolbarGroup = React.createClass({
           value={selectedSize}
           width={40}
           onSubmit={val => {
-            this.props.changeSelectionAttribute(
+            this.props.editor.changeSelectionAttribute(
               Text,
-              'size',
+              'font-size',
               parseInt(val, 10),
               'Change font size'
             );
@@ -92,7 +80,7 @@ let TypeToolbarGroup = React.createClass({
           value={selectedSpacing}
           width={40}
           onSubmit={val => {
-            this.props.changeSelectionAttribute(
+            this.props.editor.changeSelectionAttribute(
               Text,
               'spacing',
               parseInt(val, 10),
@@ -104,7 +92,7 @@ let TypeToolbarGroup = React.createClass({
         <ToolbarButton
           title="Align left"
           onClick={() => {
-            this.props.changeSelectionAttribute(
+            this.props.editor.changeSelectionAttribute(
               Text,
               'align',
               'left',
@@ -116,7 +104,7 @@ let TypeToolbarGroup = React.createClass({
         <ToolbarButton
           title="Align center"
           onClick={() => {
-            this.props.changeSelectionAttribute(
+            this.props.editor.changeSelectionAttribute(
               Text,
               'align',
               'center',
@@ -128,7 +116,7 @@ let TypeToolbarGroup = React.createClass({
         <ToolbarButton
           title="Align right"
           onClick={() => {
-            this.props.changeSelectionAttribute(
+            this.props.editor.changeSelectionAttribute(
               Text,
               'align',
               'right',
@@ -141,7 +129,7 @@ let TypeToolbarGroup = React.createClass({
         <ToolbarButton
           title="Vertical align top"
           onClick={() => {
-            this.props.changeSelectionAttribute(
+            this.props.editor.changeSelectionAttribute(
               Text,
               'valign',
               'top',
@@ -153,7 +141,7 @@ let TypeToolbarGroup = React.createClass({
         <ToolbarButton
           title="Vertical align center"
           onClick={() => {
-            this.props.changeSelectionAttribute(
+            this.props.editor.changeSelectionAttribute(
               Text,
               'valign',
               'center',
@@ -165,7 +153,7 @@ let TypeToolbarGroup = React.createClass({
         <ToolbarButton
           title="Vertical align bottom"
           onClick={() => {
-            this.props.changeSelectionAttribute(
+            this.props.editor.changeSelectionAttribute(
               Text,
               'valign',
               'bottom',

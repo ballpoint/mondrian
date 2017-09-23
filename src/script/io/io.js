@@ -53,7 +53,6 @@ let io = {
           d.height = parseFloat(mHeight);
         }
 
-        console.log(d);
         results.push(new Text(d));
       } else {
         // Otherwise it must be a shape node we have a class for.
@@ -82,8 +81,6 @@ let io = {
   },
 
   parseTextGroup(node) {
-    console.log(node);
-
     let d = {
       x: parseFloat(node.getAttribute('mondrian:x')),
       y: parseFloat(node.getAttribute('mondrian:y')),
@@ -93,8 +90,6 @@ let io = {
       size: parseFloat(node.style['font-size']),
       value: ''
     };
-
-    console.log(d);
 
     let lines = [];
 
@@ -125,7 +120,6 @@ let io = {
           break;
       }
     }
-    console.log(value, value.split(' '));
 
     if (value[0] === '\n') {
       value = value.slice(1);
@@ -145,9 +139,12 @@ let io = {
 
       if (action && args) {
         action = action[0].strip();
-        args = args[0].replace(/[\(\)]/g, '').split(/[,\s]+/).map(s => {
-          return s.strip();
-        });
+        args = args[0]
+          .replace(/[\(\)]/g, '')
+          .split(/[,\s]+/)
+          .map(s => {
+            return s.strip();
+          });
       } else {
         console.warn('Failed to parse transform', item);
       }
@@ -366,10 +363,14 @@ let io = {
         textElem.setAttribute('mondrian:width', item.data.width);
         textElem.setAttribute('mondrian:height', item.data.height);
 
+        textElem.setAttribute('fill', item.data.fill.toString());
+        textElem.setAttribute('stroke', item.data.stroke.toString());
+
         if (!opts.partOfGroup) {
-          textElem.style['font-size'] = item.fontSize();
-          textElem.style['font-family'] = item.fontFamily();
+          textElem.setAttribute('font-size', item.fontSize());
+          textElem.setAttribute('font-family', item.fontFamily());
         }
+
         textElem.innerHTML = line.data.value;
 
         textElem.setAttribute(
@@ -395,8 +396,11 @@ let io = {
       groupElem.setAttribute('mondrian:height', item.data.height);
       groupElem.setAttribute('mondrian:spacing', item.data.height);
 
-      groupElem.style['font-size'] = item.fontSize();
-      groupElem.style['font-family'] = item.fontFamily();
+      groupElem.setAttribute('fill', item.data.fill.toString());
+      groupElem.setAttribute('stroke', item.data.stroke.toString());
+
+      groupElem.setAttribute('font-size', item.fontSize());
+      groupElem.setAttribute('font-family', item.fontFamily());
 
       for (let line of lines) {
         let textElem = lineToElem(item, line, { partOfGroup: true });

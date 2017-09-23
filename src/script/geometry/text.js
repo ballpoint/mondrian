@@ -17,9 +17,10 @@ export default class Text extends Item {
   constructor(data) {
     if (data.x === undefined) data.x = 100;
     if (data.y === undefined) data.y = 100;
-    if (data.size === undefined) data.size = 12;
+    if (data['font-size'] === undefined) data['font-size'] = 12;
     if (data.value === undefined) data.value = '';
-    if (data.fontFamily === undefined) data.fontFamily = 'Times New Roman';
+    if (data['font-family'] === undefined)
+      data['font-family'] = 'Times New Roman';
 
     if (data.fill === undefined) data.fill = consts.black;
     if (data.stroke === undefined) data.stroke = NONE;
@@ -38,15 +39,15 @@ export default class Text extends Item {
   }
 
   fontStyle() {
-    return `${this.fontSize()} ${this.fontFamily()}`;
+    return `${this.fontSize()}pt ${this.fontFamily()}`;
   }
 
   fontFamily() {
-    return this.data.fontFamily;
+    return this.data['font-family'];
   }
 
   fontSize() {
-    return `${this.data.size}pt`;
+    return this.data['font-size'];
   }
 
   lines() {
@@ -89,14 +90,14 @@ export default class Text extends Item {
       lines.push(
         new TextLine({
           x,
-          y: cursor.y + this.data.size,
+          y: cursor.y + this.fontSize(),
           value: currentLine.join(' '),
-          size: this.data.size
+          size: this.fontSize()
         })
       );
 
       cursor.x = this.data.x;
-      cursor.y += this.data.spacing * this.data.size;
+      cursor.y += this.data.spacing * this.fontSize();
       currentLine = [];
     };
 
@@ -127,8 +128,8 @@ export default class Text extends Item {
     if (this.data.valign !== 'top') {
       let extraV =
         this.data.height -
-        (this.data.size +
-          (lines.length - 1) * this.data.size * this.data.spacing);
+        (this.fontSize() +
+          (lines.length - 1) * this.fontSize() * this.data.spacing);
 
       for (let span of lines) {
         switch (this.data.valign) {
@@ -205,7 +206,7 @@ export default class Text extends Item {
 
   lineBounds(line) {
     let w = measure(line.data.value, this.fontStyle()).width;
-    let h = this.data.size;
+    let h = this.fontSize();
 
     switch (this.data.align) {
       case 'left':

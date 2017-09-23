@@ -24,6 +24,8 @@ export default class Item {
 
     this.validateColors();
 
+    this.setDefaultAttrs();
+
     // Apply
     if (this.data['mondrian:angle'] != null) {
       this.metadata.angle = parseFloat(this.data['mondrian:angle'], 10);
@@ -52,9 +54,19 @@ export default class Item {
     } else {
       this.data.stroke = NONE;
     }
+  }
 
-    if (this.data['stroke-width'] == null) {
-      return (this.data['stroke-width'] = 1);
+  setDefaultAttrs() {
+    const defaults = {
+      'stroke-width': 1,
+      'stroke-linecap': 'butt',
+      'stroke-linejoin': 'miter'
+    };
+
+    for (let k in defaults) {
+      if (this.data[k] === undefined) {
+        this.data[k] = defaults[k];
+      }
     }
   }
 

@@ -46,22 +46,6 @@ let Toolbar = React.createClass({
     );
   },
 
-  changeSelectionAttribute(type, key, value, title) {
-    let frame = new HistoryFrame(
-      [
-        actions.SetAttributeAction.forItems(
-          this.props.editor.selectedOfType(type),
-          key,
-          value
-        )
-      ],
-      title
-    );
-
-    this.props.editor.stageFrame(frame);
-    this.props.editor.commitFrame();
-  },
-
   renderBooleanGroup() {
     let editor = this.props.editor;
 
@@ -113,10 +97,7 @@ let Toolbar = React.createClass({
         <div className="toolbar-group">
           {this.renderHistoryGroup()}
           {this.renderBooleanGroup()}
-          <TypeToolbarGroup
-            changeSelectionAttribute={this.changeSelectionAttribute}
-            {...this.props}
-          />
+          <TypeToolbarGroup {...this.props} />
         </div>
       </div>
     );

@@ -1,16 +1,16 @@
 let TextInput = React.createClass({
   getInitialState() {
     return {
-      value: this.props.value,
-      lastCommittedValue: this.props.value
+      value: this.props.value || '',
+      lastCommittedValue: this.props.value || ''
     };
   },
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.value !== this.state.value && !this.state.isFocused) {
       this.setState({
-        value: nextProps.value,
-        lastCommittedValue: nextProps.value
+        value: nextProps.value || '',
+        lastCommittedValue: nextProps.value || ''
       });
     }
   },
@@ -18,11 +18,7 @@ let TextInput = React.createClass({
   render() {
     let label;
     if (this.props.label) {
-      label = (
-        <label htmlFor={this.props.id}>
-          {this.props.label}
-        </label>
-      );
+      label = <label htmlFor={this.props.id}>{this.props.label}</label>;
     }
 
     let style = {};

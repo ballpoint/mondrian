@@ -1,0 +1,70 @@
+@import '~vars.scss';
+
+#util-stroke {
+  width: 220px;
+}
+
+.stroke-util {
+  .stroke-util__row {
+    width: 100%;
+    display: flex;
+
+    + .stroke-util__row {
+      border-top: 1px solid $blue-grey;
+    }
+
+    .stroke-util__row__label {
+      padding: 5px;
+      display: flex;
+      align-items: center;
+    }
+
+    .stroke-util__row__control {
+      margin-left: auto;
+
+      input {
+        margin: 5px;
+      }
+
+      .stroke-util__button-group {
+        display: flex;
+        border-left: 1px solid $blue-grey;
+
+        .stroke-util__button {
+          .icon {
+            width: 32px;
+            height: 32px;
+          }
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+    }
+
+    .stroke-util__col {
+      width: 96px;
+      display: flex;
+
+      &:first-child {
+        border-right: 1px solid $blue-grey;
+      }
+      &:last-child {
+        border-left: 1px solid $blue-grey;
+        margin-left: auto;
+      }
+
+      .stroke-util__col__button {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        + .stroke-util__col__button {
+          border-left: 1px solid $blue-grey;
+        }
+      }
+    }
+  }
+}
