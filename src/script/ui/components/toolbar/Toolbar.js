@@ -78,13 +78,13 @@ let Toolbar = React.createClass({
       return (
         <ToolbarGroup>
           <ToolbarButton onClick={boolOp('unite')} title="Unite">
-            U
+            {renderIcon('booleanUnite')}
           </ToolbarButton>
           <ToolbarButton onClick={boolOp('subtract')} title="Subtract">
-            S
+            {renderIcon('booleanSubtract')}
           </ToolbarButton>
           <ToolbarButton onClick={boolOp('intersect')} title="Intersect">
-            X
+            {renderIcon('booleanIntersect')}
           </ToolbarButton>
         </ToolbarGroup>
       );

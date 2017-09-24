@@ -1,5 +1,6 @@
 import classnames from 'classnames';
 import cursor from 'icons/cursor.svg';
+import subcursor from 'icons/subcursor.svg';
 import ellipse from 'icons/ellipse.svg';
 import rect from 'icons/rect.svg';
 import zoom from 'icons/zoom.svg';
@@ -33,8 +34,13 @@ import linejoinMiter from 'icons/linejoin_miter.svg';
 import linejoinBevel from 'icons/linejoin_bevel.svg';
 import linejoinRound from 'icons/linejoin_round.svg';
 
+import booleanUnite from 'icons/boolean_unite.svg';
+import booleanIntersect from 'icons/boolean_intersect.svg';
+import booleanSubtract from 'icons/boolean_subtract.svg';
+
 const ICONS = {
   cursor,
+  subcursor,
   ellipse,
   rect,
   zoom,
@@ -66,7 +72,11 @@ const ICONS = {
 
   linejoinMiter,
   linejoinBevel,
-  linejoinRound
+  linejoinRound,
+
+  booleanUnite,
+  booleanIntersect,
+  booleanSubtract
 };
 
 export default ICONS;

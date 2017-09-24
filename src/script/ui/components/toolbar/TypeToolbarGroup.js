@@ -1,3 +1,4 @@
+import Item from 'geometry/item';
 import Text from 'geometry/text';
 import { renderIcon } from 'ui/components/icons';
 
@@ -21,10 +22,17 @@ let TypeToolbarGroup = React.createClass({
     ];
 
     let selectedFonts = this.props.editor.selectedAttributeValues(
+      Item,
       'font-family'
     );
-    let selectedSizes = this.props.editor.selectedAttributeValues('font-size');
-    let selectedSpacings = this.props.editor.selectedAttributeValues('spacing');
+    let selectedSizes = this.props.editor.selectedAttributeValues(
+      Item,
+      'font-size'
+    );
+    let selectedSpacings = this.props.editor.selectedAttributeValues(
+      Item,
+      'spacing'
+    );
 
     let selectedFont = null;
     let selectedSize = null;

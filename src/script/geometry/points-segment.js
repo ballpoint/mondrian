@@ -198,6 +198,7 @@ export default class PointsSegment {
       let fpt = this.points[0];
       s += ' ';
       s += fpt.toSVGString();
+      s += 'z';
     }
 
     return s;
@@ -327,6 +328,8 @@ export default class PointsSegment {
       let prec = this.points[this.points.length - 1];
 
       this.drawPointToCanvas(point, prec, layer, projection);
+
+      context.closePath();
     }
   }
 }

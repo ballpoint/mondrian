@@ -1,0 +1,6 @@
+<!-- Made in Mondrian.io -->
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" xmlns:mondrian="https://mondrian.io/xml">
+<path fill="rgba(0, 0, 0, 0)" stroke="rgba(183, 183, 183, 1)" d="M7.00000000,13.00000000 C7.00000000,9.68629150 9.68629150,7.00000000 13.00000000,7.00000000 " stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"/>
+<path fill="rgba(0, 0, 0, 0)" stroke="rgba(183, 183, 183, 1)" d="M13.00000000,7.00000000 L13.00000000,13.00000000 L7.00000000,13.00000000 " stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"/>
+<path d="M19.00000000,13.00000000 C19.00000000,16.31370850 16.31370850,19.00000000 13.00000000,19.00000000 C9.68629150,19.00000000 7.00000000,16.31370850 7.00000000,13.00000000 L3.00000000,13.00000000 L3.00000000,3.00000000 L13.00000000,3.00000000 L13.00000000,7.00000000 C16.31370850,7.00000000 19.00000000,9.68629150 19.00000000,13.00000000z " stroke="rgba(0, 0, 0, 1)" fill="rgba(0, 0, 0, 0)" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"/>
+</svg>

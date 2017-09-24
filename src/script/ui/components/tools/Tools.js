@@ -14,7 +14,7 @@ const config = [
   {
     label: 'Subcursor',
     constructor: tools.SubCursor,
-    icon: 'cursor'
+    icon: 'subcursor'
   },
   {
     label: 'Zoom',
