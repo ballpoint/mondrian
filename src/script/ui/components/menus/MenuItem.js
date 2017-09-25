@@ -8,7 +8,7 @@ let MenuItem = React.createClass({
         className={classnames({
           'app-menu-item': true,
           disabled: this.props.disabled,
-          [this.props.className]: true
+          [this.props.className || '']: true
         })}
         onClick={this.props.action}
         href={this.props.href}>
@@ -16,11 +16,9 @@ let MenuItem = React.createClass({
           {this.props.label || this.props.children}
         </div>
 
-        {this.props.hotkey
-          ? <div className="app-menu-item__hotkey">
-              {this.props.hotkey}
-            </div>
-          : null}
+        {this.props.hotkey ? (
+          <div className="app-menu-item__hotkey">{this.props.hotkey}</div>
+        ) : null}
       </div>
     );
   }

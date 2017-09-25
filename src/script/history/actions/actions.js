@@ -412,12 +412,10 @@ export class GroupAction extends HistoryAction {
         return a.compare(b);
       });
 
-
     let groupIndex = childIndexes.last();
     for (let index of childIndexes.slice(0, -1)) {
       groupIndex = groupIndex.plusAt(-1, index.depth);
     }
-
 
     return new GroupAction({
       childIndexes,
@@ -536,6 +534,35 @@ export class SetAttributeAction extends HistoryAction {
           index: item.index,
           value: item.oldValue,
           oldValue: item.value
+        };
+      })
+    });
+  }
+}
+
+export class ShiftIndexAction extends HistoryAction {
+  perform(doc) {
+    let positive = this.data.items[0].delta > 0;
+    let items = this.data.items.slice(0).sort((a, b) => {
+      if (positive) {
+        return b.index.compare(a.index);
+      } else {
+        return a.index.compare(b.index);
+      }
+    });
+
+    for (let item of items) {
+      let { index, delta } = item;
+      doc.shiftIndex(index, delta);
+    }
+  }
+
+  opposite() {
+    return new ShiftIndexAction({
+      items: this.data.items.map(item => {
+        return {
+          index: item.index.plus(item.delta),
+          delta: -item.delta
         };
       })
     });

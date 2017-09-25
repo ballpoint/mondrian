@@ -220,6 +220,13 @@ export default class Editor extends EventEmitter {
       this.groupSelection();
     });
 
+    hotkeys.on('down', 'ctrl-downArrow', e => {
+      this.shiftSelected(-1);
+    });
+    hotkeys.on('down', 'ctrl-upArrow', e => {
+      this.shiftSelected(1);
+    });
+
     hotkeys.on('down', 'V', () => {
       this.selectTool(new tools.Cursor(this));
     });
@@ -1114,6 +1121,59 @@ export default class Editor extends EventEmitter {
     ]);
 
     this.stageFrame(frame);
+  }
+
+  shiftSelected(delta) {
+    if (!this.hasSelection()) {
+      return;
+    }
+
+    let indexes = this.selectedIndexes();
+    let indexesIdx = {};
+    for (let index of indexes) {
+      indexesIdx[index.toString()] = true;
+    }
+
+    let items = [];
+
+    for (let index of indexes) {
+      if (this.canShift(index, delta)) {
+        items.push({ index, delta });
+      }
+    }
+
+    if (items.length > 0) {
+      let frame = new HistoryFrame(
+        [new actions.ShiftIndexAction({ items })],
+        'Shift ' + (delta === 1 ? 'up' : 'down')
+      );
+
+      this.stageFrame(frame);
+      this.commitFrame();
+    }
+  }
+
+  canShift(index, delta) {
+    switch (delta) {
+      case -1:
+        for (let i = index.last - 1; i >= 0; i--) {
+          let otherIndex = index.parent.concat([i]);
+          if (indexesIdx[otherIndex.toString()] === undefined) {
+            return true;
+          }
+        }
+        return false;
+      case 1:
+        let parent = this.doc.getFromIndex(index.parent);
+        let cap = parent.children.length;
+        for (let i = index.last + 1; i < cap; i++) {
+          let otherIndex = index.parent.concat([i]);
+          if (indexesIdx[otherIndex.toString()] === undefined) {
+            return true;
+          }
+        }
+        return false;
+    }
   }
 
   editText(item, position) {

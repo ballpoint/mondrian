@@ -2,6 +2,8 @@ import consts from 'consts';
 import { PIXEL_RATIO } from 'lib/math';
 import mathUtils from 'lib/math';
 import Posn from 'geometry/posn';
+import Item from 'geometry/item';
+
 import Util from 'ui/components/utils/Util';
 import TextInput from 'ui/components/utils/TextInput';
 import CursorTracking from 'ui/cursor-tracking';
@@ -201,7 +203,12 @@ let ColorUtil = React.createClass({
       editor.state.selectionType === 'ELEMENTS' &&
       editor.state.selection.length > 0
     ) {
-      return editor.state.selection[0].data[which];
+      let color = editor.selectedAttributeValue(Item, which);
+      if (color === null) {
+        return NONE;
+      } else {
+        return color;
+      }
     } else {
       return editor.state.colors[which];
     }

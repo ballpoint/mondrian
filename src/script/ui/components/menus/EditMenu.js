@@ -1,5 +1,6 @@
 import MenuBody from 'ui/components/menus/MenuBody';
 import MenuItem from 'ui/components/menus/MenuItem';
+import MenuGroup from 'ui/components/menus/MenuGroup';
 import 'menus/menus.scss';
 
 let EditMenu = React.createClass({
@@ -11,36 +12,40 @@ let EditMenu = React.createClass({
       <MenuBody
         absoluteTop={this.props.absoluteTop}
         absoluteLeft={this.props.absoluteLeft}>
-        <MenuItem
-          label="Undo"
-          disabled={!history.canUndo()}
-          action={editor.undo.bind(editor)}
-          hotkey="Ctrl-Z"
-        />
-        <MenuItem
-          label="Redo"
-          disabled={!history.canRedo()}
-          action={editor.redo.bind(editor)}
-          hotkey="Shift-Ctrl-Z"
-        />
-        <MenuItem
-          label="Cut"
-          disabled={!selectionExists}
-          action={editor.cut.bind(editor)}
-          hotkey="Ctrl-X"
-        />
-        <MenuItem
-          label="Copy"
-          disabled={!selectionExists}
-          action={editor.copy.bind(editor)}
-          hotkey="Ctrl-C"
-        />
-        <MenuItem
-          label="Paste"
-          disabled={!editor.state.clipboard}
-          action={editor.paste.bind(editor)}
-          hotkey="Ctrl-V"
-        />
+        <MenuGroup>
+          <MenuItem
+            label="Undo"
+            disabled={!history.canUndo()}
+            action={editor.undo.bind(editor)}
+            hotkey="Ctrl-Z"
+          />
+          <MenuItem
+            label="Redo"
+            disabled={!history.canRedo()}
+            action={editor.redo.bind(editor)}
+            hotkey="Shift-Ctrl-Z"
+          />
+        </MenuGroup>
+        <MenuGroup>
+          <MenuItem
+            label="Cut"
+            disabled={!selectionExists}
+            action={editor.cut.bind(editor)}
+            hotkey="Ctrl-X"
+          />
+          <MenuItem
+            label="Copy"
+            disabled={!selectionExists}
+            action={editor.copy.bind(editor)}
+            hotkey="Ctrl-C"
+          />
+          <MenuItem
+            label="Paste"
+            disabled={!editor.state.clipboard}
+            action={editor.paste.bind(editor)}
+            hotkey="Ctrl-V"
+          />
+        </MenuGroup>
       </MenuBody>
     );
   }

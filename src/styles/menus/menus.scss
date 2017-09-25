@@ -1,5 +1,5 @@
-@import "~vars.scss";
-@import "~mixins.scss";
+@import '~vars.scss';
+@import '~mixins.scss';
 
 #app-menus {
   flex-grow: 0;
@@ -39,6 +39,14 @@
 
     @include card-shadow-medium;
 
+    .app-menu-group {
+      padding: 2px 0;
+      border-bottom: 1px solid darken($bg-grey, 10%);
+
+      .app-menu-item:last-child {
+      }
+    }
+
     .app-menu-item {
       cursor: default;
       padding: 5px 10px;
@@ -60,7 +68,7 @@
       }
 
       + .app-menu-item {
-        border-top: 1px solid $blue-grey;
+        border-top: 1px solid $bg-grey;
       }
 
       &.disabled {

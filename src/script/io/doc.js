@@ -32,8 +32,6 @@ export default class Doc {
   static fromSVG(str, name) {
     let doc = new DOMParser().parseFromString(str, MIMETYPE);
 
-    console.log(doc);
-
     // TODO check how this works in firefox etc. this is for chrome.
     let parserError = doc.querySelector('parsererror');
     if (parserError) {
@@ -282,6 +280,42 @@ export default class Doc {
     this.layers = this.layers.filter(layer => {
       return layer !== rm;
     });
+  }
+
+  shiftIndex(index, delta) {
+    // Given delta of 1 or -1, shifts item at index so its index increases by delta
+    let parent = this.getFromIndex(index.parent);
+    let item = this.getFromIndex(index);
+    let last = index.last;
+    let ceil = parent.children.length - 1;
+    let r;
+
+    // [ 0, 1, 2, 3, 4 ]
+    // index 2, delta 4
+    // 5 - 2 = 3
+    //
+
+    switch (delta) {
+      case 1:
+        if (last === ceil) {
+          return;
+        }
+
+        r = parent.children[last + 1];
+        parent.children[last + 1] = item;
+        parent.children[last] = r;
+        break;
+      case -1:
+        if (last === 0) {
+          return;
+        }
+        r = parent.children[last - 1];
+        parent.children[last - 1] = item;
+        parent.children[last] = r;
+        break;
+    }
+
+    this.cacheIndexes();
   }
 
   center() {
