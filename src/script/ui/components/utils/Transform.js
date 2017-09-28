@@ -2,10 +2,11 @@ import classnames from 'classnames';
 import Bounds from 'geometry/bounds';
 import Thumb from 'ui/thumb';
 import Layer from 'ui/layer';
-import 'utils/selection.scss';
 import Util from 'ui/components/utils/Util';
 import Projection from 'ui/projection';
 import TextInput from 'ui/components/utils/TextInput';
+
+import 'utils/transform.scss';
 
 const THUMB_IMG_MAX_WIDTH = 120;
 const THUMB_IMG_MAX_HEIGHT = 80;
@@ -39,11 +40,7 @@ let TransformUtil = React.createClass({
       subheader = sel.length + ' items';
     }
 
-    return (
-      <div className="sel-util__subheader">
-        {subheader}
-      </div>
-    );
+    return <div className="sel-util__subheader">{subheader}</div>;
   },
 
   getSelectionIdKey() {
@@ -199,12 +196,12 @@ let TransformUtil = React.createClass({
           <div className="sel-util__thumb">
             {this.renderPoints(state.selection)}
 
-            {bounds.height > 0
-              ? <div className="sel-util__thumb__height-bracket" />
-              : null}
-            {bounds.width > 0
-              ? <div className="sel-util__thumb__width-bracket" />
-              : null}
+            {bounds.height > 0 ? (
+              <div className="sel-util__thumb__height-bracket" />
+            ) : null}
+            {bounds.width > 0 ? (
+              <div className="sel-util__thumb__width-bracket" />
+            ) : null}
           </div>
         );
       }
@@ -299,8 +296,8 @@ let TransformUtil = React.createClass({
       if (bounds) {
         let origin = this.getOrigin(bounds);
         return (
-          <div className="sel-util__coords">
-            <div className="sel-util__coords__x-input">
+          <div className="sel-util__top__left">
+            <div className="sel-util__top__left__x-input">
               <TextInput
                 label="x"
                 id="selection-x"
@@ -310,7 +307,7 @@ let TransformUtil = React.createClass({
                 }}
               />
             </div>
-            <div className="sel-util__coords__y-input">
+            <div className="sel-util__top__left__y-input">
               <TextInput
                 label="y"
                 id="selection-y"
@@ -325,7 +322,7 @@ let TransformUtil = React.createClass({
       }
     }
 
-    return <div className="sel-util__coords"> </div>;
+    return <div className="sel-util__top__left"> </div>;
   },
 
   renderHeight() {
@@ -358,8 +355,8 @@ let TransformUtil = React.createClass({
     }
 
     return (
-      <div className="sel-util__height">
-        <div className="sel-util__height__input">
+      <div className="sel-util__top__right">
+        <div className="sel-util__top__right__input">
           <TextInput id="selection-h" value={value} onSubmit={onSubmit} />
         </div>
       </div>
@@ -414,13 +411,9 @@ let TransformUtil = React.createClass({
               {this.renderThumb()}
               {this.renderHeight()}
             </div>
-            <div className="sel-util__middle">
-              {this.renderWidth()}
-            </div>
+            <div className="sel-util__middle">{this.renderWidth()}</div>
           </div>
-          <div className="sel-util__bottom">
-            {this.renderSubheader()}
-          </div>
+          <div className="sel-util__bottom">{this.renderSubheader()}</div>
         </div>
       </Util>
     );

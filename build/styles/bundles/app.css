@@ -152,10 +152,10 @@ html {
     .sel-util .sel-util__main .sel-util__top {
       display: flex;
       justify-content: center; }
-      .sel-util .sel-util__main .sel-util__top .sel-util__coords {
+      .sel-util .sel-util__main .sel-util__top .sel-util__top__left {
         width: 80px;
         text-align: right; }
-        .sel-util .sel-util__main .sel-util__top .sel-util__coords input[type="text"] {
+        .sel-util .sel-util__main .sel-util__top .sel-util__top__left input[type='text'] {
           margin-bottom: 5px; }
       .sel-util .sel-util__main .sel-util__top .sel-util__thumb {
         margin: 20px;
@@ -247,10 +247,10 @@ html {
           border-right: 1px solid #ccc;
           border-left: 1px solid #ccc;
           border-bottom: 1px solid #ccc; }
-      .sel-util .sel-util__main .sel-util__top .sel-util__height {
+      .sel-util .sel-util__main .sel-util__top .sel-util__top__right {
         display: flex;
         width: 80px; }
-        .sel-util .sel-util__main .sel-util__top .sel-util__height .sel-util__height__input {
+        .sel-util .sel-util__main .sel-util__top .sel-util__top__right .sel-util__top__right__input {
           margin-top: auto;
           margin-bottom: auto; }
   .sel-util .sel-util__middle {
