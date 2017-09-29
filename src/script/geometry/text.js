@@ -187,8 +187,8 @@ export default class Text extends Item {
 
   scale(x, y, origin) {
     let b = this.bounds().scale(x, y, origin);
-    this.data.x = b.x;
-    this.data.y = b.y;
+    this.data.x = b.l;
+    this.data.y = b.t;
     this.data.width = b.width;
     this.data.height = b.height;
 

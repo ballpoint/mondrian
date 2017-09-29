@@ -276,9 +276,11 @@ export default class TransformerUIElement extends UIElement {
       stroke: consts.blue
     };
 
+    /*
     if (this.editor.cursorHandler.isActive(id)) {
       ctrlOpts.fill = consts.blue;
     }
+    */
 
     let { angle } = this.editor.state.selection;
     ctrlBounds.angle = angle;
