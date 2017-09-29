@@ -9,7 +9,7 @@ import ToolbarNumberInput from 'ui/components/toolbar/ToolbarNumberInput';
 
 let TypeToolbarGroup = React.createClass({
   render() {
-    let selectedTextItems = this.props.editor.selectedOfType(Text);
+    let selectedTextItems = this.props.editor.state.selection.ofType(Text);
     if (selectedTextItems.length === 0) return null;
 
     const fonts = [
@@ -21,32 +21,18 @@ let TypeToolbarGroup = React.createClass({
       'Ubuntu Mono'
     ];
 
-    let selectedFonts = this.props.editor.selectedAttributeValues(
+    let selectedFont = this.props.editor.state.selection.getAttr(
       Item,
       'font-family'
     );
-    let selectedSizes = this.props.editor.selectedAttributeValues(
+    let selectedSize = this.props.editor.state.selection.getAttr(
       Item,
       'font-size'
     );
-    let selectedSpacings = this.props.editor.selectedAttributeValues(
+    let selectedSpacing = this.props.editor.state.selection.getAttr(
       Item,
       'spacing'
     );
-
-    let selectedFont = null;
-    let selectedSize = null;
-    let selectedSpacing = null;
-
-    if (selectedFonts.length === 1) {
-      selectedFont = selectedFonts[0];
-    }
-    if (selectedSizes.length === 1) {
-      selectedSize = selectedSizes[0];
-    }
-    if (selectedSpacings.length === 1) {
-      selectedSpacing = selectedSpacings[0];
-    }
 
     return (
       <ToolbarGroup>

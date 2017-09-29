@@ -30,13 +30,12 @@ let Utils = React.createClass({
 
         this.setState({
           selection: editor.state.selection,
-          selectionBounds: editor.state.selectionBounds,
           hasSelectedElements:
             editor.state.selection.length > 0 &&
-            editor.state.selectionType === 'ELEMENTS',
+            editor.state.selection.type === 'ELEMENTS',
           hasSelectedPoints:
             editor.state.selection.length > 0 &&
-            editor.state.selectionType === 'POINTS'
+            editor.state.selection.type === 'POINTS'
         });
       });
     });
@@ -52,7 +51,6 @@ let Utils = React.createClass({
         key="color"
         editor={this.props.editor}
         selection={this.state.selection}
-        selectionBounds={this.state.selectionBounds}
       />
     );
 
@@ -61,7 +59,6 @@ let Utils = React.createClass({
         key="stroke"
         editor={this.props.editor}
         selection={this.state.selection}
-        selectionBounds={this.state.selectionBounds}
       />
     );
 
@@ -70,7 +67,6 @@ let Utils = React.createClass({
         key="align"
         editor={this.props.editor}
         selection={this.state.selection}
-        selectionBounds={this.state.selectionBounds}
       />
     );
 
@@ -87,7 +83,6 @@ let Utils = React.createClass({
         key="selection"
         editor={this.props.editor}
         selection={this.state.selection}
-        selectionBounds={this.state.selectionBounds}
       />
     );
 
@@ -96,7 +91,6 @@ let Utils = React.createClass({
         key="document"
         editor={this.props.editor}
         selection={this.state.selection}
-        selectionBounds={this.state.selectionBounds}
       />
     );
 
@@ -106,7 +100,6 @@ let Utils = React.createClass({
         editor={this.props.editor}
         doc={this.props.editor.doc}
         selection={this.state.selection}
-        selectionBounds={this.state.selectionBounds}
       />
     );
 

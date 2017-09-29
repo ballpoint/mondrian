@@ -79,7 +79,7 @@ let AlignUtil = React.createClass({
 
     switch (this.state.mode) {
       case SELECTION:
-        sb = this.props.selectionBounds.bounds;
+        sb = this.props.selection.bounds;
         break;
       case CANVAS:
         sb = this.props.editor.doc.bounds;
@@ -87,7 +87,7 @@ let AlignUtil = React.createClass({
     }
 
     let as = [];
-    for (let elem of this.props.selection) {
+    for (let elem of this.props.selection.items) {
       let b = elem.bounds();
       let xd = 0;
       let yd = 0;

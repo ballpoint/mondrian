@@ -87,8 +87,6 @@ export default class SubCursor extends Tool {
 
       this.editor.setSelection(newSelection);
 
-      console.log(newSelection);
-
       this.dragSelectStart = null;
       this.dragSelectEnd = null;
     }

@@ -156,7 +156,7 @@ let ColorUtil = React.createClass({
     let frame;
 
     if (
-      editor.state.selectionType === 'ELEMENTS' &&
+      editor.state.selection.type === 'ELEMENTS' &&
       editor.state.selection.length > 0
     ) {
       frame = this.props.editor.setColor(which, color);
@@ -200,10 +200,10 @@ let ColorUtil = React.createClass({
   getColor(which) {
     let editor = this.props.editor;
     if (
-      editor.state.selectionType === 'ELEMENTS' &&
+      editor.state.selection.type === 'ELEMENTS' &&
       editor.state.selection.length > 0
     ) {
-      let color = editor.selectedAttributeValue(Item, which);
+      let color = editor.state.selection.getAttr(Item, which);
       if (color === null) {
         return NONE;
       } else {

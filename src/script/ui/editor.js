@@ -7,6 +7,7 @@ import { NONE } from 'ui/color';
 import SelectedStrokeStyle from 'ui/SelectedStrokeStyle';
 import EventEmitter from 'lib/events';
 import Canvas from 'ui/canvas';
+import Selection from 'ui/selection';
 
 import Posn from 'geometry/posn';
 import Group from 'geometry/group';
@@ -329,8 +330,8 @@ export default class Editor extends EventEmitter {
       this.state = {
         zoomLevel: cached.zoomLevel,
         position: new Posn(cached.position),
-        selection: [],
-        hovering: [],
+        selection: new Selection([]),
+        hovering: new Selection([]),
         scope: new Index([0]),
         tool: new tools.Cursor(this),
 
@@ -341,8 +342,8 @@ export default class Editor extends EventEmitter {
     } else {
       this.state = {
         zoomLevel: 1,
-        selection: [],
-        hovering: [],
+        selection: new Selection([]),
+        hovering: new Selection([]),
         scope: new Index([0]),
         tool: new tools.Cursor(this),
 
@@ -383,7 +384,7 @@ export default class Editor extends EventEmitter {
 
     if (
       this.state.selection.length > 0 &&
-      this.state.selectionType === 'ELEMENTS'
+      this.state.selection.type === 'ELEMENTS'
     ) {
       frame = new HistoryFrame(
         [
@@ -474,7 +475,7 @@ export default class Editor extends EventEmitter {
   }
 
   selectAll() {
-    this.setSelection(this.doc.filterAvailable(this.doc.elements.slice(0)));
+    this.setSelection(this.doc.filterAvailable(this.doc.elements));
   }
 
   /*
@@ -496,19 +497,12 @@ export default class Editor extends EventEmitter {
 
   setSelection(items) {
     let oldSelection = this.state.selection;
-    this.state.selection = items;
 
-    if (items[0] instanceof PathPoint) {
-      this.state.selectionType = 'POINTS';
-    } else {
-      this.state.selectionType = 'ELEMENTS';
-    }
+    this.state.selection = new Selection(this.doc, items);
 
     window.$s = items; // DEBUG
 
-    this.calculateSelectionBounds();
-
-    if (!oldSelection.sameMembers(this.state.selection)) {
+    if (!oldSelection.equal(this.state.selection)) {
       this.trigger('change');
       this.trigger('change:selection');
     }
@@ -517,27 +511,22 @@ export default class Editor extends EventEmitter {
   }
 
   toggleInSelection(items) {
-    let sel = this.state.selection.slice(0);
+    let sel = this.state.selection.clone();
     for (let item of items) {
-      let i = sel.indexOf(item);
-      if (i === -1) {
+      if (sel.contains(item)) {
         sel.push(item);
       } else {
-        sel = sel.removeIndex(i);
+        sel = sel.remove(item);
       }
     }
-    this.setSelection(sel);
-  }
-
-  hasSelection() {
-    return this.state.selection.length > 0;
+    this.setSelection(sel.items);
   }
 
   setHovering(items) {
     let oldHovering = this.state.hovering;
-    this.state.hovering = items;
+    this.state.hovering = new Selection(this.doc, items);
 
-    if (this.state.hovering.length > 0) {
+    if (!this.state.hovering.empty) {
       if (items[0] instanceof PathPoint) {
         this.state.hoveringType = 'POINTS';
       } else {
@@ -545,7 +534,7 @@ export default class Editor extends EventEmitter {
       }
     }
 
-    if (!oldHovering.sameMembers(this.state.hovering)) {
+    if (!oldHovering.equal(this.state.hovering)) {
       this.trigger('change');
       this.trigger('change:hovering');
 
@@ -557,7 +546,7 @@ export default class Editor extends EventEmitter {
     if (item instanceof Layer) {
       return this.state.layer === item;
     } else {
-      return this.state.selection.indexOf(item) > -1;
+      return this.state.selection.contains(item);
     }
   }
 
@@ -609,25 +598,25 @@ export default class Editor extends EventEmitter {
     this.state.tool = tool;
 
     this.canvas.refreshAll();
-    this.calculateSelectionBounds();
+    this.state.selection.clearCache();
     this.trigger('change');
     this.trigger('change:tool');
   }
 
   deleteSelection() {
-    if (!this.hasSelection()) {
+    if (this.state.selection.empty) {
       return;
     }
 
     let frame;
 
-    switch (this.state.selectionType) {
+    switch (this.state.selection.type) {
       case 'ELEMENTS':
         // Simple when removing elements; remove them whole
         frame = new HistoryFrame(
           [
             new actions.DeleteAction({
-              items: this.state.selection.slice(0).map(item => {
+              items: this.state.selection.map(item => {
                 return { item, index: item.index };
               })
             })
@@ -639,7 +628,7 @@ export default class Editor extends EventEmitter {
       case 'POINTS':
         // If we're removing points that's harder. We have to open and split
         // PointsSegments to handle this properly.
-        let selection = this.state.selection.slice(0);
+        let selection = this.state.selection.items;
 
         let as = [];
 
@@ -750,7 +739,9 @@ export default class Editor extends EventEmitter {
   }
 
   groupSelection() {
-    if (!this.hasSelection()) return;
+    if (this.state.selection.empty) {
+      return;
+    }
 
     let frame = new HistoryFrame([
       actions.GroupAction.forChildren(this.doc, this.state.selection)
@@ -782,103 +773,6 @@ export default class Editor extends EventEmitter {
     this.commitFrame();
   }
 
-  updateSelection() {
-    // Filter out deleted items
-    this.state.selection = this.state.selection.filter(item => {
-      return this.doc.getFromIndex(item.index) === item;
-    });
-
-    this.state.hovering = this.state.hovering.filter(item => {
-      return this.doc.getFromIndex(item.index) === item;
-    });
-  }
-
-  calculateSelectionBounds() {
-    let selectionBounds = {};
-
-    this.updateSelection();
-
-    if (this.hasSelection()) {
-      let bounds;
-      let angle = 0;
-      let center;
-
-      if (this.state.selectionType === 'ELEMENTS') {
-        let selectedAngles = _.uniq(
-          this.state.selection.map(e => {
-            return e.metadata.angle;
-          })
-        );
-        if (selectedAngles.length === 1) {
-          angle = selectedAngles[0];
-        }
-
-        let boundsList = [];
-
-        for (let elem of this.state.selection) {
-          if (angle !== 0) {
-            elem.rotate(-angle, new Posn(0, 0));
-          }
-          boundsList.push(elem.bounds());
-          if (angle !== 0) {
-            elem.rotate(angle, new Posn(0, 0));
-          }
-        }
-
-        bounds = new Bounds(boundsList);
-        center = bounds.center();
-      } else if (this.state.selectionType === 'POINTS') {
-        let selectedAngles = _.uniq(
-          this.state.selection.map(e => {
-            return e.path.metadata.angle;
-          })
-        );
-        if (selectedAngles.length === 1) {
-          angle = selectedAngles[0];
-        }
-
-        if (angle !== 0) {
-          for (let pt of this.state.selection) {
-            pt.rotate(-angle, new Posn(0, 0));
-          }
-        }
-        bounds = Bounds.fromPosns(this.state.selection);
-        if (angle !== 0) {
-          for (let pt of this.state.selection) {
-            pt.rotate(angle, new Posn(0, 0));
-          }
-        }
-
-        center = bounds.center();
-      }
-
-      if (angle) {
-        center = center.rotate(angle, new Posn(0, 0));
-        bounds.centerOn(center);
-        bounds.angle = angle;
-      }
-
-      selectionBounds.bounds = bounds;
-      selectionBounds.angle = angle;
-      selectionBounds.center = center;
-    }
-
-    this.state.selectionBounds = selectionBounds;
-  }
-
-  selectionFlat() {
-    let selection = [];
-    for (let item of this.state.selection) {
-      if (item instanceof Group) {
-        selection = selection.concat(item.childrenFlat);
-      } else {
-        selection.push(item);
-      }
-    }
-
-    return selection;
-  }
-
   selectedIndexes() {
     return this.state.selection
       .map(item => {
@@ -897,48 +791,11 @@ export default class Editor extends EventEmitter {
       });
   }
 
-  selectedIndexesFlat() {
-    return this.selectionFlat().map(item => {
-      return item.index;
-    });
-  }
-
-  selectedOfType(type) {
-    if (type === undefined) {
-      return this.selectionFlat();
-    }
-    return this.selectionFlat().filter(item => {
-      return item instanceof type;
-    });
-  }
-
-  selectedAttributeValues(type, key) {
-    let vals = new Set();
-    let selection = this.selectedOfType(type);
-    for (let item of selection) {
-      let val = item.data[key];
-      if (val !== undefined) {
-        vals.add(val);
-      }
-    }
-
-    return Array.from(vals.values());
-  }
-
-  selectedAttributeValue(type, key) {
-    let values = this.selectedAttributeValues(type, key);
-    if (values.length === 1) {
-      return values[0];
-    } else {
-      return null;
-    }
-  }
-
   changeSelectionAttribute(type, key, value, title) {
     let frame = new HistoryFrame(
       [
         actions.SetAttributeAction.forItems(
-          this.selectedOfType(type),
+          this.state.selection.ofType(type),
           key,
           value
         )
@@ -1026,7 +883,7 @@ export default class Editor extends EventEmitter {
   }
 
   nudgeSelected(xd, yd) {
-    if (!this.hasSelection()) {
+    if (this.state.selection.empty) {
       return;
     }
 
@@ -1042,7 +899,7 @@ export default class Editor extends EventEmitter {
   }
 
   nudgeHandle(index, handle, xd, yd) {
-    if (!this.hasSelection()) {
+    if (this.state.selection.empty) {
       return;
     }
 
@@ -1059,7 +916,7 @@ export default class Editor extends EventEmitter {
   }
 
   scaleSelected(x, y, origin) {
-    if (!this.hasSelection()) {
+    if (this.state.selection.empty) {
       return;
     }
 
@@ -1097,7 +954,7 @@ export default class Editor extends EventEmitter {
           indexes: this.selectedIndexes(),
           x,
           y,
-          origin: this.state.selectionBounds.center
+          origin: this.state.selection.center
         })
       ],
       title
@@ -1108,7 +965,7 @@ export default class Editor extends EventEmitter {
   }
 
   rotateSelected(angle, origin) {
-    if (!this.hasSelection()) {
+    if (this.state.selection.empty) {
       return;
     }
 
@@ -1124,7 +981,7 @@ export default class Editor extends EventEmitter {
   }
 
   shiftSelected(delta) {
-    if (!this.hasSelection()) {
+    if (this.state.selection.empty) {
       return;
     }
 
@@ -1253,7 +1110,8 @@ export default class Editor extends EventEmitter {
 
   stageFrame(frame) {
     this.doc.stageFrame(frame);
-    this.calculateSelectionBounds();
+
+    this.state.selection.clearCache();
     this.canvas.refreshAll();
     this.trigger('change');
   }
@@ -1267,16 +1125,17 @@ export default class Editor extends EventEmitter {
     this.trigger('change');
   }
 
+  // TODO remove
   perform(h) {
     this.doc.perform(h);
-    this.calculateSelectionBounds();
+    this.state.selection.clearCache();
     this.canvas.refreshAll();
     this.trigger('change');
   }
 
   undo() {
     this.doc.undo();
-    this.calculateSelectionBounds();
+    this.state.selection.clearCache();
     this.canvas.refreshAll();
     this.trigger('change');
     this.trigger('history:step');
@@ -1284,7 +1143,7 @@ export default class Editor extends EventEmitter {
 
   redo() {
     this.doc.redo();
-    this.calculateSelectionBounds();
+    this.state.selection.clearCache();
     this.canvas.refreshAll();
     this.trigger('change');
     this.trigger('history:step');
@@ -1292,14 +1151,14 @@ export default class Editor extends EventEmitter {
 
   jumpToHistoryDepth(depth) {
     this.doc.jumpToHistoryDepth(depth);
-    this.calculateSelectionBounds();
+    this.state.selection.clearCache();
     this.canvas.refreshAll();
     this.trigger('change');
     this.trigger('history:step');
   }
 
   cut(e) {
-    this.state.clipboard = this.state.selection.map(e => {
+    this.state.clipboard = this.state.selection.items.map(e => {
       return e.clone();
     });
     this.deleteSelection();
@@ -1307,7 +1166,7 @@ export default class Editor extends EventEmitter {
   }
 
   copy(e) {
-    this.state.clipboard = this.state.selection.map(e => {
+    this.state.clipboard = this.state.selection.items.map(e => {
       return e.clone();
     });
     this.trigger('change');

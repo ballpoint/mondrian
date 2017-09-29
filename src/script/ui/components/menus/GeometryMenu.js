@@ -10,7 +10,7 @@ let GeometryMenu = React.createClass({
   },
 
   render() {
-    let selectionExists = this.props.editor.hasSelection();
+    let selectionExists = !this.props.editor.state.selection.empty;
     let editor = this.props.editor;
 
     return (

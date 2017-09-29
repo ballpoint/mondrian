@@ -54,7 +54,7 @@ export default class Eyedropper extends Tool {
 
       if (
         this.editor.state.selection.length > 0 &&
-        this.editor.state.selectionType === 'ELEMENTS'
+        this.editor.state.selection.type === 'ELEMENTS'
       ) {
         this.frame = new HistoryFrame(
           [

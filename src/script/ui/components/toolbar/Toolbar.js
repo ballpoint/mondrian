@@ -24,7 +24,7 @@ let Toolbar = React.createClass({
     this.props.editor.on('change:selection', () => {
       this.setState({
         selection: this.props.editor.state.selection,
-        selectionType: this.props.editor.state.selectionType
+        selectionType: this.props.editor.state.selection.type
       });
     });
   },
@@ -51,14 +51,14 @@ let Toolbar = React.createClass({
 
     let boolOp = function(op) {
       return function() {
-        let result = bool[op](this.state.selection.slice(0));
+        let result = bool[op](this.state.selection.items.slice(0));
 
         let index = editor.selectedIndexes()[0];
 
         let frame = new HistoryFrame(
           [
             new actions.DeleteAction({
-              items: editor.state.selection.slice(0).map(item => {
+              items: editor.state.selection.map(item => {
                 return { item, index: item.index };
               })
             }),

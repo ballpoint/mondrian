@@ -114,7 +114,7 @@ export default class Cursor extends Tool {
   }
 
   handleDragStart(e, cursor) {
-    if (this.editor.state.selection.length === 0) {
+    if (this.editor.state.selection.empty) {
       this.dragSelectStart = cursor.posnDown;
     }
   }
@@ -172,7 +172,7 @@ export default class Cursor extends Tool {
     if (ann) {
       switch (ann.type) {
         case 'line':
-          let sb = this.editor.state.selectionBounds.bounds;
+          let sb = this.editor.state.selection.bounds;
           let center = this.editor.projection.posn(sb.center());
           let centerDown = this.editor.projection.posn(
             sb.center().nudge(-ann.delta.x, -ann.delta.y)

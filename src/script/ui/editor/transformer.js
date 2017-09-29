@@ -85,42 +85,64 @@ export default class TransformerUIElement extends UIElement {
   }
 
   points() {
-    let tl = bounds.tl().rotate(angle, center).sharp();
-    let tr = bounds.tr().rotate(angle, center).sharp();
-    let br = bounds.br().rotate(angle, center).sharp();
-    let bl = bounds.bl().rotate(angle, center).sharp();
+    let tl = bounds
+      .tl()
+      .rotate(angle, center)
+      .sharp();
+    let tr = bounds
+      .tr()
+      .rotate(angle, center)
+      .sharp();
+    let br = bounds
+      .br()
+      .rotate(angle, center)
+      .sharp();
+    let bl = bounds
+      .bl()
+      .rotate(angle, center)
+      .sharp();
 
     // Edges
-    let tm = bounds.tm().rotate(angle, center).sharp();
-    let bm = bounds.bm().rotate(angle, center).sharp();
-    let rm = bounds.rm().rotate(angle, center).sharp();
-    let lm = bounds.lm().rotate(angle, center).sharp();
+    let tm = bounds
+      .tm()
+      .rotate(angle, center)
+      .sharp();
+    let bm = bounds
+      .bm()
+      .rotate(angle, center)
+      .sharp();
+    let rm = bounds
+      .rm()
+      .rotate(angle, center)
+      .sharp();
+    let lm = bounds
+      .lm()
+      .rotate(angle, center)
+      .sharp();
   }
 
   _refresh(layer, context) {
     let selection = this.editor.state.selection;
 
-    if (selection.length === 0) {
+    if (selection.empty) {
       this.reset(this.editor);
       return;
     }
 
     if (this.editor.state.textEditHandler !== undefined) return;
 
-    //if (this.editor.state.selectionType !== 'ELEMENTS') {
+    //if (this.editor.state.selection.type !== 'ELEMENTS') {
     // return;
     //}
 
-    let bounds = this.editor.projection.bounds(
-      this.editor.state.selectionBounds.bounds
-    );
+    let bounds = this.editor.projection.bounds(selection.bounds);
 
     if (bounds.width === 0 || bounds.height === 0) {
       // Don't draw one or two dimensional transformer
       return;
     }
 
-    let { angle, center } = this.editor.state.selectionBounds;
+    let { angle, center } = this.editor.state.selection;
     center = this.editor.projection.posn(center);
 
     // Draw transformer box
@@ -258,7 +280,7 @@ export default class TransformerUIElement extends UIElement {
       ctrlOpts.fill = consts.blue;
     }
 
-    let { angle } = this.editor.state.selectionBounds;
+    let { angle } = this.editor.state.selection;
     ctrlBounds.angle = angle;
     layer.drawRect(ctrlBounds, ctrlOpts);
 
@@ -280,7 +302,11 @@ export default class TransformerUIElement extends UIElement {
         mousedown: (e, posn) => {
           e.stopPropagation();
 
-          this.startBounds = this.editor.state.selectionBounds;
+          this.startData = {
+            bounds: this.editor.state.selection.bounds.clone(),
+            angle: this.editor.state.selection.angle,
+            center: this.editor.state.selection.center.clone()
+          };
         },
         click: function(e, posn) {
           e.stopPropagation();
@@ -293,7 +319,7 @@ export default class TransformerUIElement extends UIElement {
           let scaleOrigin;
           let scaleMode;
 
-          let { bounds, angle, center } = this.startBounds;
+          let { bounds, angle, center } = this.startData;
 
           if (e.altKey) {
             scaleOrigin = center;
@@ -383,7 +409,7 @@ export default class TransformerUIElement extends UIElement {
               //which = this.oppositeX(which);
               // Take new opposite from editor-calculated bounds so that it's perfect
               // Taking it from resultBounds in here is imperfect by at least 0.00001
-              //opposite = this.oppositeForPoint(which, this.editor.state.selectionBounds.bounds);
+              //opposite = this.oppositeForPoint(which, this.editor.state.selection.bounds);
             }
 
             if (flipY) {
@@ -395,7 +421,7 @@ export default class TransformerUIElement extends UIElement {
               //which = this.oppositeY(which);
               // Take new opposite from editor-calculated bounds so that it's perfect
               // Taking it from resultBounds in here is imperfect by at least 0.00001
-              //opposite = this.oppositeForPoint(which, this.editor.state.selectionBounds.bounds);
+              //opposite = this.oppositeForPoint(which, this.editor.state.selection.bounds);
             }
           }
         },
@@ -437,7 +463,7 @@ export default class TransformerUIElement extends UIElement {
 
       drag: (e, cursor) => {
         e.stopPropagation();
-        let center = this.editor.state.selectionBounds.center;
+        let center = this.editor.state.selection.center;
 
         let posn = cursor.posnCurrent;
         if (e.shiftKey) {

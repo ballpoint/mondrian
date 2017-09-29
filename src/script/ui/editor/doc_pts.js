@@ -30,7 +30,7 @@ export default class DocumentPointsUIElement extends UIElement {
         }
       }
 
-      if (tool.hovering && this.editor.state.selection.indexOf(tool.hovering)) {
+      if (tool.hovering && !this.editor.state.selection.has(tool.hovering)) {
         this.handlePoint(tool.hovering, layer);
       }
     }
@@ -40,9 +40,9 @@ export default class DocumentPointsUIElement extends UIElement {
       return;
     }
 
-    if (this.editor.state.selectionType === 'POINTS') {
+    if (this.editor.state.selection.type === 'POINTS') {
       // draw selected pts
-      for (let pt of this.editor.state.selection) {
+      for (let pt of this.editor.state.selection.items) {
         this.handlePoint(pt, layer, {
           includeHandles: this.editor.state.selection.length === 1
         });

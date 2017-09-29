@@ -21,7 +21,7 @@ export default class CursorSnapperUIElement extends UIElement {
     let tool = this.editor.state.tool;
     let cursor = this.editor.cursor;
     let activeElement = this.editor.cursorHandler.active;
-    let sb = this.editor.state.selectionBounds.bounds;
+    let sb = this.editor.state.selection.bounds;
 
     if (!sb) return posn;
 

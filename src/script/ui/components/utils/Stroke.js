@@ -7,7 +7,7 @@ import classnames from 'classnames';
 
 let StrokeUtil = React.createClass({
   renderAttrButton(attr, val, icon) {
-    let selectedLineCap = this.props.editor.selectedAttributeValue(Item, attr);
+    let selectedLineCap = this.props.editor.state.selection.getAttr(Item, attr);
 
     return (
       <div
@@ -30,12 +30,12 @@ let StrokeUtil = React.createClass({
   },
 
   render() {
-    let selectedWidth = this.props.editor.selectedAttributeValue(
+    let selectedWidth = this.props.editor.state.selection.getAttr(
       Item,
       'stroke-width'
     );
 
-    let selectedLineJoin = this.props.editor.selectedAttributeValue(
+    let selectedLineJoin = this.props.editor.state.selection.getAttr(
       Item,
       'stroke-linejoin'
     );
