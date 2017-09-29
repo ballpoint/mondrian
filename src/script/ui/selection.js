@@ -151,7 +151,7 @@ export default class Selection {
         }
       }
 
-      bounds = new Bounds(boundsList);
+      bounds = Bounds.fromBounds(boundsList);
       center = bounds.center();
     } else if (this.type === 'POINTS') {
       let selectedAngles = _.uniq(
@@ -164,14 +164,14 @@ export default class Selection {
       }
 
       if (angle !== 0) {
-        for (let pt of this.items) {
-          pt.rotate(-angle, new Posn(0, 0));
+        for (let item of this.items) {
+          item.rotate(-angle, new Posn(0, 0));
         }
       }
       bounds = Bounds.fromPosns(this.items);
       if (angle !== 0) {
-        for (let pt of this.items) {
-          pt.rotate(angle, new Posn(0, 0));
+        for (let item of this.items) {
+          item.rotate(angle, new Posn(0, 0));
         }
       }
 

@@ -4,6 +4,7 @@ import PointsList from 'geometry/points-list';
 import Range from 'geometry/range';
 import PathPoint from 'geometry/path-point';
 import Posn from 'geometry/posn';
+import { NONE } from 'ui/color';
 
 export default class Path extends Item {
   constructor(data) {
@@ -241,6 +242,21 @@ export default class Path extends Item {
     for (let segment of this.points.segments) {
       segment.drawToCanvas(layer, context, projection);
     }
-    this.finishToCanvas(context, projection);
+
+    let fill = this.data.fill;
+    if (fill && fill !== 'none') {
+      context.fillStyle = fill;
+      context.fill();
+    }
+
+    let stroke = this.data.stroke;
+    let lineWidth = parseFloat(this.data['stroke-width']);
+    if (stroke !== NONE && lineWidth > 0) {
+      context.strokeStyle = this.data.stroke.toString();
+      context.lineCap = this.data['stroke-linecap']; // lol
+      context.lineJoin = this.data['stroke-linejoin'];
+      context.lineWidth = projection.z(lineWidth);
+      context.stroke();
+    }
   }
 }

@@ -156,16 +156,34 @@ export default class Text extends Item {
     context.font = this.fontStyle();
 
     for (let span of this.lines()) {
+      let origin = new Posn(span.data.x, span.data.y);
+      if (this.metadata.angle !== 0) {
+        origin.rotate(this.metadata.angle, this.bounds().center());
+      }
       context.save();
 
-      let fill = 'black';
-      if (this.data.fill) fill = this.data.fill;
+      let { fill, stroke } = this.data;
+      let z = projection.z(1);
 
-      context.fillStyle = fill;
       context.textAlign = this.data.align;
-      context.translate(projection.x(span.data.x), projection.y(span.data.y));
-      context.scale(projection.z(1), projection.z(1));
-      context.fillText(span.data.value, 0, 0);
+      context.translate(projection.x(origin.x), projection.y(origin.y));
+      context.scale(z, z);
+      context.rotate(this.metadata.angle * (Math.PI / 180));
+
+      if (fill !== NONE) {
+        context.fillStyle = fill;
+        context.fillText(span.data.value, 0, 0);
+      }
+
+      let lineWidth = parseFloat(this.data['stroke-width']);
+      if (stroke !== NONE && lineWidth > 0) {
+        context.lineCap = this.data['stroke-linecap']; // lol
+        context.lineJoin = this.data['stroke-linejoin'];
+        context.lineWidth = lineWidth;
+
+        context.strokeStyle = stroke;
+        context.strokeText(span.data.value, 0, 0);
+      }
 
       context.restore();
     }
@@ -186,13 +204,32 @@ export default class Text extends Item {
   }
 
   scale(x, y, origin) {
+    let center = this.bounds().center();
+    let angle = this.metadata.angle;
+    if (angle != 0) {
+      this.rotate(-angle, origin);
+    }
     let b = this.bounds().scale(x, y, origin);
     this.data.x = b.l;
     this.data.y = b.t;
     this.data.width = b.width;
     this.data.height = b.height;
 
+    if (angle != 0) {
+      this.rotate(angle, origin);
+    }
+
     this.clearCache();
+  }
+
+  rotate(a, origin) {
+    let center = this.bounds().center();
+    let newCenter = center.clone().rotate(a, origin);
+    let xd = newCenter.x - center.x;
+    let yd = newCenter.y - center.y;
+    this.metadata.angle += a;
+    this.metadata.angle %= 360;
+    this.nudge(xd, yd);
   }
 
   bounds() {
@@ -200,22 +237,34 @@ export default class Text extends Item {
       this.data.x,
       this.data.y,
       this.data.width,
-      this.data.height
+      this.data.height,
+      this.metadata.angle
     );
   }
 
   lineBounds(line) {
     let w = measure(line.data.value, this.fontStyle()).width;
     let h = this.fontSize();
+    let center = this.bounds().center();
+    let b;
 
     switch (this.data.align) {
       case 'left':
-        return new Bounds(line.data.x, line.data.y - h, w, h);
+        b = new Bounds(line.data.x, line.data.y - h, w, h);
+        break;
       case 'center':
-        return new Bounds(line.data.x - w / 2, line.data.y - h, w, h);
+        b = new Bounds(line.data.x - w / 2, line.data.y - h, w, h);
+        break;
       case 'right':
-        return new Bounds(line.data.x - w, line.data.y - h, w, h);
+        b = new Bounds(line.data.x - w, line.data.y - h, w, h);
+        break;
     }
+
+    if (this.metadata.angle !== 0) {
+      b = b.rotate(this.metadata.angle, center);
+    }
+
+    return b;
   }
 
   lineSegments() {

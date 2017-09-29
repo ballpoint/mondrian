@@ -143,6 +143,7 @@ export default class TransformerUIElement extends UIElement {
     }
 
     let { angle, center } = this.editor.state.selection;
+
     center = this.editor.projection.posn(center);
 
     // Draw transformer box

@@ -389,7 +389,7 @@ export default class Editor extends EventEmitter {
       frame = new HistoryFrame(
         [
           actions.SetAttributeAction.forItems(
-            this.state.selection,
+            this.state.selection.items,
             which,
             color
           )

@@ -44,7 +44,9 @@ export default class Item {
         this.data.fill = Color.fromString(this.data.fill);
       }
     } else {
-      this.data.fill = consts.black;
+      if (!this.data.stroke) {
+        this.data.fill = consts.black;
+      }
     }
 
     if (this.data.stroke) {
@@ -143,47 +145,7 @@ export default class Item {
     this.data['stroke-linejoin'] = val;
   }
 
-  finishToCanvas(context, projection) {
-    let fill = 'black';
-    if (this.data.fill) {
-      fill = this.data.fill.toString();
-    }
-    if (fill && fill !== 'none') {
-      context.fillStyle = fill;
-      context.fill();
-    }
-
-    let stroke = this.data.stroke;
-    if (stroke && stroke !== 'none') {
-      context.strokeStyle = this.data.stroke.toString();
-      let lineWidth = 1;
-      let lineCap = 'butt'; // lol
-      let lineJoin = 'miter';
-      if (this.data['stroke-width'] !== undefined) {
-        lineWidth = parseFloat(this.data['stroke-width']);
-      }
-      if (this.data['stroke-linecap'] !== undefined) {
-        lineCap = this.data['stroke-linecap'];
-      }
-      if (this.data['stroke-linejoin'] !== undefined) {
-        lineJoin = this.data['stroke-linejoin'];
-      }
-
-      if (lineWidth !== 0) {
-        context.lineWidth = projection.z(lineWidth);
-        context.lineCap = lineCap;
-        context.lineJoin = lineJoin;
-        context.stroke();
-      }
-    }
-
-    if (!this.data.fill && !this.data.stroke) {
-      // Default behavior for elements with neither a fill nor stroke set is to just
-      // fill them with black.
-      context.fillStyle = '#000000';
-      context.fill();
-    }
-  }
+  finishToCanvas(context, projection, fillAction, strokeAction) {}
 
   nudgeCachedObjects(x, y) {
     if (this.boundsCached != null) {

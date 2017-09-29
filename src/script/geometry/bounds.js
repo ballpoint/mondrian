@@ -63,6 +63,12 @@ export default class Bounds {
   }
 
   static fromBounds(bounds) {
+    let pss = bounds.reduce((a, b) => {
+      return a.concat([b.tl(), b.tr(), b.br(), b.bl()]);
+    }, []);
+
+    return Bounds.fromPosns(pss);
+
     let x = Math.min.apply(this, bounds.map(b => b.x));
     let y = Math.min.apply(this, bounds.map(b => b.y));
     let x2 = Math.max.apply(this, bounds.map(b => b.x2));
@@ -188,6 +194,14 @@ export default class Bounds {
     this.yr.scale(y, origin);
 
     return this;
+  }
+
+  rotate(angle, origin) {
+    let center = this.center();
+    center.rotate(angle, origin);
+    let nb = new Bounds(this.l, this.t, this.width, this.height, angle);
+    nb.centerOn(center);
+    return nb;
   }
 
   padded(n) {
