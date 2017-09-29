@@ -28,6 +28,7 @@ export default class CursorTracking extends EventEmitter {
     document.addEventListener('mousemove', this._mousemove.bind(this));
     document.addEventListener('mouseover', this._mouseover.bind(this));
     document.addEventListener('mousewheel', this._scroll.bind(this));
+    document.addEventListener('contextmenu', this._contextmenu.bind(this));
   }
 
   reset() {
@@ -153,6 +154,9 @@ export default class CursorTracking extends EventEmitter {
     if (this.down && !insideOf(this.lastDownTarget, this.root)) {
       return;
     }
+    if (!this.down && !insideOf(e.target, this.root)) {
+      return;
+    }
 
     this.doubleclickArmed = false;
 
@@ -196,6 +200,14 @@ export default class CursorTracking extends EventEmitter {
     }
     if (e.deltaX !== 0) {
       this.trigger('scroll:x', e, this);
+    }
+  }
+
+  _contextmenu(e) {
+    if (insideOf(e.target, this.root)) {
+      e.preventDefault();
+      this.trigger('contextmenu', e, this);
+      return false;
     }
   }
 }

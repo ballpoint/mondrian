@@ -526,14 +526,6 @@ export default class Editor extends EventEmitter {
     let oldHovering = this.state.hovering;
     this.state.hovering = new Selection(this.doc, items);
 
-    if (!this.state.hovering.empty) {
-      if (items[0] instanceof PathPoint) {
-        this.state.hoveringType = 'POINTS';
-      } else {
-        this.state.hoveringType = 'ELEMENTS';
-      }
-    }
-
     if (!oldHovering.equal(this.state.hovering)) {
       this.trigger('change');
       this.trigger('change:hovering');

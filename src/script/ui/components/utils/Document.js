@@ -159,21 +159,24 @@ let DocumentUtilChild = React.createClass({
           className={classnames({
             'doc-util__item__children': true
           })}>
-          {child.children.slice(0).reverse().map(child => {
-            return (
-              <DocumentUtilChild
-                key={child.index.toString()}
-                child={child}
-                editor={this.props.editor}
-                isExpanded={this.props.isExpanded}
-                expand={this.props.expand}
-                collapse={this.props.collapse}
-                parentSelected={propagateSelected && isSelected}
-                parentLocked={isLocked}
-                parentVisible={isVisible}
-              />
-            );
-          })}
+          {child.children
+            .slice(0)
+            .reverse()
+            .map(child => {
+              return (
+                <DocumentUtilChild
+                  key={child.index.toString()}
+                  child={child}
+                  editor={this.props.editor}
+                  isExpanded={this.props.isExpanded}
+                  expand={this.props.expand}
+                  collapse={this.props.collapse}
+                  parentSelected={propagateSelected && isSelected}
+                  parentLocked={isLocked}
+                  parentVisible={isVisible}
+                />
+              );
+            })}
         </div>
       );
     }
@@ -222,7 +225,7 @@ let DocumentUtilChild = React.createClass({
 
               this.props.editor.setHovering(hovering);
             }}
-            onMouseOut={e => {
+            onMouseLeave={e => {
               e.stopPropagation();
               if (!isAvailable) return;
               this.props.editor.setHovering([]);
@@ -233,9 +236,7 @@ let DocumentUtilChild = React.createClass({
             <div className="doc-util__item__bar__type">
               {child.constructor.name}
             </div>
-            <div className="doc-util__item__bar__id">
-              {child.id}
-            </div>
+            <div className="doc-util__item__bar__id">{child.id}</div>
           </div>
           <div className="doc-util__item__bar__ctrls">
             <ChildCtrlButton
@@ -306,20 +307,23 @@ let DocumentUtil = React.createClass({
     return (
       <Util title="Document">
         <div className="doc-util__items">
-          {this.props.editor.doc.layers.slice(0).reverse().map(child => {
-            return (
-              <DocumentUtilChild
-                key={child.index.toString()}
-                child={child}
-                editor={this.props.editor}
-                isExpanded={this.isExpanded}
-                expand={this.expand}
-                collapse={this.collapse}
-                parentVisible={true}
-                parentLocked={false}
-              />
-            );
-          })}
+          {this.props.editor.doc.layers
+            .slice(0)
+            .reverse()
+            .map(child => {
+              return (
+                <DocumentUtilChild
+                  key={child.index.toString()}
+                  child={child}
+                  editor={this.props.editor}
+                  isExpanded={this.isExpanded}
+                  expand={this.expand}
+                  collapse={this.collapse}
+                  parentVisible={true}
+                  parentLocked={false}
+                />
+              );
+            })}
         </div>
         <div className="doc-util__ctrls">
           <a onClick={this.createLayer}> +</a>
