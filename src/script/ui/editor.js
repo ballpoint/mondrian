@@ -765,24 +765,6 @@ export default class Editor extends EventEmitter {
     this.commitFrame();
   }
 
-  selectedIndexes() {
-    return this.state.selection
-      .map(item => {
-        return item.index;
-      })
-      .filter(index => {
-        if (index === null) {
-          console.warn('null index in history!');
-          return false;
-        } else {
-          return true;
-        }
-      })
-      .sort((a, b) => {
-        return a.compare(b);
-      });
-  }
-
   changeSelectionAttribute(type, key, value, title) {
     let frame = new HistoryFrame(
       [
@@ -881,7 +863,7 @@ export default class Editor extends EventEmitter {
 
     let frame = new HistoryFrame([
       new actions.NudgeAction({
-        indexes: this.selectedIndexes(),
+        indexes: this.state.selection.indexes,
         xd,
         yd
       })
@@ -914,7 +896,7 @@ export default class Editor extends EventEmitter {
 
     let frame = new HistoryFrame([
       new actions.ScaleAction({
-        indexes: this.selectedIndexes(),
+        indexes: this.state.selection.indexes,
         x,
         y,
         origin
@@ -943,7 +925,7 @@ export default class Editor extends EventEmitter {
     let frame = new HistoryFrame(
       [
         new actions.ScaleAction({
-          indexes: this.selectedIndexes(),
+          indexes: this.state.selection.indexes,
           x,
           y,
           origin: this.state.selection.center
@@ -963,7 +945,7 @@ export default class Editor extends EventEmitter {
 
     let frame = new HistoryFrame([
       new actions.RotateAction({
-        indexes: this.selectedIndexes(),
+        indexes: this.state.selection.indexes,
         a: angle,
         origin
       })
@@ -977,7 +959,7 @@ export default class Editor extends EventEmitter {
       return;
     }
 
-    let indexes = this.selectedIndexes();
+    let indexes = this.state.selection.indexes;
     let indexesIdx = {};
     for (let index of indexes) {
       indexesIdx[index.toString()] = true;

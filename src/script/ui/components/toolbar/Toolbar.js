@@ -53,7 +53,7 @@ let Toolbar = React.createClass({
       return function() {
         let result = bool[op](this.state.selection.items.slice(0));
 
-        let index = editor.selectedIndexes()[0];
+        let index = editor.state.selection.indexes[0];
 
         let frame = new HistoryFrame(
           [

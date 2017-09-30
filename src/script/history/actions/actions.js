@@ -76,8 +76,11 @@ export class RotateAction extends HistoryAction {
   }
 
   perform(doc) {
-    for (let index of this.data.indexes) {
-      let item = doc.getFromIndex(index);
+    let items = this.data.indexes.map(index => {
+      return doc.getFromIndex(index);
+    });
+
+    for (let item of items) {
       item.rotate(this.data.a, this.data.origin);
     }
   }

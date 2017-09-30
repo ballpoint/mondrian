@@ -14,6 +14,7 @@ const CTRL_PT_DIMEN = 7;
 export default class TransformerUIElement extends UIElement {
   constructor(editor, id) {
     super(...arguments);
+    this.reset();
 
     //editor.on('change:selection', this.calculateSelectionBounds.bind(this));
   }
@@ -82,43 +83,6 @@ export default class TransformerUIElement extends UIElement {
       case 'r':
         return bounds.lm();
     }
-  }
-
-  points() {
-    let tl = bounds
-      .tl()
-      .rotate(angle, center)
-      .sharp();
-    let tr = bounds
-      .tr()
-      .rotate(angle, center)
-      .sharp();
-    let br = bounds
-      .br()
-      .rotate(angle, center)
-      .sharp();
-    let bl = bounds
-      .bl()
-      .rotate(angle, center)
-      .sharp();
-
-    // Edges
-    let tm = bounds
-      .tm()
-      .rotate(angle, center)
-      .sharp();
-    let bm = bounds
-      .bm()
-      .rotate(angle, center)
-      .sharp();
-    let rm = bounds
-      .rm()
-      .rotate(angle, center)
-      .sharp();
-    let lm = bounds
-      .lm()
-      .rotate(angle, center)
-      .sharp();
   }
 
   _refresh(layer, context) {
@@ -481,7 +445,6 @@ export default class TransformerUIElement extends UIElement {
         if (e.shiftKey) {
           angleDelta = math.roundTo(angleDelta, 45);
         }
-
         this.editor.rotateSelected(angleDelta, center);
       },
 

@@ -130,13 +130,29 @@ export default class Selection {
     let center;
 
     if (this.type === 'ELEMENTS') {
+      let angleFreq = {};
+
       let selectedAngles = _.uniq(
         this.items.map(e => {
+          if (angleFreq[e.metadata.angle] === undefined) {
+            angleFreq[e.metadata.angle] = 0;
+          }
+          angleFreq[e.metadata.angle]++;
+
           return e.metadata.angle;
         })
       );
       if (selectedAngles.length === 1) {
         angle = selectedAngles[0];
+      } else if (selectedAngles.length > 1) {
+        let maxLocal = 0;
+        for (let key in angleFreq) {
+          let freq = angleFreq[key];
+          if (freq > maxLocal) {
+            angle = parseFloat(key);
+            maxLocal = freq;
+          }
+        }
       }
 
       let boundsList = [];
@@ -209,5 +225,31 @@ export default class Selection {
     } else {
       return null;
     }
+  }
+
+  get indexes() {
+    return this.items
+      .map(item => {
+        return item.index;
+      })
+      .filter(index => {
+        if (index === null) {
+          console.warn('null index in history!');
+          return false;
+        } else {
+          return true;
+        }
+      })
+      .sort((a, b) => {
+        return a.compare(b);
+      });
+  }
+
+  get fingerprint() {
+    return this.indexes
+      .map(idx => {
+        return idx.toString();
+      })
+      .join(',');
   }
 }
