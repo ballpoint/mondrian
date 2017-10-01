@@ -188,7 +188,7 @@ export default class Cursor extends Tool {
   posnForDrag(e, cursor) {
     let posn = cursor.posnCurrent;
 
-    if (e.shiftKey) {
+    if (e.shiftKey && !this.dragSelectStart) {
       posn = snapping.toDegs(cursor.posnDown, posn, degs_45_90);
 
       let delta = posn.delta(cursor.posnDown);

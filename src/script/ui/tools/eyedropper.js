@@ -59,12 +59,12 @@ export default class Eyedropper extends Tool {
         this.frame = new HistoryFrame(
           [
             actions.SetAttributeAction.forItems(
-              this.editor.state.selection,
+              this.editor.state.selection.items,
               'fill',
               fill
             ),
             actions.SetAttributeAction.forItems(
-              this.editor.state.selection,
+              this.editor.state.selection.items,
               'stroke',
               stroke
             )
