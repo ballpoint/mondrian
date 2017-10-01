@@ -104,8 +104,11 @@ export default class Cursor extends Tool {
   handleDoubleClick(e, cursor) {
     if (this.hovering.length === 1 && this.hovering[0] instanceof Text) {
       let item = this.hovering[0];
+      let posn = cursor.posnCurrent
+        .clone()
+        .rotate(item.metadata.angle, item.bounds().center());
 
-      let position = item.cursorPositionAtPosn(cursor.posnCurrent);
+      let position = item.cursorPositionAtPosn(posn);
 
       this.editor.editText(item, position);
     }

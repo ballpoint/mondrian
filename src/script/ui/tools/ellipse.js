@@ -61,8 +61,8 @@ export default class Ellipse extends Tool {
       cy,
       rx,
       ry,
-      fill: this.editor.state.colors.fill,
-      stroke: this.editor.state.colors.stroke
+      fill: this.editor.state.attributes.fill,
+      stroke: this.editor.state.attributes.stroke
     });
 
     let frame = new HistoryFrame(

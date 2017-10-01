@@ -5,6 +5,9 @@ import Color from 'ui/color';
 import SelectedColors from 'ui/SelectedColors';
 import { NONE } from 'ui/color';
 import SelectedStrokeStyle from 'ui/SelectedStrokeStyle';
+
+import DefaultAttributes from 'ui/DefaultAttributes';
+
 import EventEmitter from 'lib/events';
 import Canvas from 'ui/canvas';
 import Selection from 'ui/selection';
@@ -335,6 +338,9 @@ export default class Editor extends EventEmitter {
         scope: new Index([0]),
         tool: new tools.Cursor(this),
 
+        // TODO cache
+        attributes: new DefaultAttributes(),
+
         // Style
         colors: new SelectedColors(),
         stroke: new SelectedStrokeStyle()
@@ -346,6 +352,9 @@ export default class Editor extends EventEmitter {
         hovering: new Selection([]),
         scope: new Index([0]),
         tool: new tools.Cursor(this),
+
+        // TODO cache
+        attributes: new DefaultAttributes(),
 
         // Style
         colors: new SelectedColors(),
@@ -366,14 +375,10 @@ export default class Editor extends EventEmitter {
     );
   }
 
-  setColorState(which, color) {
-    if (!this.state.colors.equal(which, color)) {
-      if (color === NONE) {
-        this.state.colors.setMode(which, 'none');
-      } else {
-        this.state.colors.setMode(which, 'solid');
-        this.state.colors.set(which, color);
-      }
+  setDefaultColor(which, color) {
+    let s = this.state.attributes[which];
+    if (!s.equal(color)) {
+      s.color = color;
       this.trigger('change');
       this.trigger('change:colors');
     }
@@ -531,6 +536,14 @@ export default class Editor extends EventEmitter {
       this.trigger('change:hovering');
 
       this.canvas.refresh('ui');
+    }
+  }
+
+  getAttribute(type, key) {
+    if (this.state.selection.empty || this.state.selection.type === 'POINTS') {
+      return this.state.attributes[key];
+    } else {
+      return this.state.selection.getAttr(type, key);
     }
   }
 

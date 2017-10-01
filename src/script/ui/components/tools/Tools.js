@@ -1,7 +1,6 @@
 import * as tools from 'ui/tools/tools';
 import classnames from 'classnames';
 import 'tools/tools.scss';
-import CurrentColors from 'ui/components/tools/CurrentColors';
 import icons from 'ui/components/icons';
 import { renderIcon } from 'ui/components/icons';
 

@@ -161,7 +161,7 @@ let ColorUtil = React.createClass({
     ) {
       frame = this.props.editor.setColor(which, color);
     } else {
-      this.props.editor.setColorState(which, color);
+      this.props.editor.setDefaultColor(which, color);
     }
 
     let offset = this.state.pickerOffset;
@@ -210,7 +210,7 @@ let ColorUtil = React.createClass({
         return color;
       }
     } else {
-      return editor.state.colors[which];
+      return editor.state.attributes[which].color;
     }
   },
 
@@ -262,13 +262,13 @@ let ColorUtil = React.createClass({
   onColorModeChange(e, which) {
     let editor = this.props.editor;
     let mode = e.target.value;
+
     switch (mode) {
       case 'none':
         this.setColor(which, NONE);
         break;
       case 'solid':
-        editor.state.colors.setMode(which, 'solid');
-        this.setColor(which, editor.state.colors[which]);
+        this.setColor(which, editor.state.attributes[which]._color);
         break;
     }
 

@@ -1,5 +1,6 @@
 import consts from 'consts';
 import Bounds from 'geometry/bounds';
+import Posn from 'geometry/posn';
 import UIElement from 'ui/editor/ui_element';
 import Element from 'ui/element';
 
@@ -16,18 +17,24 @@ export default class TextEditUIElement extends UIElement {
     let handler = this.editor.state.textEditHandler;
     if (handler === undefined) return;
 
+    let item = handler.item;
+    let projection = this.editor.projection;
+
+    let center = item.bounds().center();
+    let angle = item.metadata.angle;
+    let fontSize = item.data['font-size'];
+    let lineSpacing = item.data['spacing'];
+    let selectionPadding = fontSize * ((lineSpacing - 1) / 2);
+
     let lineBounds = [];
-    let lines = handler.item.lines();
+    let lines = item.lines();
 
     for (let line of lines) {
-      lineBounds.push(handler.item.lineBounds(line));
+      lineBounds.push(item.lineBounds(line));
     }
 
     if (handler.selection) {
       let { start, end } = handler.selection;
-      // Draw blue selection
-      let posnStart = handler.item.posnAtCursorPosition(start);
-      let posnEnd = handler.item.posnAtCursorPosition(end);
 
       // Figure out the lines we have to highlight
       let highlights = [];
@@ -40,17 +47,21 @@ export default class TextEditUIElement extends UIElement {
           if (highlights.length === 0) {
             if (position + v.length >= start) {
               if (position + v.length >= end) {
-                highlights.push({ start, end });
+                highlights.push({ line, start, end });
                 break;
               } else {
-                highlights.push({ start, end: position + v.length });
+                highlights.push({ line, start, end: position + v.length });
               }
             }
           } else {
             if (position + v.length <= end) {
-              highlights.push({ start: position, end: position + v.length });
+              highlights.push({
+                line,
+                start: position,
+                end: position + v.length
+              });
             } else {
-              highlights.push({ start: position, end });
+              highlights.push({ line, start: position, end });
               break;
             }
           }
@@ -58,74 +69,71 @@ export default class TextEditUIElement extends UIElement {
         }
       }
 
+      let z = projection.z(1);
+
       // Draw blue highlights
       for (let i = 0; i < highlights.length; i++) {
         let hl = highlights[i];
-        let posnStart = handler.item.posnAtCursorPosition(hl.start, i > 0);
-        let posnEnd = handler.item.posnAtCursorPosition(hl.end);
-
-        let p1 = this.editor.projection.posn(posnStart);
-        let p2 = this.editor.projection.posn(
-          posnEnd
-            .clone()
-            .nudge(0, -handler.item.data.size * handler.item.data.spacing)
+        let posnStart = item.posnAtCursorPosition(hl.start, i > 0);
+        let posnEnd = item.posnAtCursorPosition(hl.end);
+        let translateOrigin = projection.posn(
+          posnStart.clone().rotate(angle, center)
         );
+
+        let hlWidth = posnEnd.x - posnStart.x;
+
+        context.save();
+        context.translate(translateOrigin.x, translateOrigin.y);
+        context.scale(z, z);
+        context.rotate(angle * (Math.PI / 180));
 
         layer.drawRect(
           Bounds.fromPosns([
-            this.editor.projection.posn(
-              posnStart
-                .clone()
-                .nudge(
-                  0,
-                  handler.item.data.size * (handler.item.data.spacing - 1)
-                )
-            ),
-            p2
+            new Posn(0, selectionPadding + projection.zInvert(1)),
+            new Posn(hlWidth, -fontSize - selectionPadding)
           ]),
           {
             fill: HL_BLUE
           }
         );
 
-        let valueSlice = handler.item.data.value
-          .slice(hl.start, hl.end)
-          .split('\n');
+        let valueSlice = item.data.value.slice(hl.start, hl.end).split('\n');
 
-        context.save();
-        context.translate(p1.x, p1.y);
-        context.scale(this.editor.projection.z(1), this.editor.projection.z(1));
-
-        context.font = handler.item.fontStyle();
-
+        context.font = item.fontStyle();
         context.fillStyle = 'white';
 
         context.fillText(valueSlice, 0, 0);
         context.restore();
       }
 
+      let pCursor = item.posnAtCursorPosition(end);
+      let translateOrigin = projection.posn(
+        pCursor.clone().rotate(angle, center)
+      );
+
+      let pCursorBottom = pCursor
+        .clone()
+        .nudge(0, fontSize * (item.data.spacing - 1));
+
+      context.save();
+      context.translate(translateOrigin.x, translateOrigin.y);
+      context.scale(z, z);
+      context.rotate(angle * (Math.PI / 180));
+
       // Draw cursor
       layer.drawLineSegment(
-        this.editor.projection.posn(
-          posnEnd
-            .clone()
-            .nudge(0, -handler.item.data.size * handler.item.data.spacing)
-        ),
-        this.editor.projection.posn(
-          posnEnd
-            .clone()
-            .nudge(0, handler.item.data.size * (handler.item.data.spacing - 1))
-        ),
+        new Posn(0, selectionPadding),
+        new Posn(0, -fontSize - selectionPadding),
         {
           stroke: consts.blue,
-          strokeWidth: 3
+          strokeWidth: projection.zInvert(3)
         }
       );
+
+      context.restore();
     }
 
-    let fullEditBounds = this.editor.projection.bounds(
-      Bounds.fromBounds(lineBounds)
-    );
+    let fullEditBounds = projection.bounds(Bounds.fromBounds(lineBounds));
 
     let textEditArea = new Element(
       'text:edit-area',
@@ -140,8 +148,17 @@ export default class TextEditUIElement extends UIElement {
         },
         drag: (e, cursor) => {
           e.stopPropagation();
-          let p1 = handler.item.cursorPositionAtPosn(cursor.posnDown);
-          let p2 = handler.item.cursorPositionAtPosn(cursor.posnCurrent);
+          let p1 = item.cursorPositionAtPosn(
+            cursor.posnDown
+              .clone()
+              .rotate(-item.metadata.angle, item.bounds().center())
+          );
+          let p2 = item.cursorPositionAtPosn(
+            cursor.posnCurrent
+              .clone()
+              .rotate(-item.metadata.angle, item.bounds().center())
+          );
+
           handler.setCursorPosition(Math.min(p1, p2), Math.max(p1, p2));
         },
         'drag:stop': (e, cursor) => {
@@ -149,7 +166,11 @@ export default class TextEditUIElement extends UIElement {
         },
         click: (e, cursor) => {
           e.stopPropagation();
-          let position = handler.item.cursorPositionAtPosn(cursor.posnCurrent);
+          let posn = cursor.posnCurrent
+            .clone()
+            .rotate(-item.metadata.angle, item.bounds().center());
+
+          let position = item.cursorPositionAtPosn(posn);
           handler.setCursorPosition(position, position);
         },
         doubleclick: (e, cursor) => {
