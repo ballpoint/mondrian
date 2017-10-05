@@ -58,12 +58,14 @@ export default class Type extends Tool {
 
     this._dragRect = b;
 
-    this.currentItem = new Text({
-      x: b.x,
-      y: b.y,
-      width: b.width,
-      height: b.height
-    });
+    this.currentItem = new Text(
+      this.editor.state.attributes.forType(Text, {
+        x: b.x,
+        y: b.y,
+        width: b.width,
+        height: b.height
+      })
+    );
 
     console.log(b);
 

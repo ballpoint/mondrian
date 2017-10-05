@@ -17,11 +17,10 @@ let TypeToolbarGroup = React.createClass({
     }
 
     const fonts = [
-      'sans-serif',
-      'serif',
+      'sans-serif', // system default
+      'serif', // system default
       'Arial',
-      'Times New Roman',
-      'Norasi',
+      'Courier',
       'Ubuntu Mono'
     ];
 

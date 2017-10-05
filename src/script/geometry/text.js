@@ -19,8 +19,11 @@ export default class Text extends Item {
     if (data.y === undefined) data.y = 100;
     if (data['font-size'] === undefined) data['font-size'] = 12;
     if (data.value === undefined) data.value = '';
+
     if (data['font-family'] === undefined)
       data['font-family'] = 'Times New Roman';
+
+    if (data['line-height'] === undefined) data['line-height'] = 1.5;
 
     if (data.fill === undefined) data.fill = consts.black;
     if (data.stroke === undefined) data.stroke = NONE;
@@ -30,8 +33,6 @@ export default class Text extends Item {
     data.width = parseFloat(data.width);
     data.height = parseFloat(data.height);
 
-    data['line-height'] = 1.5;
-
     if (data.align === undefined) data.align = 'left';
     if (data.valign === undefined) data.valign = 'top';
 
@@ -39,7 +40,7 @@ export default class Text extends Item {
   }
 
   fontStyle() {
-    return `${this.fontSize()}pt ${this.fontFamily()}`;
+    return `${this.fontSize()} ${this.fontFamily()}`;
   }
 
   fontFamily() {
@@ -47,7 +48,7 @@ export default class Text extends Item {
   }
 
   fontSize() {
-    return this.data['font-size'];
+    return `${this.data['font-size']}pt`;
   }
 
   lines() {
@@ -90,14 +91,14 @@ export default class Text extends Item {
       lines.push(
         new TextLine({
           x,
-          y: cursor.y + this.fontSize(),
+          y: cursor.y + this.data['font-size'],
           value: currentLine.join(' '),
-          size: this.fontSize()
+          size: this.data['font-size']
         })
       );
 
       cursor.x = this.data.x;
-      cursor.y += this.data['line-height'] * this.fontSize();
+      cursor.y += this.data['line-height'] * this.data['font-size'];
       currentLine = [];
     };
 
@@ -128,8 +129,10 @@ export default class Text extends Item {
     if (this.data.valign !== 'top') {
       let extraV =
         this.data.height -
-        (this.fontSize() +
-          (lines.length - 1) * this.fontSize() * this.data['line-height']);
+        (this.data['font-size'] +
+          (lines.length - 1) *
+            this.data['font-size'] *
+            this.data['line-height']);
 
       for (let span of lines) {
         switch (this.data.valign) {
@@ -244,7 +247,7 @@ export default class Text extends Item {
 
   lineBounds(line) {
     let w = measure(line.data.value, this.fontStyle()).width;
-    let h = this.fontSize();
+    let h = this.data['font-size'];
     let center = this.bounds().center();
     let b;
 

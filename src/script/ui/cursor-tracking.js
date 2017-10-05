@@ -6,10 +6,6 @@ import { insideOf } from 'lib/dom';
 const DRAG_THRESHOLD = 5;
 const DOUBLE_CLICK_THRESHOLD = 500;
 
-function isDefaultQuarantined() {
-  return false;
-}
-
 export default class CursorTracking extends EventEmitter {
   constructor(root) {
     super();
@@ -22,7 +18,6 @@ export default class CursorTracking extends EventEmitter {
 
     this._clientBounds = this.root.getBoundingClientRect();
 
-    document.addEventListener('click', this._click.bind(this));
     document.addEventListener('mousedown', this._mousedown.bind(this));
     document.addEventListener('mouseup', this._mouseup.bind(this));
     document.addEventListener('mousemove', this._mousemove.bind(this));
@@ -87,15 +82,6 @@ export default class CursorTracking extends EventEmitter {
     return p;
   }
 
-  _click(e) {
-    // Quarantine check, and return if so
-    if (isDefaultQuarantined(e.target)) {
-      return true;
-    } else {
-      return e.stopPropagation();
-    }
-  }
-
   _mousedown(e) {
     // Set tracking variables
     this.currentPosn = this._posnForEvent(e);
@@ -130,7 +116,7 @@ export default class CursorTracking extends EventEmitter {
     if (this.dragging && !this.draggingJustBegan) {
       this.trigger('drag:stop', e, this);
       delete this.dragStartPosn;
-    } else {
+    } else if (insideOf(this.lastDownTarget, this.root)) {
       if (this.doubleclickArmed) {
         this.doubleclickArmed = false;
         this.trigger('doubleclick', e, this);

@@ -17,7 +17,7 @@ export default class DefaultAttributes {
     return {
       'font-size': 12,
       'font-family': 'Arial',
-      'line-height': 1.2,
+      'line-height': 1.5,
       'stroke-width': 1,
       'stroke-linecap': 'butt',
       'stroke-linejoin': 'miter',
@@ -60,7 +60,12 @@ export default class DefaultAttributes {
         // keys stay as-is
         break;
       case Text:
-        keys = keys.concat(['font-family', 'font-size']);
+        keys = keys.concat(['font-family', 'font-size', 'line-height']);
+        // Make new Text have no stroke by default
+        keys = keys.filter(k => {
+          return k !== 'stroke';
+        });
+        break;
     }
 
     let attrs = {};
