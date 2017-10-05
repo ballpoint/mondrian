@@ -15,7 +15,7 @@ let StrokeUtil = React.createClass({
           'stroke-util__button': true
         })}
         onClick={e => {
-          this.props.editor.changeSelectionAttribute(
+          this.props.editor.changeAttribute(
             Item,
             attr,
             val,
@@ -43,7 +43,7 @@ let StrokeUtil = React.createClass({
                 width="50"
                 value={selectedWidth}
                 onSubmit={v => {
-                  this.props.editor.changeSelectionAttribute(
+                  this.props.editor.changeAttribute(
                     Item,
                     'stroke-width',
                     v,

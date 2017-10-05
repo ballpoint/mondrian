@@ -30,7 +30,7 @@ export default class Text extends Item {
     data.width = parseFloat(data.width);
     data.height = parseFloat(data.height);
 
-    data.spacing = 1.5;
+    data['line-height'] = 1.5;
 
     if (data.align === undefined) data.align = 'left';
     if (data.valign === undefined) data.valign = 'top';
@@ -97,7 +97,7 @@ export default class Text extends Item {
       );
 
       cursor.x = this.data.x;
-      cursor.y += this.data.spacing * this.fontSize();
+      cursor.y += this.data['line-height'] * this.fontSize();
       currentLine = [];
     };
 
@@ -129,7 +129,7 @@ export default class Text extends Item {
       let extraV =
         this.data.height -
         (this.fontSize() +
-          (lines.length - 1) * this.fontSize() * this.data.spacing);
+          (lines.length - 1) * this.fontSize() * this.data['line-height']);
 
       for (let span of lines) {
         switch (this.data.valign) {

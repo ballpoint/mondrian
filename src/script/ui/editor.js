@@ -339,11 +339,7 @@ export default class Editor extends EventEmitter {
         tool: new tools.Cursor(this),
 
         // TODO cache
-        attributes: new DefaultAttributes(),
-
-        // Style
-        colors: new SelectedColors(),
-        stroke: new SelectedStrokeStyle()
+        attributes: new DefaultAttributes()
       };
     } else {
       this.state = {
@@ -354,11 +350,7 @@ export default class Editor extends EventEmitter {
         tool: new tools.Cursor(this),
 
         // TODO cache
-        attributes: new DefaultAttributes(),
-
-        // Style
-        colors: new SelectedColors(),
-        stroke: new SelectedStrokeStyle()
+        attributes: new DefaultAttributes()
       };
     }
 
@@ -778,20 +770,28 @@ export default class Editor extends EventEmitter {
     this.commitFrame();
   }
 
-  changeSelectionAttribute(type, key, value, title) {
-    let frame = new HistoryFrame(
-      [
-        actions.SetAttributeAction.forItems(
-          this.state.selection.ofType(type),
-          key,
-          value
-        )
-      ],
-      title
-    );
+  changeAttribute(type, key, value, title) {
+    if (
+      !this.state.selection.empty &&
+      this.state.selection.type === 'ELEMENTS'
+    ) {
+      let frame = new HistoryFrame(
+        [
+          actions.SetAttributeAction.forItems(
+            this.state.selection.ofType(type),
+            key,
+            value
+          )
+        ],
+        title
+      );
 
-    this.stageFrame(frame);
-    this.commitFrame();
+      this.stageFrame(frame);
+      this.commitFrame();
+    } else {
+      this.state.attributes.set(key, value);
+      this.trigger('change');
+    }
   }
 
   selectFromIndexes(indexes) {

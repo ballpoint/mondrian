@@ -10,7 +10,11 @@ import ToolbarNumberInput from 'ui/components/toolbar/ToolbarNumberInput';
 let TypeToolbarGroup = React.createClass({
   render() {
     let selectedTextItems = this.props.editor.state.selection.ofType(Text);
-    if (selectedTextItems.length === 0) return null;
+    let selectedTool = this.props.editor.state.tool;
+
+    if (selectedTextItems.length === 0 && selectedTool.id !== 'type') {
+      return null;
+    }
 
     const fonts = [
       'sans-serif',
@@ -21,18 +25,9 @@ let TypeToolbarGroup = React.createClass({
       'Ubuntu Mono'
     ];
 
-    let selectedFont = this.props.editor.state.selection.getAttr(
-      Item,
-      'font-family'
-    );
-    let selectedSize = this.props.editor.state.selection.getAttr(
-      Item,
-      'font-size'
-    );
-    let selectedSpacing = this.props.editor.state.selection.getAttr(
-      Item,
-      'spacing'
-    );
+    let selectedFont = this.props.editor.getAttribute(Item, 'font-family');
+    let selectedSize = this.props.editor.getAttribute(Item, 'font-size');
+    let selectedSpacing = this.props.editor.getAttribute(Item, 'line-height');
 
     return (
       <ToolbarGroup>
@@ -46,7 +41,7 @@ let TypeToolbarGroup = React.createClass({
             };
           })}
           onChange={value => {
-            this.props.editor.changeSelectionAttribute(
+            this.props.editor.changeAttribute(
               Text,
               'font-family',
               value,
@@ -60,7 +55,7 @@ let TypeToolbarGroup = React.createClass({
           value={selectedSize}
           width={40}
           onSubmit={val => {
-            this.props.editor.changeSelectionAttribute(
+            this.props.editor.changeAttribute(
               Text,
               'font-size',
               parseInt(val, 10),
@@ -74,10 +69,10 @@ let TypeToolbarGroup = React.createClass({
           value={selectedSpacing}
           width={40}
           onSubmit={val => {
-            this.props.editor.changeSelectionAttribute(
+            this.props.editor.changeAttribute(
               Text,
-              'spacing',
-              parseInt(val, 10),
+              'line-height',
+              parseFloat(val),
               'Change font spacing'
             );
           }}
@@ -86,7 +81,7 @@ let TypeToolbarGroup = React.createClass({
         <ToolbarButton
           title="Align left"
           onClick={() => {
-            this.props.editor.changeSelectionAttribute(
+            this.props.editor.changeAttribute(
               Text,
               'align',
               'left',
@@ -98,7 +93,7 @@ let TypeToolbarGroup = React.createClass({
         <ToolbarButton
           title="Align center"
           onClick={() => {
-            this.props.editor.changeSelectionAttribute(
+            this.props.editor.changeAttribute(
               Text,
               'align',
               'center',
@@ -110,7 +105,7 @@ let TypeToolbarGroup = React.createClass({
         <ToolbarButton
           title="Align right"
           onClick={() => {
-            this.props.editor.changeSelectionAttribute(
+            this.props.editor.changeAttribute(
               Text,
               'align',
               'right',
@@ -123,7 +118,7 @@ let TypeToolbarGroup = React.createClass({
         <ToolbarButton
           title="Vertical align top"
           onClick={() => {
-            this.props.editor.changeSelectionAttribute(
+            this.props.editor.changeAttribute(
               Text,
               'valign',
               'top',
@@ -135,7 +130,7 @@ let TypeToolbarGroup = React.createClass({
         <ToolbarButton
           title="Vertical align center"
           onClick={() => {
-            this.props.editor.changeSelectionAttribute(
+            this.props.editor.changeAttribute(
               Text,
               'valign',
               'center',
@@ -147,7 +142,7 @@ let TypeToolbarGroup = React.createClass({
         <ToolbarButton
           title="Vertical align bottom"
           onClick={() => {
-            this.props.editor.changeSelectionAttribute(
+            this.props.editor.changeAttribute(
               Text,
               'valign',
               'bottom',

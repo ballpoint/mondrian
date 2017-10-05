@@ -47,19 +47,19 @@ export default class Rect extends Tool {
       height *= 2;
     }
 
-    this.rect = Path.rectangle({
-      x,
-      y,
-      width,
-      height,
-      fill: this.editor.state.colors.fill,
-      stroke: this.editor.state.colors.stroke
-    });
+    let rect = Path.rectangle(
+      this.editor.state.attributes.forType(Path, {
+        x,
+        y,
+        width,
+        height
+      })
+    );
 
     let frame = new HistoryFrame(
       [
         new actions.InsertAction({
-          items: [{ item: this.rect, index: this.index }]
+          items: [{ item: rect, index: this.index }]
         })
       ],
       'Draw rectangle'
@@ -72,7 +72,6 @@ export default class Rect extends Tool {
     this.editor.selectFromIndexes([this.index]);
     this.editor.commitFrame();
 
-    delete this.rect;
     delete this.index;
   }
 

@@ -202,10 +202,7 @@ export default class Pen extends Tool {
 
     if (!this.pathItemCommitted) {
       // In this case we're starting a new path item
-      path = new Path({
-        fill: this.editor.state.colors.fill,
-        stroke: this.editor.state.colors.stroke
-      });
+      path = new Path(this.editor.forType(Path));
 
       let pathIndex = this.nextChildIndex;
 
@@ -271,7 +268,6 @@ export default class Pen extends Tool {
         frame.push(
           new actions.CloseSegmentAction({ index: this.rootSegment.index })
         );
-
 
         pointToSelect = this._endpointEnd;
       } else {

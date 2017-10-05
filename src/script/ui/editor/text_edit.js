@@ -23,7 +23,7 @@ export default class TextEditUIElement extends UIElement {
     let center = item.bounds().center();
     let angle = item.metadata.angle;
     let fontSize = item.data['font-size'];
-    let lineSpacing = item.data['spacing'];
+    let lineSpacing = item.data['line-height'];
     let selectionPadding = fontSize * ((lineSpacing - 1) / 2);
 
     let lineBounds = [];
@@ -113,7 +113,7 @@ export default class TextEditUIElement extends UIElement {
 
       let pCursorBottom = pCursor
         .clone()
-        .nudge(0, fontSize * (item.data.spacing - 1));
+        .nudge(0, fontSize * (item.data['line-height'] - 1));
 
       context.save();
       context.translate(translateOrigin.x, translateOrigin.y);

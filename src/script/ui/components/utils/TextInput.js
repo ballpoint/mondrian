@@ -49,7 +49,7 @@ let TextInput = React.createClass({
           this.setState({ isFocused: false });
           // Enter
           if (this.props.onSubmit) {
-            this.props.onSubmit(this.state.value);
+            this.props.onSubmit(e.target.value);
           }
           this.setState({ lastCommittedValue: this.state.value });
         }}

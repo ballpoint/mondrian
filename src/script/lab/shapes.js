@@ -3,6 +3,7 @@ import Polynomial from 'geometry/polynomial';
 import Bounds from 'geometry/bounds';
 import Group from 'geometry/group';
 import Circle from 'geometry/circle';
+import Text from 'geometry/text';
 import CubicBezier from 'geometry/cubic-bezier-line-segment';
 
 export const OUTSIDE = Symbol('OUTSIDE');
@@ -45,9 +46,12 @@ export default {
     // Cheap check up front
     if (!(shape instanceof Bounds)) {
       bounds = shape.bounds();
-      let boundsRel = this.relationship(bounds, posn);
-      if (boundsRel === OUTSIDE) {
-        return OUTSIDE;
+
+      if (!shape instanceof Text) {
+        let boundsRel = this.relationship(bounds, posn);
+        if (boundsRel === OUTSIDE) {
+          return OUTSIDE;
+        }
       }
     } else {
       bounds = shape;

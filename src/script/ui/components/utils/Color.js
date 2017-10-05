@@ -210,7 +210,7 @@ let ColorUtil = React.createClass({
         return color;
       }
     } else {
-      return editor.state.attributes[which].color;
+      return editor.state.attributes.get(which);
     }
   },
 
@@ -333,6 +333,8 @@ let ColorUtil = React.createClass({
   },
 
   refreshPicker() {
+    if (!this.state.modifying) return;
+
     let canvas = this.refs.canvas;
     let selectedColor = this.colorModifying();
 

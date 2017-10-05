@@ -17,6 +17,10 @@ export default class Selection {
     return this.items.map(func);
   }
 
+  filter(func) {
+    return this.items.filter(func);
+  }
+
   has(item) {
     return this.items.has(item);
   }

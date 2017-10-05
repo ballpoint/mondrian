@@ -21,10 +21,10 @@ let Toolbar = React.createClass({
   },
 
   componentDidMount() {
-    this.props.editor.on('change:selection', () => {
+    this.props.editor.on(['change:selection', 'change:tool'], () => {
       this.setState({
         selection: this.props.editor.state.selection,
-        selectionType: this.props.editor.state.selection.type
+        tool: this.props.editor.state.tool
       });
     });
   },

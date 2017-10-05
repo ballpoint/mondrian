@@ -56,19 +56,19 @@ export default class Ellipse extends Tool {
       cy = minY + ry;
     }
 
-    this.rect = Path.ellipse({
-      cx,
-      cy,
-      rx,
-      ry,
-      fill: this.editor.state.attributes.fill,
-      stroke: this.editor.state.attributes.stroke
-    });
+    let ellipse = Path.ellipse(
+      this.editor.state.attributes.forType(Path, {
+        cx,
+        cy,
+        rx,
+        ry
+      })
+    );
 
     let frame = new HistoryFrame(
       [
         new actions.InsertAction({
-          items: [{ item: this.rect, index: this.index }]
+          items: [{ item: ellipse, index: this.index }]
         })
       ],
       'Draw ellipse'
@@ -81,7 +81,6 @@ export default class Ellipse extends Tool {
     this.editor.selectFromIndexes([this.index]);
     this.editor.commitFrame();
 
-    delete this.rect;
     delete this.index;
   }
 
