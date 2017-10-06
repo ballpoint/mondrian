@@ -49,7 +49,9 @@ let TextInput = React.createClass({
           this.setState({ isFocused: false });
           // Enter
           if (this.props.onSubmit) {
-            this.props.onSubmit(e.target.value);
+            if (e.target.value !== this.state.lastCommittedValue) {
+              this.props.onSubmit(e.target.value);
+            }
           }
           this.setState({ lastCommittedValue: this.state.value });
         }}

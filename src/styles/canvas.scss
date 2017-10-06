@@ -1,6 +1,9 @@
+@import "mixins.scss";
+
 .canvas-container {
   position: relative;
   height: 100%;
+  @include no-select;
 
   canvas {
     position: absolute;

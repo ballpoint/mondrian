@@ -106,7 +106,8 @@ export default class Color {
     } else if (str.match(/rgba?\(.*\)/gi) != null) {
       return Color.fromRGBString(str);
     } else {
-      throw new Error('cannot parse color ' + str);
+      console.error('cannot parse color ' + str);
+      return NONE;
     }
   }
 

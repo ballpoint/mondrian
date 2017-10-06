@@ -190,8 +190,8 @@ export default class CursorTracking extends EventEmitter {
   }
 
   _contextmenu(e) {
+    e.preventDefault();
     if (insideOf(e.target, this.root)) {
-      e.preventDefault();
       this.trigger('contextmenu', e, this);
       return false;
     }
