@@ -60,7 +60,13 @@ export default class DefaultAttributes {
         // keys stay as-is
         break;
       case Text:
-        keys = keys.concat(['font-family', 'font-size', 'line-height']);
+        keys = keys.concat([
+          'font-family',
+          'font-size',
+          'line-height',
+          'align',
+          'valign'
+        ]);
         // Make new Text have no stroke by default
         keys = keys.filter(k => {
           return k !== 'stroke';

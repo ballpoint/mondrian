@@ -202,7 +202,7 @@ export default class Pen extends Tool {
 
     if (!this.pathItemCommitted) {
       // In this case we're starting a new path item
-      path = new Path(this.editor.forType(Path));
+      path = new Path(this.editor.state.attributes.forType(Path));
 
       let pathIndex = this.nextChildIndex;
 

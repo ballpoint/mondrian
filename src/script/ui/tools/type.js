@@ -67,8 +67,6 @@ export default class Type extends Tool {
       })
     );
 
-    console.log(b);
-
     let frame = new HistoryFrame(
       [
         new actions.InsertAction({
