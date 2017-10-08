@@ -5,6 +5,8 @@ import Bounds from 'geometry/bounds';
 import HistoryFrame from 'history/Frame';
 import * as actions from 'history/actions/actions';
 
+import { ELEMENTS, POINTS, PHANDLE, SHANDLE } from 'ui/selection';
+
 export default class Eyedropper extends Tool {
   get id() {
     return 'eyedropper';
@@ -54,7 +56,7 @@ export default class Eyedropper extends Tool {
 
       if (
         this.editor.state.selection.length > 0 &&
-        this.editor.state.selection.type === 'ELEMENTS'
+        this.editor.state.selection.type === ELEMENTS
       ) {
         this.frame = new HistoryFrame(
           [

@@ -9,6 +9,8 @@ import UIElement from 'ui/editor/ui_element';
 import snapping from 'lib/snapping';
 import { degs_45 } from 'lib/snapping';
 
+import { ELEMENTS, POINTS, PHANDLE, SHANDLE } from 'ui/selection';
+
 const CTRL_PT_DIMEN = 7;
 
 export default class TransformerUIElement extends UIElement {
@@ -95,9 +97,8 @@ export default class TransformerUIElement extends UIElement {
 
     if (this.editor.state.textEditHandler !== undefined) return;
 
-    //if (this.editor.state.selection.type !== 'ELEMENTS') {
-    // return;
-    //}
+    if (this.editor.state.selection.type !== PHANDLE) return;
+    if (this.editor.state.selection.type !== SHANDLE) return;
 
     let bounds = this.editor.projection.bounds(selection.bounds);
 

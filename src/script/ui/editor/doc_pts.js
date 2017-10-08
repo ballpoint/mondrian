@@ -2,6 +2,8 @@ import consts from 'consts';
 import Circle from 'geometry/circle';
 import Element from 'ui/element';
 import UIElement from 'ui/editor/ui_element';
+import Selection from 'ui/selection';
+import { ELEMENTS, POINTS, PHANDLE, SHANDLE } from 'ui/selection';
 
 export default class DocumentPointsUIElement extends UIElement {
   reset() {
@@ -40,7 +42,7 @@ export default class DocumentPointsUIElement extends UIElement {
       return;
     }
 
-    if (this.editor.state.selection.type === 'POINTS') {
+    if (this.editor.state.selection.isOfType([POINTS, PHANDLE, SHANDLE])) {
       // draw selected pts
       for (let pt of this.editor.state.selection.items) {
         this.handlePoint(pt, layer, {
@@ -53,6 +55,7 @@ export default class DocumentPointsUIElement extends UIElement {
   handlePoint(pt, layer, opts = {}) {
     let mainPosn = this.editor.projection.posn(pt);
 
+    // Control points
     if (opts.includeHandles) {
       for (let name of ['sHandle', 'pHandle']) {
         let handle = pt[name];
@@ -68,6 +71,7 @@ export default class DocumentPointsUIElement extends UIElement {
           id,
           sp,
           e => {
+            this.editor.selectPointHandle(pt, name);
             // noop on down
           },
           (e, cursor) => {
@@ -94,8 +98,10 @@ export default class DocumentPointsUIElement extends UIElement {
       mainId,
       mp,
       e => {
-        if (!this.editor.state.selection.has(pt)) {
-          this.editor.setSelection([pt]);
+        let newSelection = new Selection(this.editor.doc, [pt]);
+
+        if (!this.editor.state.selection.equal(newSelection)) {
+          this.editor.setSelection(newSelection);
         }
       },
       (e, cursor) => {

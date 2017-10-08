@@ -128,20 +128,15 @@ export class AddHandleAction extends HistoryAction {
   }
 
   perform(doc) {
-    for (let index of this.data.indexes) {
-      let pp = doc.getFromIndex(index);
-      pp.setHandle(this.data.handle, this.data.posn);
-      if (this.data.reflect) {
-        pp.reflectHandle(this.data.handle);
-      }
+    let pp = doc.getFromIndex(this.data.index);
+    pp.setHandle(this.data.handle, this.data.posn);
+    if (this.data.reflect) {
+      pp.reflectHandle(this.data.handle);
     }
   }
 
   opposite() {
-    return new RemoveHandleAction({
-      indexes: this.data.indexes,
-      reflect: this.data.reflect
-    });
+    return new RemoveHandleAction(this.data);
   }
 }
 
@@ -150,14 +145,26 @@ export class RemoveHandleAction extends HistoryAction {
     return 'Remove handle';
   }
 
+  static forPoint(point, handle) {
+    let posn = point[handle];
+    return new RemoveHandleAction({
+      index: point.index,
+      reflect: false,
+      handle,
+      posn
+    });
+  }
+
   perform(doc) {
-    for (let index of this.data.indexes) {
-      let pp = doc.getFromIndex(index);
-      pp.unsetHandle(this.data.handle);
-      if (this.data.reflect) {
-        pp.unsetHandle(this.data.handle === 'pHandle' ? 'sHandle' : 'pHandle');
-      }
+    let pp = doc.getFromIndex(this.data.index);
+    pp.unsetHandle(this.data.handle);
+    if (this.data.reflect) {
+      pp.unsetHandle(this.data.handle === 'pHandle' ? 'sHandle' : 'pHandle');
     }
+  }
+
+  opposite() {
+    return new AddHandleAction(this.data);
   }
 }
 

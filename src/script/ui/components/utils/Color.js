@@ -12,6 +12,8 @@ import { NONE } from 'ui/color';
 import CanvasLayer from 'ui/layer';
 import 'utils/color.scss';
 
+import { ELEMENTS, POINTS, PHANDLE, SHANDLE } from 'ui/selection';
+
 const PICKER_WIDTH = 256;
 const PICKER_Y_SCALE = 2;
 const PICKER_HEIGHT = PICKER_WIDTH * 3 * PICKER_Y_SCALE;
@@ -156,7 +158,7 @@ let ColorUtil = React.createClass({
     let frame;
 
     if (
-      editor.state.selection.type === 'ELEMENTS' &&
+      editor.state.selection.type === ELEMENTS &&
       editor.state.selection.length > 0
     ) {
       frame = this.props.editor.setColor(which, color);
@@ -200,7 +202,7 @@ let ColorUtil = React.createClass({
   getColor(which) {
     let editor = this.props.editor;
     if (
-      editor.state.selection.type === 'ELEMENTS' &&
+      editor.state.selection.type === ELEMENTS &&
       editor.state.selection.length > 0
     ) {
       let color = editor.state.selection.getAttr(Item, which);

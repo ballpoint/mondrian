@@ -34,9 +34,9 @@ export default class Type extends Tool {
 
       if (this.currentItem) {
         if (this.currentItem.data.value === '') {
-          this.editor.setSelection([]);
+          this.editor.selectItems([]);
         } else {
-          this.editor.setSelection([this.currentItem]);
+          this.editor.selectItems([this.currentItem]);
         }
         delete this.currentItem;
       }

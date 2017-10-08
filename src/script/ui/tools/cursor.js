@@ -83,11 +83,11 @@ export default class Cursor extends Tool {
         this.editor.toggleInSelection([target]);
       } else {
         if (!this.editor.isSelected(target)) {
-          this.editor.setSelection([target]);
+          this.editor.selectItems([target]);
         }
       }
     } else {
-      this.editor.setSelection([]);
+      this.editor.selectItems([]);
     }
   }
 
@@ -146,7 +146,7 @@ export default class Cursor extends Tool {
         }
       }
 
-      this.editor.setSelection(newSelection);
+      this.editor.selectItems(newSelection);
 
       this.dragSelectStart = null;
       this.dragSelectEnd = null;

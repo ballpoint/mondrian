@@ -5,6 +5,7 @@ import HistoryUtil from 'ui/components/utils/History';
 import ColorUtil from 'ui/components/utils/Color';
 import StrokeUtil from 'ui/components/utils/Stroke';
 import AlignUtil from 'ui/components/utils/Align';
+import { ELEMENTS, POINTS, PHANDLE, SHANDLE } from 'ui/selection';
 
 let Utils = React.createClass({
   getInitialState() {
@@ -32,10 +33,10 @@ let Utils = React.createClass({
           selection: editor.state.selection,
           hasSelectedElements:
             editor.state.selection.length > 0 &&
-            editor.state.selection.type === 'ELEMENTS',
+            editor.state.selection.type === ELEMENTS,
           hasSelectedPoints:
             editor.state.selection.length > 0 &&
-            editor.state.selection.type === 'POINTS'
+            editor.state.selection.type === POINTS
         });
       });
     });

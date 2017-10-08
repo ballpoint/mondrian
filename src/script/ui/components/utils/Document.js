@@ -201,7 +201,7 @@ let DocumentUtilChild = React.createClass({
               if (child instanceof Layer) {
                 this.props.editor.setCurrentLayer(child);
               } else {
-                this.props.editor.setSelection([child]);
+                this.props.editor.selectItems([child]);
               }
             }}
             onDoubleClick={() => {

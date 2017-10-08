@@ -5,6 +5,7 @@ import Layer from 'ui/layer';
 import Util from 'ui/components/utils/Util';
 import Projection from 'ui/projection';
 import TextInput from 'ui/components/utils/TextInput';
+import { ELEMENTS, POINTS, PHANDLE, SHANDLE } from 'ui/selection';
 
 import 'utils/transform.scss';
 
@@ -28,14 +29,24 @@ let TransformUtil = React.createClass({
   },
 
   renderSubheader() {
-    let sel = this.props.editor.state.selection.items;
+    let sel = this.props.editor.state.selection;
+    let items = sel.items;
     let subheader;
-    if (sel.length === 0) {
+    if (items.length === 0) {
       subheader = 'Document';
-    } else if (sel.length === 1) {
-      subheader = sel[0].constructor.name + ' ' + sel[0]._i;
-    } else if (sel.length > 1) {
-      subheader = sel.length + ' items';
+    } else {
+      let noun = {
+        [ELEMENTS]: 'Element',
+        [POINTS]: 'Point',
+        [SHANDLE]: 'Control point',
+        [PHANDLE]: 'Control point'
+      }[sel.type];
+
+      if (items.length > 1) {
+        subheader = noun + 's';
+      } else {
+        subheader = noun;
+      }
     }
 
     return <div className="sel-util__subheader">{subheader}</div>;
@@ -43,7 +54,7 @@ let TransformUtil = React.createClass({
 
   getSelectionIdKey() {
     let { state } = this.props.editor;
-    if (state.selection.type === 'ELEMENTS') {
+    if (state.selection.type === ELEMENTS) {
       return state.selection.items
         .map(e => {
           return e.__id__;
@@ -167,7 +178,7 @@ let TransformUtil = React.createClass({
         </div>
       );
     } else {
-      if (state.selection.type === 'ELEMENTS') {
+      if (state.selection.type === ELEMENTS) {
         let thumb = this.getThumbnail();
         return (
           <div className="sel-util__thumb">
@@ -186,7 +197,7 @@ let TransformUtil = React.createClass({
             </div>
           </div>
         );
-      } else if (state.selection.type === 'POINTS') {
+      } else if (state.selection.type === POINTS) {
         // If we have more than one point, we draw their thumbnail
         // Otherwise, we render point + handle circle controls
 

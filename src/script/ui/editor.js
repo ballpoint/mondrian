@@ -11,6 +11,7 @@ import DefaultAttributes from 'ui/DefaultAttributes';
 import EventEmitter from 'lib/events';
 import Canvas from 'ui/canvas';
 import Selection from 'ui/selection';
+import { ELEMENTS, POINTS, PHANDLE, SHANDLE } from 'ui/selection';
 
 import Posn from 'geometry/posn';
 import Group from 'geometry/group';
@@ -381,7 +382,7 @@ export default class Editor extends EventEmitter {
 
     if (
       this.state.selection.length > 0 &&
-      this.state.selection.type === 'ELEMENTS'
+      this.state.selection.type === ELEMENTS
     ) {
       frame = new HistoryFrame(
         [
@@ -468,36 +469,19 @@ export default class Editor extends EventEmitter {
   }
 
   clearSelection() {
-    this.setSelection([]);
+    this.selectItems([]);
   }
 
   selectAll() {
-    this.setSelection(this.doc.filterAvailable(this.doc.elements));
+    this.selectItems(this.doc.filterAvailable(this.doc.elements));
   }
 
-  /*
-  flattenGroupItems(items) {
-    let finalItems = [];
-    for (let item of items) {
-      if ((item instanceof Path) || (item instanceof PathPoint)) {
-        finalItems.push(item);
-      } else if (item instanceof PointsSegment) {
-        // Reduce PointsSegments to just the contained PathPoints
-        finalItems = finalItems.concat(item.points);
-      } else if ((item instanceof Group) || (item instanceof Layer)) {
-        finalItems = finalItems.concat(item.childrenFlat);
-      }
-    }
-    return finalItems;
-  }
-  */
-
-  setSelection(items) {
+  setSelection(sel) {
     let oldSelection = this.state.selection;
 
-    this.state.selection = new Selection(this.doc, items);
+    this.state.selection = sel;
 
-    window.$s = items; // DEBUG
+    window.$s = sel; // DEBUG
 
     if (!oldSelection.equal(this.state.selection)) {
       this.trigger('change');
@@ -505,6 +489,19 @@ export default class Editor extends EventEmitter {
     }
 
     this.canvas.refreshAll();
+  }
+
+  selectItems(items) {
+    this.setSelection(new Selection(this.doc, items));
+  }
+
+  selectPointHandle(point, which) {
+    let selType = {
+      sHandle: SHANDLE,
+      pHandle: PHANDLE
+    }[which];
+
+    this.setSelection(new Selection(this.doc, [point], selType));
   }
 
   toggleInSelection(items) {
@@ -516,7 +513,7 @@ export default class Editor extends EventEmitter {
         sel = sel.remove(item);
       }
     }
-    this.setSelection(sel.items);
+    this.selectItems(sel.items);
   }
 
   setHovering(items) {
@@ -532,7 +529,7 @@ export default class Editor extends EventEmitter {
   }
 
   getAttribute(type, key) {
-    if (this.state.selection.empty || this.state.selection.type === 'POINTS') {
+    if (this.state.selection.empty || this.state.selection.type === POINTS) {
       return this.state.attributes[key];
     } else {
       return this.state.selection.getAttr(type, key);
@@ -542,6 +539,10 @@ export default class Editor extends EventEmitter {
   isSelected(item) {
     if (item instanceof Layer) {
       return this.state.layer === item;
+    } else if (this.state.selection.type === PHANDLE) {
+      return this.state.selection.items[0].pHandle === item;
+    } else if (this.state.selection.type === SHANDLE) {
+      return this.state.selection.items[0].sHandle === item;
     } else {
       return this.state.selection.contains(item);
     }
@@ -606,9 +607,12 @@ export default class Editor extends EventEmitter {
     }
 
     let frame;
+    // After deleting points and elements, we perform a cleanup step
+    // to remove empty parents.
+    let shouldCleanUp = true;
 
     switch (this.state.selection.type) {
-      case 'ELEMENTS':
+      case ELEMENTS:
         // Simple when removing elements; remove them whole
         frame = new HistoryFrame(
           [
@@ -622,7 +626,7 @@ export default class Editor extends EventEmitter {
         );
         this.stageFrame(frame);
         break;
-      case 'POINTS':
+      case POINTS:
         // If we're removing points that's harder. We have to open and split
         // PointsSegments to handle this properly.
         let selection = this.state.selection.items;
@@ -658,11 +662,28 @@ export default class Editor extends EventEmitter {
           frame = new HistoryFrame(as.slice(0), 'Remove points');
           this.stageFrame(frame);
         }
+        break;
+      case PHANDLE:
+      case SHANDLE:
+        let item = this.state.selection.items[0];
+
+        // Delete control point
+        frame = new HistoryFrame(
+          [
+            actions.RemoveHandleAction.forPoint(item, this.state.selection.type)
+          ],
+          'Remove control handle'
+        );
+        this.stageFrame(frame);
+        shouldCleanUp = false;
+        break;
     }
 
-    this.setSelection([]);
+    this.selectItems([]);
 
-    this.cleanUpEmptyItems(frame.actions[0]);
+    if (shouldCleanUp) {
+      this.cleanUpEmptyItems(frame.actions[0]);
+    }
     this.commitFrame();
   }
 
@@ -771,10 +792,7 @@ export default class Editor extends EventEmitter {
   }
 
   changeAttribute(type, key, value, title) {
-    if (
-      !this.state.selection.empty &&
-      this.state.selection.type === 'ELEMENTS'
-    ) {
+    if (!this.state.selection.empty && this.state.selection.type === ELEMENTS) {
       let frame = new HistoryFrame(
         [
           actions.SetAttributeAction.forItems(
@@ -799,7 +817,7 @@ export default class Editor extends EventEmitter {
       return this.doc.getFromIndex(index);
     });
 
-    this.setSelection(sel);
+    this.selectItems(sel);
   }
 
   refreshDrawing(layer, context) {
@@ -870,9 +888,7 @@ export default class Editor extends EventEmitter {
   }
 
   nudgeSelected(xd, yd) {
-    if (this.state.selection.empty) {
-      return;
-    }
+    if (this.state.selection.empty) return;
 
     let frame = new HistoryFrame([
       new actions.NudgeAction({

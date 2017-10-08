@@ -52,7 +52,7 @@ export default class SubCursor extends Tool {
 
   handleMousedown(e, cursor) {
     if (!this.hovering) {
-      this.editor.setSelection([]);
+      this.editor.selectItems([]);
     }
   }
 
@@ -85,7 +85,7 @@ export default class SubCursor extends Tool {
         }
       }
 
-      this.editor.setSelection(newSelection);
+      this.editor.selectItems(newSelection);
 
       this.dragSelectStart = null;
       this.dragSelectEnd = null;

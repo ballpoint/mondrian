@@ -332,9 +332,9 @@ export default class Pen extends Tool {
     this.editor.perform(frame);
 
     if (pointToSelect) {
-      this.editor.setSelection([pointToSelect]);
+      this.editor.selectItems([pointToSelect]);
     } else {
-      this.editor.setSelection([]);
+      this.editor.selectItems([]);
     }
   }
 

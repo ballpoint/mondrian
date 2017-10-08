@@ -3,10 +3,29 @@ import Posn from 'geometry/posn';
 import PathPoint from 'geometry/path-point';
 import Group from 'geometry/group';
 
+// Selection types
+export const ELEMENTS = 'elements';
+export const POINTS = 'points';
+export const PHANDLE = 'pHandle';
+export const SHANDLE = 'sHandle';
+
 export default class Selection {
-  constructor(doc, items = []) {
+  constructor(doc, items = [], type = null) {
     this.doc = doc;
     this.items = items;
+
+    if (this.empty) return 'NONE';
+
+    if (type === null) {
+      let sample = this.items[0];
+      if (sample instanceof PathPoint) {
+        this.type = POINTS;
+      } else {
+        this.type = ELEMENTS;
+      }
+    } else {
+      this.type = type;
+    }
   }
 
   [Symbol.iterator]() {
@@ -73,22 +92,11 @@ export default class Selection {
   }
 
   equal(other) {
-    return this.items.sameMembers(other.items);
+    return this.type === other.type && this.items.sameMembers(other.items);
   }
 
   get empty() {
     return this.items.length === 0;
-  }
-
-  get type() {
-    if (this.empty) return 'NONE';
-
-    let sample = this.items[0];
-    if (sample instanceof PathPoint) {
-      return 'POINTS';
-    } else {
-      return 'ELEMENTS';
-    }
   }
 
   get flat() {
@@ -113,6 +121,10 @@ export default class Selection {
     });
   }
 
+  isOfType(types) {
+    return types.indexOf(this.type) > -1;
+  }
+
   contains(item) {
     return this.items.indexOf(item) > -1;
   }
@@ -133,7 +145,7 @@ export default class Selection {
     let angle = 0;
     let center;
 
-    if (this.type === 'ELEMENTS') {
+    if (this.type === ELEMENTS) {
       let angleFreq = {};
 
       let selectedAngles = _.uniq(
@@ -173,7 +185,7 @@ export default class Selection {
 
       bounds = Bounds.fromBounds(boundsList);
       center = bounds.center();
-    } else if (this.type === 'POINTS') {
+    } else if (this.type === POINTS) {
       let selectedAngles = _.uniq(
         this.items.map(e => {
           return e.path.metadata.angle;
@@ -196,6 +208,17 @@ export default class Selection {
       }
 
       center = bounds.center();
+    } else if (this.type === SHANDLE || this.type === 'PHANDLE') {
+      let handle;
+      let pt = this.items[0];
+      if (this.type === SHANDLE) {
+        handle = pt.sHandle;
+      } else {
+        handle = pt.pHandle;
+      }
+
+      bounds = new Bounds(handle.x, handle.y, 0, 0);
+      center = new Posn(handle.x, handle.y);
     }
 
     if (angle) {

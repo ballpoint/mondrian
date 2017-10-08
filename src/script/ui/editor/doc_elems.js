@@ -1,6 +1,8 @@
 import consts from 'consts';
 import UIElement from 'ui/editor/ui_element';
 
+import { ELEMENTS, POINTS, PHANDLE, SHANDLE } from 'ui/selection';
+
 export default class DocumentPointsUIElement extends UIElement {
   reset() {}
 
@@ -10,7 +12,7 @@ export default class DocumentPointsUIElement extends UIElement {
     let tool = this.editor.state.tool;
     let selection = this.editor.state.selection;
 
-    if (this.editor.state.selection.type === 'ELEMENTS') {
+    if (this.editor.state.selection.type === ELEMENTS) {
       if (this.editor.state.textEditHandler === undefined) {
         for (let elem of selection.items) {
           this.drawOutlines(elem, layer);
