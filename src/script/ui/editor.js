@@ -477,7 +477,6 @@ export default class Editor extends EventEmitter {
   }
 
   setSelection(sel) {
-    console.log('set', sel);
     let oldSelection = this.state.selection;
 
     this.state.selection = sel;

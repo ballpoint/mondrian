@@ -110,22 +110,11 @@ $sel-thumb-width: 120px;
           }
         }
 
-        .sel-util__thumb__point-container {
-          position: relative;
-          padding: 5px;
-
-          .sel-util__thumb__point {
-            width: 6px;
-            height: 6px;
-            border-radius: 6px;
-            border: 1px solid $blue;
-
-            &.is-main {
-              width: 8px;
-              height: 8px;
-              border-radius: 8px;
-            }
-          }
+        .sel-util__thumb__point {
+          width: 6px;
+          height: 6px;
+          border-radius: 6px;
+          border: 1px solid $blue;
         }
 
         .sel-util__thumb__height-bracket {

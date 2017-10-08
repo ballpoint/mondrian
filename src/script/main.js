@@ -16,6 +16,7 @@ import tesla from 'Tesla_Motors.svg';
 import points from 'points.svg';
 import rects from 'rects.svg';
 import text from 'text2.svg';
+import handletest from 'handletest.svg';
 import shoppingCart from 'shopping-cart.svg';
 import nikon from 'Nikon_Logo.svg';
 
@@ -54,5 +55,5 @@ ReactDOM.render(
   document.getElementById('app-toolbar')
 );
 
-let doc = Doc.fromSVG(text, 'text2.svg');
+let doc = Doc.fromSVG(handletest, 'handletest.svg');
 editor.load(doc);

@@ -197,88 +197,26 @@ let TransformUtil = React.createClass({
             </div>
           </div>
         );
-      } else if (state.selection.type === POINTS) {
+      } else if (state.selection.isOfType([POINTS, PHANDLE, SHANDLE])) {
         // If we have more than one point, we draw their thumbnail
         // Otherwise, we render point + handle circle controls
 
-        return (
-          <div className="sel-util__thumb">
-            {this.renderPoints(state.selection.items)}
+        if (state.selection.items.length > 1) {
+        } else {
+          return (
+            <div className="sel-util__thumb">
+              {<div className="sel-util__thumb__point" />}
 
-            {bounds.height > 0 ? (
-              <div className="sel-util__thumb__height-bracket" />
-            ) : null}
-            {bounds.width > 0 ? (
-              <div className="sel-util__thumb__width-bracket" />
-            ) : null}
-          </div>
-        );
+              {bounds.height > 0 ? (
+                <div className="sel-util__thumb__height-bracket" />
+              ) : null}
+              {bounds.width > 0 ? (
+                <div className="sel-util__thumb__width-bracket" />
+              ) : null}
+            </div>
+          );
+        }
       }
-    }
-  },
-
-  renderPoints(points) {
-    let { state, doc } = this.props.editor;
-    let bounds = state.selection.bounds;
-
-    if (points.length === 1) {
-      let point = points[0];
-      let width = Math.max(bounds.width, 5);
-      let height = Math.max(bounds.height, 5);
-
-      let posns = [point];
-      if (point.pHandle) {
-        posns.push(point.pHandle);
-      }
-      if (point.sHandle) {
-        posns.push(point.sHandle);
-      }
-
-      let projection = Projection.forBoundsFit(
-        Bounds.fromPosns(posns),
-        THUMB_IMG_MAX_WIDTH,
-        THUMB_IMG_MAX_HEIGHT
-      );
-
-      //console.log(projection.width, projection.height);
-
-      let mainHandle, pHandle, sHandle;
-
-      function drawPosn(posn, isMain = false) {
-        return (
-          <div
-            className={classnames({
-              'sel-util__thumb__point': true,
-              'is-main': isMain
-            })}
-            style={{
-              position: 'absolute',
-              left: projection.x(posn.x),
-              top: projection.y(posn.y)
-            }}
-          />
-        );
-      }
-
-      mainHandle = drawPosn(point, true);
-      if (point.pHandle) {
-        pHandle = drawPosn(point.pHandle);
-      }
-      if (point.sHandle) {
-        sHandle = drawPosn(point.sHandle);
-      }
-
-      return (
-        <div
-          className="sel-util__thumb__point-container"
-          style={{ width: projection.width, height: projection.height }}>
-          {pHandle}
-          {mainHandle}
-          {sHandle}
-        </div>
-      );
-    } else {
-      // lol
     }
   },
 

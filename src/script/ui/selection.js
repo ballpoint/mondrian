@@ -208,7 +208,7 @@ export default class Selection {
       }
 
       center = bounds.center();
-    } else if (this.type === SHANDLE || this.type === 'PHANDLE') {
+    } else if (this.type === SHANDLE || this.type === PHANDLE) {
       let handle;
       let pt = this.items[0];
       if (this.type === SHANDLE) {

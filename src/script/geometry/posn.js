@@ -63,6 +63,10 @@ export default class Posn {
     return `${math.fmtFloat(this.x, 4)},${math.fmtFloat(this.y, 4)}`;
   }
 
+  toFixed(n) {
+    return `${this.x.toFixed(n)},${this.y.toFixed(n)}`;
+  }
+
   toJSON() {
     return {
       x: this.x,

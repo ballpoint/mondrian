@@ -234,7 +234,7 @@ export default class Pen extends Tool {
       if (dragging && !cursor.posnCurrent.equal(cursor.posnDown)) {
         frame.push(
           new actions.AddHandleAction({
-            indexes: [this._endpointIndex],
+            index: this._endpointIndex,
             handle: 'sHandle',
             reflect: true,
             posn: cursor.posnCurrent
@@ -254,7 +254,7 @@ export default class Pen extends Tool {
       if (dragging) {
         frame.push(
           new actions.AddHandleAction({
-            indexes: [this._endpointIndex],
+            index: this._endpointIndex,
             handle: 'sHandle',
             reflect: true,
             posn: cursor.posnCurrent

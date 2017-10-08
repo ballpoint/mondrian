@@ -291,12 +291,18 @@ export default class PathPoint extends Posn {
 
   setPHandle(pX, pY) {
     if (pX === undefined) return;
+
+    if (pX === this.x && pY === this.y) return;
+
     this.pHandle = new Posn(pX, pY);
     this.checkIfHandlesLocked();
   }
 
   setSHandle(sX, sY) {
     if (sX === undefined) return;
+
+    if (sX === this.x && sY === this.y) return;
+
     this.sHandle = new Posn(sX, sY);
     this.checkIfHandlesLocked();
   }
@@ -446,15 +452,13 @@ export default class PathPoint extends Posn {
     }
 
     if (p1 || p2) {
+      // CurveTo
       if (!p1) p1 = this.prec;
       if (!p2) p2 = this;
-      return `C${p1.x.toFixed(8)},${p1.y.toFixed(8)} ${p2.x.toFixed(
-        8
-      )},${p2.y.toFixed(8)} ${this.x.toFixed(8)},${this.y.toFixed(8)}`;
-      // CurveTo
+      return `C${p1.toFixed(8)} ${p2.toFixed(8)} ${this.toFixed(8)}`;
     } else {
       // LineTo
-      return `L${this.x.toFixed(8)},${this.y.toFixed(8)}`;
+      return `L${this.toFixed(8)}`;
     }
   }
 }
