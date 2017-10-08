@@ -8,6 +8,9 @@ import { ELEMENTS, POINTS, PHANDLE, SHANDLE } from 'ui/selection';
 import HistoryFrame from 'history/Frame';
 import * as actions from 'history/actions/actions';
 
+import snapping from 'lib/snapping';
+import { degs_45_90 } from 'lib/snapping';
+
 export default class DocumentPointsUIElement extends UIElement {
   reset() {
     this.editor.cursorHandler.unregisterElement(/selectedPoint.*/);
@@ -30,7 +33,7 @@ export default class DocumentPointsUIElement extends UIElement {
             if (pt !== tool.hovering) {
               layer.drawCircle(this.editor.projection.posn(pt), 2.5, {
                 stroke: consts.point,
-                fill: 'white'
+                fill: consts.white
               });
             }
           }
@@ -63,14 +66,14 @@ export default class DocumentPointsUIElement extends UIElement {
 
     // Control points
     if (opts.includeHandles) {
-      for (let name of ['sHandle', 'pHandle']) {
-        let handle = pt[name];
+      for (let which of ['sHandle', 'pHandle']) {
+        let handle = pt[which];
 
         if (handle) {
           // Handle exists; draw control for it
 
           let sp = this.editor.projection.posn(handle);
-          let id = 'selectedPoint:' + pt.index.toString() + ':' + name;
+          let id = 'selectedPoint:' + pt.index.toString() + ':' + which;
           layer.drawLineSegment(mainPosn, sp, { stroke: consts.point });
 
           this.drawPoint(id, handle, sp, layer);
@@ -79,12 +82,12 @@ export default class DocumentPointsUIElement extends UIElement {
             id,
             sp,
             e => {
-              this.editor.selectPointHandle(pt, name);
+              this.editor.selectPointHandle(pt, which);
             },
             (e, cursor) => {
               this.editor.nudgeHandle(
                 pt.index,
-                name,
+                which,
                 cursor.deltaDrag.x,
                 cursor.deltaDrag.y
               );
@@ -94,46 +97,7 @@ export default class DocumentPointsUIElement extends UIElement {
             }
           );
         } else {
-          // Handle doesn't exist; create prompt for adding one
-          let suggestedHandle;
-
-          let other = name === 'pHandle' ? 'sHandle' : 'pHandle';
-          let otherHandle = pt[other];
-
-          if (otherHandle) {
-            // Suggest reflection of the other handle
-            suggestedHandle = otherHandle.reflect(pt);
-          } else {
-            let pLine = new LineSegment(pt, pt.prec);
-            let sLine = new LineSegment(pt, pt.succ);
-            let pAngle = pLine.angle360;
-            let sAngle = sLine.angle360;
-
-            if (sAngle < pAngle) sAngle += 360;
-
-            let midAngle = pAngle + (sAngle - pAngle) / 2;
-
-            let neighborD = Math.min(pLine.length, sLine.length);
-
-            if (name === 'pHandle') {
-              suggestedHandle = pt
-                .clone()
-                .nudge(neighborD / 2, 0)
-                .rotate(midAngle + 180, pt);
-            } else {
-              suggestedHandle = pt
-                .clone()
-                .nudge(-neighborD / 2, 0)
-                .rotate(midAngle + 180, pt);
-            }
-          }
-          let suggestedProj = this.editor.projection.posn(suggestedHandle);
-
-          this.registerSuggestedHandle(pt, suggestedHandle, name);
-
-          layer.drawCircle(suggestedProj, 4, {
-            stroke: name === 'sHandle' ? 'red' : 'green'
-          });
+          this.drawSuggestedHandle(layer, pt, which);
         }
       }
     }
@@ -161,17 +125,21 @@ export default class DocumentPointsUIElement extends UIElement {
         }
       },
       (e, cursor) => {
-        this.editor.nudgeSelected(cursor.deltaDrag.x, cursor.deltaDrag.y);
+        let posn = cursor.posnCurrent;
+        if (e.shiftKey) {
+          posn = snapping.toDegs(cursor.posnDown, posn, degs_45_90);
+        }
+        let delta = posn.delta(cursor.posnDown);
+        this.editor.nudgeSelected(delta.x, delta.y);
       },
       e => {
-        console.log('commit');
         this.editor.commitFrame();
       }
     );
   }
 
   drawPoint(id, point, posn, layer) {
-    let style = { stroke: consts.point, fill: 'white' };
+    let style = { stroke: consts.point, fill: consts.white };
     let radius = 2.5;
     if (this.editor.isSelected(point)) {
       //style.stroke = 'blue';
@@ -206,7 +174,48 @@ export default class DocumentPointsUIElement extends UIElement {
     this.editor.cursorHandler.registerElement(elem);
   }
 
-  registerSuggestedHandle(pt, suggestion, which) {
+  drawSuggestedHandle(layer, pt, which) {
+    // Handle doesn't exist; create prompt for adding one
+    let suggestion;
+
+    let other = which === 'pHandle' ? 'sHandle' : 'pHandle';
+    let otherHandle = pt[other];
+
+    if (otherHandle) {
+      // Suggest reflection of the other handle
+      suggestion = otherHandle.reflect(pt);
+    } else {
+      if (pt.prec && pt.succ) {
+        let pLine = new LineSegment(pt, pt.prec);
+        let sLine = new LineSegment(pt, pt.succ);
+        let pAngle = pLine.angle360;
+        let sAngle = sLine.angle360;
+
+        if (sAngle < pAngle) sAngle += 360;
+
+        let midAngle = pAngle + (sAngle - pAngle) / 2;
+
+        let neighborD = Math.min(pLine.length, sLine.length);
+
+        if (which === 'pHandle') {
+          suggestion = pt
+            .clone()
+            .nudge(neighborD / 2, 0)
+            .rotate(midAngle + 180, pt);
+        } else {
+          suggestion = pt
+            .clone()
+            .nudge(-neighborD / 2, 0)
+            .rotate(midAngle + 180, pt);
+        }
+      }
+    }
+
+    let id = 'selectedPoint:' + pt.index.toString() + ':suggestion:' + which;
+
+    let isActive = this.editor.cursorHandler.isActive(id);
+    let suggestedProj = this.editor.projection.posn(suggestion);
+
     let stageAddition = posn => {
       this.editor.stageFrame(
         new HistoryFrame(
@@ -223,29 +232,66 @@ export default class DocumentPointsUIElement extends UIElement {
       );
     };
 
-    let id = 'selectedPoint:' + pt.index.toString() + ':suggestion:' + which;
-
-    let elem = new Element(
-      id,
-      new Circle(this.editor.projection.posn(suggestion), 12),
-      {
-        mousedown: (e, posn) => {
-          stageAddition(suggestion);
-          e.stopPropagation();
-        },
-        drag: (e, cursor) => {
-          stageAddition(cursor.posnCurrent);
-          e.stopPropagation();
-        },
-        'drag:start': e => {
-          e.stopPropagation();
-        },
-        mouseup: e => {
-          this.editor.commitFrame();
-        }
+    let elem = new Element(id, new Circle(suggestedProj, 12), {
+      mousedown: (e, posn) => {
+        stageAddition(suggestion);
+        e.stopPropagation();
+      },
+      drag: (e, cursor) => {
+        stageAddition(cursor.posnCurrent);
+        e.stopPropagation();
+      },
+      'drag:start': e => {
+        e.stopPropagation();
+      },
+      mouseup: e => {
+        this.editor.commitFrame();
+        this.editor.selectPointHandle(pt, which);
       }
-    );
+    });
 
     this.editor.cursorHandler.registerElement(elem);
+
+    if (isActive) {
+      // Dotted line
+      layer.drawLineSegment(this.editor.projection.posn(pt), suggestedProj, {
+        stroke: consts.blue
+      });
+
+      const plusSignDimens = 4;
+
+      // Draw plus sign
+      let ls = new LineSegment(pt, suggestion);
+      let a = ls.angle360;
+      let plusSignPosn = pt
+        .clone()
+        .nudge(0, -ls.length - 8)
+        .rotate(a, pt);
+
+      let pp = this.editor.projection.posn(plusSignPosn);
+
+      layer.drawLineSegment(
+        pp.clone().nudge(-plusSignDimens, 0),
+        pp.clone().nudge(plusSignDimens, 0),
+        {
+          stroke: consts.blue
+        }
+      );
+      layer.drawLineSegment(
+        pp.clone().nudge(0, -plusSignDimens),
+        pp.clone().nudge(0, plusSignDimens),
+        {
+          stroke: consts.blue
+        }
+      );
+    }
+
+    let radius = isActive ? 4.5 : 2.5;
+    let stroke = isActive ? consts.blue : consts.lightBlue;
+
+    layer.drawCircle(suggestedProj, radius, {
+      stroke,
+      fill: consts.white
+    });
   }
 }
