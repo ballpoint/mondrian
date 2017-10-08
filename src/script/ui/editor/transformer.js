@@ -97,8 +97,8 @@ export default class TransformerUIElement extends UIElement {
 
     if (this.editor.state.textEditHandler !== undefined) return;
 
-    if (this.editor.state.selection.type !== PHANDLE) return;
-    if (this.editor.state.selection.type !== SHANDLE) return;
+    if (this.editor.state.selection.type === PHANDLE) return;
+    if (this.editor.state.selection.type === SHANDLE) return;
 
     let bounds = this.editor.projection.bounds(selection.bounds);
 

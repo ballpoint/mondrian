@@ -45,7 +45,7 @@ export default class Selection {
   }
 
   clone() {
-    return new Selection(this.doc, this.items);
+    return new Selection(this.doc, this.items.slice(0));
   }
 
   push(item) {
@@ -53,7 +53,7 @@ export default class Selection {
   }
 
   remove(item) {
-    this.items.removeIndex(this.items.indexOf(item));
+    this.items = this.items.removeIndex(this.items.indexOf(item));
   }
 
   clearCache() {

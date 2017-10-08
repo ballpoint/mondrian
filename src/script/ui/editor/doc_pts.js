@@ -99,9 +99,16 @@ export default class DocumentPointsUIElement extends UIElement {
       mp,
       e => {
         let newSelection = new Selection(this.editor.doc, [pt]);
-
-        if (!this.editor.state.selection.equal(newSelection)) {
-          this.editor.setSelection(newSelection);
+        if (e.shiftKey) {
+          if (this.editor.state.selection.type === POINTS) {
+            this.editor.toggleInSelection([pt]);
+          } else {
+            this.editor.setSelection(newSelection);
+          }
+        } else {
+          if (!this.editor.state.selection.equal(newSelection)) {
+            this.editor.setSelection(newSelection);
+          }
         }
       },
       (e, cursor) => {

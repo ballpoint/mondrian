@@ -477,6 +477,7 @@ export default class Editor extends EventEmitter {
   }
 
   setSelection(sel) {
+    console.log('set', sel);
     let oldSelection = this.state.selection;
 
     this.state.selection = sel;
@@ -507,13 +508,13 @@ export default class Editor extends EventEmitter {
   toggleInSelection(items) {
     let sel = this.state.selection.clone();
     for (let item of items) {
-      if (sel.contains(item)) {
+      if (!sel.contains(item)) {
         sel.push(item);
       } else {
-        sel = sel.remove(item);
+        sel.remove(item);
       }
     }
-    this.selectItems(sel.items);
+    this.setSelection(sel);
   }
 
   setHovering(items) {
