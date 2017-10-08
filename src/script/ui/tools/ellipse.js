@@ -35,23 +35,29 @@ export default class Ellipse extends Tool {
     let maxY = Math.max(posnCurrent.y, posnDown.y);
     let minY = Math.min(posnCurrent.y, posnDown.y);
 
+    // If SHIFT && ALT, draw perfect circle using down posn as center
+    // If SHIFT, draw perfect circle within rectangular bounds
+    // If ALT, draw ellipse using down posn as center
+
     if (e.shiftKey && e.altKey) {
+      cx = posnDown.x;
+      cy = posnDown.y;
       rx = posnCurrent.distanceFrom(posnDown);
       ry = rx;
+    } else if (e.shiftKey) {
+      rx = (maxX - minX) / 2;
+      ry = (maxY - minY) / 2;
+      rx > ry ? (ry = rx) : (rx = ry);
+      cx = minX + rx;
+      cy = minY + ry;
+    } else if (e.altKey) {
+      rx = maxX - minX;
+      ry = maxY - minY;
+      cx = posnDown.x;
+      cy = posnDown.y;
     } else {
       rx = (maxX - minX) / 2;
       ry = (maxY - minY) / 2;
-    }
-
-    if (e.altKey) {
-      cx = posnDown.x;
-      cy = posnDown.y;
-
-      if (!e.shiftKey) {
-        rx *= 2;
-        ry *= 2;
-      }
-    } else {
       cx = minX + rx;
       cy = minY + ry;
     }

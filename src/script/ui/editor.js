@@ -161,7 +161,12 @@ export default class Editor extends EventEmitter {
       let delta = e.deltaX;
       if (!this.canvas.owns(e.target)) return;
 
-      if (this.state.tool.id === 'zoom') {
+      let shouldZoom =
+        (this.state.tool.id === 'zoom' && !e.altKey) ||
+        (this.state.tool.id !== 'zoom' && e.altKey);
+
+      if (shouldZoom) {
+        // noop
       } else {
         this.nudge(this.projection.zInvert(delta), 0);
       }
@@ -171,7 +176,11 @@ export default class Editor extends EventEmitter {
       let delta = e.deltaY;
       if (!this.canvas.owns(e.target)) return;
 
-      if (this.state.tool.id === 'zoom') {
+      let shouldZoom =
+        (this.state.tool.id === 'zoom' && !e.altKey) ||
+        (this.state.tool.id !== 'zoom' && e.altKey);
+
+      if (shouldZoom) {
         let zd = 1 - delta / 1000;
         let anchor = this.cursor.lastPosn;
         this.setZoom(this.state.zoomLevel * zd, anchor);

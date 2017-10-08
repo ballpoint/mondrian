@@ -177,6 +177,7 @@ export default class DocumentPointsUIElement extends UIElement {
   drawSuggestedHandle(layer, pt, which) {
     // Handle doesn't exist; create prompt for adding one
     let suggestion;
+    let ptProj = this.editor.projection.posn(pt);
 
     let other = which === 'pHandle' ? 'sHandle' : 'pHandle';
     let otherHandle = pt[other];
@@ -254,21 +255,19 @@ export default class DocumentPointsUIElement extends UIElement {
 
     if (isActive) {
       // Dotted line
-      layer.drawLineSegment(this.editor.projection.posn(pt), suggestedProj, {
+      layer.drawLineSegment(ptProj, suggestedProj, {
         stroke: consts.blue
       });
 
       const plusSignDimens = 4;
 
       // Draw plus sign
-      let ls = new LineSegment(pt, suggestion);
+      let ls = new LineSegment(ptProj, suggestedProj);
       let a = ls.angle360;
-      let plusSignPosn = pt
+      let pp = ptProj
         .clone()
-        .nudge(0, -ls.length - 8)
-        .rotate(a, pt);
-
-      let pp = this.editor.projection.posn(plusSignPosn);
+        .nudge(0, -ls.length - 14)
+        .rotate(a, ptProj);
 
       layer.drawLineSegment(
         pp.clone().nudge(-plusSignDimens, 0),
