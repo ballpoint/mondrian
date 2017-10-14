@@ -93,15 +93,6 @@ body#app {
   .icon.weak svg {
     stroke: #81888c; }
 
-#print-view {
-  display: none; }
-
-@media print {
-  #app-main {
-    display: none; }
-  #print-view {
-    display: block; } }
-
 .text-input input {
   text-align: right; }
 

@@ -1,7 +1,8 @@
 {
   "name": "mondrian",
   "version": "0.0.0",
-  "description": "Mondrian is a smart and easy-to-learn vector graphics web app.",
+  "description":
+    "Mondrian is a smart and easy-to-learn vector graphics web app.",
   "main": "",
   "directories": {
     "test": "tests"
@@ -32,8 +33,8 @@
     "lodash": "^4.17.4",
     "paper": "^0.11.3",
     "protobufjs": "^6.8.0",
-    "react": "^15.5.4",
-    "react-dom": "^15.5.4",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
     "style-loader": "^0.16.1",
     "uuid": "^3.0.1"
   },
