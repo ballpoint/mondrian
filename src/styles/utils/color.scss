@@ -22,17 +22,44 @@
         width: 32px;
         height: 32px;
 
-        &.color-util__row__swatch {
+        margin-left: 10px;
+
+        &.color-util__row__swatch--empty {
           border: 1px solid $blue-grey;
 
-          svg line {
-            stroke: $blue-grey;
+          svg {
+            width: 100%;
+            line {
+              stroke: $blue-grey;
+            }
           }
         }
       }
 
-      select {
-        margin: auto 10px auto 0;
+      .color-util__row__mini-swatches {
+        display: flex;
+        width: 100px;
+        margin-left: 10px;
+
+        .color-util__row__mini-swatch {
+          flex-grow: 1;
+          height: 32px;
+
+          + .color-util__row__mini-swatch {
+            margin-left: 3px;
+          }
+
+          &.color-util__row__mini-swatch--empty {
+            border: 1px solid $blue-grey;
+
+            svg {
+              width: 100%;
+              line {
+                stroke: $blue-grey;
+              }
+            }
+          }
+        }
       }
     }
   }

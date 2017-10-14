@@ -15,10 +15,7 @@ export default class DocHistory extends EventEmitter {
   stageFrame(frame, doc) {
     if (frame.empty) return;
 
-    if (this.head && !this.head.committed) {
-      // Undo staged but uncommitted frame
-      this.undo(doc);
-    }
+    this.resetStage(doc);
 
     if (this.head) {
       frame.depth = this.head.depth + 1;
@@ -32,6 +29,12 @@ export default class DocHistory extends EventEmitter {
 
     frame.setPrev(this.head);
     this.setHead(frame);
+  }
+
+  resetStage(doc) {
+    if (this.head && !this.head.committed) {
+      this.undo(doc);
+    }
   }
 
   commitFrame() {

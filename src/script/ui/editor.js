@@ -393,6 +393,9 @@ export default class Editor extends EventEmitter {
       this.state.selection.length > 0 &&
       this.state.selection.type === ELEMENTS
     ) {
+      // Undo current frame if we can to get original colors back
+      this.doc.resetStage();
+
       frame = new HistoryFrame(
         [
           actions.SetAttributeAction.forItems(
@@ -502,6 +505,11 @@ export default class Editor extends EventEmitter {
 
   selectItems(items) {
     this.setSelection(new Selection(this.doc, items));
+  }
+
+  narrowSelectionByAttr(key, value) {
+    let sel = this.state.selection.withAttrValue(key, value);
+    this.setSelection(sel);
   }
 
   selectPointHandle(point, which) {

@@ -197,6 +197,10 @@ export default class Doc {
     this.history.undo(this);
   }
 
+  resetStage() {
+    this.history.resetStage(this);
+  }
+
   redo() {
     this.history.redo(this);
   }

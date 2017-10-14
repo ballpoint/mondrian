@@ -18,6 +18,8 @@ const PICKER_WIDTH = 256;
 const PICKER_Y_SCALE = 2;
 const PICKER_HEIGHT = PICKER_WIDTH * 3 * PICKER_Y_SCALE;
 
+const VARIOUS = Symbol('various');
+
 let ColorUtil = React.createClass({
   getInitialState() {
     return {
@@ -48,6 +50,18 @@ let ColorUtil = React.createClass({
     if (this.state.modifying !== which) return null;
 
     if (color === NONE) return null;
+
+    let r = 0;
+    let g = 0;
+    let b = 0;
+    let hex = '000000';
+
+    if (color instanceof Color) {
+      r = color.r;
+      g = color.g;
+      b = color.b;
+      hex = color.hex;
+    }
 
     return (
       <div className="color-util__modify">
@@ -144,6 +158,11 @@ let ColorUtil = React.createClass({
       }
     }
 
+    if (color === NONE || color === VARIOUS) {
+      this.setState({ expanded: false });
+      return;
+    }
+
     this.setState({ modifying: which });
     this.setColor(which, color, null, { updateSaturation });
   },
@@ -201,18 +220,29 @@ let ColorUtil = React.createClass({
 
   getColor(which) {
     let editor = this.props.editor;
-    if (
-      editor.state.selection.type === ELEMENTS &&
-      editor.state.selection.length > 0
-    ) {
-      let color = editor.state.selection.getAttr(Item, which);
+    let colors = this.getColors(which);
+
+    if (colors.length === 1) {
+      let color = colors[0];
       if (color === null) {
         return NONE;
       } else {
         return color;
       }
     } else {
-      return editor.state.attributes.get(which);
+      return VARIOUS;
+    }
+  },
+
+  getColors(which) {
+    let editor = this.props.editor;
+    if (
+      editor.state.selection.type === ELEMENTS &&
+      editor.state.selection.length > 0
+    ) {
+      return this.props.editor.state.selection.getAttrValues(Item, which);
+    } else {
+      return [editor.state.attributes.get(which)];
     }
   },
 
@@ -329,6 +359,15 @@ let ColorUtil = React.createClass({
       needsRefresh = true;
     }
 
+    /*
+    console.log(
+      window.performance.now(),
+      needsRefresh,
+      this.state.color,
+      prevState.color
+    );
+    */
+
     if (needsRefresh) {
       this.refreshPicker();
     }
@@ -339,6 +378,7 @@ let ColorUtil = React.createClass({
 
     let canvas = this.refs.canvas;
     let selectedColor = this.colorModifying();
+    let selectedPosn;
 
     if (!canvas) return;
     if (selectedColor === NONE) return;
@@ -346,12 +386,14 @@ let ColorUtil = React.createClass({
     let context = this._layerGradient.context;
     context.clearRect(0, 0, PICKER_WIDTH, PICKER_WIDTH);
 
-    let selectedPosn = (this.state.posn || this.posnOfColor(selectedColor))
-      .clone()
-      .nudge(0, -this.state.pickerOffset);
+    if (selectedColor !== VARIOUS) {
+      selectedPosn = (this.state.posn || this.posnOfColor(selectedColor))
+        .clone()
+        .nudge(0, -this.state.pickerOffset);
 
-    if (selectedPosn.y < 0) {
-      selectedPosn.nudge(0, PICKER_HEIGHT);
+      if (selectedPosn.y < 0) {
+        selectedPosn.nudge(0, PICKER_HEIGHT);
+      }
     }
 
     let offset = this.state.pickerOffset;
@@ -408,17 +450,20 @@ let ColorUtil = React.createClass({
     context.fillRect(0, 0, PICKER_WIDTH, PICKER_WIDTH);
 
     this._layerUi.context.clearRect(0, 0, PICKER_WIDTH, PICKER_WIDTH);
-    this._layerUi.context.strokeStyle =
-      selectedColor.lightness() > 0.5 ? 'black' : 'white';
 
-    let rectDimen = 8;
+    if (selectedPosn) {
+      this._layerUi.context.strokeStyle =
+        selectedColor.lightness() > 0.5 ? 'black' : 'white';
 
-    this._layerUi.context.strokeRect(
-      mathUtils.sharpen(selectedPosn.x - 1 - rectDimen / 2),
-      mathUtils.sharpen(selectedPosn.y - 1 - rectDimen / 2),
-      rectDimen,
-      rectDimen
-    );
+      let rectDimen = 8;
+
+      this._layerUi.context.strokeRect(
+        mathUtils.sharpen(selectedPosn.x - 1 - rectDimen / 2),
+        mathUtils.sharpen(selectedPosn.y - 1 - rectDimen / 2),
+        rectDimen,
+        rectDimen
+      );
+    }
   },
 
   onPickerScroll(e) {
@@ -458,6 +503,10 @@ let ColorUtil = React.createClass({
   },
 
   posnOfColor(color) {
+    if (color === VARIOUS) {
+      return new Posn(-1, -1);
+    }
+
     let y = PICKER_HEIGHT * color.hue(); // - this.state.pickerOffset;
     let x = PICKER_WIDTH * (1 - color.lightness());
 
@@ -468,34 +517,81 @@ let ColorUtil = React.createClass({
     return new Posn(x, y);
   },
 
-  renderSwatch(which, color) {
+  renderSwatch(which, color, onClick, mini = false) {
+    let baseClass = `color-util__row__${mini ? 'mini-swatch' : 'swatch'}`;
     if (color === NONE) {
       return (
-        <div className="color-util__row__swatch color-util__row__swatch--empty">
-          <svg width="32" height="32">
-            <line x1={0} y1={30} x2={30} y2={0} />
-          </svg>
+        <div className={`${baseClass} ${baseClass}--empty`} onClick={onClick}>
+          {false ? (
+            <svg height="32">
+              <line x1={0} y1={30} x2={30} y2={0} />
+            </svg>
+          ) : null}
         </div>
       );
     } else {
       return (
         <div
-          className="color-util__row__swatch"
+          className={baseClass}
           style={{
             background: color.toString(),
             border: '1px solid ' + color.darken(0.2).toString()
           }}
-          onClick={() => {
-            this.modify(which, true);
-            this.toggle(which);
-          }}
+          onClick={onClick}
         />
       );
     }
   },
 
   renderSection(which) {
-    let color = this.getColor(which);
+    let colors = this.getColors(which);
+    let color;
+
+    let selector;
+    let swatch;
+    if (colors.length === 1) {
+      color = colors[0];
+      selector = (
+        <select
+          onChange={e => {
+            this.onColorModeChange(e, which);
+          }}>
+          <option value="solid" selected={color !== NONE}>
+            Solid
+          </option>
+          <option value="none" selected={color === NONE}>
+            None
+          </option>
+        </select>
+      );
+
+      swatch = this.renderSwatch(which, color, () => {
+        this.modify(which, true);
+        this.toggle(which);
+      });
+    } else {
+      selector = (
+        <div className="color-util__row__mini-swatches">
+          {colors.map(color => {
+            return this.renderSwatch(
+              which,
+              color,
+              () => {
+                this.props.editor.narrowSelectionByAttr(which, color);
+              },
+              true
+            );
+          })}
+        </div>
+      );
+
+      color = VARIOUS;
+
+      swatch = this.renderSwatch(which, NONE, () => {
+        this.setState({ modifying: which });
+        this.toggle(which);
+      });
+    }
 
     return [
       <div className="color-util__row">
@@ -504,19 +600,8 @@ let ColorUtil = React.createClass({
         </div>
 
         <div className="color-util__row__value">
-          <select
-            onChange={e => {
-              this.onColorModeChange(e, which);
-            }}>
-            <option value="solid" selected={color !== NONE}>
-              Solid
-            </option>
-            <option value="none" selected={color === NONE}>
-              None
-            </option>
-          </select>
-
-          {this.renderSwatch(which, color)}
+          {selector}
+          {swatch}
         </div>
       </div>,
 

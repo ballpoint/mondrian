@@ -233,14 +233,20 @@ export default class Selection {
   }
 
   getAttrValues(type, key) {
-    let vals = new Set();
+    let vals = [];
     let selection = this.ofType(type);
     for (let item of selection) {
       let val = item.data[key];
       if (val !== undefined) {
-        vals.add(val);
+        vals.push(val);
       }
     }
+
+    return _.uniqWith(vals, (a, b) => {
+      if (a.valueOf !== undefined) a = a.valueOf();
+      if (b.valueOf !== undefined) b = b.valueOf();
+      return a == b;
+    });
 
     return Array.from(vals.values());
   }
@@ -252,6 +258,19 @@ export default class Selection {
     } else {
       return null;
     }
+  }
+
+  withAttrValue(key, val) {
+    let items = this.items.filter(item => {
+      let iv = item.data[key];
+      if (val.valueOf && iv.valueOf) {
+        return val.valueOf() == iv.valueOf();
+      } else {
+        return val == iv;
+      }
+    });
+
+    return new Selection(this.doc, items);
   }
 
   get indexes() {

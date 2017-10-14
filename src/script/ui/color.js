@@ -1,11 +1,6 @@
-/*
-
-  Color
-
-  A nice lil' class for representing and manipulating colors.
-
-*/
-
+// Color class
+//
+// Special value
 export const NONE = 'none';
 
 export default class Color {
@@ -172,6 +167,10 @@ export default class Color {
 
   recalculateHex() {
     return (this.hex = this.rgbToHex(this.r, this.g, this.b));
+  }
+
+  valueOf() {
+    return this.hex;
   }
 
   darken(amt) {

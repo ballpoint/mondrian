@@ -361,13 +361,29 @@ html {
     margin-left: auto; }
     .color-util .color-util__row .color-util__row__value .color-util__row__swatch {
       width: 32px;
-      height: 32px; }
-      .color-util .color-util__row .color-util__row__value .color-util__row__swatch.color-util__row__swatch {
+      height: 32px;
+      margin-left: 10px; }
+      .color-util .color-util__row .color-util__row__value .color-util__row__swatch.color-util__row__swatch--empty {
         border: 1px solid #bbc4c9; }
-        .color-util .color-util__row .color-util__row__value .color-util__row__swatch.color-util__row__swatch svg line {
-          stroke: #bbc4c9; }
-    .color-util .color-util__row .color-util__row__value select {
-      margin: auto 10px auto 0; }
+        .color-util .color-util__row .color-util__row__value .color-util__row__swatch.color-util__row__swatch--empty svg {
+          width: 100%; }
+          .color-util .color-util__row .color-util__row__value .color-util__row__swatch.color-util__row__swatch--empty svg line {
+            stroke: #bbc4c9; }
+    .color-util .color-util__row .color-util__row__value .color-util__row__mini-swatches {
+      display: flex;
+      width: 100px;
+      margin-left: 10px; }
+      .color-util .color-util__row .color-util__row__value .color-util__row__mini-swatches .color-util__row__mini-swatch {
+        flex-grow: 1;
+        height: 32px; }
+        .color-util .color-util__row .color-util__row__value .color-util__row__mini-swatches .color-util__row__mini-swatch + .color-util__row__mini-swatch {
+          margin-left: 3px; }
+        .color-util .color-util__row .color-util__row__value .color-util__row__mini-swatches .color-util__row__mini-swatch.color-util__row__mini-swatch--empty {
+          border: 1px solid #bbc4c9; }
+          .color-util .color-util__row .color-util__row__value .color-util__row__mini-swatches .color-util__row__mini-swatch.color-util__row__mini-swatch--empty svg {
+            width: 100%; }
+            .color-util .color-util__row .color-util__row__value .color-util__row__mini-swatches .color-util__row__mini-swatch.color-util__row__mini-swatch--empty svg line {
+              stroke: #bbc4c9; }
 
 .color-util .color-util__picker .color-util__picker__slider {
   display: flex;
