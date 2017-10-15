@@ -43,15 +43,18 @@ import TextEditUIElement from 'ui/editor/text_edit';
 const UTILS_WIDTH = 360 + 275;
 
 export default class Editor extends EventEmitter {
-  constructor(root) {
+  constructor() {
     super();
 
     window.$e = this; // DEBUGGING
 
+    this.initState();
+  }
+
+  mount(root) {
     if (root) {
       this.root = root;
       this.initCanvas();
-      this.initState();
     }
   }
 
@@ -64,7 +67,7 @@ export default class Editor extends EventEmitter {
     this.fitToScreen();
     this.setCurrentLayer(doc.layers[0]);
 
-    this.canvas.refreshAll();
+    this.refreshAll();
 
     this.trigger('change');
     this.trigger('change:doc');
@@ -98,50 +101,50 @@ export default class Editor extends EventEmitter {
 
     this.cursorHandler.on('mousemove', (e, cursor) => {
       if (e.propagateToTool) this.state.tool.handleMousemove(e, cursor);
-      this.canvas.refresh('tool');
-      this.canvas.refresh('ui');
+      this.refresh('tool');
+      this.refresh('ui');
     });
 
     this.cursorHandler.on('mouseup', (e, cursor) => {
       if (e.propagateToTool) this.state.tool.handleMouseup(e, cursor);
-      this.canvas.refresh('tool');
-      this.canvas.refresh('ui');
+      this.refresh('tool');
+      this.refresh('ui');
     });
 
     this.cursorHandler.on('mousedown', (e, cursor) => {
       if (e.propagateToTool) this.state.tool.handleMousedown(e, cursor);
-      this.canvas.refresh('tool');
-      this.canvas.refresh('ui');
+      this.refresh('tool');
+      this.refresh('ui');
     });
 
     this.cursorHandler.on('click', (e, cursor) => {
       if (e.propagateToTool) this.state.tool.handleClick(e, cursor);
-      this.canvas.refresh('tool');
-      this.canvas.refresh('ui');
+      this.refresh('tool');
+      this.refresh('ui');
     });
 
     this.cursorHandler.on('doubleclick', (e, cursor) => {
       if (e.propagateToTool) this.state.tool.handleDoubleClick(e, cursor);
-      this.canvas.refresh('tool');
-      this.canvas.refresh('ui');
+      this.refresh('tool');
+      this.refresh('ui');
     });
 
     this.cursorHandler.on('drag:start', (e, cursor) => {
       if (e.propagateToTool) this.state.tool.handleDragStart(e, cursor);
-      this.canvas.refresh('tool');
-      this.canvas.refresh('ui');
+      this.refresh('tool');
+      this.refresh('ui');
     });
 
     this.cursorHandler.on('drag', (e, cursor) => {
       if (e.propagateToTool) this.state.tool.handleDrag(e, cursor);
-      this.canvas.refresh('tool');
-      this.canvas.refresh('ui');
+      this.refresh('tool');
+      this.refresh('ui');
     });
 
     this.cursorHandler.on('drag:stop', (e, cursor) => {
       if (e.propagateToTool) this.state.tool.handleDragStop(e, cursor);
-      this.canvas.refresh('tool');
-      this.canvas.refresh('ui');
+      this.refresh('tool');
+      this.refresh('ui');
     });
 
     this.cursorHandler.on('scroll:x', (e, cursor) => {
@@ -320,11 +323,20 @@ export default class Editor extends EventEmitter {
       this.calculateScales();
     });
 
-    this.canvas.refreshAll();
+    this.refreshAll();
+  }
+
+  refreshAll() {
+    if (this.canvas) this.canvas.refreshAll();
+  }
+
+  refresh(...ids) {
+    if (this.canvas) this.canvas.refresh(...ids);
   }
 
   initState() {
-    let cached = sessionStorage.getItem('editor:state');
+    let cached;
+    if (window.sessionStorage) cached = sessionStorage.getItem('editor:state');
     if (cached) {
       cached = JSON.parse(cached);
       this.state = {
@@ -404,10 +416,10 @@ export default class Editor extends EventEmitter {
 
   setPosition(posn) {
     this.state.position = posn;
-    if (this.doc) {
+    if (this.canvas && this.doc) {
       this.calculateScales();
     }
-    this.canvas.refreshAll();
+    this.refreshAll();
     this.cacheState();
   }
 
@@ -445,7 +457,7 @@ export default class Editor extends EventEmitter {
       this.nudge(-xd, -yd);
     }
 
-    this.canvas.refreshAll();
+    this.refreshAll();
     this.cacheState();
   }
 
@@ -487,7 +499,7 @@ export default class Editor extends EventEmitter {
       this.trigger('change:selection');
     }
 
-    this.canvas.refreshAll();
+    this.refreshAll();
   }
 
   selectItems(items) {
@@ -528,7 +540,7 @@ export default class Editor extends EventEmitter {
       this.trigger('change');
       this.trigger('change:hovering');
 
-      this.canvas.refresh('ui');
+      this.refresh('ui');
     }
   }
 
@@ -555,7 +567,7 @@ export default class Editor extends EventEmitter {
   setCurrentLayer(layer) {
     this.state.layer = layer;
 
-    this.canvas.refreshAll();
+    this.refreshAll();
 
     // defer
     setTimeout(() => {
@@ -599,7 +611,7 @@ export default class Editor extends EventEmitter {
     }
     this.state.tool = tool;
 
-    this.canvas.refreshAll();
+    this.refreshAll();
     this.state.selection.clearCache();
     this.trigger('change');
     this.trigger('change:tool');
@@ -1069,12 +1081,12 @@ export default class Editor extends EventEmitter {
     });
 
     handler.on('change:selection', (e, sel) => {
-      this.canvas.refreshAll();
+      this.refreshAll();
     });
 
     this.state.textEditHandler = handler;
 
-    this.canvas.refreshAll();
+    this.refreshAll();
     this.trigger('change');
   }
 
@@ -1111,7 +1123,7 @@ export default class Editor extends EventEmitter {
     this.stageFrame(frame);
     this.commitFrame();
 
-    this.canvas.refreshAll();
+    this.refreshAll();
     this.trigger('change');
   }
 
@@ -1119,7 +1131,7 @@ export default class Editor extends EventEmitter {
     this.doc.stageFrame(frame);
 
     this.state.selection.clearCache();
-    this.canvas.refreshAll();
+    this.refreshAll();
     this.trigger('change');
   }
 
@@ -1136,14 +1148,14 @@ export default class Editor extends EventEmitter {
   perform(h) {
     this.doc.perform(h);
     this.state.selection.clearCache();
-    this.canvas.refreshAll();
+    this.refreshAll();
     this.trigger('change');
   }
 
   undo() {
     this.doc.undo();
     this.state.selection.clearCache();
-    this.canvas.refreshAll();
+    this.refreshAll();
     this.trigger('change');
     this.trigger('history:step');
   }
@@ -1151,7 +1163,7 @@ export default class Editor extends EventEmitter {
   redo() {
     this.doc.redo();
     this.state.selection.clearCache();
-    this.canvas.refreshAll();
+    this.refreshAll();
     this.trigger('change');
     this.trigger('history:step');
   }
@@ -1159,7 +1171,7 @@ export default class Editor extends EventEmitter {
   jumpToHistoryDepth(depth) {
     this.doc.jumpToHistoryDepth(depth);
     this.state.selection.clearCache();
-    this.canvas.refreshAll();
+    this.refreshAll();
     this.trigger('change');
     this.trigger('history:step');
   }

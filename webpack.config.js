@@ -23,6 +23,7 @@ module.exports = {
   entry: {
     'bundles/app': 'main.js',
     'bundles/vendor': 'vendor.js',
+    'bundles/renderer': 'renderer.js',
     'bundles/test': 'test.js',
     'bundles/testbool': 'testbool.js'
   },
@@ -41,10 +42,7 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        loader: 'babel-loader',
-        options: {
-          presets: [['react']]
-        }
+        loader: 'babel-loader'
       },
       {
         test: /test.js$/,

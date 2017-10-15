@@ -27,33 +27,12 @@ import Toolbar from 'ui/components/toolbar/Toolbar';
 import Title from 'ui/components/title/Title';
 import Menus from 'ui/components/menus/Menus';
 
-let root = document.getElementById('app-render');
-let editor = new Editor(root);
+import View from 'ui/components/Editor';
 
-ReactDOM.render(
-  React.createElement(Utils, { editor }),
-  document.getElementById('app-windows')
-);
+let root = document.querySelector('#app');
+let editor = new Editor();
 
-ReactDOM.render(
-  React.createElement(Menus, { editor }),
-  document.getElementById('app-menus')
-);
-
-ReactDOM.render(
-  React.createElement(Tools, { editor }),
-  document.getElementById('app-tools')
-);
-
-ReactDOM.render(
-  React.createElement(Title, { editor }),
-  document.getElementById('app-title')
-);
-
-ReactDOM.render(
-  React.createElement(Toolbar, { editor }),
-  document.getElementById('app-toolbar')
-);
+ReactDOM.render(React.createElement(View, { editor }), root);
 
 let doc = Doc.fromSVG(handletest, 'handletest.svg');
 editor.load(doc);

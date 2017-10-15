@@ -281,6 +281,3 @@ export default class LineSegment {
   }
 }
 LineSegment.initClass();
-
-// TODO RM HACK
-window.LineSegment = LineSegment;

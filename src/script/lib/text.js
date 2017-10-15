@@ -1,10 +1,15 @@
 import EventEmitter from 'lib/events';
 // Util for measuring text with a throwaway canvas element
 
-let canvas = document.createElement('canvas');
-let context = canvas.getContext('2d');
+let canvas;
+let context;
 
 export function measure(value, style) {
+  if (canvas === undefined) {
+    canvas = document.createElement('canvas');
+    context = canvas.getContext('2d');
+  }
+
   context.font = style;
   return context.measureText(value);
 }

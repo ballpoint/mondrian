@@ -32,7 +32,6 @@ export default class SubCursor extends Tool {
       let bounds = elem.bounds().padded(10);
       if (shapes.contains(bounds, posn)) {
         let points = elem.getPoints();
-        window.$p = points;
         pointsToCheck = pointsToCheck.concat(points);
       }
     }

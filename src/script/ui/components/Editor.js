@@ -6,8 +6,14 @@ import Title from 'ui/components/title/Title';
 import Menus from 'ui/components/menus/Menus';
 
 // Main view
-let EditorView = React.createClass({
-  componentDidMount() {},
+class EditorView extends React.Component {
+  componentDidMount() {
+    let render = this.refs.render;
+
+    console.log(render);
+
+    this.props.editor.mount(render);
+  }
 
   render() {
     return (
@@ -22,20 +28,32 @@ let EditorView = React.createClass({
             </svg>
           </a>
           <div id="app-controls">
-            <div id="app-title" />
-            <div id="app-menus" />
-            <div id="app-toolbar" />
+            <div id="app-title">
+              <Title editor={this.props.editor} />
+            </div>
+            <div id="app-menus">
+              <Menus editor={this.props.editor} />
+            </div>
+            <div id="app-toolbar">
+              <Toolbar editor={this.props.editor} />
+            </div>
           </div>
         </header>
 
         <div id="app-view">
-          <div id="app-tools" />
+          <div id="app-tools">
+            <Tools editor={this.props.editor} />
+          </div>
 
-          <div id="app-render" />
+          <div id="app-render" ref="render" />
 
-          <div id="app-windows" />
+          <div id="app-windows">
+            <Utils editor={this.props.editor} />
+          </div>
         </div>
       </div>
     );
   }
-});
+}
+
+export default EditorView;
