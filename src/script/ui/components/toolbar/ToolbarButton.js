@@ -1,4 +1,4 @@
-export default React.createClass({
+export default class extends React.Component {
   render() {
     return (
       <a
@@ -9,4 +9,4 @@ export default React.createClass({
       </a>
     );
   }
-});
+}

@@ -3,7 +3,7 @@ import MenuItem from 'ui/components/menus/MenuItem';
 import MenuGroup from 'ui/components/menus/MenuGroup';
 import 'menus/menus.scss';
 
-let EditMenu = React.createClass({
+class EditMenu extends React.Component {
   render() {
     let selectionExists = this.props.editor.state.selection.length > 0;
     let editor = this.props.editor;
@@ -49,6 +49,6 @@ let EditMenu = React.createClass({
       </MenuBody>
     );
   }
-});
+}
 
 export default EditMenu;

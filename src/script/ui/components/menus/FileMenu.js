@@ -4,8 +4,8 @@ import Doc from 'io/doc';
 import 'menus/menus.scss';
 import 'menus/file-menu.scss';
 
-let FileMenu = React.createClass({
-  openFile(e) {
+class FileMenu extends React.Component {
+  openFile = (e) => {
     e = e.nativeEvent || e;
 
     let files = e.target.files;
@@ -25,14 +25,14 @@ let FileMenu = React.createClass({
     } else {
       console.warn('Failed to read files');
     }
-  },
+  };
 
-  docSVGHref() {
+  docSVGHref = () => {
     return (
       'data:image/svg+xml;charset=utf-8;base64,' +
       btoa(this.props.editor.doc.toSVG())
     );
-  },
+  };
 
   render() {
     return (
@@ -60,6 +60,6 @@ let FileMenu = React.createClass({
       </MenuBody>
     );
   }
-});
+}
 
 export default FileMenu;

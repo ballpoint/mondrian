@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import 'menus/menus.scss';
 
-let MenuItem = React.createClass({
+class MenuItem extends React.Component {
   render() {
     return (
       <div
@@ -22,6 +22,6 @@ let MenuItem = React.createClass({
       </div>
     );
   }
-});
+}
 
 export default MenuItem;

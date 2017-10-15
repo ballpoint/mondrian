@@ -1,6 +1,6 @@
 import TextInput from 'ui/components/utils/TextInput';
 
-export default React.createClass({
+export default class extends React.Component {
   render() {
     return (
       <div className="toolbar-item" title={this.props.title}>
@@ -9,4 +9,4 @@ export default React.createClass({
       </div>
     );
   }
-});
+}

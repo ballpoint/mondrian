@@ -4,10 +4,10 @@ import MenuGroup from 'ui/components/menus/MenuGroup';
 import HistoryFrame from 'history/Frame';
 import * as actions from 'history/actions/actions';
 
-let GeometryMenu = React.createClass({
-  flip(axis) {
+class GeometryMenu extends React.Component {
+  flip = (axis) => {
     this.props.editor.flipSelected(axis);
-  },
+  };
 
   render() {
     let selectionExists = !this.props.editor.state.selection.empty;
@@ -68,6 +68,6 @@ let GeometryMenu = React.createClass({
       </MenuBody>
     );
   }
-});
+}
 
 export default GeometryMenu;

@@ -8,8 +8,8 @@ import HistoryFrame from 'history/Frame';
 import * as actions from 'history/actions/actions';
 import { renderIcon } from 'ui/components/icons';
 
-let ChildCtrlButton = React.createClass({
-  icon() {
+class ChildCtrlButton extends React.Component {
+  icon = () => {
     switch (this.props.type) {
       case 'visibility':
         return this.props.value
@@ -22,9 +22,9 @@ let ChildCtrlButton = React.createClass({
       case 'delete':
         return renderIcon('del');
     }
-  },
+  };
 
-  onClick() {
+  onClick = () => {
     if (this.props.disabled) return;
 
     let frame;
@@ -75,7 +75,7 @@ let ChildCtrlButton = React.createClass({
     this.props.editor.commitFrame();
 
     if (cleanup) cleanup();
-  },
+  };
 
   render() {
     return (
@@ -89,15 +89,13 @@ let ChildCtrlButton = React.createClass({
       </div>
     );
   }
-});
+}
 
-let DocumentUtilChild = React.createClass({
-  getInitialState() {
-    return {
-      nonce: 0,
-      id: ''
-    };
-  },
+class DocumentUtilChild extends React.Component {
+  state = {
+    nonce: 0,
+    id: ''
+  };
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.child.__id__ !== this.state.id) {
@@ -106,18 +104,18 @@ let DocumentUtilChild = React.createClass({
         nonce: 0
       });
     }
-  },
+  }
 
   componentDidMount() {
     this.updateThumbDebounced = _.debounce(this.updateThumb, 1000);
     this.updateThumb();
-  },
+  }
 
   componentDidUpdate() {
     this.updateThumb();
-  },
+  }
 
-  updateThumb() {
+  updateThumb = () => {
     let nonce = this.props.child.__nonce__;
     let dimens = 20;
     if (this.props.child instanceof Layer) {
@@ -135,7 +133,7 @@ let DocumentUtilChild = React.createClass({
         this.setState({ nonce });
       }
     }
-  },
+  };
 
   render() {
     let child = this.props.child;
@@ -265,43 +263,41 @@ let DocumentUtilChild = React.createClass({
       </div>
     );
   }
-});
+}
 
-let DocumentUtil = React.createClass({
-  getInitialState() {
-    return {
-      expandedIndexes: {
-        '0': true
-      }
-    };
-  },
+class DocumentUtil extends React.Component {
+  state = {
+    expandedIndexes: {
+      '0': true
+    }
+  };
 
-  componentDidMount() {},
+  componentDidMount() {}
 
   shouldComponentUpdate(nextProps, nextState) {
     // TODO optimize this shit
     return true;
-  },
+  }
 
-  componentWillReceiveProps(prevState) {},
+  componentWillReceiveProps(prevState) {}
 
-  expand(child) {
+  expand = (child) => {
     this.state.expandedIndexes[child.index.toString()] = true;
     this.setState({ expandedIndexes: this.state.expandedIndexes });
-  },
+  };
 
-  collapse(child) {
+  collapse = (child) => {
     delete this.state.expandedIndexes[child.index.toString()];
     this.setState({ expandedIndexes: this.state.expandedIndexes });
-  },
+  };
 
-  isExpanded(child) {
+  isExpanded = (child) => {
     return !!this.state.expandedIndexes[child.index.toString()];
-  },
+  };
 
-  createLayer() {
+  createLayer = () => {
     this.props.editor.createLayer();
-  },
+  };
 
   render() {
     return (
@@ -331,6 +327,6 @@ let DocumentUtil = React.createClass({
       </Util>
     );
   }
-});
+}
 
 export default DocumentUtil;

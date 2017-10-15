@@ -5,8 +5,8 @@ import { renderIcon } from 'ui/components/icons';
 import 'utils/stroke.scss';
 import classnames from 'classnames';
 
-let StrokeUtil = React.createClass({
-  renderAttrButton(attr, val, icon) {
+class StrokeUtil extends React.Component {
+  renderAttrButton = (attr, val, icon) => {
     let selectedVal = this.props.editor.getAttribute(Item, attr);
 
     return (
@@ -27,7 +27,7 @@ let StrokeUtil = React.createClass({
         })}
       </div>
     );
-  },
+  };
 
   render() {
     let selectedWidth = this.props.editor.getAttribute(Item, 'stroke-width');
@@ -99,6 +99,6 @@ let StrokeUtil = React.createClass({
       </Util>
     );
   }
-});
+}
 
 export default StrokeUtil;

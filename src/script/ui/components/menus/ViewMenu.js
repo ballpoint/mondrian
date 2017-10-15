@@ -2,7 +2,7 @@ import MenuBody from 'ui/components/menus/MenuBody';
 import MenuItem from 'ui/components/menus/MenuItem';
 import 'menus/menus.scss';
 
-let ViewMenu = React.createClass({
+class ViewMenu extends React.Component {
   render() {
     let editor = this.props.editor;
     return (
@@ -32,6 +32,6 @@ let ViewMenu = React.createClass({
       </MenuBody>
     );
   }
-});
+}
 
 export default ViewMenu;

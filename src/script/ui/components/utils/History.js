@@ -2,8 +2,8 @@ import 'utils/history.scss';
 import classnames from 'classnames';
 import Util from 'ui/components/utils/Util';
 
-let HistoryUtil = React.createClass({
-  renderHistoryFrame(frame, selected = false) {
+class HistoryUtil extends React.Component {
+  renderHistoryFrame = (frame, selected = false) => {
     return (
       <div
         key={'frame' + frame.depth}
@@ -22,7 +22,7 @@ let HistoryUtil = React.createClass({
         </div>
       </div>
     );
-  },
+  };
 
   render() {
     if (!this.props.doc || !this.props.doc.history) {
@@ -63,6 +63,6 @@ let HistoryUtil = React.createClass({
       </Util>
     );
   }
-});
+}
 
 export default HistoryUtil;

@@ -7,12 +7,11 @@ import StrokeUtil from 'ui/components/utils/Stroke';
 import AlignUtil from 'ui/components/utils/Align';
 import { ELEMENTS, POINTS, PHANDLE, SHANDLE } from 'ui/selection';
 
-let Utils = React.createClass({
-  getInitialState() {
-    return {
-      selection: []
-    };
-  },
+class Utils extends React.Component {
+  state = {
+    selection: []
+  };
+
   componentDidMount() {
     let nextFrame = null;
 
@@ -40,9 +39,9 @@ let Utils = React.createClass({
         });
       });
     });
-  },
+  }
 
-  getUtilsLeft() {
+  getUtilsLeft = () => {
     let w = [];
 
     if (!this.props.editor.doc) return w;
@@ -72,9 +71,9 @@ let Utils = React.createClass({
     );
 
     return w;
-  },
+  };
 
-  getUtilsRight() {
+  getUtilsRight = () => {
     let w = [];
 
     if (!this.props.editor.doc) return w;
@@ -105,7 +104,7 @@ let Utils = React.createClass({
     );
 
     return w;
-  },
+  };
 
   render() {
     return (
@@ -115,6 +114,6 @@ let Utils = React.createClass({
       </div>
     );
   }
-});
+}
 
 export default Utils;

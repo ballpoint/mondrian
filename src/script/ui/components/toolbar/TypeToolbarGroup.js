@@ -7,7 +7,7 @@ import ToolbarButton from 'ui/components/toolbar/ToolbarButton';
 import ToolbarDropdown from 'ui/components/toolbar/ToolbarDropdown';
 import ToolbarNumberInput from 'ui/components/toolbar/ToolbarNumberInput';
 
-let TypeToolbarGroup = React.createClass({
+class TypeToolbarGroup extends React.Component {
   render() {
     let selectedTextItems = this.props.editor.state.selection.ofType(Text);
     let selectedTool = this.props.editor.state.tool;
@@ -154,6 +154,6 @@ let TypeToolbarGroup = React.createClass({
       </ToolbarGroup>
     );
   }
-});
+}
 
 export default TypeToolbarGroup;

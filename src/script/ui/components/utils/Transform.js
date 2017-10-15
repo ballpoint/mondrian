@@ -12,12 +12,10 @@ import 'utils/transform.scss';
 const THUMB_IMG_MAX_WIDTH = 120;
 const THUMB_IMG_MAX_HEIGHT = 80;
 
-let TransformUtil = React.createClass({
-  getInitialState() {
-    return {
-      originId: 'tl'
-    };
-  },
+class TransformUtil extends React.Component {
+  state = {
+    originId: 'tl'
+  };
 
   shouldComponentUpdate(nextProps, nextState) {
     if (!this.props.selection || nextProps.selection) {
@@ -26,9 +24,9 @@ let TransformUtil = React.createClass({
       return !this.props.selection.bounds.equal(nextProps.selection.bounds);
     }
     return true;
-  },
+  }
 
-  renderSubheader() {
+  renderSubheader = () => {
     let sel = this.props.editor.state.selection;
     let items = sel.items;
     let subheader;
@@ -50,9 +48,9 @@ let TransformUtil = React.createClass({
     }
 
     return <div className="sel-util__subheader">{subheader}</div>;
-  },
+  };
 
-  getSelectionIdKey() {
+  getSelectionIdKey = () => {
     let { state } = this.props.editor;
     if (state.selection.type === ELEMENTS) {
       return state.selection.items
@@ -64,7 +62,7 @@ let TransformUtil = React.createClass({
     } else {
       return '';
     }
-  },
+  };
 
   componentDidUpdate() {
     let canvas = ReactDOM.findDOMNode(this.refs.thumbnail);
@@ -73,15 +71,15 @@ let TransformUtil = React.createClass({
       let thumb = this.getThumbnail();
       thumb.drawTo(new Layer('thumb', canvas));
     }
-  },
+  }
 
   componentWillReceiveProps(prevState) {
     // Handle changing the thumbnail. Debounce if selection ids haven't changed.
     let selectionKey = this.getSelectionIdKey();
     this.setState({ selectionKey });
-  },
+  }
 
-  onChangeCoord(val, which) {
+  onChangeCoord = (val, which) => {
     let xd = 0,
       yd = 0;
     let { state, doc } = this.props.editor;
@@ -101,9 +99,9 @@ let TransformUtil = React.createClass({
         this.props.editor.commitFrame();
       }
     }
-  },
+  };
 
-  onChangeScale(val, which) {
+  onChangeScale = (val, which) => {
     let xs = 1,
       ys = 1;
     let { state, doc } = this.props.editor;
@@ -123,16 +121,16 @@ let TransformUtil = React.createClass({
         this.props.editor.commitFrame();
       }
     }
-  },
+  };
 
-  getThumbnail() {
+  getThumbnail = () => {
     return new Thumb(this.props.editor.state.selection.items, {
       maxWidth: THUMB_IMG_MAX_WIDTH,
       maxHeight: THUMB_IMG_MAX_HEIGHT
     });
-  },
+  };
 
-  renderOriginButton(id) {
+  renderOriginButton = (id) => {
     return (
       <div
         className={classnames({
@@ -145,9 +143,9 @@ let TransformUtil = React.createClass({
         }}
       />
     );
-  },
+  };
 
-  renderThumb() {
+  renderThumb = () => {
     let { state, doc } = this.props.editor;
     let bounds = state.selection.bounds;
 
@@ -218,9 +216,9 @@ let TransformUtil = React.createClass({
         }
       }
     }
-  },
+  };
 
-  getOrigin(bounds) {
+  getOrigin = (bounds) => {
     switch (this.state.originId) {
       case 'tl':
         return bounds.tl();
@@ -233,9 +231,9 @@ let TransformUtil = React.createClass({
       case 'c':
         return bounds.center();
     }
-  },
+  };
 
-  renderCoords() {
+  renderCoords = () => {
     let { state, doc } = this.props.editor;
     if (state.selection) {
       let bounds = state.selection.bounds;
@@ -270,9 +268,9 @@ let TransformUtil = React.createClass({
     }
 
     return <div className="sel-util__top__left"> </div>;
-  },
+  };
 
-  renderHeight() {
+  renderHeight = () => {
     let { state, doc } = this.props.editor;
     if (!doc) return;
 
@@ -308,9 +306,9 @@ let TransformUtil = React.createClass({
         </div>
       </div>
     );
-  },
+  };
 
-  renderWidth() {
+  renderWidth = () => {
     let { state, doc } = this.props.editor;
     if (!doc) return;
 
@@ -346,7 +344,7 @@ let TransformUtil = React.createClass({
         </div>
       </div>
     );
-  },
+  };
 
   render() {
     return (
@@ -365,6 +363,6 @@ let TransformUtil = React.createClass({
       </Util>
     );
   }
-});
+}
 
 export default TransformUtil;

@@ -13,12 +13,10 @@ import ToolbarDropdown from 'ui/components/toolbar/ToolbarDropdown';
 import ToolbarNumberInput from 'ui/components/toolbar/ToolbarNumberInput';
 import TypeToolbarGroup from 'ui/components/toolbar/TypeToolbarGroup';
 
-let Toolbar = React.createClass({
-  getInitialState() {
-    return {
-      selection: null
-    };
-  },
+class Toolbar extends React.Component {
+  state = {
+    selection: null
+  };
 
   componentDidMount() {
     this.props.editor.on(['change:selection', 'change:tool'], () => {
@@ -27,9 +25,9 @@ let Toolbar = React.createClass({
         tool: this.props.editor.state.tool
       });
     });
-  },
+  }
 
-  renderHistoryGroup() {
+  renderHistoryGroup = () => {
     return (
       <ToolbarGroup>
         <ToolbarButton
@@ -44,9 +42,9 @@ let Toolbar = React.createClass({
         </ToolbarButton>
       </ToolbarGroup>
     );
-  },
+  };
 
-  renderBooleanGroup() {
+  renderBooleanGroup = () => {
     let editor = this.props.editor;
 
     let boolOp = function(op) {
@@ -89,7 +87,7 @@ let Toolbar = React.createClass({
         </ToolbarGroup>
       );
     }
-  },
+  };
 
   render() {
     return (
@@ -102,6 +100,6 @@ let Toolbar = React.createClass({
       </div>
     );
   }
-});
+}
 
 export default Toolbar;

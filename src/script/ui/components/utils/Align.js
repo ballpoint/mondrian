@@ -5,7 +5,7 @@ import 'utils/align.scss';
 import HistoryFrame from 'history/Frame';
 import * as actions from 'history/actions/actions';
 
-let AlignUtilButton = React.createClass({
+class AlignUtilButton extends React.Component {
   render() {
     return (
       <div
@@ -21,19 +21,17 @@ let AlignUtilButton = React.createClass({
       </div>
     );
   }
-});
+}
 
 const SELECTION = 'SELECTION';
 const CANVAS = 'CANVAS';
 
-let AlignUtil = React.createClass({
-  getInitialState() {
-    return {
-      mode: SELECTION
-    };
-  },
+class AlignUtil extends React.Component {
+  state = {
+    mode: SELECTION
+  };
 
-  renderModeButton() {
+  renderModeButton = () => {
     let buttonIcon;
     let buttonHint;
 
@@ -68,13 +66,13 @@ let AlignUtil = React.createClass({
         {buttonIcon}
       </a>
     );
-  },
+  };
 
-  toggleMode() {
+  toggleMode = () => {
     this.setState({ mode: this.state.mode === SELECTION ? CANVAS : SELECTION });
-  },
+  };
 
-  performAlign(which) {
+  performAlign = (which) => {
     let sb;
 
     switch (this.state.mode) {
@@ -151,7 +149,7 @@ let AlignUtil = React.createClass({
 
     this.props.editor.stageFrame(frame);
     this.props.editor.commitFrame();
-  },
+  };
 
   render() {
     return (
@@ -198,6 +196,6 @@ let AlignUtil = React.createClass({
       </Util>
     );
   }
-});
+}
 
 export default AlignUtil;

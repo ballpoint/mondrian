@@ -20,15 +20,13 @@ const PICKER_HEIGHT = PICKER_WIDTH * 3 * PICKER_Y_SCALE;
 
 const VARIOUS = Symbol('various');
 
-let ColorUtil = React.createClass({
-  getInitialState() {
-    return {
-      expanded: false,
-      pickerOffset: 0,
+class ColorUtil extends React.Component {
+  state = {
+    expanded: false,
+    pickerOffset: 0,
 
-      saturation: 0.5
-    };
-  },
+    saturation: 0.5
+  };
 
   componentDidMount() {
     this.props.editor.on('change:selection', () => {
@@ -42,9 +40,9 @@ let ColorUtil = React.createClass({
       }
     });
     this.refreshPicker();
-  },
+  }
 
-  renderPicker(which, color) {
+  renderPicker = (which, color) => {
     if (!this.state.expanded) return null;
 
     if (this.state.modifying !== which) return null;
@@ -131,17 +129,17 @@ let ColorUtil = React.createClass({
         </div>
       </div>
     );
-  },
+  };
 
-  toggle(which) {
+  toggle = which => {
     if (this.state.modifying === which) {
       this.setState({ expanded: !this.state.expanded });
     } else {
       this.setState({ expanded: true });
     }
-  },
+  };
 
-  modify(which, updateSaturation) {
+  modify = (which, updateSaturation) => {
     let color = this.getColor(which);
 
     if (this.state.color) {
@@ -165,13 +163,13 @@ let ColorUtil = React.createClass({
 
     this.setState({ modifying: which });
     this.setColor(which, color, null, { updateSaturation });
-  },
+  };
 
-  colorModifying() {
+  colorModifying = () => {
     return this.getColor(this.state.modifying);
-  },
+  };
 
-  setColor(which, color, posn, opts = {}) {
+  setColor = (which, color, posn, opts = {}) => {
     let editor = this.props.editor;
 
     let frame;
@@ -210,15 +208,15 @@ let ColorUtil = React.createClass({
         saturation: color.saturation()
       });
     }
-  },
+  };
 
-  commitColor() {
+  commitColor = () => {
     if (this.state.uncommittedFrame) {
       this.props.editor.commitFrame();
     }
-  },
+  };
 
-  getColor(which) {
+  getColor = which => {
     let editor = this.props.editor;
     let colors = this.getColors(which);
 
@@ -232,9 +230,9 @@ let ColorUtil = React.createClass({
     } else {
       return VARIOUS;
     }
-  },
+  };
 
-  getColors(which) {
+  getColors = which => {
     let editor = this.props.editor;
     if (
       editor.state.selection.type === ELEMENTS &&
@@ -244,9 +242,9 @@ let ColorUtil = React.createClass({
     } else {
       return [editor.state.attributes.get(which)];
     }
-  },
+  };
 
-  onSliderChange(e) {
+  onSliderChange = e => {
     let val = parseFloat(e.target.value) / 1000;
 
     this.setState({
@@ -254,18 +252,18 @@ let ColorUtil = React.createClass({
     });
 
     e.stopPropagation();
-  },
+  };
 
-  onSaturationInputChange(val) {
+  onSaturationInputChange = val => {
     let sat = parseFloat(val) / 100;
     sat = Math.min(1, Math.max(0, sat));
 
     this.setState({
       saturation: sat
     });
-  },
+  };
 
-  onRGBChange(val, which) {
+  onRGBChange = (val, which) => {
     val = parseInt(val);
     val = Math.max(0, Math.min(255, val));
 
@@ -289,9 +287,9 @@ let ColorUtil = React.createClass({
     });
 
     this.commitColor();
-  },
+  };
 
-  onColorModeChange(e, which) {
+  onColorModeChange = (e, which) => {
     let editor = this.props.editor;
     let mode = e.target.value;
 
@@ -305,15 +303,15 @@ let ColorUtil = React.createClass({
     }
 
     this.commitColor();
-  },
+  };
 
-  onHexChange(val) {
+  onHexChange = val => {
     let color = Color.fromHex(val);
 
     this.setColor(this.state.modifying, color, null, {
       updateSaturation: true
     });
-  },
+  };
 
   componentDidUpdate(prevProps, prevState) {
     let canvas = this.refs.canvas;
@@ -371,9 +369,9 @@ let ColorUtil = React.createClass({
     if (needsRefresh) {
       this.refreshPicker();
     }
-  },
+  }
 
-  refreshPicker() {
+  refreshPicker = () => {
     if (!this.state.modifying) return;
 
     let canvas = this.refs.canvas;
@@ -464,9 +462,9 @@ let ColorUtil = React.createClass({
         rectDimen
       );
     }
-  },
+  };
 
-  onPickerScroll(e) {
+  onPickerScroll = e => {
     let pickerOffset = this.state.pickerOffset + e.deltaY / 2;
 
     pickerOffset %= PICKER_HEIGHT;
@@ -478,9 +476,9 @@ let ColorUtil = React.createClass({
     });
 
     e.stopPropagation();
-  },
+  };
 
-  pickerSelect(e, cursor) {
+  pickerSelect = (e, cursor) => {
     let bounds = this._canvas.getBoundingClientRect();
     let x = Math.round(e.clientX - bounds.left);
     let y = Math.round(e.clientY - bounds.top);
@@ -500,9 +498,9 @@ let ColorUtil = React.createClass({
     let color = new Color(imgData[0], imgData[1], imgData[2]);
 
     this.setColor(this.state.modifying, color, posn);
-  },
+  };
 
-  posnOfColor(color) {
+  posnOfColor = color => {
     if (color === VARIOUS) {
       return new Posn(-1, -1);
     }
@@ -515,9 +513,9 @@ let ColorUtil = React.createClass({
     }
 
     return new Posn(x, y);
-  },
+  };
 
-  renderSwatch(which, color, onClick, mini = false) {
+  renderSwatch = (which, color, onClick, mini = false) => {
     let baseClass = `color-util__row__${mini ? 'mini-swatch' : 'swatch'}`;
     if (color === NONE) {
       return (
@@ -532,6 +530,7 @@ let ColorUtil = React.createClass({
     } else {
       return (
         <div
+          key={which}
           className={baseClass}
           style={{
             background: color.toString(),
@@ -541,9 +540,9 @@ let ColorUtil = React.createClass({
         />
       );
     }
-  },
+  };
 
-  renderSection(which) {
+  renderSection = which => {
     let colors = this.getColors(which);
     let color;
 
@@ -555,13 +554,10 @@ let ColorUtil = React.createClass({
         <select
           onChange={e => {
             this.onColorModeChange(e, which);
-          }}>
-          <option value="solid" selected={color !== NONE}>
-            Solid
-          </option>
-          <option value="none" selected={color === NONE}>
-            None
-          </option>
+          }}
+          defaultValue={color === NONE ? 'none' : 'solid'}>
+          <option value="solid">Solid</option>
+          <option value="none">None</option>
         </select>
       );
 
@@ -594,12 +590,12 @@ let ColorUtil = React.createClass({
     }
 
     return [
-      <div className="color-util__row">
+      <div className="color-util__row" key={`${which}-row`}>
         <div className="color-util__row__label">
           {{ fill: 'Fill', stroke: 'Stroke' }[which]}
         </div>
 
-        <div className="color-util__row__value">
+        <div className="color-util__row__value" key={`${which}-picker`}>
           {selector}
           {swatch}
         </div>
@@ -607,7 +603,7 @@ let ColorUtil = React.createClass({
 
       this.renderPicker(which, color)
     ];
-  },
+  };
 
   render() {
     return (
@@ -619,6 +615,6 @@ let ColorUtil = React.createClass({
       </Util>
     );
   }
-});
+}
 
 export default ColorUtil;

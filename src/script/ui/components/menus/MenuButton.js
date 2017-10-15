@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import 'menus/menus.scss';
 
-let MenuButton = React.createClass({
+class MenuButton extends React.Component {
   render() {
     return (
       <div
@@ -15,6 +15,6 @@ let MenuButton = React.createClass({
       </div>
     );
   }
-});
+}
 
 export default MenuButton;

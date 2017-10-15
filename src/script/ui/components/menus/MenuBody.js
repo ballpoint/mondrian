@@ -1,6 +1,6 @@
 import 'menus/menus.scss';
 
-let MenuBody = React.createClass({
+class MenuBody extends React.Component {
   render() {
     return (
       <div
@@ -10,6 +10,6 @@ let MenuBody = React.createClass({
       </div>
     );
   }
-});
+}
 
 export default MenuBody;

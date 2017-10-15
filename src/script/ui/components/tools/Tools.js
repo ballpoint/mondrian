@@ -47,12 +47,10 @@ const config = [
   }
 ];
 
-let Tools = React.createClass({
-  getInitialState() {
-    return {
-      selected: this.props.editor.state.tool
-    };
-  },
+class Tools extends React.Component {
+  state = {
+    selected: this.props.editor.state.tool
+  };
 
   componentDidMount() {
     this.props.editor.on('change:tool', () => {
@@ -65,7 +63,7 @@ let Tools = React.createClass({
         });
       }
     });
-  },
+  }
 
   render() {
     return (
@@ -76,6 +74,7 @@ let Tools = React.createClass({
             this.props.editor.state.tool.constructor === t.constructor;
           return (
             <a
+              key={t.constructor.name}
               className={classnames({
                 'app-tool': true,
                 icon: true,
@@ -94,6 +93,6 @@ let Tools = React.createClass({
       </div>
     );
   }
-});
+}
 
 export default Tools;

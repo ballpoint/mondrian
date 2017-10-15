@@ -1,10 +1,8 @@
-let TextInput = React.createClass({
-  getInitialState() {
-    return {
-      value: this.props.value || '',
-      lastCommittedValue: this.props.value || ''
-    };
-  },
+class TextInput extends React.Component {
+  state = {
+    value: this.props.value || '',
+    lastCommittedValue: this.props.value || ''
+  };
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.value !== this.state.value && !this.state.isFocused) {
@@ -13,7 +11,7 @@ let TextInput = React.createClass({
         lastCommittedValue: nextProps.value || ''
       });
     }
-  },
+  }
 
   render() {
     let label;
@@ -68,6 +66,6 @@ let TextInput = React.createClass({
       </span>
     );
   }
-});
+}
 
 export default TextInput;

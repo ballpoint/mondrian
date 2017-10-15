@@ -1,4 +1,4 @@
-let Util = React.createClass({
+class Util extends React.Component {
   render() {
     return (
       <div className="util-window" id={'util-' + this.props.id}>
@@ -8,6 +8,6 @@ let Util = React.createClass({
       </div>
     );
   }
-});
+}
 
 export default Util;

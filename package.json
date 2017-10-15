@@ -1,8 +1,7 @@
 {
   "name": "mondrian",
   "version": "0.0.0",
-  "description":
-    "Mondrian is a smart and easy-to-learn vector graphics web app.",
+  "description": "Mondrian is a smart and easy-to-learn vector graphics web app.",
   "main": "",
   "directories": {
     "test": "tests"
@@ -40,6 +39,7 @@
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
+    "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-preset-react": "^6.24.1",
     "chai": "^4.1.2",
     "connect": "~2.12.0",

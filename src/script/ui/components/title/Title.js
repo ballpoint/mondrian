@@ -1,11 +1,9 @@
 import 'title/title.scss';
 
-let Title = React.createClass({
-  getInitialState() {
-    return {
-      doc: null
-    };
-  },
+class Title extends React.Component {
+  state = {
+    doc: null
+  };
 
   componentDidMount() {
     this.props.editor.on('change:doc', () => {
@@ -13,7 +11,7 @@ let Title = React.createClass({
         doc: this.props.editor.doc
       });
     });
-  },
+  }
 
   render() {
     if (!this.state.doc) return null;
@@ -24,6 +22,6 @@ let Title = React.createClass({
       </h2>
     );
   }
-});
+}
 
 export default Title;

@@ -1,6 +1,6 @@
 import Util from 'ui/components/utils/Util';
 
-let LayersUtil = React.createClass({
+class LayersUtil extends React.Component {
   render() {
     let doc = this.props.editor.doc;
 
@@ -12,6 +12,6 @@ let LayersUtil = React.createClass({
       </Util>
     );
   }
-});
+}
 
 export default LayersUtil;

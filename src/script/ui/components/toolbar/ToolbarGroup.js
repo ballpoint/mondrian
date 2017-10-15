@@ -1,4 +1,4 @@
-export default React.createClass({
+export default class extends React.Component {
   render() {
     return (
       <div className="toolbar-group">
@@ -6,4 +6,4 @@ export default React.createClass({
       </div>
     );
   }
-});
+}

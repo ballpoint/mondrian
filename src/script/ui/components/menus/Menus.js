@@ -29,12 +29,10 @@ const fileMenu = menus[0];
 const editMenu = menus[1];
 const viewMenu = menus[2];
 
-let Menus = React.createClass({
-  getInitialState() {
-    return {
-      active: null
-    };
-  },
+class Menus extends React.Component {
+  state = {
+    active: null
+  };
 
   componentDidMount() {
     document.addEventListener('mousedown', e => {
@@ -73,16 +71,16 @@ let Menus = React.createClass({
         }
       }, 100);
     });
-  },
+  }
 
-  closeActive() {
+  closeActive = () => {
     this.setState({
       active: null,
       activeButton: null
     });
-  },
+  };
 
-  renderActiveMenu() {
+  renderActiveMenu = () => {
     let a = this.state.active;
     if (a) {
       let button = this.state.activeButton; //ReactDOM.findDOMNode(this.refs['button'+a.name]);
@@ -96,16 +94,16 @@ let Menus = React.createClass({
         />
       );
     }
-  },
+  };
 
-  activateMenu(m) {
+  activateMenu = (m) => {
     let button = ReactDOM.findDOMNode(this.refs['button' + m.name]);
 
     this.setState({
       active: m,
       activeButton: button
     });
-  },
+  };
 
   render() {
     return (
@@ -138,6 +136,6 @@ let Menus = React.createClass({
       </div>
     );
   }
-});
+}
 
 export default Menus;
