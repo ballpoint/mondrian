@@ -248,8 +248,8 @@ export default class Posn {
     return new Posn(x + (x - this.x), y + (y - this.y));
   }
 
-  distanceFrom(p) {
-    return new LineSegment(this, p).length;
+  distanceFrom(b) {
+    return Math.sqrt(Math.pow(b.x - this.x, 2) + Math.pow(b.y - this.y, 2));
   }
 
   perpendicularDistanceFrom(ls) {

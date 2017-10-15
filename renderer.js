@@ -80,7 +80,7 @@ let server = http.createServer((req, res) => {
     }
 
     switch (data.view) {
-      case 'EditorView':
+      case 'editor':
         props.editor = new __CLASSES__.Editor();
     }
 

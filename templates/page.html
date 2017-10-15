@@ -1,0 +1,12 @@
+<html>
+  <head>
+    <!--<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">-->
+    <link rel="stylesheet" href="/assets/styles/bundles/{{ .View.Name }}.css" />
+  </head>
+  <body>
+    {{ .View.Prerendered }}
+
+    <script type="text/javascript" src="/assets/bundles/vendor.bundle.js"></script>
+    <script type="text/javascript" src="/assets/bundles/{{ .View.Name }}.bundle.js"></script>
+  </body>
+</html>

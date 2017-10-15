@@ -3,7 +3,6 @@ package webserver
 import (
 	"net/http"
 
-	"github.com/ballpoint/mondrian/src/webserver/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -23,14 +22,16 @@ func New() *Webserver {
 		},
 	}
 
-	s.Handle("/", handlers.RootHandler)
+	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir("build"))))
+
+	s.Handle("/", editorViewHandler)
 
 	return s
 }
 
-func (s *Webserver) Handle(route string, h handlers.Handler) {
+func (s *Webserver) Handle(route string, h Handler) {
 	do := func(w http.ResponseWriter, req *http.Request) {
-		context := &handlers.Context{
+		context := &Context{
 			ResponseWriter: w,
 			Request:        req,
 		}

@@ -29,7 +29,7 @@ import Menus from 'ui/components/menus/Menus';
 
 import View from 'ui/components/Editor';
 
-let root = document.querySelector('#app');
+let root = document.querySelector('body');
 let editor = new Editor();
 
 ReactDOM.render(React.createElement(View, { editor }), root);

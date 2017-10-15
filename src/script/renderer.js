@@ -4,7 +4,7 @@ import EditorView from 'ui/components/Editor';
 import Editor from 'ui/editor';
 
 __VIEWS__ = {
-  EditorView
+  editor: EditorView
 };
 
 __CLASSES__ = {
