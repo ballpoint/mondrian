@@ -650,12 +650,10 @@ body {
       background-color: #bbc4c9;
       border-right: 1px solid #82939c;
       border-bottom: 1px solid #82939c; }
-      #app-main header#app-header #logo svg {
-        display: none; }
-        #app-main header#app-header #logo svg rect.logo-bg {
-          fill: #212121; }
-        #app-main header#app-header #logo svg rect.logo-fg {
-          fill: #fff; }
+      #app-main header#app-header #logo svg rect.logo-bg {
+        fill: #212121; }
+      #app-main header#app-header #logo svg rect.logo-fg {
+        fill: #fff; }
     #app-main header#app-header #app-controls {
       flex-grow: 1;
       display: flex;

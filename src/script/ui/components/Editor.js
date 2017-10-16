@@ -20,14 +20,7 @@ class EditorView extends React.Component {
 
     if (this.props.doc) {
       let doc;
-      if (false && window.__RENDERER__) {
-        doc = new Doc({
-          layers: [],
-          name: this.props.doc.name
-        });
-      } else {
-        doc = Doc.fromSVG(this.props.doc.svg, this.props.doc.name);
-      }
+      doc = Doc.fromSVG(this.props.doc.svg, this.props.doc.name);
       this.state.editor.load(doc);
     }
   }

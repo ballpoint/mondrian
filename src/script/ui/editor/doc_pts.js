@@ -1,5 +1,6 @@
 import consts from 'consts';
 import Circle from 'geometry/circle';
+import LineSegment from 'geometry/line-segment';
 import Element from 'ui/element';
 import UIElement from 'ui/editor/ui_element';
 import Selection from 'ui/selection';
@@ -211,6 +212,8 @@ export default class DocumentPointsUIElement extends UIElement {
         }
       }
     }
+
+    if (!suggestion) return;
 
     let id = 'selectedPoint:' + pt.index.toString() + ':suggestion:' + which;
 

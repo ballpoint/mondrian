@@ -1,5 +1,6 @@
 import Range from 'geometry/range';
 import Posn from 'geometry/posn';
+import LineSegment from 'geometry/line-segment';
 import Bounds from 'geometry/bounds';
 
 const EPSILON = 1e-12;
