@@ -5,6 +5,7 @@ import Group from 'geometry/group';
 import Circle from 'geometry/circle';
 import Text from 'geometry/text';
 import CubicBezier from 'geometry/cubic-bezier-line-segment';
+import LineSegment from 'geometry/line-segment';
 
 export const OUTSIDE = Symbol('OUTSIDE');
 export const INCIDENT = Symbol('INCIDENT');

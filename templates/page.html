@@ -4,7 +4,9 @@
     <link rel="stylesheet" href="/assets/styles/bundles/{{ .View.Name }}.css" />
   </head>
   <body>
-    {{ .View.Prerendered }}
+    <main>
+      {{ .View.Prerendered }}
+    </main>
 
     <script type="text/javascript" src="/assets/bundles/vendor.bundle.js"></script>
     <script type="text/javascript" src="/assets/bundles/{{ .View.Name }}.bundle.js"></script>

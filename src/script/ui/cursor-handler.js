@@ -71,6 +71,7 @@ export default class CursorHandler extends EventEmitter {
       data.posnLast = this.projection.posnInvert(cursor.lastPosn);
       data.deltaDragStep = data.posnCurrent.delta(data.posnLast);
     }
+
     if (cursor.lastDown) {
       data.posnDown = this.projection.posnInvert(cursor.lastDown);
       data.deltaDrag = data.posnCurrent.delta(data.posnDown);

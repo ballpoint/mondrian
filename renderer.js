@@ -17,7 +17,6 @@ let factories = {};
 
 function loadViews() {
   global.__VIEWS__ = {};
-  global.__CLASSES__ = {};
   global.window = global;
 
   for (let fp of deps) {
@@ -57,6 +56,8 @@ let server = http.createServer((req, res) => {
   });
 
   req.on('end', function() {
+    loadViews();
+
     let data = qs.parse(body);
 
     let start = new Date().valueOf();
@@ -77,11 +78,6 @@ let server = http.createServer((req, res) => {
       res.writeHead(404);
       res.end('View not found: ' + data.view);
       return;
-    }
-
-    switch (data.view) {
-      case 'editor':
-        props.editor = new __CLASSES__.Editor();
     }
 
     try {

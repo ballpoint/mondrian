@@ -7,12 +7,24 @@ import Menus from 'ui/components/menus/Menus';
 
 // Main view
 class EditorView extends React.Component {
+  constructor(props) {
+    super(props);
+
+    let editor = new Editor();
+
+    this.state = {
+      editor
+    };
+  }
+
   componentDidMount() {
     let render = this.refs.render;
 
-    console.log(render);
+    this.state.editor.mount(render);
 
-    this.props.editor.mount(render);
+    if (this.props.doc) {
+      this.state.editor.load(this.props.doc);
+    }
   }
 
   render() {
@@ -29,26 +41,26 @@ class EditorView extends React.Component {
           </a>
           <div id="app-controls">
             <div id="app-title">
-              <Title editor={this.props.editor} />
+              <Title editor={this.state.editor} />
             </div>
             <div id="app-menus">
-              <Menus editor={this.props.editor} />
+              <Menus editor={this.state.editor} />
             </div>
             <div id="app-toolbar">
-              <Toolbar editor={this.props.editor} />
+              <Toolbar editor={this.state.editor} />
             </div>
           </div>
         </header>
 
         <div id="app-view">
           <div id="app-tools">
-            <Tools editor={this.props.editor} />
+            <Tools editor={this.state.editor} />
           </div>
 
           <div id="app-render" ref="render" />
 
           <div id="app-windows">
-            <Utils editor={this.props.editor} />
+            <Utils editor={this.state.editor} />
           </div>
         </div>
       </div>

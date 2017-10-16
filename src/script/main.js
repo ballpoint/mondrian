@@ -29,10 +29,16 @@ import Menus from 'ui/components/menus/Menus';
 
 import View from 'ui/components/Editor';
 
-let root = document.querySelector('body');
+let root = document.querySelector('main');
 let editor = new Editor();
 
-ReactDOM.render(React.createElement(View, { editor }), root);
-
 let doc = Doc.fromSVG(handletest, 'handletest.svg');
-editor.load(doc);
+
+ReactDOM.render(
+  React.createElement(View, {
+    doc
+  }),
+  root
+);
+
+//editor.load(doc);

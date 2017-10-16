@@ -1,5 +1,6 @@
 import math from 'lib/math';
 import Posn from 'geometry/posn';
+import LineSegment from 'geometry/line-segment';
 import Range from 'geometry/range';
 
 export default class Bounds {

@@ -1,5 +1,4 @@
 import Posn from 'geometry/posn';
-import Bounds from 'geometry/bounds';
 import Range from 'geometry/range';
 /*
   Internal representation of a straight line segment
@@ -87,7 +86,9 @@ export default class LineSegment {
   }
 
   get angle360() {
-    return this.b.angle360(this.a);
+    let a = 90 - this.angle;
+    if (this.b.x < this.a.x) a += 180;
+    return a;
   }
 
   reverse() {
@@ -95,6 +96,7 @@ export default class LineSegment {
     return new LineSegment(this.b, this.a);
   }
 
+  /*
   bounds(useCached) {
     if (useCached == null) {
       useCached = false;
@@ -115,6 +117,7 @@ export default class LineSegment {
 
     return (this.boundsCached = new Bounds(minx, miny, width, height));
   }
+  */
 
   rotate(angle, origin) {
     return new LineSegment(

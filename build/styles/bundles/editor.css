@@ -33,9 +33,12 @@ body {
     cursor: nwse-resize; }
   body[cursor='text'] {
     cursor: text; }
-  body > div {
+  body > main {
     width: 100%;
     height: 100%; }
+    body > main > div {
+      width: 100%;
+      height: 100%; }
 
 #app-main {
   flex-grow: 1;

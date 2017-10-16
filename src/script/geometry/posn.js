@@ -174,11 +174,6 @@ export default class Posn {
     return new Posn(Math.max(this.x, p.x), Math.max(this.y, p.y));
   }
 
-  angle360(base) {
-    let a = 90 - new LineSegment(base, this).angle;
-    return a + (this.x < base.x ? 180 : 0);
-  }
-
   rotate(angle, origin) {
     if (angle === 0) return this;
 
@@ -232,17 +227,6 @@ export default class Posn {
     return new Posn(this.x, this.y);
   }
 
-  snap(to, threshold) {
-    // Algorithm: bisect the line on this posn's x and y
-    // coordinates and return the midpoint of that line.
-    if (threshold == null) {
-      threshold = Math.INFINITY;
-    }
-    let perpLine = this.verti(10000);
-    perpLine.rotate(to.angle360() + 90, this);
-    return perpLine.intersection(to);
-  }
-
   reflect(posn) {
     let { x, y } = posn;
     return new Posn(x + (x - this.x), y + (y - this.y));
@@ -250,20 +234,6 @@ export default class Posn {
 
   distanceFrom(b) {
     return Math.sqrt(Math.pow(b.x - this.x, 2) + Math.pow(b.y - this.y, 2));
-  }
-
-  perpendicularDistanceFrom(ls) {
-    let ray = this.verti(1e5);
-    ray.rotate(ls.angle360() + 90, this);
-    //ui.annotations.drawLine(ray.a, ray.b)
-    let inter = ray.intersection(ls);
-    if (inter != null) {
-      ls = new LineSegment(this, inter);
-      let len = ls.length;
-      return [len, inter, ls];
-    } else {
-      return null;
-    }
   }
 
   multiplyBy(s) {
@@ -333,13 +303,6 @@ export default class Posn {
 
   inRangesInclusive(xr, yr) {
     return xr.containsInclusive(this.x) && yr.containsInclusive(this.y);
-  }
-
-  verti(ln) {
-    return new LineSegment(
-      this.clone().nudge(0, -ln),
-      this.clone().nudge(0, ln)
-    );
   }
 
   insideOf(shape) {
