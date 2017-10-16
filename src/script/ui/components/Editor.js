@@ -1,4 +1,6 @@
 import Editor from 'ui/editor';
+import Doc from 'io/doc';
+
 import Utils from 'ui/components/utils/Utils';
 import Tools from 'ui/components/tools/Tools';
 import Toolbar from 'ui/components/toolbar/Toolbar';
@@ -15,16 +17,25 @@ class EditorView extends React.Component {
     this.state = {
       editor
     };
+
+    if (this.props.doc) {
+      let doc;
+      if (window.__RENDERER__) {
+        doc = new Doc({
+          layers: [],
+          name: this.props.doc.name
+        });
+      } else {
+        doc = Doc.fromSVG(this.props.doc.svg, this.props.doc.name);
+      }
+      this.state.editor.load(doc);
+    }
   }
 
   componentDidMount() {
     let render = this.refs.render;
 
     this.state.editor.mount(render);
-
-    if (this.props.doc) {
-      this.state.editor.load(this.props.doc);
-    }
   }
 
   render() {
@@ -41,7 +52,7 @@ class EditorView extends React.Component {
           </a>
           <div id="app-controls">
             <div id="app-title">
-              <Title editor={this.state.editor} />
+              <Title value={this.state.editor.doc.name} />
             </div>
             <div id="app-menus">
               <Menus editor={this.state.editor} />

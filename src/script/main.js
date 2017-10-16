@@ -32,13 +32,12 @@ import View from 'ui/components/Editor';
 let root = document.querySelector('main');
 let editor = new Editor();
 
-let doc = Doc.fromSVG(handletest, 'handletest.svg');
-
 ReactDOM.render(
   React.createElement(View, {
-    doc
+    doc: {
+      svg: handletest,
+      name: 'handletest.svg'
+    }
   }),
   root
 );
-
-//editor.load(doc);

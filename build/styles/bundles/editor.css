@@ -79,7 +79,8 @@ body {
     #app-main #app-view #app-render {
       position: relative;
       flex-grow: 1;
-      height: 100%; }
+      height: 100%;
+      background: #f2f2f2; }
 
 .icon {
   display: flex;

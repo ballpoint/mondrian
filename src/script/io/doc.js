@@ -32,19 +32,21 @@ export default class Doc {
   static fromSVG(str, name) {
     let doc = new DOMParser().parseFromString(str, MIMETYPE);
 
+    /*
     // TODO check how this works in firefox etc. this is for chrome.
     let parserError = doc.querySelector('parsererror');
     if (parserError) {
       let errorDiv = parserError.querySelector('div');
       throw new Error(errorDiv.innerHTML);
     }
+    */
 
     // Parse SVG document
-    let root = doc.querySelector('svg');
+    let root = doc.getElementsByTagName('svg')[0];
     if (!root) {
       throw new Error('No svg node in given doc');
     }
-    let children = io.parse(doc.querySelector('svg'));
+    let children = io.parse(root);
 
     let { width, height, transform } = this.parseDimensions(root);
 

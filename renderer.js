@@ -3,7 +3,7 @@ const fs = require('fs');
 // load the cache manifest
 const path = require('path');
 
-const deps = ['build/bundles/renderer.bundle.js'];
+const deps = ['build/bundles/views.bundle.js'];
 
 const _ = require('lodash');
 const React = require('react');
@@ -12,6 +12,8 @@ const protobuf = require('protobufjs');
 
 const ReactDOMServer = require('react-dom/server');
 global.ReactDOMServer = ReactDOMServer;
+
+global.__RENDERER__ = true;
 
 let factories = {};
 

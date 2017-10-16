@@ -21,9 +21,9 @@ module.exports = {
   },
 
   entry: {
-    'bundles/editor': 'main.js',
     'bundles/vendor': 'vendor.js',
-    'bundles/renderer': 'renderer.js',
+    'bundles/views': 'views.js',
+    'bundles/app': 'app.js',
     'bundles/test': 'test.js',
     'bundles/testbool': 'testbool.js'
   },

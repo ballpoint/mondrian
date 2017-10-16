@@ -2,6 +2,8 @@
 
 import EditorView from 'ui/components/Editor';
 
-__VIEWS__ = {
+window.__VIEWS__ = {
   editor: EditorView
 };
+
+export default __VIEWS__;

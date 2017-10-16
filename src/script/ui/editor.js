@@ -55,6 +55,8 @@ export default class Editor extends EventEmitter {
     if (root) {
       this.root = root;
       this.initCanvas();
+
+      if (this.doc) this.initDoc();
     }
   }
 
@@ -63,17 +65,21 @@ export default class Editor extends EventEmitter {
 
     window.h = this.doc.history;
 
-    this.setPosition(doc.center());
+    if (this.root) this.initDoc();
+  }
+
+  save() {}
+
+  initDoc() {
+    this.setPosition(this.doc.center());
     this.fitToScreen();
-    this.setCurrentLayer(doc.layers[0]);
+    this.setCurrentLayer(this.doc.layers[0]);
 
     this.refreshAll();
 
     this.trigger('change');
     this.trigger('change:doc');
   }
-
-  save() {}
 
   initCanvas() {
     this.canvas = new Canvas(this.root);
