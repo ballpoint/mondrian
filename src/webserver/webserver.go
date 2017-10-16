@@ -31,10 +31,7 @@ func New() *Webserver {
 
 func (s *Webserver) Handle(route string, h Handler) {
 	do := func(w http.ResponseWriter, req *http.Request) {
-		context := &Context{
-			ResponseWriter: w,
-			Request:        req,
-		}
+		context := NewContext(w, req)
 
 		h(context)
 	}

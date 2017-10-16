@@ -1,17 +1,21 @@
 package webserver
 
-import "io/ioutil"
+import (
+	"io/ioutil"
+	"path/filepath"
+)
 
 func editorViewHandler(ctxt *Context) error {
+	fn := "sbux.svg"
 
-	svgData, _ := ioutil.ReadFile("src/svg/handletest.svg")
+	svgData, _ := ioutil.ReadFile(filepath.Join("src/svg", fn))
 
-	ctxt.RenderView("editor", props{
+	ctxt.Title = fn
+
+	return ctxt.RenderView("editor", props{
 		"doc": props{
 			"svg":  string(svgData),
-			"name": "handletest.svg",
+			"name": fn,
 		},
 	})
-
-	return nil
 }

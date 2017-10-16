@@ -20,7 +20,7 @@ class EditorView extends React.Component {
 
     if (this.props.doc) {
       let doc;
-      if (window.__RENDERER__) {
+      if (false && window.__RENDERER__) {
         doc = new Doc({
           layers: [],
           name: this.props.doc.name

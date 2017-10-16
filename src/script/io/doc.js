@@ -46,7 +46,14 @@ export default class Doc {
     if (!root) {
       throw new Error('No svg node in given doc');
     }
-    let children = io.parse(root);
+
+    let children = [];
+
+    if (!window.__RENDERER__) {
+      // REMOVE to enable full backend parsing
+      // Costs about 50-100ms more on backend but UI renders more correctly
+      children = io.parse(root);
+    }
 
     let { width, height, transform } = this.parseDimensions(root);
 

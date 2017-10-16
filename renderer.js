@@ -8,10 +8,13 @@ const deps = ['build/bundles/views.bundle.js'];
 const _ = require('lodash');
 const React = require('react');
 const ReactDOM = require('react-dom');
+const DOMParser = require('xmldom').DOMParser;
 const protobuf = require('protobufjs');
 
 const ReactDOMServer = require('react-dom/server');
 global.ReactDOMServer = ReactDOMServer;
+
+global.DOMParser = DOMParser;
 
 global.__RENDERER__ = true;
 

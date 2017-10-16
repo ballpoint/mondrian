@@ -10,7 +10,8 @@ import UUIDV4 from 'uuid/v4';
 let io = {
   parse(container) {
     let results = [];
-    for (let node of container.childNodes) {
+    for (let i = 0; i < container.childNodes.length; i++) {
+      let node = container.childNodes[i];
       if (node.nodeName === 'defs') {
         // <defs> symbols... for now we don't do much with this.
         continue;
@@ -93,7 +94,8 @@ let io = {
 
     let lines = [];
 
-    for (let child of node.childNodes) {
+    for (let i = 0; i < node.childNodes.length; i++) {
+      let node = container.childNodes[i];
       if (child.nodeName.toLowerCase() === 'text') {
         lines.push(this.innerTextValue(child));
       }
@@ -107,7 +109,8 @@ let io = {
   innerTextValue(node) {
     let value = '';
 
-    for (let child of node.childNodes) {
+    for (let i = 0; i < node.childNodes.length; i++) {
+      let node = container.childNodes[i];
       switch (child.nodeName) {
         case 'tspan':
           // <tspan>
@@ -195,7 +198,8 @@ let io = {
   applyStyles(node, elem) {
     let blacklist = ['display', 'transform'];
 
-    for (let attr of node.attributes) {
+    for (let i = 0; i < node.attributes.length; i++) {
+      let attr = node.attributes[i];
       let key = attr.name;
       let val = attr.value;
 
@@ -242,7 +246,8 @@ let io = {
   },
 
   applyRootAttrs(root, elems) {
-    for (let attr of root.attributes) {
+    for (let i = 0; i < root.attributes.length; i++) {
+      let attr = root.attributes[i];
       let key = attr.name;
       let val = attr.value;
 
