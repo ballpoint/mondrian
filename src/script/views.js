@@ -1,6 +1,6 @@
 // Collection of views for renderer
 
-import EditorView from 'ui/components/Editor';
+import EditorView from 'ui/components/EditorView';
 
 window.__VIEWS__ = {
   editor: EditorView

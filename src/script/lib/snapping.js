@@ -13,8 +13,6 @@ export default {
       let min = deg - 45 / 2;
       let max = deg + 45 / 2;
 
-      console.log(a, min, max);
-
       let matches = false;
       if (min < 0 && a >= 360 - 45) {
         matches = a - 360 > min && a - 360 < max;

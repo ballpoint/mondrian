@@ -5,12 +5,13 @@ import HistoryFrame from 'history/Frame';
 import * as actions from 'history/actions/actions';
 
 class GeometryMenu extends React.Component {
-  flip = (axis) => {
+  flip = axis => {
     this.props.editor.flipSelected(axis);
   };
 
   render() {
     let selectionExists = !this.props.editor.state.selection.empty;
+    let selectionMultiple = this.props.editor.state.selection.length > 1;
     let editor = this.props.editor;
 
     return (
@@ -63,6 +64,29 @@ class GeometryMenu extends React.Component {
               editor.shiftSelected(-1);
             }}
             hotkey="Ctrl-Down"
+          />
+        </MenuGroup>
+        <MenuGroup>
+          <MenuItem
+            label="Unite"
+            disabled={!selectionMultiple}
+            action={() => {
+              editor.booleanSelected('unite');
+            }}
+          />
+          <MenuItem
+            label="Subtract"
+            disabled={!selectionMultiple}
+            action={() => {
+              editor.booleanSelected('subtract');
+            }}
+          />
+          <MenuItem
+            label="Intersect"
+            disabled={!selectionMultiple}
+            action={() => {
+              editor.booleanSelected('intersect');
+            }}
           />
         </MenuGroup>
       </MenuBody>

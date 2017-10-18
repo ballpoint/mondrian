@@ -5,6 +5,7 @@ import EventEmitter from 'lib/events';
 export default class DocHistory extends EventEmitter {
   constructor() {
     super();
+    this._nextFrameId = 1;
     let initFrame = new HistoryFrame([
       new actions.InitAction() // TODO shove doc in here
     ]);
@@ -38,7 +39,11 @@ export default class DocHistory extends EventEmitter {
   }
 
   commitFrame() {
+    if (this.head.committed) return;
+
     this.head.commit();
+    this.head.id = this._nextFrameId;
+    this._nextFrameId++;
 
     if (this.head.prev) {
       this.head.prev.registerSucc(this.head);

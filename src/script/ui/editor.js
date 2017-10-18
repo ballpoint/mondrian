@@ -19,6 +19,7 @@ import Index from 'geometry/index';
 import Path from 'geometry/path';
 import PathPoint from 'geometry/path-point';
 import PointsSegment from 'geometry/points-segment';
+import bool from 'lib/bool';
 
 import Layer from 'io/layer';
 
@@ -189,35 +190,35 @@ export default class Editor extends EventEmitter {
 
     hotkeys.on('down', 'downArrow', () => {
       this.nudgeSelected(0, 1);
-      this.doc.commitFrame();
+      this.commitFrame();
     });
     hotkeys.on('down', 'upArrow', () => {
       this.nudgeSelected(0, -1);
-      this.doc.commitFrame();
+      this.commitFrame();
     });
     hotkeys.on('down', 'leftArrow', () => {
       this.nudgeSelected(-1, 0);
-      this.doc.commitFrame();
+      this.commitFrame();
     });
     hotkeys.on('down', 'rightArrow', () => {
       this.nudgeSelected(1, 0);
-      this.doc.commitFrame();
+      this.commitFrame();
     });
     hotkeys.on('down', 'shift-downArrow', () => {
       this.nudgeSelected(0, 10);
-      this.doc.commitFrame();
+      this.commitFrame();
     });
     hotkeys.on('down', 'shift-rightArrow', () => {
       this.nudgeSelected(10, 0);
-      this.doc.commitFrame();
+      this.commitFrame();
     });
     hotkeys.on('down', 'shift-upArrow', () => {
       this.nudgeSelected(0, -10);
-      this.doc.commitFrame();
+      this.commitFrame();
     });
     hotkeys.on('down', 'shift-leftArrow', () => {
       this.nudgeSelected(-10, 0);
-      this.doc.commitFrame();
+      this.commitFrame();
     });
 
     hotkeys.on('down', 'ctrl-shift-G', e => {
@@ -1019,7 +1020,7 @@ export default class Editor extends EventEmitter {
     let items = [];
 
     for (let index of indexes) {
-      if (this.canShift(index, delta)) {
+      if (this.canShift(indexesIdx, index, delta)) {
         items.push({ index, delta });
       }
     }
@@ -1035,7 +1036,30 @@ export default class Editor extends EventEmitter {
     }
   }
 
-  canShift(index, delta) {
+  booleanSelected(op) {
+    let result = bool[op](this.state.selection.items.slice(0));
+
+    let index = this.state.selection.indexes[0];
+
+    let frame = new HistoryFrame(
+      [
+        new actions.DeleteAction({
+          items: this.state.selection.map(item => {
+            return { item, index: item.index };
+          })
+        }),
+        new actions.InsertAction({
+          items: [{ item: result, index }]
+        })
+      ],
+      _.capitalize(op)
+    );
+
+    this.stageFrame(frame);
+    this.commitFrame();
+  }
+
+  canShift(indexesIdx, index, delta) {
     switch (delta) {
       case -1:
         for (let i = index.last - 1; i >= 0; i--) {
@@ -1143,6 +1167,7 @@ export default class Editor extends EventEmitter {
 
   commitFrame(frame) {
     this.doc.commitFrame();
+    this.trigger('change');
   }
 
   abandonFrame() {

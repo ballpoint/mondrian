@@ -8,27 +8,23 @@ import AlignUtil from 'ui/components/utils/Align';
 import { ELEMENTS, POINTS, PHANDLE, SHANDLE } from 'ui/selection';
 
 class Utils extends React.Component {
-  state = {
-    selection: []
-  };
+  constructor() {
+    super();
+
+    this.state = {
+      selection: [],
+      frameId: 1
+    };
+  }
 
   componentDidMount() {
-    let nextFrame = null;
+    let editor = this.props.editor;
 
-    window.utilCounter = { cancel: 0, ok: 0 };
-
-    this.props.editor.on('change', () => {
-      if (nextFrame !== null) {
-        return;
-      }
-
-      nextFrame = window.requestAnimationFrame(() => {
-        nextFrame = null;
-
-        let editor = this.props.editor;
-        window.utilCounter.ok++;
-
+    editor.on('change', () => {
+      if (editor.doc.history.head.id !== undefined) {
         this.setState({
+          frameId: editor.doc.history.head.id,
+
           selection: editor.state.selection,
           hasSelectedElements:
             editor.state.selection.length > 0 &&
@@ -37,7 +33,9 @@ class Utils extends React.Component {
             editor.state.selection.length > 0 &&
             editor.state.selection.type === POINTS
         });
-      });
+      }
+
+      return;
     });
   }
 
@@ -78,30 +76,18 @@ class Utils extends React.Component {
 
     if (!this.props.editor.doc) return w;
 
-    w.push(
-      <TransformUtil
-        key="selection"
-        editor={this.props.editor}
-        selection={this.state.selection}
-      />
-    );
+    let props = {
+      editor: this.props.editor,
+      doc: this.props.editor.doc,
+      selection: this.state.selection,
+      frameId: this.props.editor.doc.history.head.id
+    };
 
-    w.push(
-      <DocumentUtil
-        key="document"
-        editor={this.props.editor}
-        selection={this.state.selection}
-      />
-    );
+    w.push(<TransformUtil key="selection" {...props} />);
 
-    w.push(
-      <HistoryUtil
-        key="history"
-        editor={this.props.editor}
-        doc={this.props.editor.doc}
-        selection={this.state.selection}
-      />
-    );
+    w.push(<DocumentUtil key="document" {...props} />);
+
+    w.push(<HistoryUtil key="history" {...props} />);
 
     return w;
   };

@@ -530,7 +530,7 @@ class ColorUtil extends React.Component {
     } else {
       return (
         <div
-          key={which}
+          key={which + ':' + color.hex}
           className={baseClass}
           style={{
             background: color.toString(),

@@ -152,7 +152,7 @@ export default class Cursor extends Tool {
       this.dragSelectEnd = null;
     } else {
       // Commit ongoing nudge
-      this.editor.doc.history.commitFrame();
+      this.editor.commitFrame();
     }
 
     delete this.annotation;

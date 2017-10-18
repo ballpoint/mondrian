@@ -262,6 +262,10 @@ export default class Selection {
 
   withAttrValue(key, val) {
     let items = this.items.filter(item => {
+      if (!item.data) {
+        debugger;
+      }
+
       let iv = item.data[key];
       if (val.valueOf && iv.valueOf) {
         return val.valueOf() == iv.valueOf();

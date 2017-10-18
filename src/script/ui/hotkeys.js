@@ -106,10 +106,10 @@ export default class HotkeyTracking extends EventEmitter {
   onKeydown(e) {
     let stroke = this.fullKeystrokeFor(e);
     if (stroke === undefined) {
-      console.log(e.which);
+      //console.log(e.which);
       return;
     }
-    console.log(stroke);
+    //console.log(stroke);
     this.handle('down', stroke, e);
   }
 

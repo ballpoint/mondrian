@@ -93,45 +93,33 @@ class ChildCtrlButton extends React.Component {
 
 class DocumentUtilChild extends React.Component {
   state = {
-    nonce: 0,
     id: ''
   };
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.child.__id__ !== this.state.id) {
-      this.setState({
-        id: nextProps.child.__id__,
-        nonce: 0
-      });
-    }
-  }
 
   componentDidMount() {
     this.updateThumbDebounced = _.debounce(this.updateThumb, 1000);
     this.updateThumb();
   }
 
-  componentDidUpdate() {
-    this.updateThumb();
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.frameId !== prevProps.frameId) {
+      this.updateThumb();
+    }
   }
 
   updateThumb = () => {
-    let nonce = this.props.child.__nonce__;
     let dimens = 20;
     if (this.props.child instanceof Layer) {
       dimens = 30;
     }
 
-    if (this.state.nonce < nonce) {
-      let canvas = ReactDOM.findDOMNode(this.refs.thumbnail);
-      if (canvas) {
-        let thumb = new Thumb([this.props.child], {
-          maxWidth: dimens,
-          maxHeight: dimens
-        });
-        thumb.drawTo(new CanvasLayer('thumb', canvas));
-        this.setState({ nonce });
-      }
+    let canvas = ReactDOM.findDOMNode(this.refs.thumbnail);
+    if (canvas) {
+      let thumb = new Thumb([this.props.child], {
+        maxWidth: dimens,
+        maxHeight: dimens
+      });
+      thumb.drawTo(new CanvasLayer('thumb', canvas));
     }
   };
 
@@ -165,6 +153,7 @@ class DocumentUtilChild extends React.Component {
                 <DocumentUtilChild
                   key={child.index.toString()}
                   child={child}
+                  frameId={this.props.frameId}
                   editor={this.props.editor}
                   isExpanded={this.props.isExpanded}
                   expand={this.props.expand}
@@ -281,17 +270,17 @@ class DocumentUtil extends React.Component {
 
   componentWillReceiveProps(prevState) {}
 
-  expand = (child) => {
+  expand = child => {
     this.state.expandedIndexes[child.index.toString()] = true;
     this.setState({ expandedIndexes: this.state.expandedIndexes });
   };
 
-  collapse = (child) => {
+  collapse = child => {
     delete this.state.expandedIndexes[child.index.toString()];
     this.setState({ expandedIndexes: this.state.expandedIndexes });
   };
 
-  isExpanded = (child) => {
+  isExpanded = child => {
     return !!this.state.expandedIndexes[child.index.toString()];
   };
 
@@ -311,6 +300,7 @@ class DocumentUtil extends React.Component {
                 <DocumentUtilChild
                   key={child.index.toString()}
                   child={child}
+                  frameId={this.props.editor.doc.history.head.id}
                   editor={this.props.editor}
                   isExpanded={this.isExpanded}
                   expand={this.expand}

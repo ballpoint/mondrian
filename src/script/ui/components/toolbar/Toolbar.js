@@ -1,4 +1,3 @@
-import bool from 'lib/bool';
 import Text from 'geometry/text';
 import 'toolbar/toolbar.scss';
 import icons from 'ui/components/icons';
@@ -47,41 +46,28 @@ class Toolbar extends React.Component {
   renderBooleanGroup = () => {
     let editor = this.props.editor;
 
-    let boolOp = function(op) {
-      return function() {
-        let result = bool[op](this.state.selection.items.slice(0));
-
-        let index = editor.state.selection.indexes[0];
-
-        let frame = new HistoryFrame(
-          [
-            new actions.DeleteAction({
-              items: editor.state.selection.map(item => {
-                return { item, index: item.index };
-              })
-            }),
-            new actions.InsertAction({
-              items: [{ item: result, index }]
-            })
-          ],
-          'Boolean ' + op
-        );
-
-        editor.stageFrame(frame);
-        editor.commitFrame();
-      }.bind(this);
-    }.bind(this);
-
     if (this.state.selection && this.state.selection.length > 1) {
       return (
         <ToolbarGroup>
-          <ToolbarButton onClick={boolOp('unite')} title="Unite">
+          <ToolbarButton
+            onClick={() => {
+              editor.booleanSelected('unite');
+            }}
+            title="Unite">
             {renderIcon('booleanUnite')}
           </ToolbarButton>
-          <ToolbarButton onClick={boolOp('subtract')} title="Subtract">
+          <ToolbarButton
+            onClick={() => {
+              editor.booleanSelected('subtract');
+            }}
+            title="Subtract">
             {renderIcon('booleanSubtract')}
           </ToolbarButton>
-          <ToolbarButton onClick={boolOp('intersect')} title="Intersect">
+          <ToolbarButton
+            onClick={() => {
+              editor.booleanSelected('intersect');
+            }}
+            title="Intersect">
             {renderIcon('booleanIntersect')}
           </ToolbarButton>
         </ToolbarGroup>
