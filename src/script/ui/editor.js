@@ -1223,9 +1223,11 @@ export default class Editor extends EventEmitter {
   }
 
   paste(e) {
+    let items = this.state.clipboard.slice(0).reverse();
     if (this.state.clipboard) {
-      this.insertElements(this.state.clipboard);
+      this.insertElements(items);
     }
+    this.selectItems(items);
     this.trigger('change');
   }
 

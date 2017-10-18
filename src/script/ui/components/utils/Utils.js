@@ -20,22 +20,28 @@ class Utils extends React.Component {
   componentDidMount() {
     let editor = this.props.editor;
 
-    editor.on('change', () => {
-      if (editor.doc.history.head.id !== undefined) {
-        this.setState({
-          frameId: editor.doc.history.head.id,
+    let nextFrame = null;
 
-          selection: editor.state.selection,
-          hasSelectedElements:
-            editor.state.selection.length > 0 &&
-            editor.state.selection.type === ELEMENTS,
-          hasSelectedPoints:
-            editor.state.selection.length > 0 &&
-            editor.state.selection.type === POINTS
-        });
+    editor.on('change', () => {
+      if (nextFrame !== null) {
+        return;
       }
 
-      return;
+      if (editor.doc.history.head.id !== undefined) {
+        nextFrame = window.requestAnimationFrame(() => {
+          this.setState({
+            frameId: editor.doc.history.head.id,
+
+            selection: editor.state.selection,
+            hasSelectedElements:
+              editor.state.selection.length > 0 &&
+              editor.state.selection.type === ELEMENTS,
+            hasSelectedPoints:
+              editor.state.selection.length > 0 &&
+              editor.state.selection.type === POINTS
+          });
+        });
+      }
     });
   }
 
