@@ -40,6 +40,7 @@ class Utils extends React.Component {
               editor.state.selection.length > 0 &&
               editor.state.selection.type === POINTS
           });
+          nextFrame = null;
         });
       }
     });

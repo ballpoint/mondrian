@@ -18,11 +18,14 @@ class EditorView extends React.Component {
       editor
     };
 
+    let doc;
     if (this.props.doc) {
-      let doc;
       doc = Doc.fromSVG(this.props.doc.svg, this.props.doc.name);
-      this.state.editor.load(doc);
+    } else {
+      doc = Doc.empty(850, 1100, 'untitled');
     }
+
+    this.state.editor.load(doc);
   }
 
   componentDidMount() {
@@ -45,7 +48,9 @@ class EditorView extends React.Component {
           </a>
           <div id="app-controls">
             <div id="app-title">
-              <Title value={this.state.editor.doc.name} />
+              {this.state.editor.doc ? (
+                <Title value={this.state.editor.doc.name} />
+              ) : null}
             </div>
             <div id="app-menus">
               <Menus editor={this.state.editor} />

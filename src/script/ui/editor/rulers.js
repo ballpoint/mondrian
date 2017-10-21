@@ -9,6 +9,8 @@ export default class RulersUIElement extends UIElement {
   reset() {}
 
   _refresh(layer, context) {
+    if (!this.editor.doc) return;
+
     layer.setLineWidth(1);
 
     let docBounds;

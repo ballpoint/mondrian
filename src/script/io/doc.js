@@ -80,6 +80,15 @@ export default class Doc {
     });
   }
 
+  static empty(width, height, name) {
+    return new Doc({
+      layers: [new Layer({ id: 'main', children: [] })],
+      width,
+      height,
+      name
+    });
+  }
+
   filename(extension) {
     return this.name.split('.')[0] + '.' + extension;
   }

@@ -5,7 +5,7 @@ import 'menus/menus.scss';
 import 'menus/file-menu.scss';
 
 class FileMenu extends React.Component {
-  openFile = (e) => {
+  openFile = e => {
     e = e.nativeEvent || e;
 
     let files = e.target.files;
@@ -35,28 +35,34 @@ class FileMenu extends React.Component {
   };
 
   render() {
+    let downloadHref;
+    let downloadName;
+
+    if (this.props.editor.doc) {
+      downloadHref = this.docSVGHref();
+      downloadName = this.props.editor.doc.filename('svg');
+    }
+
     return (
       <MenuBody
         absoluteTop={this.props.absoluteTop}
         absoluteLeft={this.props.absoluteLeft}>
-        <MenuItem label="New" hotkey="Ctrl-N" />
+        <MenuItem label="New..." hotkey="Ctrl-N" />
 
         <MenuItem className="menu-item--file-input" hotkey="Ctrl-O">
           <input ref="fileInput" type="file" onChange={this.openFile} />
           Open...
         </MenuItem>
 
-        <MenuItem hotkey="Ctrl-S">
+        <MenuItem hotkey="Ctrl-S" disabled={!this.props.editor.doc}>
           <a
             className="menu-item__cover"
             ref="downloadAnchor"
-            href={this.docSVGHref()}
-            download={this.props.editor.doc.filename('svg')}
+            href={downloadHref}
+            download={downloadName}
           />
           Save as SVG
         </MenuItem>
-
-        <MenuItem hotkey="Ctrl-E">Save as PNG</MenuItem>
       </MenuBody>
     );
   }
