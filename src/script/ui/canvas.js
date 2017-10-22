@@ -18,7 +18,7 @@ export default class Canvas extends EventEmitter {
       this.container.className = 'canvas-container';
       parent.appendChild(this.container);
 
-      window.onresize = (e) => {
+      window.onresize = e => {
         this.updateDimensions();
         this.trigger('resize');
         this.refreshAll();

@@ -16,6 +16,13 @@
     svg {
       stroke: $blue !important;
     }
+
+    &.icon--del {
+      color: $red;
+      svg {
+        stroke: $red !important;
+      }
+    }
   }
 
   &:active {

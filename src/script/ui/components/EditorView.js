@@ -6,6 +6,7 @@ import Tools from 'ui/components/tools/Tools';
 import Toolbar from 'ui/components/toolbar/Toolbar';
 import Title from 'ui/components/title/Title';
 import Menus from 'ui/components/menus/Menus';
+import Filetabs from 'ui/components/filetabs/Filetabs';
 
 // Main view
 class EditorView extends React.Component {
@@ -14,10 +15,6 @@ class EditorView extends React.Component {
 
     let editor = new Editor();
 
-    this.state = {
-      editor
-    };
-
     let doc;
     if (this.props.doc) {
       doc = Doc.fromSVG(this.props.doc.svg, this.props.doc.name);
@@ -25,13 +22,34 @@ class EditorView extends React.Component {
       doc = Doc.empty(850, 1100, 'untitled');
     }
 
-    this.state.editor.load(doc);
+    let doc2 = Doc.empty(850, 1100, 'dinosaur.svg');
+    let doc3 = Doc.empty(850, 1100, 'test.svg');
+
+    this.state = {
+      editor,
+      docs: [doc3, doc, doc2],
+      activeDoc: doc
+    };
+
+    editor.load(doc);
   }
 
   componentDidMount() {
     let render = this.refs.render;
 
     this.state.editor.mount(render);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.activeDoc !== prevState.activeDoc) {
+      this.state.editor.load(this.state.activeDoc);
+    }
+  }
+
+  viewDoc(doc) {
+    this.setState({
+      activeDoc: doc
+    });
   }
 
   render() {
@@ -72,6 +90,14 @@ class EditorView extends React.Component {
             <Utils editor={this.state.editor} />
           </div>
         </div>
+
+        <footer>
+          <Filetabs
+            files={this.state.docs}
+            active={this.state.activeDoc}
+            viewDoc={this.viewDoc.bind(this)}
+          />
+        </footer>
       </div>
     );
   }

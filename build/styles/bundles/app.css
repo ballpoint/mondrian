@@ -1,6 +1,6 @@
 #app-windows {
   position: absolute;
-  top: 148px;
+  top: 138px;
   right: 0;
   bottom: 20px;
   pointer-events: none; }
@@ -589,6 +589,35 @@
   left: 0;
   right: 0;
   bottom: 0; }
+.filetabs {
+  display: flex;
+  position: relative;
+  top: -1px;
+  height: 32px; }
+  .filetabs .filetab {
+    padding: 3px 5px;
+    border: 1px solid #b2b2b2;
+    display: flex;
+    height: 28px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: default;
+    margin-left: -1px; }
+    .filetabs .filetab.active {
+      padding: 5px 5px 3px 5px;
+      height: 32px;
+      color: #0072d1; }
+    .filetabs .filetab:hover {
+      color: #0072d1; }
+    .filetabs .filetab:active:not(.active) {
+      background: #f2f2f2; }
+    .filetabs .filetab .icon {
+      margin-left: 10px;
+      opacity: 1; }
+      .filetabs .filetab .icon:hover {
+        stroke: #e3104a; }
 .canvas-container {
   position: relative;
   height: 100%;
@@ -641,7 +670,8 @@ body {
     flex-grow: 0;
     flex-shrink: 0;
     border-bottom: 1px solid #b2b2b2;
-    display: flex; }
+    display: flex;
+    z-index: 100; }
     #app-main header#app-header #logo {
       display: block;
       padding: 14px 10px;
@@ -670,6 +700,12 @@ body {
       flex-grow: 1;
       height: 100%;
       background: #f2f2f2; }
+  #app-main footer {
+    z-index: 100;
+    border-top: 1px solid #b2b2b2;
+    height: 50px;
+    margin-left: 59px;
+    padding-left: 40px; }
 
 .icon {
   display: flex;
@@ -684,6 +720,10 @@ body {
     color: #0072d1; }
     .icon.selected svg, .icon:hover svg {
       stroke: #0072d1 !important; }
+    .icon.selected.icon--del, .icon:hover.icon--del {
+      color: #e3104a; }
+      .icon.selected.icon--del svg, .icon:hover.icon--del svg {
+        stroke: #e3104a !important; }
   .icon:active {
     background-color: #f2f2f2; }
   .icon.weak svg {

@@ -19,7 +19,17 @@ export default class Zoom extends Tool {
 
   handleMouseup(e, cursor) {}
 
-  handleClick(e, cursor) {}
+  handleClick(e, cursor) {
+    if (e.altKey) {
+      this.editor.zoomOut(this.editor.cursor.lastPosn);
+    } else {
+      this.editor.zoomIn(this.editor.cursor.lastPosn);
+    }
+  }
+
+  handleDoubleClick(e, cursor) {
+    this.handleClick(e, cursor);
+  }
 
   handleDragStart(e, cursor) {
     this.dragStart = cursor.posnDown;

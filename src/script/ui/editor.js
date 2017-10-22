@@ -434,12 +434,12 @@ export default class Editor extends EventEmitter {
     this.setPosition(this.state.position.nudge(x, y));
   }
 
-  zoomIn() {
-    this.setZoom(this.state.zoomLevel * 1.2);
+  zoomIn(anchor = null) {
+    this.setZoom(this.state.zoomLevel * 1.2, anchor);
   }
 
-  zoomOut() {
-    this.setZoom(this.state.zoomLevel * 0.8);
+  zoomOut(anchor = null) {
+    this.setZoom(this.state.zoomLevel * 0.8, anchor);
   }
 
   setZoom(zl, anchor = null) {

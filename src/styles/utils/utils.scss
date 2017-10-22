@@ -5,7 +5,7 @@ $util-grey: darken($bg-grey, 13%);
 
 #app-windows {
   position: absolute;
-  top: $app-header-height + 30px;
+  top: $app-header-height + 20px;
   right: 0;
   bottom: 20px;
   pointer-events: none;

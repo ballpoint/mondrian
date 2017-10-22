@@ -1,6 +1,6 @@
 #app-windows {
   position: absolute;
-  top: 148px;
+  top: 138px;
   right: 0;
   bottom: 20px;
   pointer-events: none; }
@@ -589,5 +589,34 @@
   left: 0;
   right: 0;
   bottom: 0; }
+.filetabs {
+  display: flex;
+  position: relative;
+  top: -1px;
+  height: 32px; }
+  .filetabs .filetab {
+    padding: 3px 5px;
+    border: 1px solid #b2b2b2;
+    display: flex;
+    height: 28px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: default;
+    margin-left: -1px; }
+    .filetabs .filetab.active {
+      padding: 5px 5px 3px 5px;
+      height: 32px;
+      color: #0072d1; }
+    .filetabs .filetab:hover {
+      color: #0072d1; }
+    .filetabs .filetab:active:not(.active) {
+      background: #f2f2f2; }
+    .filetabs .filetab .icon {
+      margin-left: 10px;
+      opacity: 1; }
+      .filetabs .filetab .icon:hover {
+        stroke: #e3104a; }
 
 /*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzdHlsZXMvYnVuZGxlcy92aWV3cy5jc3MiLCJzb3VyY2VSb290IjoiIn0=*/

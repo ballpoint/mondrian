@@ -1,0 +1,42 @@
+@import '~vars.scss';
+@import '~mixins.scss';
+
+.filetabs {
+  display: flex;
+  position: relative;
+  top: -1px;
+  height: 32px;
+
+  .filetab {
+    padding: 3px 5px;
+    border: 1px solid $fg-grey;
+    display: flex;
+    height: 28px;
+    @include no-select;
+    cursor: default;
+    margin-left: -1px;
+
+    &.active {
+      padding: 5px 5px 3px 5px;
+      height: 32px;
+      color: $blue;
+    }
+
+    &:hover {
+      color: $blue;
+    }
+
+    &:active:not(.active) {
+      background: $bg-grey;
+    }
+
+    .icon {
+      margin-left: 10px;
+      opacity: 1;
+
+      &:hover {
+        stroke: $red;
+      }
+    }
+  }
+}

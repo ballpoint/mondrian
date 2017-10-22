@@ -87,7 +87,8 @@ export function renderIcon(name, opts = {}) {
       className={classnames({
         icon: true,
         weak: opts.weak,
-        selected: opts.selected
+        selected: opts.selected,
+        ['icon--' + name]: true
       })}
       dangerouslySetInnerHTML={{ __html: ICONS[name] }}
     />

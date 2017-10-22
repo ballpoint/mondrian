@@ -38,6 +38,7 @@ body {
     flex-shrink: 0;
     border-bottom: 1px solid $fg-grey;
     display: flex;
+    z-index: 100;
 
     #logo {
       display: block;
@@ -81,5 +82,13 @@ body {
       height: 100%;
       background: $bg-grey;
     }
+  }
+
+  footer {
+    z-index: 100;
+    border-top: 1px solid $fg-grey;
+    height: 50px;
+    margin-left: $app-toolbar-width - 1px;
+    padding-left: 40px;
   }
 }

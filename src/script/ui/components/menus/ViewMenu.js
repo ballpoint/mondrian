@@ -11,22 +11,30 @@ class ViewMenu extends React.Component {
         absoluteLeft={this.props.absoluteLeft}>
         <MenuItem
           label="Zoom in"
-          action={editor.zoomIn.bind(editor)}
+          action={() => {
+            editor.zoomIn();
+          }}
           hotkey="+"
         />
         <MenuItem
           label="Zoom out"
-          action={editor.zoomOut.bind(editor)}
+          action={() => {
+            editor.zoomOut();
+          }}
           hotkey="-"
         />
         <MenuItem
           label="Fit to screen"
-          action={editor.fitToScreen.bind(editor)}
+          action={() => {
+            editor.fitToScreen();
+          }}
           hotkey="0"
         />
         <MenuItem
           label="Actual size"
-          action={editor.actualSize.bind(editor)}
+          action={() => {
+            editor.actualSize();
+          }}
           hotkey="1"
         />
       </MenuBody>
