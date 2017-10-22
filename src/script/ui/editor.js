@@ -4,9 +4,9 @@ import consts from 'consts';
 import Color from 'ui/color';
 import SelectedColors from 'ui/SelectedColors';
 import { NONE } from 'ui/color';
-import SelectedStrokeStyle from 'ui/SelectedStrokeStyle';
 
 import DefaultAttributes from 'ui/DefaultAttributes';
+import DocState from 'ui/DocState';
 
 import EventEmitter from 'lib/events';
 import Canvas from 'ui/canvas';
@@ -49,6 +49,9 @@ export default class Editor extends EventEmitter {
 
     window.$e = this; // DEBUGGING
 
+    this.docs = {};
+    this.docStates = {};
+
     this.initState();
   }
 
@@ -61,10 +64,21 @@ export default class Editor extends EventEmitter {
     }
   }
 
-  load(doc) {
-    this.doc = doc;
+  open(doc) {
+    let id = doc.__id__;
+    let docState;
 
-    window.h = this.doc.history;
+    if (this.docs[id] === undefined) {
+      // New doc we haven't opened yet
+      this.docs[id] = doc;
+      docState = DocState.forDoc(doc);
+      this.docStates[id] = docState;
+    } else {
+      docState = this.docStates[id];
+    }
+
+    this.doc = doc;
+    this.docState = docState;
 
     if (this.root) this.initDoc();
   }
@@ -352,9 +366,9 @@ export default class Editor extends EventEmitter {
         selection: new Selection([]),
         hovering: new Selection([]),
         scope: new Index([0]),
-        tool: new tools.Cursor(this),
 
-        // TODO cache
+        // to keep
+        tool: new tools.Cursor(this),
         attributes: new DefaultAttributes()
       };
     } else {
@@ -363,9 +377,9 @@ export default class Editor extends EventEmitter {
         selection: new Selection([]),
         hovering: new Selection([]),
         scope: new Index([0]),
-        tool: new tools.Cursor(this),
 
-        // TODO cache
+        // to keep
+        tool: new tools.Cursor(this),
         attributes: new DefaultAttributes()
       };
     }

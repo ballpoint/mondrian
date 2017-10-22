@@ -31,7 +31,7 @@ class EditorView extends React.Component {
       activeDoc: doc
     };
 
-    editor.load(doc);
+    editor.open(doc);
   }
 
   componentDidMount() {
@@ -42,7 +42,7 @@ class EditorView extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (this.state.activeDoc !== prevState.activeDoc) {
-      this.state.editor.load(this.state.activeDoc);
+      this.state.editor.open(this.state.activeDoc);
     }
   }
 

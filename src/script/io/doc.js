@@ -13,6 +13,8 @@ import PathPoint from 'geometry/path-point';
 import PointsSegment from 'geometry/points-segment';
 import Item from 'geometry/item';
 
+import UUIDV4 from 'uuid/v4';
+
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
 
 const MIMETYPE = 'image/svg+xml';
@@ -27,6 +29,9 @@ export default class Doc {
     this.cacheIndexes(this);
 
     this.history = new DocHistory();
+
+    // TODO get this from backend?
+    this.__id__ = UUIDV4();
   }
 
   static fromSVG(str, name) {
