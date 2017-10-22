@@ -552,10 +552,10 @@ export default class Editor extends EventEmitter {
   }
 
   setHovering(items) {
-    let oldHovering = this.state.hovering;
-    this.state.hovering = new Selection(this.doc, items);
+    let oldHovering = this.doc.state.hovering;
+    this.doc.state.hovering = new Selection(this.doc, items);
 
-    if (!oldHovering.equal(this.state.hovering)) {
+    if (!oldHovering.equal(this.doc.state.hovering)) {
       this.trigger('change');
       this.trigger('change:hovering');
 
@@ -818,7 +818,7 @@ export default class Editor extends EventEmitter {
 
   insertElements(elems) {
     let items = [];
-    let parent = this.doc.getFromIndex(this.state.scope);
+    let parent = this.doc.getFromIndex(this.doc.state.scope);
     let nextIndex = parent.nextChildIndex();
 
     for (let item of elems) {
@@ -880,8 +880,7 @@ export default class Editor extends EventEmitter {
       (this.doc.width / 2 - this.doc.state.position.x) *
       this.doc.state.zoomLevel;
     let offsetTop =
-      (this.canvas.height - this.doc.height * this.doc.state.zoomLevel) /
-      2;
+      (this.canvas.height - this.doc.height * this.doc.state.zoomLevel) / 2;
     offsetTop +=
       (this.doc.height / 2 - this.doc.state.position.y) *
       this.doc.state.zoomLevel;

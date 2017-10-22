@@ -20,7 +20,7 @@ export default class DocumentPointsUIElement extends UIElement {
       }
     }
 
-    let hovering = this.editor.state.hovering;
+    let hovering = this.editor.doc.state.hovering;
 
     for (let elem of hovering.items) {
       if (elem.metadata.visible && !this.editor.isSelected(elem)) {
