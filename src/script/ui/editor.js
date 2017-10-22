@@ -67,9 +67,11 @@ export default class Editor extends EventEmitter {
   open(doc) {
     let id = doc.__id__;
     let docState;
+    let isNew = false;
 
     if (this.docs[id] === undefined) {
       // New doc we haven't opened yet
+      isNew = true;
       this.docs[id] = doc;
       docState = DocState.forDoc(doc);
       this.docStates[id] = docState;
@@ -80,18 +82,19 @@ export default class Editor extends EventEmitter {
     this.doc = doc;
     this.docState = docState;
 
-    if (this.root) this.initDoc();
+    if (this.root) {
+      this.initDoc();
+      if (isNew) {
+        //this.fitToScreen();
+      }
+    }
   }
 
   save() {}
 
   initDoc() {
-    this.setPosition(this.doc.center());
-    this.fitToScreen();
-    this.setCurrentLayer(this.doc.layers[0]);
-
+    this.calculateScales();
     this.refreshAll();
-
     this.trigger('change');
     this.trigger('change:doc');
   }
@@ -194,7 +197,7 @@ export default class Editor extends EventEmitter {
       if (shouldZoom) {
         let zd = 1 - delta / 1000;
         let anchor = this.cursor.lastPosn;
-        this.setZoom(this.state.zoomLevel * zd, anchor);
+        this.setZoom(this.docState.state.zoomLevel * zd, anchor);
       } else {
         this.nudge(0, this.projection.zInvert(delta));
       }
@@ -391,8 +394,8 @@ export default class Editor extends EventEmitter {
     sessionStorage.setItem(
       'editor:state',
       JSON.stringify({
-        zoomLevel: this.state.zoomLevel,
-        position: this.state.position
+        zoomLevel: this.docState.state.zoomLevel,
+        position: this.docState.state.position
       })
     );
   }
@@ -436,7 +439,7 @@ export default class Editor extends EventEmitter {
   }
 
   setPosition(posn) {
-    this.state.position = posn;
+    this.docState.state.position = posn;
     if (this.canvas && this.doc) {
       this.calculateScales();
     }
@@ -445,21 +448,21 @@ export default class Editor extends EventEmitter {
   }
 
   nudge(x, y) {
-    this.setPosition(this.state.position.nudge(x, y));
+    this.setPosition(this.docState.state.position.nudge(x, y));
   }
 
   zoomIn(anchor = null) {
-    this.setZoom(this.state.zoomLevel * 1.2, anchor);
+    this.setZoom(this.docState.state.zoomLevel * 1.2, anchor);
   }
 
   zoomOut(anchor = null) {
-    this.setZoom(this.state.zoomLevel * 0.8, anchor);
+    this.setZoom(this.docState.state.zoomLevel * 0.8, anchor);
   }
 
   setZoom(zl, anchor = null) {
     zl = Math.min(100, Math.max(0.01, zl));
 
-    this.state.zoomLevel = zl;
+    this.docState.state.zoomLevel = zl;
 
     let anchorBefore;
     if (anchor) {
@@ -866,13 +869,16 @@ export default class Editor extends EventEmitter {
   calculateScales() {
     // Calculate scales
     let offsetLeft =
-      (this.canvas.width - this.doc.width * this.state.zoomLevel) / 2;
+      (this.canvas.width - this.doc.width * this.docState.state.zoomLevel) / 2;
     offsetLeft +=
-      (this.doc.width / 2 - this.state.position.x) * this.state.zoomLevel;
+      (this.doc.width / 2 - this.docState.state.position.x) *
+      this.docState.state.zoomLevel;
     let offsetTop =
-      (this.canvas.height - this.doc.height * this.state.zoomLevel) / 2;
+      (this.canvas.height - this.doc.height * this.docState.state.zoomLevel) /
+      2;
     offsetTop +=
-      (this.doc.height / 2 - this.state.position.y) * this.state.zoomLevel;
+      (this.doc.height / 2 - this.docState.state.position.y) *
+      this.docState.state.zoomLevel;
 
     // Account for windows on right side
     offsetLeft -= UTILS_WIDTH / 2;
@@ -882,13 +888,19 @@ export default class Editor extends EventEmitter {
 
     let x = scaleLinear()
       .domain([0, this.doc.width])
-      .range([offsetLeft, offsetLeft + this.doc.width * this.state.zoomLevel]);
+      .range([
+        offsetLeft,
+        offsetLeft + this.doc.width * this.docState.state.zoomLevel
+      ]);
 
     let y = scaleLinear()
       .domain([0, this.doc.height])
-      .range([offsetTop, offsetTop + this.doc.height * this.state.zoomLevel]);
+      .range([
+        offsetTop,
+        offsetTop + this.doc.height * this.docState.state.zoomLevel
+      ]);
 
-    this.projection = new Projection(x, y, this.state.zoomLevel);
+    this.projection = new Projection(x, y, this.docState.state.zoomLevel);
 
     this.cursorHandler.projection = this.projection;
   }
