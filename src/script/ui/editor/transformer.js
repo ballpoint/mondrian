@@ -88,7 +88,7 @@ export default class TransformerUIElement extends UIElement {
   }
 
   _refresh(layer, context) {
-    let selection = this.editor.state.selection;
+    let selection = this.editor.doc.state.selection;
 
     if (selection.empty) {
       this.reset(this.editor);
@@ -97,8 +97,8 @@ export default class TransformerUIElement extends UIElement {
 
     if (this.editor.state.textEditHandler !== undefined) return;
 
-    if (this.editor.state.selection.type === PHANDLE) return;
-    if (this.editor.state.selection.type === SHANDLE) return;
+    if (this.editor.doc.state.selection.type === PHANDLE) return;
+    if (this.editor.doc.state.selection.type === SHANDLE) return;
 
     let bounds = this.editor.projection.bounds(selection.bounds);
 
@@ -107,7 +107,7 @@ export default class TransformerUIElement extends UIElement {
       return;
     }
 
-    let { angle, center } = this.editor.state.selection;
+    let { angle, center } = this.editor.doc.state.selection;
 
     center = this.editor.projection.posn(center);
 
@@ -248,7 +248,7 @@ export default class TransformerUIElement extends UIElement {
     }
     */
 
-    let { angle } = this.editor.state.selection;
+    let { angle } = this.editor.doc.state.selection;
     ctrlBounds.angle = angle;
     layer.drawRect(ctrlBounds, ctrlOpts);
 
@@ -271,9 +271,9 @@ export default class TransformerUIElement extends UIElement {
           e.stopPropagation();
 
           this.startData = {
-            bounds: this.editor.state.selection.bounds.clone(),
-            angle: this.editor.state.selection.angle,
-            center: this.editor.state.selection.center.clone()
+            bounds: this.editor.doc.state.selection.bounds.clone(),
+            angle: this.editor.doc.state.selection.angle,
+            center: this.editor.doc.state.selection.center.clone()
           };
         },
         click: function(e, posn) {
@@ -377,7 +377,7 @@ export default class TransformerUIElement extends UIElement {
               //which = this.oppositeX(which);
               // Take new opposite from editor-calculated bounds so that it's perfect
               // Taking it from resultBounds in here is imperfect by at least 0.00001
-              //opposite = this.oppositeForPoint(which, this.editor.state.selection.bounds);
+              //opposite = this.oppositeForPoint(which, this.editor.doc.state.selection.bounds);
             }
 
             if (flipY) {
@@ -389,7 +389,7 @@ export default class TransformerUIElement extends UIElement {
               //which = this.oppositeY(which);
               // Take new opposite from editor-calculated bounds so that it's perfect
               // Taking it from resultBounds in here is imperfect by at least 0.00001
-              //opposite = this.oppositeForPoint(which, this.editor.state.selection.bounds);
+              //opposite = this.oppositeForPoint(which, this.editor.doc.state.selection.bounds);
             }
           }
         },
@@ -431,7 +431,7 @@ export default class TransformerUIElement extends UIElement {
 
       drag: (e, cursor) => {
         e.stopPropagation();
-        let center = this.editor.state.selection.center;
+        let center = this.editor.doc.state.selection.center;
 
         let posn = cursor.posnCurrent;
         if (e.shiftKey) {

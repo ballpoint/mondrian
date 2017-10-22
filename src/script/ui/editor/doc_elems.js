@@ -10,9 +10,9 @@ export default class DocumentPointsUIElement extends UIElement {
     this.reset();
 
     let tool = this.editor.state.tool;
-    let selection = this.editor.state.selection;
+    let selection = this.editor.doc.state.selection;
 
-    if (this.editor.state.selection.type === ELEMENTS) {
+    if (this.editor.doc.state.selection.type === ELEMENTS) {
       if (this.editor.state.textEditHandler === undefined) {
         for (let elem of selection.items) {
           this.drawOutlines(elem, layer);

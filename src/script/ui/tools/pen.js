@@ -25,7 +25,7 @@ export default class Pen extends Tool {
 
   resetState() {
     this.pathItemCommitted = false;
-    this.nextChildIndex = this.editor.state.layer.nextChildIndex();
+    this.nextChildIndex = this.editor.doc.state.layer.nextChildIndex();
 
     delete this.rootSegment;
     delete this._endedPath;

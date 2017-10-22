@@ -23,7 +23,7 @@ export default class Rect extends Tool {
   handleClick(e, cursor) {}
 
   handleDragStart(e, cursor) {
-    this.index = this.editor.state.layer.nextChildIndex();
+    this.index = this.editor.doc.state.layer.nextChildIndex();
   }
 
   handleDrag(e, cursor) {

@@ -32,13 +32,13 @@ class Utils extends React.Component {
           this.setState({
             frameId: editor.doc.history.head.id,
 
-            selection: editor.state.selection,
+            selection: editor.doc.state.selection,
             hasSelectedElements:
-              editor.state.selection.length > 0 &&
-              editor.state.selection.type === ELEMENTS,
+              editor.doc.state.selection.length > 0 &&
+              editor.doc.state.selection.type === ELEMENTS,
             hasSelectedPoints:
-              editor.state.selection.length > 0 &&
-              editor.state.selection.type === POINTS
+              editor.doc.state.selection.length > 0 &&
+              editor.doc.state.selection.type === POINTS
           });
           nextFrame = null;
         });

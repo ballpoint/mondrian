@@ -55,18 +55,18 @@ export default class Eyedropper extends Tool {
       let { fill, stroke } = chosen.data;
 
       if (
-        this.editor.state.selection.length > 0 &&
-        this.editor.state.selection.type === ELEMENTS
+        this.editor.doc.state.selection.length > 0 &&
+        this.editor.doc.state.selection.type === ELEMENTS
       ) {
         this.frame = new HistoryFrame(
           [
             actions.SetAttributeAction.forItems(
-              this.editor.state.selection.items,
+              this.editor.doc.state.selection.items,
               'fill',
               fill
             ),
             actions.SetAttributeAction.forItems(
-              this.editor.state.selection.items,
+              this.editor.doc.state.selection.items,
               'stroke',
               stroke
             )

@@ -3,7 +3,9 @@ import Selection from 'ui/selection';
 
 export default class DocState {
   constructor(state = {}) {
-    this.state = state;
+    for (let key in state) {
+      this[key] = state[key];
+    }
   }
 
   static forDoc(doc) {

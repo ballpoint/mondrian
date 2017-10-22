@@ -30,7 +30,7 @@ export default class DocumentPointsUIElement extends UIElement {
         // Draw all of the non-selected, non-hovered points
         for (let i = 0; i < points.length; i++) {
           let pt = points[i];
-          if (!this.editor.state.selection.has(pt)) {
+          if (!this.editor.doc.state.selection.has(pt)) {
             if (pt !== tool.hovering) {
               layer.drawCircle(this.editor.projection.posn(pt), 2.5, {
                 stroke: consts.point,
@@ -42,7 +42,7 @@ export default class DocumentPointsUIElement extends UIElement {
       }
 
       // Draw hovered point
-      if (tool.hovering && !this.editor.state.selection.has(tool.hovering)) {
+      if (tool.hovering && !this.editor.doc.state.selection.has(tool.hovering)) {
         this.handlePoint(tool.hovering, layer);
       }
     }
@@ -53,10 +53,10 @@ export default class DocumentPointsUIElement extends UIElement {
     }
 
     // Draw selected points
-    if (this.editor.state.selection.isOfType([POINTS, PHANDLE, SHANDLE])) {
-      for (let pt of this.editor.state.selection.items) {
+    if (this.editor.doc.state.selection.isOfType([POINTS, PHANDLE, SHANDLE])) {
+      for (let pt of this.editor.doc.state.selection.items) {
         this.handlePoint(pt, layer, {
-          includeHandles: this.editor.state.selection.length === 1
+          includeHandles: this.editor.doc.state.selection.length === 1
         });
       }
     }
@@ -114,13 +114,13 @@ export default class DocumentPointsUIElement extends UIElement {
       e => {
         let newSelection = new Selection(this.editor.doc, [pt]);
         if (e.shiftKey) {
-          if (this.editor.state.selection.type === POINTS) {
+          if (this.editor.doc.state.selection.type === POINTS) {
             this.editor.toggleInSelection([pt]);
           } else {
             this.editor.setSelection(newSelection);
           }
         } else {
-          if (!this.editor.state.selection.equal(newSelection)) {
+          if (!this.editor.doc.state.selection.equal(newSelection)) {
             this.editor.setSelection(newSelection);
           }
         }

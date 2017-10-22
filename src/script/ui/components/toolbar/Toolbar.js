@@ -20,23 +20,23 @@ class Toolbar extends React.Component {
   componentDidMount() {
     this.props.editor.on(['change:selection', 'change:tool'], () => {
       this.setState({
-        selection: this.props.editor.state.selection,
+        selection: this.props.editor.doc.state.selection,
         tool: this.props.editor.state.tool
       });
     });
   }
 
   renderHistoryGroup = () => {
+    let editor = this.props.editor;
+
+    if (!editor.docState) return null;
+
     return (
       <ToolbarGroup>
-        <ToolbarButton
-          onClick={this.props.editor.undo.bind(this.props.editor)}
-          title="Undo">
+        <ToolbarButton onClick={editor.undo.bind(editor)} title="Undo">
           {renderIcon('undo')}
         </ToolbarButton>
-        <ToolbarButton
-          onClick={this.props.editor.redo.bind(this.props.editor)}
-          title="Redo">
+        <ToolbarButton onClick={editor.redo.bind(editor)} title="Redo">
           {renderIcon('redo')}
         </ToolbarButton>
       </ToolbarGroup>
@@ -45,6 +45,8 @@ class Toolbar extends React.Component {
 
   renderBooleanGroup = () => {
     let editor = this.props.editor;
+
+    if (!editor.docState) return null;
 
     if (this.state.selection && this.state.selection.length > 1) {
       return (

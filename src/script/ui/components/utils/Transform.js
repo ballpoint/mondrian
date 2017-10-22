@@ -27,7 +27,7 @@ class TransformUtil extends React.Component {
   }
 
   renderSubheader = () => {
-    let sel = this.props.editor.state.selection;
+    let sel = this.props.editor.doc.state.selection;
     let items = sel.items;
     let subheader;
     if (items.length === 0) {
@@ -51,9 +51,9 @@ class TransformUtil extends React.Component {
   };
 
   getSelectionIdKey = () => {
-    let { state } = this.props.editor;
-    if (state.selection.type === ELEMENTS) {
-      return state.selection.items
+    let { doc } = this.props.editor;
+    if (doc.state.selection.type === ELEMENTS) {
+      return doc.state.selection.items
         .map(e => {
           return e.__id__;
         })
@@ -82,9 +82,9 @@ class TransformUtil extends React.Component {
   onChangeCoord = (val, which) => {
     let xd = 0,
       yd = 0;
-    let { state, doc } = this.props.editor;
-    if (state.selection) {
-      let bounds = state.selection.bounds;
+    let { doc } = this.props.editor;
+    if (doc.state.selection) {
+      let bounds = doc.state.selection.bounds;
       let origin = this.getOrigin(bounds);
       switch (which) {
         case 'x':
@@ -104,9 +104,9 @@ class TransformUtil extends React.Component {
   onChangeScale = (val, which) => {
     let xs = 1,
       ys = 1;
-    let { state, doc } = this.props.editor;
-    if (state.selection) {
-      let bounds = state.selection.bounds;
+    let { doc } = this.props.editor;
+    if (doc.state.selection) {
+      let bounds = doc.state.selection.bounds;
       let origin = this.getOrigin(bounds);
       switch (which) {
         case 'w':
@@ -124,13 +124,13 @@ class TransformUtil extends React.Component {
   };
 
   getThumbnail = () => {
-    return new Thumb(this.props.editor.state.selection.items, {
+    return new Thumb(this.props.editor.doc.state.selection.items, {
       maxWidth: THUMB_IMG_MAX_WIDTH,
       maxHeight: THUMB_IMG_MAX_HEIGHT
     });
   };
 
-  renderOriginButton = (id) => {
+  renderOriginButton = id => {
     return (
       <div
         className={classnames({
@@ -146,15 +146,15 @@ class TransformUtil extends React.Component {
   };
 
   renderThumb = () => {
-    let { state, doc } = this.props.editor;
-    let bounds = state.selection.bounds;
+    let { doc } = this.props.editor;
+    let bounds = doc.state.selection.bounds;
 
     let img;
     let brackets;
 
     if (!doc) return;
 
-    if (state.selection.empty) {
+    if (doc.state.selection.empty) {
       let docBounds = doc.bounds.fitToDimensions(
         THUMB_IMG_MAX_WIDTH,
         THUMB_IMG_MAX_HEIGHT
@@ -176,7 +176,7 @@ class TransformUtil extends React.Component {
         </div>
       );
     } else {
-      if (state.selection.type === ELEMENTS) {
+      if (doc.state.selection.type === ELEMENTS) {
         let thumb = this.getThumbnail();
         return (
           <div className="sel-util__thumb">
@@ -195,11 +195,13 @@ class TransformUtil extends React.Component {
             </div>
           </div>
         );
-      } else if (state.selection.isOfType([POINTS, PHANDLE, SHANDLE])) {
+      } else if (
+        doc.state.selection.isOfType([POINTS, PHANDLE, SHANDLE])
+      ) {
         // If we have more than one point, we draw their thumbnail
         // Otherwise, we render point + handle circle controls
 
-        if (state.selection.items.length > 1) {
+        if (doc.state.selection.items.length > 1) {
         } else {
           return (
             <div className="sel-util__thumb">
@@ -218,7 +220,7 @@ class TransformUtil extends React.Component {
     }
   };
 
-  getOrigin = (bounds) => {
+  getOrigin = bounds => {
     switch (this.state.originId) {
       case 'tl':
         return bounds.tl();
@@ -234,9 +236,9 @@ class TransformUtil extends React.Component {
   };
 
   renderCoords = () => {
-    let { state, doc } = this.props.editor;
-    if (state.selection) {
-      let bounds = state.selection.bounds;
+    let { doc } = this.props.editor;
+    if (doc.state.selection) {
+      let bounds = doc.state.selection.bounds;
 
       if (bounds) {
         let origin = this.getOrigin(bounds);
@@ -271,12 +273,12 @@ class TransformUtil extends React.Component {
   };
 
   renderHeight = () => {
-    let { state, doc } = this.props.editor;
+    let { doc } = this.props.editor;
     if (!doc) return;
 
     let value, onSubmit;
 
-    if (state.selection.empty) {
+    if (doc.state.selection.empty) {
       value = doc.height;
 
       onSubmit = val => {
@@ -284,8 +286,8 @@ class TransformUtil extends React.Component {
           this.props.editor.setDocDimens(doc.width, val);
         }
       };
-    } else if (state.selection) {
-      let bounds = state.selection.bounds;
+    } else if (doc.state.selection) {
+      let bounds = doc.state.selection.bounds;
 
       if (bounds) {
         onSubmit = val => {
@@ -309,12 +311,12 @@ class TransformUtil extends React.Component {
   };
 
   renderWidth = () => {
-    let { state, doc } = this.props.editor;
+    let { doc } = this.props.editor;
     if (!doc) return;
 
     let value, onSubmit;
 
-    if (state.selection.empty) {
+    if (doc.state.selection.empty) {
       value = doc.width;
 
       onSubmit = val => {
@@ -322,8 +324,8 @@ class TransformUtil extends React.Component {
           this.props.editor.setDocDimens(val, doc.height);
         }
       };
-    } else if (state.selection) {
-      let bounds = state.selection.bounds;
+    } else if (doc.state.selection) {
+      let bounds = doc.state.selection.bounds;
 
       if (bounds) {
         onSubmit = val => {
