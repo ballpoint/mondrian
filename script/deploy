@@ -1,0 +1,18 @@
+#!/bin/sh
+
+gitrev=$(git rev-parse HEAD)
+
+make
+
+ssh mondrian <<CMDS
+mkdir -p /app/mondrian/releases/$gitrev
+CMDS
+
+scp bin/webserver mondrian:/app/mondrian/releases/$gitrev
+
+ssh mondrian <<CMDS
+cd /app/mondrian/releases
+rm current
+ln -s /app/mondrian/releases/$gitrev current
+sudo service mondrian restart
+CMDS
