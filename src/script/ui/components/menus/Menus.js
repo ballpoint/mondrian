@@ -88,15 +88,15 @@ class Menus extends React.Component {
       return (
         <this.state.active.render
           ref="activeMenu"
-          editor={this.props.editor}
           absoluteTop={box.bottom}
           absoluteLeft={box.left}
+          {...this.props}
         />
       );
     }
   };
 
-  activateMenu = (m) => {
+  activateMenu = m => {
     let button = ReactDOM.findDOMNode(this.refs['button' + m.name]);
 
     this.setState({

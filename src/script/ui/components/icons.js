@@ -82,14 +82,23 @@ const ICONS = {
 export default ICONS;
 
 export function renderIcon(name, opts = {}) {
+  let style = {};
+
+  if (opts.width && opts.height) {
+    style.width = opts.width;
+    style.height = opts.height;
+  }
+
   return (
     <span
       className={classnames({
         icon: true,
         weak: opts.weak,
         selected: opts.selected,
-        ['icon--' + name]: true
+        ['icon--' + name]: true,
+        'icon--fill-dimens': opts.width && opts.height
       })}
+      style={style}
       dangerouslySetInnerHTML={{ __html: ICONS[name] }}
     />
   );

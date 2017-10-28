@@ -9,12 +9,25 @@
     #app-windows #app-utils #app-utils-left {
       width: 266px; }
     #app-windows #app-utils #app-utils-right {
-      width: 360px; }
+      width: 320px;
+      margin-left: 10px; }
+      #app-windows #app-utils #app-utils-right .util-window {
+        width: 100%; }
+    #app-windows #app-utils #app-utils-left,
+    #app-windows #app-utils #app-utils-right {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end; }
 
 .util-window {
-  margin: 10px 10px 10px auto;
+  margin: 5px 5px 5px 0;
   pointer-events: auto;
-  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.05), 0 4px 4px rgba(0, 0, 0, 0.03); }
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.05), 0 4px 4px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column; }
+  .util-window:not(.util-window--grow) {
+    flex-shrink: 0; }
   .util-window .util-header {
     padding: 3px;
     font-size: 14px;
@@ -26,7 +39,9 @@
     user-select: none; }
   .util-window .util-body {
     background: white;
-    font-size: 14px; }
+    font-size: 14px;
+    display: flex;
+    flex-direction: column; }
 
 .text-input label {
   margin-right: 5px; }
@@ -65,7 +80,7 @@
           border: 1px solid #bbc4c9; }
           .sel-util .sel-util__main .sel-util__top .sel-util__thumb .sel-util__thumb__img canvas {
             align-self: center;
-            max-width: 120px;
+            max-width: 100px;
             max-height: 80px; }
           .sel-util .sel-util__main .sel-util__top .sel-util__thumb .sel-util__thumb__img .sel-util__thumb__img--doc {
             display: block; }
@@ -145,8 +160,6 @@
     padding: 4px;
     border-top: 1px solid #ccc; }
 .doc-util__items {
-  min-height: 100px;
-  max-height: 220px;
   overflow-y: scroll;
   padding-bottom: 10px; }
   .doc-util__items .doc-util__item {
@@ -162,7 +175,8 @@
       flex-direction: row; }
       .doc-util__items .doc-util__item .doc-util__item__bar > * {
         align-self: center; }
-      .doc-util__items .doc-util__item .doc-util__item__bar .doc-util__item__bar__type, .doc-util__items .doc-util__item .doc-util__item__bar .doc-util__item__bar__id {
+      .doc-util__items .doc-util__item .doc-util__item__bar .doc-util__item__bar__type,
+      .doc-util__items .doc-util__item .doc-util__item__bar .doc-util__item__bar__id {
         padding: 2px 5px 2px 0; }
       .doc-util__items .doc-util__item .doc-util__item__bar .doc-util__item__bar__thumb {
         margin-right: 5px;
@@ -190,7 +204,8 @@
           margin-right: 5px; }
           .doc-util__items .doc-util__item .doc-util__item__bar .doc-util__item__bar__ctrls .doc-util__item__bar__ctrls__ctrl.disabled {
             opacity: 0.5; }
-    .doc-util__items .doc-util__item.doc-util__item--layer > .doc-util__item__bar .doc-util__item__bar__type, .doc-util__items .doc-util__item.doc-util__item--layer > .doc-util__item__bar .doc-util__item__bar__id {
+    .doc-util__items .doc-util__item.doc-util__item--layer > .doc-util__item__bar .doc-util__item__bar__type,
+    .doc-util__items .doc-util__item.doc-util__item--layer > .doc-util__item__bar .doc-util__item__bar__id {
       padding: 7px 5px 7px 0; }
     .doc-util__items .doc-util__item.doc-util__item--layer > .doc-util__item__bar .doc-util__item__bar__thumb {
       width: 30px;
@@ -213,106 +228,107 @@
 .doc-util__ctrls {
   padding: 5px;
   border-top: 1px solid #bbc4c9; }
-.history-util__frame {
-  padding: 5px;
-  cursor: default;
-  display: flex;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none; }
-  .history-util__frame:not(:last-child) {
-    border-bottom: 1px solid #bbc4c9; }
-  .history-util__frame .history-util__frame__depth {
-    color: #b2b2b2;
-    margin-right: 16px; }
-  .history-util__frame .history-util__frame__title {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap; }
-  .history-util__frame.selected, .history-util__frame:hover {
-    color: #0072d1; }
-    .history-util__frame.selected .history-util__frame__depth, .history-util__frame:hover .history-util__frame__depth {
-      color: #66aae3; }
-  .history-util__frame:active {
-    background-color: #f2f2f2; }
-.color-util .color-util__row {
-  width: 100%;
-  padding: 5px;
-  display: flex; }
-  .color-util .color-util__row:not(:first-child) {
-    border-top: 1px solid #bbc4c9; }
-  .color-util .color-util__row .color-util__row__label {
-    line-height: 32px; }
-  .color-util .color-util__row .color-util__row__value {
+.history-util__frames {
+  overflow-y: scroll; }
+  .history-util__frames .history-util__frame {
+    padding: 5px;
+    cursor: default;
     display: flex;
-    margin-left: auto; }
-    .color-util .color-util__row .color-util__row__value .color-util__row__swatch {
-      width: 32px;
-      height: 32px;
-      margin-left: 10px; }
-      .color-util .color-util__row .color-util__row__value .color-util__row__swatch.color-util__row__swatch--empty {
-        border: 1px solid #bbc4c9; }
-        .color-util .color-util__row .color-util__row__value .color-util__row__swatch.color-util__row__swatch--empty svg {
-          width: 100%; }
-          .color-util .color-util__row .color-util__row__value .color-util__row__swatch.color-util__row__swatch--empty svg line {
-            stroke: #bbc4c9; }
-    .color-util .color-util__row .color-util__row__value .color-util__row__mini-swatches {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none; }
+    .history-util__frames .history-util__frame:not(:last-child) {
+      border-bottom: 1px solid #bbc4c9; }
+    .history-util__frames .history-util__frame .history-util__frame__depth {
+      color: #b2b2b2;
+      margin-right: 16px; }
+    .history-util__frames .history-util__frame .history-util__frame__title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap; }
+    .history-util__frames .history-util__frame.selected, .history-util__frames .history-util__frame:hover {
+      color: #0072d1; }
+      .history-util__frames .history-util__frame.selected .history-util__frame__depth, .history-util__frames .history-util__frame:hover .history-util__frame__depth {
+        color: #66aae3; }
+    .history-util__frames .history-util__frame:active {
+      background-color: #f2f2f2; }
+.color-util {
+  width: 256px; }
+  .color-util .color-util__row {
+    width: 100%;
+    padding: 5px;
+    display: flex; }
+    .color-util .color-util__row:not(:first-child) {
+      border-top: 1px solid #bbc4c9; }
+    .color-util .color-util__row .color-util__row__label {
+      line-height: 32px; }
+    .color-util .color-util__row .color-util__row__value {
       display: flex;
-      width: 100px;
-      margin-left: 10px; }
-      .color-util .color-util__row .color-util__row__value .color-util__row__mini-swatches .color-util__row__mini-swatch {
-        flex-grow: 1;
-        height: 32px; }
-        .color-util .color-util__row .color-util__row__value .color-util__row__mini-swatches .color-util__row__mini-swatch + .color-util__row__mini-swatch {
-          margin-left: 3px; }
-        .color-util .color-util__row .color-util__row__value .color-util__row__mini-swatches .color-util__row__mini-swatch.color-util__row__mini-swatch--empty {
+      margin-left: auto; }
+      .color-util .color-util__row .color-util__row__value .color-util__row__swatch {
+        width: 32px;
+        height: 32px;
+        margin-left: 10px; }
+        .color-util .color-util__row .color-util__row__value .color-util__row__swatch.color-util__row__swatch--empty {
           border: 1px solid #bbc4c9; }
-          .color-util .color-util__row .color-util__row__value .color-util__row__mini-swatches .color-util__row__mini-swatch.color-util__row__mini-swatch--empty svg {
+          .color-util .color-util__row .color-util__row__value .color-util__row__swatch.color-util__row__swatch--empty svg {
             width: 100%; }
-            .color-util .color-util__row .color-util__row__value .color-util__row__mini-swatches .color-util__row__mini-swatch.color-util__row__mini-swatch--empty svg line {
+            .color-util .color-util__row .color-util__row__value .color-util__row__swatch.color-util__row__swatch--empty svg line {
               stroke: #bbc4c9; }
-
-.color-util .color-util__picker .color-util__picker__slider {
-  display: flex;
-  justify-content: center;
-  padding: 5px;
-  border-bottom: 1px solid #bbc4c9; }
-  .color-util .color-util__picker .color-util__picker__slider input,
-  .color-util .color-util__picker .color-util__picker__slider label {
-    margin: auto 0; }
-  .color-util .color-util__picker .color-util__picker__slider .text-input {
-    display: block;
-    margin-left: 10px;
-    text-align: right; }
-  .color-util .color-util__picker .color-util__picker__slider label {
-    margin-right: 10px; }
-  .color-util .color-util__picker .color-util__picker__slider label,
-  .color-util .color-util__picker .color-util__picker__slider input[type='text'] {
-    width: 40px; }
-  .color-util .color-util__picker .color-util__picker__slider input[type='range'] {
-    flex-grow: 1; }
-
-.color-util .color-util__picker .color-util__picker__rgb {
-  display: flex;
-  padding: 5px; }
-  .color-util .color-util__picker .color-util__picker__rgb .text-input {
-    display: block;
-    margin: auto 0; }
-    .color-util .color-util__picker .color-util__picker__rgb .text-input + label {
-      margin-left: 8px; }
-  .color-util .color-util__picker .color-util__picker__rgb label {
-    margin: auto 0;
-    margin-right: 4px; }
-
-.color-util .color-util__picker .color-util__canvas-container {
-  width: 256;
-  height: 256;
-  position: relative; }
-  .color-util .color-util__picker .color-util__canvas-container canvas {
-    position: absolute;
-    top: 0;
-    left: 0; }
+      .color-util .color-util__row .color-util__row__value .color-util__row__mini-swatches {
+        display: flex;
+        width: 100px;
+        margin-left: 10px; }
+        .color-util .color-util__row .color-util__row__value .color-util__row__mini-swatches .color-util__row__mini-swatch {
+          flex-grow: 1;
+          height: 32px; }
+          .color-util .color-util__row .color-util__row__value .color-util__row__mini-swatches .color-util__row__mini-swatch + .color-util__row__mini-swatch {
+            margin-left: 3px; }
+          .color-util .color-util__row .color-util__row__value .color-util__row__mini-swatches .color-util__row__mini-swatch.color-util__row__mini-swatch--empty {
+            border: 1px solid #bbc4c9; }
+            .color-util .color-util__row .color-util__row__value .color-util__row__mini-swatches .color-util__row__mini-swatch.color-util__row__mini-swatch--empty svg {
+              width: 100%; }
+              .color-util .color-util__row .color-util__row__value .color-util__row__mini-swatches .color-util__row__mini-swatch.color-util__row__mini-swatch--empty svg line {
+                stroke: #bbc4c9; }
+  .color-util .color-util__picker .color-util__picker__slider {
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+    border-bottom: 1px solid #bbc4c9; }
+    .color-util .color-util__picker .color-util__picker__slider input,
+    .color-util .color-util__picker .color-util__picker__slider label {
+      margin: auto 0; }
+    .color-util .color-util__picker .color-util__picker__slider .text-input {
+      display: block;
+      margin-left: 10px;
+      text-align: right; }
+    .color-util .color-util__picker .color-util__picker__slider label {
+      margin-right: 10px; }
+    .color-util .color-util__picker .color-util__picker__slider label,
+    .color-util .color-util__picker .color-util__picker__slider input[type='text'] {
+      width: 40px; }
+    .color-util .color-util__picker .color-util__picker__slider input[type='range'] {
+      flex-grow: 1; }
+  .color-util .color-util__picker .color-util__picker__rgb {
+    display: flex;
+    padding: 5px; }
+    .color-util .color-util__picker .color-util__picker__rgb .text-input {
+      display: block;
+      margin: auto 0; }
+      .color-util .color-util__picker .color-util__picker__rgb .text-input + label {
+        margin-left: 8px; }
+    .color-util .color-util__picker .color-util__picker__rgb label {
+      margin: auto 0;
+      margin-right: 4px; }
+  .color-util .color-util__picker .color-util__canvas-container {
+    width: 256;
+    height: 256;
+    position: relative; }
+    .color-util .color-util__picker .color-util__canvas-container canvas {
+      position: absolute;
+      top: 0;
+      left: 0; }
 #util-stroke {
   width: 180px; }
 
@@ -488,8 +504,7 @@
   overflow: hidden;
   padding-bottom: 1px; }
   #app-toolbar .toolbar-group {
-    display: flex;
-    border-right: 1px solid #bbc4c9; }
+    display: flex; }
     #app-toolbar .toolbar-group .toolbar-item {
       height: 100%;
       padding-left: 5px;
@@ -509,6 +524,8 @@
         width: 36px; }
       #app-toolbar .toolbar-group .toolbar-button:hover {
         color: #0072d1; }
+    #app-toolbar .toolbar-group:not(:last-child) {
+      border-right: 1px solid #bbc4c9; }
 #app-title {
   flex-grow: 1; }
   #app-title h2 {
@@ -598,6 +615,7 @@
     padding: 3px 5px;
     border: 1px solid #b2b2b2;
     display: flex;
+    align-items: center;
     height: 28px;
     -webkit-user-select: none;
     -moz-user-select: none;

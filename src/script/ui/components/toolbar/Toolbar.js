@@ -29,7 +29,7 @@ class Toolbar extends React.Component {
   renderHistoryGroup = () => {
     let editor = this.props.editor;
 
-    if (!editor.docState) return null;
+    if (!editor.doc) return null;
 
     return (
       <ToolbarGroup>
@@ -46,7 +46,7 @@ class Toolbar extends React.Component {
   renderBooleanGroup = () => {
     let editor = this.props.editor;
 
-    if (!editor.docState) return null;
+    if (!editor.doc) return null;
 
     if (this.state.selection && this.state.selection.length > 1) {
       return (

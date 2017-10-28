@@ -14,12 +14,8 @@ class HistoryUtil extends React.Component {
         onClick={() => {
           this.props.editor.jumpToHistoryDepth(frame.depth);
         }}>
-        <div className="history-util__frame__depth">
-          {frame.depth}
-        </div>
-        <div className="history-util__frame__title">
-          {frame.displayTitle}
-        </div>
+        <div className="history-util__frame__depth">{frame.depth}</div>
+        <div className="history-util__frame__title">{frame.displayTitle}</div>
       </div>
     );
   };
@@ -58,8 +54,8 @@ class HistoryUtil extends React.Component {
     }
 
     return (
-      <Util title="History">
-        {frames}
+      <Util title="History" grow={true}>
+        <div className="history-util__frames">{frames}</div>
       </Util>
     );
   }

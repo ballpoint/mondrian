@@ -1,8 +1,6 @@
-@import "~vars.scss";
+@import '~vars.scss';
 
 .doc-util__items {
-  min-height: 100px;
-  max-height: 220px;
   overflow-y: scroll;
   padding-bottom: 10px;
 
@@ -26,8 +24,8 @@
         align-self: center;
       }
 
-
-      .doc-util__item__bar__type, .doc-util__item__bar__id {
+      .doc-util__item__bar__type,
+      .doc-util__item__bar__id {
         padding: 2px 5px 2px 0;
       }
 
@@ -74,10 +72,10 @@
       }
     }
 
-
     &.doc-util__item--layer {
       > .doc-util__item__bar {
-        .doc-util__item__bar__type, .doc-util__item__bar__id {
+        .doc-util__item__bar__type,
+        .doc-util__item__bar__id {
           padding: 7px 5px 7px 0;
         }
 
@@ -100,13 +98,11 @@
     .doc-util__item__children {
       margin-left: 3px;
       padding-bottom: 3px;
-
     }
 
     &:last-child {
       border-bottom: 1px solid $blue-grey;
     }
-
 
     &.selected {
       border-left-color: $blue;

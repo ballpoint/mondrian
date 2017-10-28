@@ -1,5 +1,5 @@
 <!-- Made in Mondrian.io -->
 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" xmlns:mondrian="https://mondrian.io/xml">
-<path fill="rgba(178, 178, 178, 1)"  stroke-width="1" d="M5.00000000,15.00000000 L15.00000000,5.00000000"/>
-<path fill="rgba(178, 178, 178, 1)"  stroke-width="1" d="M5.00000000,5.00000000 L15.00000000,15.00000000"/>
+<line x1="20%" x2="80%" y1="20%" y2="80%" />
+<line x1="80%" x2="20%" y1="20%" y2="80%" />
 </svg>

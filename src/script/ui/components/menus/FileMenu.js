@@ -18,7 +18,7 @@ class FileMenu extends React.Component {
 
         let doc = Doc.fromSVG(text, fn.split('.')[0]);
 
-        this.props.editor.load(doc);
+        this.props.openDoc(doc);
       };
 
       reader.readAsText(files[0]);
@@ -47,7 +47,7 @@ class FileMenu extends React.Component {
       <MenuBody
         absoluteTop={this.props.absoluteTop}
         absoluteLeft={this.props.absoluteLeft}>
-        <MenuItem label="New..." hotkey="Ctrl-N" />
+        <MenuItem label="New..." hotkey="Ctrl-N" action={this.props.newDoc} />
 
         <MenuItem className="menu-item--file-input" hotkey="Ctrl-O">
           <input ref="fileInput" type="file" onChange={this.openFile} />

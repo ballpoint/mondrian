@@ -65,10 +65,12 @@ body {
       display: flex;
       flex-direction: column;
       height: $app-header-height;
+      border-right: 1px solid $blue-grey;
     }
+
     #app-account {
       flex-grow: 0;
-      width: 200px;
+      width: 630px;
     }
   }
 
@@ -87,7 +89,7 @@ body {
   footer {
     z-index: 100;
     border-top: 1px solid $fg-grey;
-    height: 50px;
+    height: 40px;
     margin-left: $app-toolbar-width - 1px;
     padding-left: 40px;
   }

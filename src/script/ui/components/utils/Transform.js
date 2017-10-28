@@ -195,9 +195,7 @@ class TransformUtil extends React.Component {
             </div>
           </div>
         );
-      } else if (
-        doc.state.selection.isOfType([POINTS, PHANDLE, SHANDLE])
-      ) {
+      } else if (doc.state.selection.isOfType([POINTS, PHANDLE, SHANDLE])) {
         // If we have more than one point, we draw their thumbnail
         // Otherwise, we render point + handle circle controls
 
@@ -350,7 +348,7 @@ class TransformUtil extends React.Component {
 
   render() {
     return (
-      <Util title="Transform">
+      <Util title="Transform" id="transform">
         <div className="sel-util">
           <div className="sel-util__main">
             <div className="sel-util__top">

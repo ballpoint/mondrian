@@ -41,7 +41,7 @@ import DocumentPointsUIElement from 'ui/editor/doc_pts';
 import DocumentElemsUIElement from 'ui/editor/doc_elems';
 import TextEditUIElement from 'ui/editor/text_edit';
 
-const UTILS_WIDTH = 360 + 275;
+const UTILS_WIDTH = 320 + 270;
 
 export default class Editor extends EventEmitter {
   constructor() {
@@ -59,13 +59,15 @@ export default class Editor extends EventEmitter {
       this.root = root;
       this.initCanvas();
 
-      if (this.doc) this.initDoc();
+      if (this.doc) {
+        this.initDoc();
+        this.fitToScreen();
+      }
     }
   }
 
   open(doc) {
     let id = doc.__id__;
-    let docState;
     let isNew = false;
 
     if (this.docs[id] === undefined) {
@@ -80,7 +82,7 @@ export default class Editor extends EventEmitter {
     if (this.root) {
       this.initDoc();
       if (isNew) {
-        //this.fitToScreen();
+        this.fitToScreen();
       }
     }
   }

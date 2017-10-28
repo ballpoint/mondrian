@@ -17,15 +17,37 @@ $util-grey: darken($bg-grey, 13%);
       width: 266px;
     }
     #app-utils-right {
-      width: 360px;
+      width: 320px;
+      margin-left: 10px;
+
+      .util-window {
+        width: 100%;
+      }
+    }
+
+    #app-utils-left,
+    #app-utils-right {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
     }
   }
 }
 
 .util-window {
-  margin: 10px 10px 10px auto;
+  margin: 5px 5px 5px 0;
   pointer-events: auto;
   @include card-shadow-small;
+  display: flex;
+  flex-direction: column;
+
+  &.util-window--grow {
+  }
+
+  &:not(.util-window--grow) {
+    flex-shrink: 0;
+  }
 
   .util-header {
     padding: 3px;
@@ -43,6 +65,8 @@ $util-grey: darken($bg-grey, 13%);
   .util-body {
     background: white;
     font-size: 14px;
+    display: flex;
+    flex-direction: column;
   }
 }
 

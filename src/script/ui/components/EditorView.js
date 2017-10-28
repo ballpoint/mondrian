@@ -52,6 +52,22 @@ class EditorView extends React.Component {
     });
   }
 
+  openDoc(doc) {
+    this.setState({
+      docs: this.state.docs.slice(0).concat([doc]),
+      activeDoc: doc
+    });
+  }
+
+  newDoc() {
+    let doc = Doc.empty(
+      this.state.activeDoc.width,
+      this.state.activeDoc.height,
+      'untitled'
+    );
+    this.openDoc(doc);
+  }
+
   render() {
     return (
       <div id="app-main">
@@ -71,10 +87,15 @@ class EditorView extends React.Component {
               ) : null}
             </div>
             <div id="app-menus">
-              <Menus editor={this.state.editor} />
+              <Menus
+                editor={this.state.editor}
+                doc={this.state.activeDoc}
+                openDoc={this.openDoc.bind(this)}
+                newDoc={this.newDoc.bind(this)}
+              />
             </div>
             <div id="app-toolbar">
-              <Toolbar editor={this.state.editor} />
+              <Toolbar editor={this.state.editor} doc={this.state.activeDoc} />
             </div>
           </div>
         </header>
@@ -90,14 +111,6 @@ class EditorView extends React.Component {
             <Utils editor={this.state.editor} />
           </div>
         </div>
-
-        <footer>
-          <Filetabs
-            files={this.state.docs}
-            active={this.state.activeDoc}
-            viewDoc={this.viewDoc.bind(this)}
-          />
-        </footer>
       </div>
     );
   }

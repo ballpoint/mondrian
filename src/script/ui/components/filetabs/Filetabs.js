@@ -19,7 +19,7 @@ class Filetabs extends React.Component {
           }}>
           {doc.name}
 
-          {renderIcon('del')}
+          {renderIcon('del', { width: 14, height: 14 })}
         </div>
       );
       i++;

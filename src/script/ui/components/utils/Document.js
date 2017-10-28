@@ -290,7 +290,7 @@ class DocumentUtil extends React.Component {
 
   render() {
     return (
-      <Util title="Document">
+      <Util title="Document" grow={true}>
         <div className="doc-util__items">
           {this.props.editor.doc.layers
             .slice(0)
