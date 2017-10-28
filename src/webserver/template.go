@@ -15,8 +15,13 @@ import (
 var page *template.Template
 
 func init() {
-	var err error
-	page, err = template.New("page.html").ParseFiles("templates/page.html")
+	templ, err := Asset("templates/page.html")
+
+	if err != nil {
+		panic(err)
+	}
+
+	page, err = template.New("page.html").Parse(string(templ))
 
 	if err != nil {
 		panic(err)

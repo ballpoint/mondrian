@@ -5,6 +5,7 @@ gitrev=$(git rev-parse HEAD)
 make
 
 ssh mondrian <<CMDS
+rm -rf /app/mondrian/releases/$gitrev
 mkdir -p /app/mondrian/releases/$gitrev
 CMDS
 
