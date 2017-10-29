@@ -4,9 +4,10 @@ gitrev=$(git rev-parse HEAD)
 
 rm -rf prod
 
-make
 
-GIT_REV=$gitrev npm run build
+npm run build
+
+make webserver-prod
 
 ssh mondrian <<CMDS
 rm -rf /app/mondrian/releases/$gitrev

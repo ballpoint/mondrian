@@ -6,13 +6,6 @@ const WebpackSHAHash = require('webpack-sha-hash');
 const WebpackAssetsManifest = require('webpack-assets-manifest');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-var gitRev = process.env.GIT_REV;
-
-if (gitRev === '') {
-  console.log('Missing GIT_REV');
-  process.exit(1);
-}
-
 module.exports = merge(common, {
   plugins: [
     new WebpackSHAHash(),
