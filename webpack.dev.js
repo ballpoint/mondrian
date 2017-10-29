@@ -14,5 +14,10 @@ module.exports = merge(common, {
   output: {
     path: path.join(__dirname, 'build/dev'),
     filename: '[name].js'
+  },
+
+  entry: {
+    test: 'test.js',
+    testbool: 'testbool.js'
   }
 });

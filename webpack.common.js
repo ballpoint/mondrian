@@ -18,9 +18,7 @@ module.exports = {
   entry: {
     vendor: 'vendor.js',
     views: 'views.js',
-    app: 'app.js',
-    test: 'test.js',
-    testbool: 'testbool.js'
+    app: 'app.js'
   },
 
   plugins: [],
