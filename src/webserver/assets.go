@@ -26,7 +26,7 @@ func (ctxt *Context) AssetURL(path string) string {
 	if conf.Env.Production() {
 		return filepath.Join("https://d3ozpu4dhcdupq.cloudfront.net", path)
 	} else {
-		return filepath.Join("/assets", path)
+		return path
 	}
 }
 

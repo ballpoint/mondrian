@@ -28,7 +28,8 @@ func New() *Webserver {
 		},
 	}
 
-	r.PathPrefix("/assets/build/").Handler(http.StripPrefix("/assets/build/", http.FileServer(http.Dir("build/dev"))))
+	r.PathPrefix("/build/").Handler(http.StripPrefix("/build/", http.FileServer(http.Dir("build/dev"))))
+	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir("src"))))
 
 	s.Handle("/", editorViewHandler)
 
