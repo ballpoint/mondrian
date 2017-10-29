@@ -3,7 +3,7 @@ package webserver
 import (
 	"net/http"
 
-	"github.com/cryptowatch/golib/conf"
+	"github.com/ballpoint/mondrian/src/conf"
 	"github.com/gorilla/mux"
 )
 
