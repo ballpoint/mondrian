@@ -9,6 +9,7 @@ make webserver-prod
 ssh mondrian <<CMDS
 rm -rf /app/mondrian/releases/$gitrev
 mkdir -p /app/mondrian/releases/$gitrev
+ln -s /app/mondrian/shared/node_modules /app/mondrian/releases/$gitrev/node_modules
 CMDS
 
 aws s3 sync build/prod/ s3://mondrian-static/build/ --profile ballpoint-deploy \
@@ -18,8 +19,12 @@ aws s3 sync build/prod/ s3://mondrian-static/build/ --profile ballpoint-deploy \
 scp bin/webserver mondrian:/app/mondrian/releases/$gitrev
 scp build/prod/views.*js mondrian:/app/mondrian/releases/$gitrev/views.js
 scp renderer.js mondrian:/app/mondrian/releases/$gitrev
+scp package-server.json mondrian:/app/mondrian/releases/$gitrev/package.json
 
 ssh mondrian <<CMDS
+cd /app/mondrian/releases/$gitrev
+npm install
+
 cd /app/mondrian/releases
 rm current
 ln -s /app/mondrian/releases/$gitrev current
