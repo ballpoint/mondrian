@@ -16,10 +16,13 @@ aws s3 sync build/prod/ s3://mondrian-static/build/ --profile ballpoint-deploy \
   --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
 
 scp bin/webserver mondrian:/app/mondrian/releases/$gitrev
+scp build/prod/views.*js mondrian:/app/mondrian/releases/$gitrev/views.js
+scp renderer.js mondrian:/app/mondrian/releases/$gitrev
 
 ssh mondrian <<CMDS
 cd /app/mondrian/releases
 rm current
 ln -s /app/mondrian/releases/$gitrev current
+sudo service react-server restart
 sudo service mondrian restart
 CMDS

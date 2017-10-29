@@ -76,7 +76,7 @@ let server = http.createServer((req, res) => {
 
     if (data.view === undefined) {
       res.writeHead(400);
-      res.end('Need component field');
+      res.end('Need view field');
       return;
     }
 
