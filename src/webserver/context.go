@@ -1,10 +1,6 @@
 package webserver
 
-import (
-	"net/http"
-
-	"github.com/ballpoint/mondrian/src/conf"
-)
+import "net/http"
 
 type Context struct {
 	http.ResponseWriter
@@ -27,13 +23,5 @@ func (ctxt *Context) FormatTitle() string {
 		return ctxt.Title + " - Mondrian"
 	} else {
 		return "Mondrian"
-	}
-}
-
-func (ctxt *Context) AssetURL(path string) string {
-	if conf.Env.Production() {
-		return "https://d3ozpu4dhcdupq.cloudfront.net" + path
-	} else {
-		return "/assets" + path
 	}
 }

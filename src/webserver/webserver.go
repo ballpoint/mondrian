@@ -22,7 +22,7 @@ func New() *Webserver {
 		},
 	}
 
-	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir("build"))))
+	r.PathPrefix("/assets/build/").Handler(http.StripPrefix("/assets/build/", http.FileServer(http.Dir("build/dev"))))
 
 	s.Handle("/", editorViewHandler)
 

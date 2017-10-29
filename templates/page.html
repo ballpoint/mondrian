@@ -1,7 +1,7 @@
 <html>
   <head>
     <!--<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">-->
-    <link rel="stylesheet" href="/assets/styles/bundles/app.css" />
+    <link rel="stylesheet" href='{{ .Bundle "app.css" }}' />
 
     <title>{{ .FormatTitle }}</title>
   </head>
@@ -10,7 +10,7 @@
       {{ .View.Prerendered }}
     </main>
 
-    <script type="text/javascript" src='{{ .AssetURL "/bundles/vendor.bundle.js" }}'></script>
-    <script type="text/javascript" src='{{ .AssetURL "/bundles/app.bundle.js" }}'></script>
+    <script type="text/javascript" src='{{ .Bundle "vendor.bundle.js" }}'></script>
+    <script type="text/javascript" src='{{ .Bundle "app.bundle.js" }}'></script>
   </body>
 </html>

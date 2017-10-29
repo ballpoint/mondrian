@@ -13,11 +13,7 @@ rm -rf /app/mondrian/releases/$gitrev
 mkdir -p /app/mondrian/releases/$gitrev
 CMDS
 
-aws s3 sync build/prod/bundles/ s3://mondrian-static/bundles/ --profile ballpoint-deploy \
-  --region us-east-2 \
-  --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
-
-aws s3 sync build/prod/styles/ s3://mondrian-static/styles/ --profile ballpoint-deploy \
+aws s3 sync build/prod/ s3://mondrian-static/build/ --profile ballpoint-deploy \
   --region us-east-2 \
   --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
 

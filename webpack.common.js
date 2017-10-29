@@ -1,9 +1,8 @@
-const webpack = require('webpack');
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
-  context: path.join(__dirname, 'src/script'),
+  context: path.join(__dirname, 'src'),
 
   resolve: {
     modules: [
@@ -17,11 +16,11 @@ module.exports = {
   },
 
   entry: {
-    'bundles/vendor': 'vendor.js',
-    'bundles/views': 'views.js',
-    'bundles/app': 'app.js',
-    'bundles/test': 'test.js',
-    'bundles/testbool': 'testbool.js'
+    vendor: 'vendor.js',
+    views: 'views.js',
+    app: 'app.js',
+    test: 'test.js',
+    testbool: 'testbool.js'
   },
 
   plugins: [],

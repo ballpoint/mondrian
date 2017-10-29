@@ -19,12 +19,12 @@ module.exports = merge(common, {
     new WebpackAssetsManifest({
       output: path.join(__dirname, 'build/prod/manifest.json')
     }),
-    new ExtractTextPlugin('../styles/[name].[chunkhash].css'),
+    new ExtractTextPlugin('[name].[chunkhash].css'),
     new UglifyJSPlugin()
   ],
 
   output: {
-    path: path.join(__dirname, 'build/prod/script'),
+    path: path.join(__dirname, 'build/prod'),
     filename: '[name].[chunkhash].bundle.js'
   }
 });
