@@ -4,6 +4,7 @@ Description=Mondrian webserver
 [Service]
 ExecStart=/app/mondrian/releases/current/webserver
 WorkingDirectory=/app/mondrian/releases/current
+Environment=MONDRIAN_ENV=production
 LimitNOFILE=100000
 Restart=on-failure
 RestartSec=1
