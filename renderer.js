@@ -3,7 +3,9 @@ const fs = require('fs');
 // load the cache manifest
 const path = require('path');
 
-const deps = ['build/bundles/views.bundle.js'];
+let viewsBundle = process.env.VIEWS_BUNDLE_PATH || 'build/dev/views.js';
+
+const deps = [viewsBundle];
 
 const _ = require('lodash');
 const React = require('react');
@@ -12,11 +14,15 @@ const DOMParser = require('xmldom').DOMParser;
 const protobuf = require('protobufjs');
 
 const ReactDOMServer = require('react-dom/server');
+const classnames = require('classnames');
+
+global.classnames = classnames;
 global.ReactDOMServer = ReactDOMServer;
-
 global.DOMParser = DOMParser;
-
 global.__RENDERER__ = true;
+
+const env = process.env.MONDRIAN_ENV || 'development';
+console.log('Running in ' + env + ' environment');
 
 let factories = {};
 
@@ -41,7 +47,6 @@ function loadViews() {
       return;
     }
   }
-  console.log('loaded');
 
   for (key in global.__VIEWS__) {
     factories[key] = React.createFactory(global.__VIEWS__[key]);
@@ -61,7 +66,9 @@ let server = http.createServer((req, res) => {
   });
 
   req.on('end', function() {
-    loadViews();
+    if (env === 'development') {
+      loadViews();
+    }
 
     let data = qs.parse(body);
 
@@ -102,6 +109,12 @@ let server = http.createServer((req, res) => {
   });
 });
 
-server.listen('8111', function() {
-  console.log('Listening on :8111');
+try {
+  fs.unlinkSync('renderer.sock');
+} catch (e) {
+  // whatever
+}
+
+server.listen('renderer.sock', function() {
+  console.log('Listening on unix socket');
 });

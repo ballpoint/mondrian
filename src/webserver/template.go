@@ -2,11 +2,14 @@ package webserver
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"html/template"
 	"log"
+	"net"
 	"net/http"
 	"net/url"
+	"time"
 
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
@@ -39,8 +42,17 @@ type view struct {
 // All views in Mondrian are top-level React components rendered directly into <body>
 func (ctxt *Context) RenderView(name string, p props) error {
 	var (
-		client http.Client
+		client = http.Client{
+			Timeout: 1 * time.Second,
+
+			Transport: &http.Transport{
+				DialContext: func(_ context.Context, _, _ string) (net.Conn, error) {
+					return net.Dial("unix", "renderer.sock")
+				},
+			},
+		}
 	)
+
 	propsJson, jsonErr := json.Marshal(p)
 
 	if jsonErr != nil {
@@ -56,7 +68,7 @@ func (ctxt *Context) RenderView(name string, p props) error {
 		},
 	}
 
-	resp, renderErr := client.PostForm("http://127.0.0.1:8111", url.Values{
+	resp, renderErr := client.PostForm("http://unix", url.Values{
 		"view":  []string{name},
 		"props": []string{string(propsJson)},
 	})
