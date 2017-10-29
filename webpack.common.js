@@ -5,10 +5,6 @@ const path = require('path');
 module.exports = {
   context: path.join(__dirname, 'src/script'),
 
-  output: {
-    path: path.join(__dirname, 'build')
-  },
-
   resolve: {
     modules: [
       path.resolve(__dirname, 'node_modules'),

@@ -1,7 +1,5 @@
 node_modules
-build/bundles
-build/*.css
 src/proto
 *_generated.go
 bin/*
-prod
+build
