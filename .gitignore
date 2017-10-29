@@ -4,3 +4,4 @@ build/*.css
 src/proto
 *_generated.go
 bin/*
+prod

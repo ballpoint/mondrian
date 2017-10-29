@@ -1,14 +1,16 @@
 {
   "name": "mondrian",
   "version": "0.0.0",
-  "description": "Mondrian is a smart and easy-to-learn vector graphics web app.",
+  "description": "mondrian.io",
   "main": "",
   "directories": {
     "test": "tests"
   },
   "scripts": {
-    "start": "coffee server.coffee",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start":
+      "./node_modules/.bin/webpack --progress --watch --config ./webpack.dev.js",
+    "build":
+      "./node_modules/.bin/webpack --progress -p --config ./webpack.prod.js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +26,7 @@
     "babel": "^6.23.0",
     "babel-core": "^6.24.1",
     "babel-loader": "^7.0.0",
+    "babel-plugin-transform-es2015-classes": "^6.24.1",
     "classnames": "^2.2.5",
     "css-loader": "^0.28.0",
     "d3-scale": "^1.0.5",
@@ -35,12 +38,14 @@
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "style-loader": "^0.16.1",
+    "uglifyjs-webpack-plugin": "^1.0.1",
     "uuid": "^3.0.1",
+    "webpack-merge": "^4.1.0",
     "xmldom": "^0.1.27"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
-    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
     "chai": "^4.1.2",
     "connect": "~2.12.0",
