@@ -10,12 +10,16 @@ ssh mondrian <<CMDS
 rm -rf /app/mondrian/releases/$gitrev
 mkdir -p /app/mondrian/releases/$gitrev
 ln -s /app/mondrian/shared/node_modules /app/mondrian/releases/$gitrev/node_modules
+
+chmod a+x /app/mondrian/releases/$gitrev/exec_renderer.js
+
 CMDS
 
 aws s3 sync build/prod/ s3://mondrian-static/build/ --profile ballpoint-deploy \
   --region us-east-2 \
   --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
 
+scp script/exec_renderer.js mondrian:/app/mondrian/releases/$gitrev
 scp bin/webserver mondrian:/app/mondrian/releases/$gitrev
 scp build/prod/views.*js mondrian:/app/mondrian/releases/$gitrev/views.js
 scp renderer.js mondrian:/app/mondrian/releases/$gitrev

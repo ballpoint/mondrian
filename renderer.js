@@ -98,7 +98,7 @@ let server = http.createServer((req, res) => {
       res.writeHead(200);
       res.end(string);
       let end = new Date().valueOf();
-      console.log('Render time', data.component, end - start + 'ms');
+      console.log('Render time', data.view, end - start + 'ms');
     } catch (e) {
       console.log(e);
       res.writeHead(500);
