@@ -1,4 +1,3 @@
-import classnames from 'classnames';
 import Util from 'ui/components/utils/Util';
 import 'utils/align.scss';
 

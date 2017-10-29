@@ -1,4 +1,3 @@
-import classnames from 'classnames';
 import Bounds from 'geometry/bounds';
 import Thumb from 'ui/thumb';
 import Layer from 'ui/layer';

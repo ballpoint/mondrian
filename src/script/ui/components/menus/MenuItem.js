@@ -1,4 +1,3 @@
-import classnames from 'classnames';
 import 'menus/menus.scss';
 
 class MenuItem extends React.Component {

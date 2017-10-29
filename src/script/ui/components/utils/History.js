@@ -1,5 +1,4 @@
 import 'utils/history.scss';
-import classnames from 'classnames';
 import Util from 'ui/components/utils/Util';
 
 class HistoryUtil extends React.Component {

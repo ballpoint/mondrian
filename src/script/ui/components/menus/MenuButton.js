@@ -1,4 +1,3 @@
-import classnames from 'classnames';
 import 'menus/menus.scss';
 
 class MenuButton extends React.Component {

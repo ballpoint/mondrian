@@ -1,4 +1,3 @@
-import classnames from 'classnames';
 import 'filetabs/filetabs.scss';
 import { renderIcon } from 'ui/components/icons';
 

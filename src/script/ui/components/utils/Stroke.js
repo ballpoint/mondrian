@@ -3,7 +3,6 @@ import Util from 'ui/components/utils/Util';
 import TextInput from 'ui/components/utils/TextInput';
 import { renderIcon } from 'ui/components/icons';
 import 'utils/stroke.scss';
-import classnames from 'classnames';
 
 class StrokeUtil extends React.Component {
   renderAttrButton = (attr, val, icon) => {

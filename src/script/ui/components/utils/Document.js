@@ -1,5 +1,4 @@
 import 'utils/document.scss';
-import classnames from 'classnames';
 import Util from 'ui/components/utils/Util';
 import Layer from 'io/layer';
 import Thumb from 'ui/thumb';

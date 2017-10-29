@@ -1,4 +1,3 @@
-import classnames from 'classnames';
 import cursor from 'icons/cursor.svg';
 import subcursor from 'icons/subcursor.svg';
 import ellipse from 'icons/ellipse.svg';
