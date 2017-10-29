@@ -1,6 +1,6 @@
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const webpack = require('webpack');
 const path = require('path');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
   context: path.join(__dirname, 'src/script'),
@@ -24,15 +24,7 @@ module.exports = {
     'bundles/testbool': 'testbool.js'
   },
 
-  output: {
-    path: path.join(__dirname, './build'),
-    filename: '[name].bundle.js'
-  },
-
-  plugins: [
-    new webpack.SourceMapDevToolPlugin({}),
-    new ExtractTextPlugin('styles/[name].css')
-  ],
+  plugins: [],
 
   module: {
     rules: [

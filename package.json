@@ -7,10 +7,8 @@
     "test": "tests"
   },
   "scripts": {
-    "start":
-      "./node_modules/.bin/webpack --progress --watch --config ./webpack.dev.js",
-    "build":
-      "./node_modules/.bin/webpack --progress -p --config ./webpack.prod.js"
+    "start": "./node_modules/.bin/webpack --progress --watch --config ./webpack.dev.js",
+    "build": "./node_modules/.bin/webpack --progress -p --config ./webpack.prod.js"
   },
   "repository": {
     "type": "git",
@@ -40,6 +38,7 @@
     "style-loader": "^0.16.1",
     "uglifyjs-webpack-plugin": "^1.0.1",
     "uuid": "^3.0.1",
+    "webpack-assets-manifest": "^1.0.0",
     "webpack-merge": "^4.1.0",
     "xmldom": "^0.1.27"
   },
@@ -55,6 +54,8 @@
     "prettier": "^1.5.3",
     "raw-loader": "^0.5.1",
     "sass-loader": "^4.0.1",
-    "webpack": "^2.5.1"
+    "webpack": "^2.5.1",
+    "webpack-md5-hash": "0.0.5",
+    "webpack-sha-hash": "^2.0.0"
   }
 }

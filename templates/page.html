@@ -10,7 +10,7 @@
       {{ .View.Prerendered }}
     </main>
 
-    <script type="text/javascript" src="/assets/bundles/vendor.bundle.js"></script>
-    <script type="text/javascript" src="/assets/bundles/app.bundle.js"></script>
+    <script type="text/javascript" src='{{ .AssetURL "/bundles/vendor.bundle.js" }}'></script>
+    <script type="text/javascript" src='{{ .AssetURL "/bundles/app.bundle.js" }}'></script>
   </body>
 </html>
