@@ -3,6 +3,7 @@ package webserver
 import (
 	"net/http"
 
+	"github.com/cryptowatch/golib/conf"
 	"github.com/gorilla/mux"
 )
 
@@ -14,10 +15,15 @@ type Webserver struct {
 func New() *Webserver {
 	r := mux.NewRouter()
 
+	var addr string = ":8060"
+	if conf.Env.Production() {
+		addr = ":80"
+	}
+
 	s := &Webserver{
 		r: r,
 		server: &http.Server{
-			Addr:    ":8060",
+			Addr:    addr,
 			Handler: r,
 		},
 	}
