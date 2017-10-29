@@ -19,7 +19,7 @@ class EditorView extends React.Component {
     if (this.props.doc) {
       doc = Doc.fromSVG(this.props.doc.svg, this.props.doc.name);
     } else {
-      doc = Doc.empty(850, 1100, 'untitled');
+      doc = Doc.empty(600, 300, 'untitled');
     }
 
     let doc2 = Doc.empty(850, 1100, 'dinosaur.svg');
