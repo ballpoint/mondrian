@@ -1,0 +1,5 @@
+#!/bin/sh
+
+aws s3 sync src/images/ s3://mondrian-static/assets/images/ --profile ballpoint-deploy \
+  --region us-east-2 \
+  --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers
