@@ -10,6 +10,10 @@ export default class Group {
     this.__id__ = UUIDV4();
   }
 
+  static get type() {
+    return 'group';
+  }
+
   bounds() {
     let nonce = this.__nonce__;
     if (nonce === this._cachedBoundsNonce) {
@@ -118,6 +122,11 @@ export default class Group {
   }
 
   clone() {
-    return new Group(this.children.map(child => { return child.clone() }), this.metadata);
+    return new Group(
+      this.children.map(child => {
+        return child.clone();
+      }),
+      this.metadata
+    );
   }
 }

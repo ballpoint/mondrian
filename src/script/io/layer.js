@@ -11,6 +11,10 @@ export default class Layer {
     this.__id__ = UUIDV4();
   }
 
+  get type() {
+    return 'layer';
+  }
+
   remove(elem) {
     this.children = this.children.filter(existing => {
       return existing !== elem;

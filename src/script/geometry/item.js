@@ -37,6 +37,10 @@ export default class Item {
     this.__nonce__ = 1;
   }
 
+  static get type() {
+    return 'item';
+  }
+
   validateColors() {
     // Convert color strings to Color objects
     if (this.data.fill) {

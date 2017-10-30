@@ -172,7 +172,7 @@ class DocumentUtilChild extends React.Component {
         className={classnames({
           'doc-util__item': true,
           'doc-util__item--parent': child.children && child.children.length > 0,
-          ['doc-util__item--' + child.constructor.name]: true,
+          ['doc-util__item--' + child.constructor.type]: true,
           selected: isSelected
         })}>
         <div
@@ -220,7 +220,7 @@ class DocumentUtilChild extends React.Component {
               <canvas ref="thumbnail" />
             </div>
             <div className="doc-util__item__bar__type">
-              {child.constructor.name}
+              {_.capitalize(child.type)}
             </div>
             <div className="doc-util__item__bar__id">{child.id}</div>
           </div>
