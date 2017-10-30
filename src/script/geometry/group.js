@@ -10,7 +10,7 @@ export default class Group {
     this.__id__ = UUIDV4();
   }
 
-  static get type() {
+  get type() {
     return 'group';
   }
 

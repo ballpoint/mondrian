@@ -8,6 +8,8 @@ import Title from 'ui/components/title/Title';
 import Menus from 'ui/components/menus/Menus';
 import Filetabs from 'ui/components/filetabs/Filetabs';
 
+import google from 'google.svg';
+
 // Main view
 class EditorView extends React.Component {
   constructor(props) {
@@ -15,7 +17,8 @@ class EditorView extends React.Component {
 
     let editor = new Editor();
 
-    let doc;
+    let doc = Doc.fromSVG(google, 'google-logo.svg');
+    /*
     if (this.props.doc) {
       doc = Doc.fromSVG(this.props.doc.svg, this.props.doc.name);
     } else {
@@ -24,10 +27,11 @@ class EditorView extends React.Component {
 
     let doc2 = Doc.empty(850, 1100, 'dinosaur.svg');
     let doc3 = Doc.empty(850, 1100, 'test.svg');
+    */
 
     this.state = {
       editor,
-      docs: [doc3, doc, doc2],
+      docs: [doc],
       activeDoc: doc
     };
 
