@@ -14,11 +14,7 @@ export default class HistoryFrame {
     if (this.title) {
       return this.title;
     } else {
-      return this.actions
-        .map(a => {
-          return a.displayTitle || a.constructor.name;
-        })
-        .join('; ');
+      return 'Frame';
     }
   }
 
