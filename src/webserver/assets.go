@@ -24,9 +24,9 @@ func init() {
 
 func (ctxt *Context) AssetURL(path string) string {
 	if conf.Env.Production() {
-		return "https://d3ozpu4dhcdupq.cloudfront.net" + path
+		return "https://d3ozpu4dhcdupq.cloudfront.net/" + path
 	} else {
-		return path
+		return "/" + path
 	}
 }
 
