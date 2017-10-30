@@ -24,20 +24,20 @@ func init() {
 
 func (ctxt *Context) AssetURL(path string) string {
 	if conf.Env.Production() {
-		return "https://d3ozpu4dhcdupq.cloudfront.net/" + path
+		return "https://d3ozpu4dhcdupq.cloudfront.net" + path
 	} else {
-		return "/" + path
+		return path
 	}
 }
 
 func (ctxt *Context) Bundle(bundle string) string {
 	if conf.Env.Production() {
 		if path, ok := assetsManifest[bundle]; ok {
-			return ctxt.AssetURL(filepath.Join("build", path))
+			return ctxt.AssetURL(filepath.Join("/build", path))
 		} else {
 			return bundle
 		}
 	} else {
-		return ctxt.AssetURL(filepath.Join("build", bundle))
+		return ctxt.AssetURL(filepath.Join("/build", bundle))
 	}
 }
