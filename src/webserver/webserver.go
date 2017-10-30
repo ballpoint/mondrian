@@ -30,7 +30,7 @@ func New() *Webserver {
 			Addr: ":80",
 			Handler: http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 				fmt.Println("https://"+req.URL.Host+req.URL.RawPath, 301)
-				http.Redirect(w, req, "https://alpha.mondrian.io"+req.URL.RawPath, 301)
+				http.Redirect(w, req, "https://mondrian.io"+req.URL.RawPath, 301)
 			}),
 			ReadTimeout:  10 * time.Second,
 			WriteTimeout: 10 * time.Second,
