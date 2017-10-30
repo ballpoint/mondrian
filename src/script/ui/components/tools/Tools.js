@@ -71,9 +71,10 @@ class Tools extends React.Component {
           let isSelected =
             this.state.selected &&
             this.props.editor.state.tool.constructor === t.constructor;
+
           return (
             <a
-              key={t.constructor.name}
+              key={t.icon}
               className={classnames({
                 'app-tool': true,
                 icon: true,
