@@ -2,6 +2,8 @@
 
 gitrev=$(git rev-parse HEAD)
 
+rm -rf build/prod
+
 npm run build
 
 make webserver-prod
