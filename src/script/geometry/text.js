@@ -39,6 +39,10 @@ export default class Text extends Item {
     super(data);
   }
 
+  get type() {
+    return 'text';
+  }
+
   fontStyle() {
     return `${this.fontSize()} ${this.fontFamily()}`;
   }
