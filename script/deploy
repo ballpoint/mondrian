@@ -13,8 +13,6 @@ rm -rf /app/mondrian/releases/$gitrev
 mkdir -p /app/mondrian/releases/$gitrev
 ln -s /app/mondrian/shared/node_modules /app/mondrian/releases/$gitrev/node_modules
 
-chmod a+x /app/mondrian/releases/$gitrev/exec_renderer.js
-
 CMDS
 
 aws s3 sync build/prod/ s3://mondrian-static/build/ --profile ballpoint-deploy \

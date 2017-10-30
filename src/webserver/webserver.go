@@ -66,6 +66,7 @@ func New() *Webserver {
 	r.PathPrefix("/build/").Handler(http.StripPrefix("/build/", http.FileServer(http.Dir("build/dev"))))
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir("src"))))
 
+	s.Handle("/contributing", aliasHandler("/"))
 	s.Handle("/", editorViewHandler)
 
 	return s
@@ -79,6 +80,13 @@ func (s *Webserver) Handle(route string, h Handler) {
 	}
 
 	s.r.HandleFunc(route, do)
+}
+
+func aliasHandler(alias string) Handler {
+	return func(c *Context) error {
+		http.Redirect(c.ResponseWriter, c.Request, "/", 301)
+		return nil
+	}
 }
 
 func (s *Webserver) Run() {
