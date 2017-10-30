@@ -101,7 +101,10 @@ class DocumentUtilChild extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.frameId !== prevProps.frameId) {
+    if (
+      this.props.frameId !== prevProps.frameId ||
+      this.props.docId !== prevProps.docId
+    ) {
       this.updateThumb();
     }
   }
@@ -153,6 +156,7 @@ class DocumentUtilChild extends React.Component {
                   key={child.index.toString()}
                   child={child}
                   frameId={this.props.frameId}
+                  docId={this.props.docId}
                   editor={this.props.editor}
                   isExpanded={this.props.isExpanded}
                   expand={this.props.expand}
@@ -300,6 +304,7 @@ class DocumentUtil extends React.Component {
                   key={child.index.toString()}
                   child={child}
                   frameId={this.props.editor.doc.history.head.id}
+                  docId={this.props.editor.doc.__id__}
                   editor={this.props.editor}
                   isExpanded={this.isExpanded}
                   expand={this.expand}
