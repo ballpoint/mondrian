@@ -9,20 +9,6 @@ export default class Index {
     this.parts = parts;
   }
 
-  toProto() {
-    return proto.geometry.Index.fromObject({
-      parts: this.parts
-    });
-  }
-
-  static fromProto(index) {
-    return new Index(
-      index.parts.map(x => {
-        return x.toNumber();
-      })
-    );
-  }
-
   clone() {
     return new Index(this.parts);
   }

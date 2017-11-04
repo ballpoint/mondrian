@@ -1,8 +1,41 @@
 import Posn from 'geometry/posn';
 import PathPoint from 'geometry/path-point';
+import Index from 'geometry/index';
 import schema from 'proto/schema';
 
 const proto = {
+  serialize(value) {
+    switch (value.constructor) {
+      case Posn:
+        return schema.geometry.Posn.fromObject(value.toObject());
+
+      case PathPoint:
+        let obj = {
+          base: schema.geometry.Posn.fromObject(value.toObject())
+        };
+
+        if (value.hasPHandle())
+          obj.pHandle = schema.geometry.Posn.fromObject(
+            value.pHandle.toObject()
+          );
+        if (value.hasSHandle())
+          obj.sHandle = schema.geometry.Posn.fromObject(
+            value.sHandle.toObject()
+          );
+
+        return schema.geometry.PathPoint.fromObject(obj);
+
+      case Index:
+        return schema.geometry.Index.fromObject({
+          parts: value.parts
+        });
+
+      default:
+        console.error('proto serialize failed on:', value);
+        throw new Error('Unable to serialize');
+    }
+  },
+
   parse(value) {
     if (this.isNative(value)) {
       return value;
@@ -27,40 +60,15 @@ const proto = {
           vals.sY = value.sHandle.y;
         }
 
-        console.log(value, vals);
-
         return PathPoint.fromObject(vals);
 
+      case schema.geometry.Index:
+        console.log(value.parts);
+        return new Index(value.parts);
+
       default:
-        console.error('Parse failed on:', value);
+        console.error('proto parse failed on:', value);
         throw new Error('Unable to parse');
-    }
-  },
-
-  serialize(value) {
-    switch (value.constructor) {
-      case Posn:
-        return schema.geometry.Posn.fromObject(value.toObject());
-
-      case PathPoint:
-        let obj = {
-          base: schema.geometry.Posn.fromObject(value.toObject())
-        };
-
-        if (value.hasPHandle())
-          obj.pHandle = schema.geometry.Posn.fromObject(
-            value.pHandle.toObject()
-          );
-        if (value.hasSHandle())
-          obj.sHandle = schema.geometry.Posn.fromObject(
-            value.sHandle.toObject()
-          );
-
-        return schema.geometry.PathPoint.fromObject(obj);
-
-      default:
-        console.error('Serialize failed on:', value);
-        throw new Error('Unable to serialize');
     }
   },
 
