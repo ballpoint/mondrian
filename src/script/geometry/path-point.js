@@ -12,12 +12,35 @@ export default class PathPoint extends Posn {
 
     if (isNaN(this.x) || isNaN(this.y)) debugger;
 
-    if (pX !== undefined && pY !== undefined) {
+    if (!_.isNil(pX) && !_.isNil(pY)) {
       this.setPHandle(pX, pY);
     }
-    if (sX !== undefined && sY !== undefined) {
+    if (!_.isNil(sX) && !_.isNil(sY)) {
       this.setSHandle(sX, sY);
     }
+  }
+
+  toObject() {
+    let obj = {
+      x: this.x,
+      y: this.y
+    };
+
+    if (this.hasPHandle()) {
+      obj.pX = this.pHandle.x;
+      obj.pY = this.pHandle.y;
+    }
+
+    if (this.hasSHandle()) {
+      obj.sX = this.sHandle.x;
+      obj.sY = this.sHandle.y;
+    }
+
+    return obj;
+  }
+
+  static fromObject(obj) {
+    return new PathPoint(obj.x, obj.y, obj.pX, obj.pY, obj.sX, obj.sY);
   }
 
   clone() {

@@ -1,6 +1,9 @@
 package webserver
 
-import "net/http"
+import (
+	"html/template"
+	"net/http"
+)
 
 type Context struct {
 	http.ResponseWriter
@@ -24,4 +27,8 @@ func (ctxt *Context) FormatTitle() string {
 	} else {
 		return "Mondrian"
 	}
+}
+
+func (ctxt *Context) Render(templ *template.Template) error {
+	return templ.Execute(ctxt.ResponseWriter, ctxt)
 }

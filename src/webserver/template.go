@@ -15,7 +15,9 @@ import (
 	"golang.org/x/net/html/atom"
 )
 
-var page *template.Template
+var (
+	page *template.Template
+)
 
 func init() {
 	templ, err := Asset("templates/page.html")
@@ -98,9 +100,7 @@ func (ctxt *Context) RenderView(name string, p props) error {
 		Prerendered: template.HTML(rootWriter.String()),
 	}
 
-	templ, _ := page.Clone()
-
-	execErr := templ.Execute(ctxt.ResponseWriter, ctxt)
+	execErr := ctxt.Render(page)
 
 	if execErr != nil {
 		panic(execErr)

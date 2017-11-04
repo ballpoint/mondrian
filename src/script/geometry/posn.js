@@ -1,4 +1,3 @@
-import proto from 'proto/schema';
 import math from 'lib/math';
 
 /*
@@ -53,6 +52,17 @@ export default class Posn {
     }
   }
 
+  toObject() {
+    return {
+      x: this.x,
+      y: this.y
+    };
+  }
+
+  static fromObject(obj) {
+    return new Posn(obj.x, obj.y);
+  }
+
   // Rounding an you know
 
   toString() {
@@ -65,21 +75,6 @@ export default class Posn {
 
   toFixed(n) {
     return `${this.x.toFixed(n)},${this.y.toFixed(n)}`;
-  }
-
-  toJSON() {
-    return {
-      x: this.x,
-      y: this.y
-    };
-  }
-
-  toProto() {
-    return proto.geometry.Posn.fromObject(this.toJSON());
-  }
-
-  static fromProto(posn) {
-    return new Posn({ x: posn.x, y: posn.y });
   }
 
   nudge(x, y) {

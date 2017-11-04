@@ -66,6 +66,8 @@ func New() *Webserver {
 	r.PathPrefix("/build/").Handler(http.StripPrefix("/build/", http.FileServer(http.Dir("build/dev"))))
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir("src"))))
 
+	s.Handle("/test/unit", mochaHandler)
+
 	s.Handle("/contributing", aliasHandler("/"))
 	s.Handle("/", editorViewHandler)
 
