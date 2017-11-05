@@ -20,11 +20,25 @@ const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
 const MIMETYPE = 'image/svg+xml';
 const CHARSET = 'utf-8';
 
+const DOC_STORES = {
+  UNKNOWN: 0,
+  LOCAL: 1
+};
+
+export class DocLocation {
+  constructor(path) {
+    this.store = DOC_STORES.LOCAL;
+    this.path = path;
+  }
+}
+
 export default class Doc {
   constructor(attrs) {
     this.layers = attrs.layers;
     this.setDimens(attrs.width, attrs.height);
     this.name = attrs.name;
+
+    this.location = new DocLocation(attrs.name);
 
     this.cacheIndexes(this);
 

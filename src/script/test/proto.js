@@ -1,15 +1,22 @@
 import Posn from 'geometry/posn';
 import PathPoint from 'geometry/path-point';
 import Index from 'geometry/index';
+import Doc from 'io/doc';
+
 import proto from 'proto/proto';
 import assert from 'assert';
 
-function testRoundTrip(value) {
+import googleSVG from 'google.svg';
+
+function roundTripProto(value) {
   let serialized = proto.serialize(value);
   let bytes = serialized.$type.encode(serialized).finish();
   let message = serialized.$type.decode(bytes);
-  let parsed = proto.parse(message);
-  assert.deepStrictEqual(value, parsed);
+  return proto.parse(message);
+}
+
+function testRoundTrip(value) {
+  assert.deepStrictEqual(value, roundTripProto(value));
 }
 
 describe('Proto', function() {
@@ -29,6 +36,14 @@ describe('Proto', function() {
 
   it('roundtrip: Index', done => {
     testRoundTrip(new Index([0, 1, 5, 6, 1, 0]));
+    done();
+  });
+
+  it('roundtrip: Document', done => {
+    let doc = Doc.fromSVG(googleSVG, 'google.svg');
+
+    let docOut = roundTripProto(doc);
+
     done();
   });
 });
