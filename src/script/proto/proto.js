@@ -1,8 +1,10 @@
 import Posn from 'geometry/posn';
-import PathPoint from 'geometry/path-point';
-import PointsSegment from 'geometry/points-segment';
-import Path from 'geometry/path';
 import Group from 'geometry/group';
+
+import Path from 'geometry/path';
+import PointsList from 'geometry/points-list';
+import PointsSegment from 'geometry/points-segment';
+import PathPoint from 'geometry/path-point';
 
 import Color from 'ui/color';
 import { NONE } from 'ui/color';
@@ -27,6 +29,10 @@ const proto = {
       return schema.document.Color.fromObject({
         isNone: true
       });
+    }
+
+    if (this.isNative(value)) {
+      return value;
     }
 
     switch (value.constructor) {
@@ -166,15 +172,19 @@ const proto = {
       case schema.document.Index:
         return new Index(value.parts);
 
+      case schema.document.Color:
+        if (value.isNone) return NONE;
+        return new Color(value.r, value.g, value.b, value.a);
+
       case schema.document.Item:
+
+      // Document
 
       case schema.document.DocumentLocation:
         return new DocLocation({
           store: value.store,
           path: value.path
         });
-
-      // Document
 
       case schema.document.Layer:
         return new Layer({
@@ -183,8 +193,6 @@ const proto = {
         });
 
       case schema.document.Document:
-        console.log('doc', value);
-
         return new Doc({
           name: value.location.path,
 
@@ -204,15 +212,40 @@ const proto = {
   parseChildren(children) {
     return children.map(child => {
       if (child.pathItem) {
-        return new Path({});
+        let data = {
+          d: new PointsList(
+            child.pathItem.points.map(ps => {
+              let segment = new PointsSegment(
+                ps.points.map(p => {
+                  return this.parse(p);
+                })
+              );
+
+              if (ps.closed) segment.close();
+
+              return segment;
+            })
+          )
+        };
+
+        _.extend(data, this.parseItemStyle(child.pathItem.style));
+
+        return new Path(data);
       } else if (child.textItem) {
         return null;
       } else if (child.groupItem) {
-        return new Group({
-          children: this.parseChildren(child.groupItem.children)
-        });
+        return new Group(this.parseChildren(child.groupItem.children));
       }
     });
+  },
+
+  parseItemStyle(style) {
+    return {
+      fill: this.parse(style.fill),
+      stroke: this.parse(style.stroke),
+      strokeLineCap: 'butt',
+      strokeLineJoin: 'miter'
+    };
   },
 
   isNative(value) {

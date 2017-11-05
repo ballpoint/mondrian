@@ -4,6 +4,7 @@ import FileMenu from 'ui/components/menus/FileMenu';
 import EditMenu from 'ui/components/menus/EditMenu';
 import ViewMenu from 'ui/components/menus/ViewMenu';
 import GeometryMenu from 'ui/components/menus/GeometryMenu';
+import DebugMenu from 'ui/components/menus/DebugMenu';
 import 'menus/menus.scss';
 
 const menus = [
@@ -24,6 +25,13 @@ const menus = [
     render: GeometryMenu
   }
 ];
+
+if (localStorage.getItem('debug') === '1') {
+  menus.push({
+    name: 'Debug',
+    render: DebugMenu
+  });
+}
 
 const fileMenu = menus[0];
 const editMenu = menus[1];

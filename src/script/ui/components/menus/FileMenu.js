@@ -1,7 +1,6 @@
 import MenuBody from 'ui/components/menus/MenuBody';
 import MenuItem from 'ui/components/menus/MenuItem';
 import Doc from 'io/doc';
-import 'menus/menus.scss';
 import 'menus/file-menu.scss';
 
 class FileMenu extends React.Component {
