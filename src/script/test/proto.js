@@ -44,6 +44,8 @@ describe('Proto', function() {
 
     let docOut = roundTripProto(doc);
 
+    console.log(docOut);
+
     done();
   });
 });

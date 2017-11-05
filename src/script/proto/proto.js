@@ -3,6 +3,9 @@ import PathPoint from 'geometry/path-point';
 import PointsSegment from 'geometry/points-segment';
 import Path from 'geometry/path';
 import Group from 'geometry/group';
+
+import Color from 'ui/color';
+import { NONE } from 'ui/color';
 import Index from 'geometry/index';
 
 import { DocLocation } from 'io/doc';
@@ -11,10 +14,19 @@ import Layer from 'io/layer';
 
 import schema from 'proto/schema';
 
+window.schema = schema;
+
 const proto = {
   serialize(value) {
     if (value instanceof Array) {
       return value.map(this.serialize.bind(this));
+    }
+
+    // I dislike this:
+    if (value === NONE) {
+      return schema.document.Color.fromObject({
+        isNone: true
+      });
     }
 
     switch (value.constructor) {
@@ -42,6 +54,15 @@ const proto = {
           parts: value.parts
         });
 
+      case Color:
+        return schema.document.Color.fromObject({
+          r: value.r,
+          g: value.g,
+          b: value.b,
+          a: value.a,
+          isNone: value === NONE
+        });
+
       // Item types
 
       case PointsSegment:
@@ -52,7 +73,7 @@ const proto = {
 
       case Path:
         return schema.document.PathItem.fromObject({
-          style: {},
+          style: this.serializeItemStyle(value),
           points: this.serialize(value.points.segments)
         });
 
@@ -102,7 +123,21 @@ const proto = {
     });
   },
 
+  serializeItemStyle(value) {
+    return {
+      fill: this.serialize(value.data.fill),
+      stroke: this.serialize(value.data.stroke),
+      strokeLineCap: schema.document.StrokeLineCap[value.data.strokeLineCap],
+      strokeLineJoin: schema.document.StrokeLineJoin[value.data.strokeLineJoin],
+      opacity: 1.0
+    };
+  },
+
   parse(value) {
+    if (value instanceof Array) {
+      return value.map(this.parse.bind(this));
+    }
+
     if (this.isNative(value)) {
       return value;
     }
@@ -131,10 +166,53 @@ const proto = {
       case schema.document.Index:
         return new Index(value.parts);
 
+      case schema.document.Item:
+
+      case schema.document.DocumentLocation:
+        return new DocLocation({
+          store: value.store,
+          path: value.path
+        });
+
+      // Document
+
+      case schema.document.Layer:
+        return new Layer({
+          id: value.id,
+          children: this.parseChildren(value.children)
+        });
+
+      case schema.document.Document:
+        console.log('doc', value);
+
+        return new Doc({
+          name: value.location.path,
+
+          width: value.width,
+          height: value.height,
+
+          location: this.parse(value.location),
+          layers: this.parse(value.layers)
+        });
+
       default:
         console.error('proto parse failed on:', value);
         throw new Error('Unable to parse');
     }
+  },
+
+  parseChildren(children) {
+    return children.map(child => {
+      if (child.pathItem) {
+        return new Path({});
+      } else if (child.textItem) {
+        return null;
+      } else if (child.groupItem) {
+        return new Group({
+          children: this.parseChildren(child.groupItem.children)
+        });
+      }
+    });
   },
 
   isNative(value) {
