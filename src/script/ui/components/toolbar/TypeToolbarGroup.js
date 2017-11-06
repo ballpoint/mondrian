@@ -9,6 +9,8 @@ import ToolbarNumberInput from 'ui/components/toolbar/ToolbarNumberInput';
 
 class TypeToolbarGroup extends React.Component {
   render() {
+    if (!this.props.editor.doc) return null;
+
     let selectedTextItems = this.props.editor.doc.state.selection.ofType(Text);
     let selectedTool = this.props.editor.state.tool;
 

@@ -98,7 +98,7 @@ const proto = {
 
       case DocLocation:
         return schema.document.DocumentLocation.fromObject({
-          store: value.store,
+          backend: value.backend,
           path: value.path
         });
 
@@ -182,7 +182,7 @@ const proto = {
 
       case schema.document.DocumentLocation:
         return new DocLocation({
-          store: value.store,
+          backend: value.backend,
           path: value.path
         });
 

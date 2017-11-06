@@ -69,6 +69,7 @@ func New() *Webserver {
 	s.Handle("/test/unit", mochaHandler)
 
 	s.Handle("/contributing", aliasHandler("/"))
+	s.Prefix("/files", editorViewHandler)
 	s.Handle("/", editorViewHandler)
 
 	return s
@@ -82,6 +83,16 @@ func (s *Webserver) Handle(route string, h Handler) {
 	}
 
 	s.r.HandleFunc(route, do)
+}
+
+func (s *Webserver) Prefix(prefix string, h Handler) {
+	do := func(w http.ResponseWriter, req *http.Request) {
+		context := NewContext(w, req)
+
+		h(context)
+	}
+
+	s.r.PathPrefix(prefix).Handler(http.HandlerFunc(do))
 }
 
 func aliasHandler(alias string) Handler {

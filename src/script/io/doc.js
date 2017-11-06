@@ -14,21 +14,22 @@ import PointsSegment from 'geometry/points-segment';
 import Item from 'geometry/item';
 
 import UUIDV4 from 'uuid/v4';
+import shortid from 'shortid';
 
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
 
 const MIMETYPE = 'image/svg+xml';
 const CHARSET = 'utf-8';
 
-const DOC_STORES = {
+const DOC_BACKENDS = {
   UNKNOWN: 0,
   LOCAL: 1
 };
 
 export class DocLocation {
-  constructor(path) {
-    this.store = DOC_STORES.LOCAL;
-    this.path = path;
+  constructor(attrs) {
+    this.backend = attrs.backend;
+    this.path = attrs.path;
   }
 }
 
@@ -45,7 +46,7 @@ export default class Doc {
     this.history = new DocHistory();
 
     // TODO get this from backend?
-    this.__id__ = UUIDV4();
+    this.__id__ = shortid.generate();
   }
 
   static fromSVG(str, name) {

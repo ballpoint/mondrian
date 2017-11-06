@@ -10,6 +10,8 @@ import Filetabs from 'ui/components/filetabs/Filetabs';
 
 import google from 'google.svg';
 
+import backend from 'io/backend/backend';
+
 // Main view
 class EditorView extends React.Component {
   constructor(props) {
@@ -17,7 +19,6 @@ class EditorView extends React.Component {
 
     let editor = new Editor();
 
-    let doc = Doc.fromSVG(google, 'google-logo.svg');
     /*
     if (this.props.doc) {
       doc = Doc.fromSVG(this.props.doc.svg, this.props.doc.name);
@@ -30,18 +31,24 @@ class EditorView extends React.Component {
     */
 
     this.state = {
-      editor,
-      docs: [doc],
-      activeDoc: doc
+      editor
     };
-
-    editor.open(doc);
   }
 
   componentDidMount() {
     let render = this.refs.render;
-
     this.state.editor.mount(render);
+
+    this.loadFromURL();
+  }
+
+  async loadFromURL() {
+    let loc = backend.parseLocation();
+    let doc = await loc.backend.load(loc.path);
+    this.openDoc(doc);
+    doc.history.on('commit', () => {
+      loc.backend.save(doc, loc.path);
+    });
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -58,7 +65,6 @@ class EditorView extends React.Component {
 
   openDoc(doc) {
     this.setState({
-      docs: this.state.docs.slice(0).concat([doc]),
       activeDoc: doc
     });
   }
@@ -86,9 +92,9 @@ class EditorView extends React.Component {
           </a>
           <div id="app-controls">
             <div id="app-title">
-              {this.state.editor.doc ? (
-                <Title value={this.state.editor.doc.name} />
-              ) : null}
+              <Title
+                value={this.state.activeDoc ? this.state.activeDoc.name : ''}
+              />
             </div>
             <div id="app-menus">
               <Menus
