@@ -105,6 +105,7 @@ const proto = {
       case Doc:
         return schema.document.Document.fromObject({
           id: value.__id__,
+          name: value.name,
           location: this.serialize(value.location),
           width: value.width,
           height: value.height,
