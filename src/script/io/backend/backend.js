@@ -18,6 +18,10 @@ const backend = {
     return new DocLocation({ backend, path });
   },
 
+  replaceLocation(doc) {
+    history.replaceState({}, doc.name, doc.location.path);
+  },
+
   loadFromURL() {}
 };
 

@@ -44,10 +44,23 @@ class EditorView extends React.Component {
 
   async loadFromURL() {
     let loc = backend.parseLocation();
-    let doc = await loc.backend.load(loc.path);
+    let doc;
+
+    try {
+      doc = await loc.backend.load(loc.path);
+    } catch (e) {
+      doc = Doc.empty(600, 300, 'untitled');
+    }
+
+    doc.location = loc;
+
     this.openDoc(doc);
-    doc.history.on('commit', () => {
-      loc.backend.save(doc, loc.path);
+    doc.history.on(['commit', 'step'], () => {
+      try {
+        loc.backend.save(doc, loc.path);
+      } catch (e) {
+        console.error('Error saving document', e);
+      }
     });
   }
 
@@ -67,6 +80,8 @@ class EditorView extends React.Component {
     this.setState({
       activeDoc: doc
     });
+
+    backend.replaceLocation(doc);
   }
 
   newDoc() {

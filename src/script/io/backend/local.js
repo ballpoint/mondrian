@@ -3,11 +3,13 @@ import schema from 'proto/schema';
 import proto from 'proto/proto';
 
 class LocalBackend {
-  constructor() {}
+  constructor() {
+    this.store = localForage.createInstance({ name: 'documents' });
+  }
 
   async load(path) {
     let id = path.split('-')[0];
-    let bytes = await localForage.getItem(id);
+    let bytes = await this.store.getItem(id);
     let doc = schema.document.Document.decode(bytes);
     doc = proto.parse(doc);
     return doc;
@@ -19,9 +21,7 @@ class LocalBackend {
 
     let id = path.split('-')[0];
 
-    console.log(id, 'saved');
-
-    return await localForage.setItem(id, bytes);
+    return await this.store.setItem(id, bytes);
   }
 }
 

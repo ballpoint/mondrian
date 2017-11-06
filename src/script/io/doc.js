@@ -39,14 +39,11 @@ export default class Doc {
     this.setDimens(attrs.width, attrs.height);
     this.name = attrs.name;
 
-    this.location = new DocLocation(attrs.name);
-
     this.cacheIndexes(this);
 
     this.history = new DocHistory();
 
-    // TODO get this from backend?
-    this.__id__ = shortid.generate();
+    this.__id__ = attrs.__id__ || shortid.generate();
   }
 
   static fromSVG(str, name) {

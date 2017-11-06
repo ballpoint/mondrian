@@ -26,7 +26,7 @@ const menus = [
   }
 ];
 
-if (localStorage.getItem('debug') === '1') {
+if (window.localStorage && localStorage.getItem('debug') === '1') {
   menus.push({
     name: 'Debug',
     render: DebugMenu

@@ -1201,6 +1201,7 @@ export default class Editor extends EventEmitter {
   commitFrame(frame) {
     this.doc.commitFrame();
     this.trigger('change');
+    this.trigger('history:step');
   }
 
   abandonFrame() {

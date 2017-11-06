@@ -194,7 +194,8 @@ const proto = {
 
       case schema.document.Document:
         return new Doc({
-          name: value.location.path,
+          __id__: value.id,
+          name: value.name,
 
           width: value.width,
           height: value.height,
