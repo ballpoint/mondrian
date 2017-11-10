@@ -102,8 +102,12 @@ class Utils extends React.Component {
   render() {
     return (
       <div id="app-utils">
-        <div id="app-utils-left">{this.getUtilsLeft()}</div>
-        <div id="app-utils-right">{this.getUtilsRight()}</div>
+        <div id="app-utils-left">
+          {this.getUtilsLeft()}
+        </div>
+        <div id="app-utils-right">
+          {this.getUtilsRight()}
+        </div>
       </div>
     );
   }

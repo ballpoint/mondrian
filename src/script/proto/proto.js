@@ -10,7 +10,7 @@ import Color from 'ui/color';
 import { NONE } from 'ui/color';
 import Index from 'geometry/index';
 
-import { DocLocation } from 'io/doc';
+import { DocLocation } from 'io/backend/backend';
 import Doc from 'io/doc';
 import Layer from 'io/layer';
 

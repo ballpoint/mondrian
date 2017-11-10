@@ -7,6 +7,10 @@ class LocalBackend {
     this.store = localForage.createInstance({ name: 'documents' });
   }
 
+  get id() {
+    return 'local';
+  }
+
   async load(path) {
     let id = path.split('-')[0];
     let bytes = await this.store.getItem(id);
@@ -22,6 +26,10 @@ class LocalBackend {
     let id = path.split('-')[0];
 
     return await this.store.setItem(id, bytes);
+  }
+
+  async list() {
+    return await this.store.keys();
   }
 }
 

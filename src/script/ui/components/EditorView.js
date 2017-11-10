@@ -1,5 +1,6 @@
 import Editor from 'ui/editor';
 import Doc from 'io/doc';
+import { DocLocation } from 'io/backend/backend';
 
 import Utils from 'ui/components/utils/Utils';
 import Tools from 'ui/components/tools/Tools';
@@ -43,21 +44,12 @@ class EditorView extends React.Component {
   }
 
   async loadFromURL() {
-    let loc = backend.parseLocation();
-    let doc;
-
-    try {
-      doc = await loc.backend.load(loc.path);
-    } catch (e) {
-      doc = Doc.empty(600, 300, 'untitled');
-    }
-
-    doc.location = loc;
-
+    let doc = await backend.parseDocFromURL();
     this.openDoc(doc);
+
     doc.history.on(['commit', 'step'], () => {
       try {
-        loc.backend.save(doc, loc.path);
+        doc.location.save(doc);
       } catch (e) {
         console.error('Error saving document', e);
       }
@@ -80,6 +72,12 @@ class EditorView extends React.Component {
     this.setState({
       activeDoc: doc
     });
+
+    if (!doc.location) {
+      doc.location = DocLocation.defaultLocal(doc);
+    }
+
+    doc.location.save(doc);
 
     backend.replaceLocation(doc);
   }

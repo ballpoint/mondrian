@@ -52,10 +52,6 @@ class Menus extends React.Component {
       }
     });
 
-    this.props.editor.on('change', () => {
-      this.forceUpdate();
-    });
-
     this.props.editor.on('hotkey:open', e => {
       this.activateMenu(fileMenu);
       setTimeout(() => {

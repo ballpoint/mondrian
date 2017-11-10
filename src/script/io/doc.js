@@ -26,13 +26,6 @@ const DOC_BACKENDS = {
   LOCAL: 1
 };
 
-export class DocLocation {
-  constructor(attrs) {
-    this.backend = attrs.backend;
-    this.path = attrs.path;
-  }
-}
-
 export default class Doc {
   constructor(attrs) {
     this.layers = attrs.layers;
