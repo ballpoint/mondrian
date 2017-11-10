@@ -1,3 +1,5 @@
+@import '~vars.scss';
+
 #app-title {
   flex-grow: 1;
 
@@ -6,5 +8,17 @@
     padding: 5px;
     font-size: 18px;
     font-weight: normal;
+
+    input {
+      font-size: 18px;
+      width: 300px;
+      text-align: left;
+      border: none;
+
+      &:hover,
+      &:focus {
+        background-color: $bg-grey;
+      }
+    }
   }
 }

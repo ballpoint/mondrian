@@ -107,6 +107,9 @@ class EditorView extends React.Component {
             <div id="app-title">
               <Title
                 value={this.state.activeDoc ? this.state.activeDoc.name : ''}
+                rename={name => {
+                  this.state.editor.setDocName(name);
+                }}
               />
             </div>
             <div id="app-menus">

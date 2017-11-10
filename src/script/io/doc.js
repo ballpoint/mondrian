@@ -109,6 +109,10 @@ export default class Doc {
     this.bounds = new Bounds(0, 0, this.width, this.height);
   }
 
+  setName(name) {
+    this.name = name;
+  }
+
   clone() {
     return Doc.fromSVG(this.toSVG());
   }

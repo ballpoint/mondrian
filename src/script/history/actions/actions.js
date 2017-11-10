@@ -514,6 +514,30 @@ export class SetDocDimensionsAction extends HistoryAction {
   }
 }
 
+export class SetDocNameAction extends HistoryAction {
+  get displayTitle() {
+    return 'Rename document';
+  }
+
+  static forDoc(doc, name) {
+    return new SetDocNameAction({
+      name,
+      prevName: doc.name
+    });
+  }
+
+  perform(doc) {
+    doc.setName(this.data.name);
+  }
+
+  opposite() {
+    return new SetDocDimensionsAction({
+      name: this.data.prevName,
+      prevName: this.data.name
+    });
+  }
+}
+
 export class SetAttributeAction extends HistoryAction {
   static forItems(items, key, value) {
     let d = [];

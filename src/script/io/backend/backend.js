@@ -58,9 +58,7 @@ const backend = {
 
   replaceLocation(doc) {
     history.replaceState({}, doc.name, doc.location.uri);
-  },
-
-  loadFromURL() {}
+  }
 };
 
 export default backend;

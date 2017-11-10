@@ -1179,9 +1179,25 @@ export default class Editor extends EventEmitter {
   }
 
   setDocDimens(width, height) {
-    let frame = new HistoryFrame([
-      actions.SetDocDimensionsAction.forDoc(this.doc, width, height)
-    ]);
+    let frame = new HistoryFrame(
+      [actions.SetDocDimensionsAction.forDoc(this.doc, width, height)],
+      'Resize document'
+    );
+
+    this.stageFrame(frame);
+    this.commitFrame();
+
+    this.refreshAll();
+    this.trigger('change');
+  }
+
+  setDocName(name) {
+    let frame = new HistoryFrame(
+      [actions.SetDocNameAction.forDoc(this.doc, name)],
+      'Rename document'
+    );
+
+    console.log(name);
 
     this.stageFrame(frame);
     this.commitFrame();
