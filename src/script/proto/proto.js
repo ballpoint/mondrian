@@ -15,13 +15,26 @@ import Doc from 'io/doc';
 import Layer from 'io/layer';
 
 import schema from 'proto/schema';
+import * as actions from 'history/actions/actions';
 
 window.schema = schema;
 
 const proto = {
   serialize(value) {
+    if (value === undefined || value === null) return undefined;
+
     if (value instanceof Array) {
       return value.map(this.serialize.bind(this));
+    }
+
+    if (_.isPlainObject(value)) {
+      let out = {};
+      for (let key in value) {
+        if (value.hasOwnProperty(key)) {
+          out[key] = this.serialize(value[key]);
+        }
+      }
+      return out;
     }
 
     // I dislike this:
@@ -112,6 +125,12 @@ const proto = {
           layers: this.serialize(value.layers)
         });
 
+      // Actions
+      case actions.NudgeAction:
+        return schema.history.NudgeAction.fromObject(
+          this.serialize(value.data)
+        );
+
       default:
         console.error('proto serialize failed on:', value);
         throw new Error('Unable to serialize');
@@ -141,6 +160,18 @@ const proto = {
   },
 
   parse(value) {
+    if (value === undefined || value === null) return undefined;
+
+    if (_.isPlainObject(value)) {
+      let out = {};
+      for (let key in value) {
+        if (value.hasOwnProperty(key)) {
+          out[key] = this.parse(value[key]);
+        }
+      }
+      return out;
+    }
+
     if (value instanceof Array) {
       return value.map(this.parse.bind(this));
     }
@@ -204,6 +235,11 @@ const proto = {
           location: this.parse(value.location),
           layers: this.parse(value.layers)
         });
+
+      // Actions
+
+      case schema.history.NudgeAction:
+        return new actions.NudgeAction(this.parse(value.toJSON()));
 
       default:
         console.error('proto parse failed on:', value);

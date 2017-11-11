@@ -8,6 +8,8 @@ import assert from 'assert';
 
 import googleSVG from 'google.svg';
 
+import * as actions from 'history/actions/actions';
+
 function roundTripProto(value) {
   let serialized = proto.serialize(value);
   let bytes = serialized.$type.encode(serialized).finish();
@@ -16,7 +18,7 @@ function roundTripProto(value) {
 }
 
 function testRoundTrip(value) {
-  assert.deepStrictEqual(value, roundTripProto(value));
+  assert.deepEqual(value, roundTripProto(value));
 }
 
 describe('Proto', function() {
@@ -41,10 +43,18 @@ describe('Proto', function() {
 
   it('roundtrip: Document', done => {
     let doc = Doc.fromSVG(googleSVG, 'google.svg');
-
     let docOut = roundTripProto(doc);
+    done();
+  });
 
-    console.log(docOut);
+  it('actions: NudgeAction ', done => {
+    let action = new actions.NudgeAction({
+      indexes: [new Index([0, 3, 4])],
+      xd: 10,
+      yd: 20
+    });
+
+    testRoundTrip(action);
 
     done();
   });

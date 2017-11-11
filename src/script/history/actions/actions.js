@@ -7,7 +7,6 @@ import { indexesIdentical } from 'geometry/index';
 export class HistoryAction {
   constructor(data) {
     this.data = data;
-    this.created = new Date();
   }
 }
 
@@ -297,64 +296,6 @@ export class OpenSegmentAction extends HistoryAction {
   }
 }
 
-export class SplitPathAction extends HistoryAction {
-  static forPoint(doc, point) {
-    let segment = doc.getFromIndex(point.index.parent);
-    return new SplitPathAction({
-      splitIndex: point.index
-    });
-  }
-
-  perform(doc) {
-    let path = doc.getFromIndex(this.data.splitIndex.parent.parent);
-
-    let pl = path.points.popSlice(
-      this.data.splitIndex.parent.last,
-      this.data.splitIndex.last
-    );
-
-    let p2 = path.clone();
-    p2.setPoints(pl);
-
-    let pathParent = doc.getFromIndex(path.index.parent);
-    pathParent.insert(p2, path.index.last + 1);
-
-    doc.cacheIndexes();
-  }
-
-  opposite() {
-    return new UnsplitPathAction({
-      splitIndex: this.data.splitIndex
-    });
-  }
-}
-
-export class UnsplitPathAction extends HistoryAction {
-  perform(doc) {
-    let pathIndex = this.data.splitIndex.parent.parent;
-    let newPathIndex = pathIndex.plus(1);
-    let path = doc.getFromIndex(pathIndex);
-    let newPath = doc.getFromIndex(newPathIndex);
-
-    // Append contents of newPath to the segment containing splitIndex
-
-    let segment = doc.getFromIndex(this.data.splitIndex.parent);
-
-    path.points.replaceSegment(
-      segment,
-      segment.concat(newPath.points.segments[0])
-    );
-
-    doc.removeIndexes([newPathIndex]);
-  }
-
-  opposite() {
-    return new SplitPathAction({
-      splitIndex: this.data.splitIndex
-    });
-  }
-}
-
 export class UngroupAction extends HistoryAction {
   static forGroup(doc, group) {
     // Constructor helper which pre-determines the resulting
@@ -464,6 +405,64 @@ export class GroupAction extends HistoryAction {
     return new UngroupAction({
       groupIndex: this.data.groupIndex,
       childIndexes: this.data.childIndexes
+    });
+  }
+}
+
+export class SplitPathAction extends HistoryAction {
+  static forPoint(doc, point) {
+    let segment = doc.getFromIndex(point.index.parent);
+    return new SplitPathAction({
+      splitIndex: point.index
+    });
+  }
+
+  perform(doc) {
+    let path = doc.getFromIndex(this.data.splitIndex.parent.parent);
+
+    let pl = path.points.popSlice(
+      this.data.splitIndex.parent.last,
+      this.data.splitIndex.last
+    );
+
+    let p2 = path.clone();
+    p2.setPoints(pl);
+
+    let pathParent = doc.getFromIndex(path.index.parent);
+    pathParent.insert(p2, path.index.last + 1);
+
+    doc.cacheIndexes();
+  }
+
+  opposite() {
+    return new UnsplitPathAction({
+      splitIndex: this.data.splitIndex
+    });
+  }
+}
+
+export class UnsplitPathAction extends HistoryAction {
+  perform(doc) {
+    let pathIndex = this.data.splitIndex.parent.parent;
+    let newPathIndex = pathIndex.plus(1);
+    let path = doc.getFromIndex(pathIndex);
+    let newPath = doc.getFromIndex(newPathIndex);
+
+    // Append contents of newPath to the segment containing splitIndex
+
+    let segment = doc.getFromIndex(this.data.splitIndex.parent);
+
+    path.points.replaceSegment(
+      segment,
+      segment.concat(newPath.points.segments[0])
+    );
+
+    doc.removeIndexes([newPathIndex]);
+  }
+
+  opposite() {
+    return new SplitPathAction({
+      splitIndex: this.data.splitIndex
     });
   }
 }
