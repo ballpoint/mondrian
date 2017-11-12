@@ -964,7 +964,7 @@ export default class Editor extends EventEmitter {
 
     let frame = new HistoryFrame([
       new actions.NudgeHandleAction({
-        indexes: [index],
+        index,
         xd,
         yd,
         handle

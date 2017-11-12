@@ -48,13 +48,82 @@ describe('Proto', function() {
   });
 
   it('actions: NudgeAction ', done => {
-    let action = new actions.NudgeAction({
-      indexes: [new Index([0, 3, 4])],
-      xd: 10,
-      yd: 20
-    });
+    testRoundTrip(
+      new actions.NudgeAction({
+        indexes: [new Index([0, 3, 4])],
+        xd: 10,
+        yd: 20
+      })
+    );
 
-    testRoundTrip(action);
+    done();
+  });
+
+  it('actions: ScaleAction ', done => {
+    testRoundTrip(
+      new actions.ScaleAction({
+        indexes: [new Index([0, 3, 4])],
+        xs: 2.02,
+        ys: 1.4
+      })
+    );
+
+    done();
+  });
+
+  it('actions: RotateAction ', done => {
+    testRoundTrip(
+      new actions.RotateAction({
+        indexes: [new Index([0, 3, 4])],
+        angle: 12.2
+      })
+    );
+
+    done();
+  });
+
+  it('actions: NudgeHandleAction ', done => {
+    testRoundTrip(
+      new actions.NudgeHandleAction({
+        index: new Index([0, 2]),
+        handle: 'pHandle',
+        xd: 20,
+        yd: 10
+      })
+    );
+
+    testRoundTrip(
+      new actions.NudgeHandleAction({
+        index: new Index([1, 4]),
+        handle: 'sHandle',
+        xd: 20,
+        yd: 100
+      })
+    );
+
+    done();
+  });
+
+  it('actions: AddHandleAction  ', done => {
+    testRoundTrip(
+      new actions.AddHandleAction({
+        index: new Index([1, 4]),
+        handle: 'sHandle',
+        reflect: true
+      })
+    );
+
+    done();
+  });
+
+  it('actions: RemoveHandleAction  ', done => {
+    testRoundTrip(
+      new actions.RemoveHandleAction({
+        index: new Index([1, 4]),
+        handle: 'sHandle',
+        reflect: true
+      })
+    );
 
     done();
   });

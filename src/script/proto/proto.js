@@ -48,6 +48,8 @@ const proto = {
       return value;
     }
 
+    let d;
+
     switch (value.constructor) {
       case Posn:
         return schema.geometry.Posn.fromObject(value.toObject());
@@ -130,6 +132,31 @@ const proto = {
         return schema.history.NudgeAction.fromObject(
           this.serialize(value.data)
         );
+
+      case actions.ScaleAction:
+        return schema.history.ScaleAction.fromObject(
+          this.serialize(value.data)
+        );
+
+      case actions.RotateAction:
+        return schema.history.RotateAction.fromObject(
+          this.serialize(value.data)
+        );
+
+      case actions.NudgeHandleAction:
+        d = this.serialize(value.data);
+        d.handle = schema.geometry.Handle[value.data.handle];
+        return schema.history.NudgeHandleAction.fromObject(d);
+
+      case actions.AddHandleAction:
+        d = this.serialize(value.data);
+        d.handle = schema.geometry.Handle[value.data.handle];
+        return schema.history.AddHandleAction.fromObject(d);
+
+      case actions.RemoveHandleAction:
+        d = this.serialize(value.data);
+        d.handle = schema.geometry.Handle[value.data.handle];
+        return schema.history.RemoveHandleAction.fromObject(d);
 
       default:
         console.error('proto serialize failed on:', value);
@@ -241,6 +268,21 @@ const proto = {
       case schema.history.NudgeAction:
         return new actions.NudgeAction(this.parse(value.toJSON()));
 
+      case schema.history.ScaleAction:
+        return new actions.ScaleAction(this.parse(value.toJSON()));
+
+      case schema.history.RotateAction:
+        return new actions.RotateAction(this.parse(value.toJSON()));
+
+      case schema.history.NudgeHandleAction:
+        return new actions.NudgeHandleAction(this.parse(value.toJSON()));
+
+      case schema.history.AddHandleAction:
+        return new actions.AddHandleAction(this.parse(value.toJSON()));
+
+      case schema.history.RemoveHandleAction:
+        return new actions.RemoveHandleAction(this.parse(value.toJSON()));
+
       default:
         console.error('proto parse failed on:', value);
         throw new Error('Unable to parse');
@@ -287,7 +329,7 @@ const proto = {
   },
 
   isNative(value) {
-    return _.isNumber(value) || _.isString(value);
+    return _.isNumber(value) || _.isString(value) || _.isBoolean(value);
   }
 };
 

@@ -99,21 +99,16 @@ export class NudgeHandleAction extends HistoryAction {
   }
 
   perform(doc) {
-    let points = this.data.indexes.map(q => {
-      return doc.getFromIndex(q);
-    });
-    for (let point of points) {
-      point.nudgeHandle(this.data.handle, this.data.xd, this.data.yd);
-
-      if (point.path) {
-        point.path.clearCachedObjects();
-      }
+    let point = doc.getFromIndex(this.data.index);
+    point.nudgeHandle(this.data.handle, this.data.xd, this.data.yd);
+    if (point.path) {
+      point.path.clearCachedObjects();
     }
   }
 
   opposite() {
     return new NudgeHandleAction({
-      indexes: this.data.indexes,
+      index: this.data.index,
       handle: this.data.handle,
       xd: -this.data.xd,
       yd: -this.data.yd
