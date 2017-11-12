@@ -3,14 +3,25 @@ import * as actions from 'history/actions/actions';
 import EventEmitter from 'lib/events';
 
 export default class DocHistory extends EventEmitter {
-  constructor() {
+  constructor(frames = []) {
     super();
     this._nextFrameId = 1;
-    let initFrame = new HistoryFrame([
-      new actions.InitAction() // TODO shove doc in here
-    ]);
-    this.stageFrame(initFrame);
-    this.commitFrame();
+    this._currentIndex = -1;
+
+    this.frames = frames;
+    this.staged = undefined;
+
+    if (this.frames.length === 0) {
+      let initFrame = new HistoryFrame([
+        new actions.InitAction() // TODO shove doc in here
+      ]);
+      this.stageFrame(initFrame);
+      this.commitFrame();
+    }
+  }
+
+  get head() {
+    return this.frames[this._currentIndex];
   }
 
   stageFrame(frame, doc) {
@@ -18,49 +29,41 @@ export default class DocHistory extends EventEmitter {
 
     this.resetStage(doc);
 
-    if (this.head) {
-      frame.depth = this.head.depth + 1;
-    } else {
-      frame.depth = 0;
-    }
-
     for (let action of frame.actions) {
       action.perform(doc);
     }
 
-    frame.setPrev(this.head);
-    this.setHead(frame);
+    this.staged = frame;
+
+    return;
   }
 
   resetStage(doc) {
-    if (this.head && !this.head.committed) {
-      this.undo(doc);
+    if (this.staged && !this.staged.committed) {
+      this.staged.undo(doc);
+      delete this.staged;
     }
   }
 
   commitFrame() {
-    if (this.head.committed) return;
+    if (!this.staged) return;
 
-    this.head.commit();
-    this.head.id = this._nextFrameId;
+    this.frames = this.frames.slice(0, this._currentIndex + 1);
+
+    this.frames.push(this.staged);
+    this.staged.commit();
+
+    this.staged.id = this._nextFrameId;
     this._nextFrameId++;
 
-    if (this.head.prev) {
-      this.head.prev.registerSucc(this.head);
-    }
+    this._currentIndex++;
 
+    delete this.staged;
     this.trigger('commit');
   }
 
   abandonFrame(doc) {
-    if (this.head.committed) {
-      throw new Error('Tried to abandon committed frame');
-    }
-
-    let oldHead = this.head;
-    this.undo(doc);
-    this.head.succ = [];
-    delete this.head.newestSucc;
+    this.resetState();
   }
 
   pushAction(action, doc) {
@@ -75,32 +78,25 @@ export default class DocHistory extends EventEmitter {
     }
   }
 
-  setHead(action) {
-    this.head = action;
-  }
-
   canUndo() {
-    return this.head.hasPrev();
+    return this._currentIndex > 0;
   }
 
   undo(doc) {
-    if (this.head.hasPrev()) {
+    if (this.canUndo()) {
       this.head.undo(doc);
-      if (this.head.prev) {
-        this.setHead(this.head.prev);
-      }
+      this._currentIndex--;
     }
   }
 
   canRedo() {
-    return !!this.head.newestSucc;
+    return this.frames.length - 1 > this._currentIndex;
   }
 
   redo(doc) {
-    let next = this.head.newestSucc;
-    if (next) {
-      next.perform(doc);
-      this.setHead(next);
+    if (this.canRedo()) {
+      this.frames[this._currentIndex + 1].perform(doc);
+      this._currentIndex++;
     }
   }
 

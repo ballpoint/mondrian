@@ -34,7 +34,11 @@ export default class Doc {
 
     this.cacheIndexes(this);
 
-    this.history = new DocHistory();
+    if (attrs.history) {
+      this.history = attrs.history;
+    } else {
+      this.history = new DocHistory();
+    }
 
     this.__id__ = attrs.__id__ || shortid.generate();
   }

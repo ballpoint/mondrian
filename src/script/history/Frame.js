@@ -3,45 +3,17 @@ export default class HistoryFrame {
     this.actions = actions;
     this.title = title;
 
-    this.succ = [];
     this.timestamp = new Date();
 
     this.committed = false;
-    this.merges = 0;
   }
 
   get displayTitle() {
-    if (this.title) {
-      return this.title;
-    } else {
-      return 'Frame';
-    }
+    return this.title || 'Frame';
   }
 
   get empty() {
     return this.actions.length === 0;
-  }
-
-  setPrev(prev) {
-    this.prev = prev;
-  }
-
-  hasPrev() {
-    return !!this.prev;
-  }
-
-  registerSucc(succ) {
-    this.succ.push(succ);
-    this.newestSucc = succ;
-  }
-
-  merge(action) {
-    for (let a of this.actions) {
-      if (a.constructor === action.constructor) {
-        a.merge(action);
-        this.merges++;
-      }
-    }
   }
 
   push(action) {
@@ -50,22 +22,6 @@ export default class HistoryFrame {
 
   get last() {
     return this.actions[this.actions.length - 1];
-  }
-
-  canMerge(action) {
-    let sameType = this.last.constructor === action.constructor;
-    if (!sameType) return false;
-
-    let hasMerge = this.last.constructor.prototype.merge;
-    if (!hasMerge) return false;
-
-    let hasCanMerge = !!this.last.constructor.prototype.canMerge;
-
-    if (hasCanMerge) {
-      return this.last.canMerge(action);
-    } else {
-      return true;
-    }
   }
 
   commit() {
