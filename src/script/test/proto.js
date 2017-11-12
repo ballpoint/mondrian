@@ -10,15 +10,17 @@ import googleSVG from 'google.svg';
 
 import * as actions from 'history/actions/actions';
 
-function roundTripProto(value) {
+function roundTrip(value) {
   let serialized = proto.serialize(value);
   let bytes = serialized.$type.encode(serialized).finish();
   let message = serialized.$type.decode(bytes);
-  return proto.parse(message);
+  let parsed = proto.parse(message);
+
+  return parsed;
 }
 
 function testRoundTrip(value) {
-  assert.deepEqual(value, roundTripProto(value));
+  assert.deepEqual(value, roundTrip(value));
 }
 
 describe('Proto', function() {
@@ -43,7 +45,7 @@ describe('Proto', function() {
 
   it('roundtrip: Document', done => {
     let doc = Doc.fromSVG(googleSVG, 'google.svg');
-    let docOut = roundTripProto(doc);
+    roundTrip(doc);
     done();
   });
 
@@ -124,6 +126,28 @@ describe('Proto', function() {
         reflect: true
       })
     );
+
+    done();
+  });
+
+  it('actions: InsertAction  ', done => {
+    let doc = Doc.fromSVG(googleSVG, 'google.svg');
+
+    let items = [doc.elementsFlat[0]];
+
+    for (let item of items) {
+      roundTrip(
+        new actions.InsertAction({
+          items: [
+            {
+              index: new Index([1, 4]),
+              item
+            }
+          ]
+        }),
+        true
+      );
+    }
 
     done();
   });

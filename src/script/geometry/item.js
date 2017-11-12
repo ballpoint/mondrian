@@ -33,7 +33,6 @@ export default class Item {
 
     // Internal ID only to be used for caching session-specific state
     // like thumbnails. Never persisted.
-    this.__id__ = UUIDV4();
     this.__nonce__ = 1;
   }
 

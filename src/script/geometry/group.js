@@ -7,7 +7,6 @@ export default class Group {
     this.children = children;
 
     this.metadata = new Metadata(metadata);
-    this.__id__ = UUIDV4();
   }
 
   get type() {

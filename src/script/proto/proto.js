@@ -100,7 +100,7 @@ const proto = {
 
       case Group:
         return schema.document.GroupItem.fromObject({
-          children: this.serializeChildren(value.children)
+          children: value.children.map(this.serializeChild.bind(this))
         });
 
       // Document types
@@ -108,7 +108,7 @@ const proto = {
       case Layer:
         return schema.document.Layer.fromObject({
           id: value.id,
-          children: this.serializeChildren(value.children)
+          children: value.children.map(this.serializeChild.bind(this))
         });
 
       case DocLocation:
@@ -158,22 +158,31 @@ const proto = {
         d.handle = schema.geometry.Handle[value.data.handle];
         return schema.history.RemoveHandleAction.fromObject(d);
 
+      case actions.InsertAction:
+        d = {
+          items: value.data.items.map(item => {
+            return {
+              index: this.serialize(item.index),
+              item: this.serializeChild(item.item)
+            };
+          })
+        };
+        return schema.history.InsertAction.fromObject(d);
+
       default:
         console.error('proto serialize failed on:', value);
         throw new Error('Unable to serialize');
     }
   },
 
-  serializeChildren(children) {
-    return children.map(child => {
-      if (child instanceof Path) {
-        return { pathItem: this.serialize(child) };
-      } else if (child instanceof Group) {
-        return { groupItem: this.serialize(child) };
-      } else if (child instanceof Text) {
-        return { textItem: this.serialize(child) };
-      }
-    });
+  serializeChild(child) {
+    if (child instanceof Path) {
+      return { pathItem: this.serialize(child) };
+    } else if (child instanceof Group) {
+      return { groupItem: this.serialize(child) };
+    } else if (child instanceof Text) {
+      return { textItem: this.serialize(child) };
+    }
   },
 
   serializeItemStyle(value) {
@@ -207,6 +216,8 @@ const proto = {
       return value;
     }
 
+    let d;
+
     switch (value.$type) {
       case schema.geometry.Posn:
         return Posn.fromObject(value.$type.toObject(value));
@@ -236,6 +247,7 @@ const proto = {
         return new Color(value.r, value.g, value.b, value.a);
 
       case schema.document.Item:
+        debugger;
 
       // Document
 
@@ -248,7 +260,7 @@ const proto = {
       case schema.document.Layer:
         return new Layer({
           id: value.id,
-          children: this.parseChildren(value.children)
+          children: value.children.map(this.parseChild.bind(this))
         });
 
       case schema.document.Document:
@@ -283,18 +295,32 @@ const proto = {
       case schema.history.RemoveHandleAction:
         return new actions.RemoveHandleAction(this.parse(value.toJSON()));
 
+      case schema.history.InsertAction:
+        d = {
+          items: value.items.map(item => {
+            return {
+              index: this.parse(item.index),
+              item: this.parseChild(item.item)
+            };
+          })
+        };
+        return new actions.InsertAction(d);
+
       default:
         console.error('proto parse failed on:', value);
         throw new Error('Unable to parse');
     }
   },
 
-  parseChildren(children) {
-    return children.map(child => {
-      if (child.pathItem) {
-        let data = {
-          d: new PointsList(
-            child.pathItem.points.map(ps => {
+  parseChild(child) {
+    if (child.pathItem) {
+      let data = {
+        d: new PointsList(
+          child.pathItem.points
+            .filter(ps => {
+              return !!ps.points;
+            })
+            .map(ps => {
               let segment = new PointsSegment(
                 ps.points.map(p => {
                   return this.parse(p);
@@ -305,18 +331,19 @@ const proto = {
 
               return segment;
             })
-          )
-        };
+        )
+      };
 
-        _.extend(data, this.parseItemStyle(child.pathItem.style));
+      _.extend(data, this.parseItemStyle(child.pathItem.style));
 
-        return new Path(data);
-      } else if (child.textItem) {
-        return null;
-      } else if (child.groupItem) {
-        return new Group(this.parseChildren(child.groupItem.children));
-      }
-    });
+      return new Path(data);
+    } else if (child.textItem) {
+      return null;
+    } else if (child.groupItem) {
+      return new Group(
+        child.groupItem.children.map(this.parseChild.bind(this))
+      );
+    }
   },
 
   parseItemStyle(style) {

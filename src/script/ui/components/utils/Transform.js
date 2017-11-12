@@ -49,20 +49,6 @@ class TransformUtil extends React.Component {
     return <div className="sel-util__subheader">{subheader}</div>;
   };
 
-  getSelectionIdKey = () => {
-    let { doc } = this.props.editor;
-    if (doc.state.selection.type === ELEMENTS) {
-      return doc.state.selection.items
-        .map(e => {
-          return e.__id__;
-        })
-        .sort()
-        .join(',');
-    } else {
-      return '';
-    }
-  };
-
   componentDidUpdate() {
     let canvas = ReactDOM.findDOMNode(this.refs.thumbnail);
 
@@ -74,8 +60,6 @@ class TransformUtil extends React.Component {
 
   componentWillReceiveProps(prevState) {
     // Handle changing the thumbnail. Debounce if selection ids haven't changed.
-    let selectionKey = this.getSelectionIdKey();
-    this.setState({ selectionKey });
   }
 
   onChangeCoord = (val, which) => {
