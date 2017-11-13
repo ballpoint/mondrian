@@ -12,6 +12,8 @@ import Index from 'geometry/index';
 
 import { DocLocation } from 'io/backend/backend';
 import Doc from 'io/doc';
+import DocHistory from 'history/history';
+import HistoryFrame from 'history/Frame';
 import Layer from 'io/layer';
 
 import schema from 'proto/schema';
@@ -117,17 +119,54 @@ const proto = {
           path: value.path
         });
 
+      case DocHistory:
+        return schema.history.DocHistory.fromObject({
+          frames: this.serialize(value.frames),
+          currentIndex: value.currentIndex
+        });
+
+      case HistoryFrame:
+        return schema.history.HistoryFrame.fromObject({
+          actions: value.actions
+            .map(action => {
+              let ser = this.serialize(action);
+
+              for (let field of schema.history.DocAction.oneofs.action
+                .fieldsArray) {
+                if (ser.$type.name === field.type) {
+                  return schema.history.DocAction.fromObject({
+                    [field.name]: ser
+                  });
+                }
+              }
+
+              console.error('Unable to parse action', value);
+
+              return null;
+            })
+            .filter(action => {
+              return action !== null;
+            }),
+          timestamp: Math.round(value.timestamp.valueOf() / 1000),
+          id: value.id
+        });
+
       case Doc:
+        console.log(value.history);
         return schema.document.Document.fromObject({
           id: value.__id__,
           name: value.name,
           location: this.serialize(value.location),
+          history: this.serialize(value.history),
           width: value.width,
           height: value.height,
           layers: this.serialize(value.layers)
         });
 
       // Actions
+      case actions.InitAction:
+        return schema.history.InitAction.fromObject({});
+
       case actions.NudgeAction:
         return schema.history.NudgeAction.fromObject(
           this.serialize(value.data)
@@ -247,7 +286,7 @@ const proto = {
         return new Color(value.r, value.g, value.b, value.a);
 
       case schema.document.Item:
-        debugger;
+        return null;
 
       // Document
 
@@ -264,6 +303,8 @@ const proto = {
         });
 
       case schema.document.Document:
+        console.log(value.history);
+
         return new Doc({
           __id__: value.id,
           name: value.name,
@@ -271,11 +312,30 @@ const proto = {
           width: value.width,
           height: value.height,
 
+          history: this.parse(value.history),
           location: this.parse(value.location),
           layers: this.parse(value.layers)
         });
 
+      case schema.history.DocHistory:
+        return new DocHistory(this.parse(value.frames), value.currentIndex);
+
+      case schema.history.HistoryFrame:
+        return HistoryFrame.fromObject({
+          actions: this.parse(value.actions),
+          id: value.id,
+          timestamp: new Date(value.timestamp * 1000),
+          committed: true
+        });
+
       // Actions
+
+      case schema.history.DocAction:
+        // Wrapper
+        return this.parse(value[value.action]);
+
+      case schema.history.InitAction:
+        return new actions.InitAction(this.parse(value.toJSON()));
 
       case schema.history.NudgeAction:
         return new actions.NudgeAction(this.parse(value.toJSON()));

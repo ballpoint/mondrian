@@ -1,13 +1,19 @@
 export default class HistoryFrame {
-  constructor(actions = [], title = '') {
+  constructor(actions = []) {
     this.actions = actions;
-    this.title = title;
-
     this.timestamp = new Date();
-
     this.committed = false;
   }
 
+  static fromObject(attrs) {
+    let frame = new HistoryFrame(attrs.actions || []);
+    if (attrs.timestamp) frame.timestamp = attrs.timestamp;
+    if (attrs.committed) frame.committed = true;
+    if (attrs.id) frame.id = attrs.id;
+    return frame;
+  }
+
+  // TODO remove
   get displayTitle() {
     return this.title || 'Frame';
   }

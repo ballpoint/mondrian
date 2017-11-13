@@ -3,13 +3,14 @@ import * as actions from 'history/actions/actions';
 import EventEmitter from 'lib/events';
 
 export default class DocHistory extends EventEmitter {
-  constructor(frames = []) {
+  constructor(frames = [], currentIndex = -1) {
     super();
     this._nextFrameId = 1;
-    this._currentIndex = -1;
 
     this.frames = frames;
     this.staged = undefined;
+
+    this.currentIndex = currentIndex;
 
     if (this.frames.length === 0) {
       let initFrame = new HistoryFrame([
@@ -17,11 +18,13 @@ export default class DocHistory extends EventEmitter {
       ]);
       this.stageFrame(initFrame);
       this.commitFrame();
+    } else {
+      this._nextFrameId = this.head.id + 1;
     }
   }
 
   get head() {
-    return this.frames[this._currentIndex];
+    return this.frames[this.currentIndex];
   }
 
   stageFrame(frame, doc) {
@@ -48,7 +51,7 @@ export default class DocHistory extends EventEmitter {
   commitFrame() {
     if (!this.staged) return;
 
-    this.frames = this.frames.slice(0, this._currentIndex + 1);
+    this.frames = this.frames.slice(0, this.currentIndex + 1);
 
     this.frames.push(this.staged);
     this.staged.commit();
@@ -56,7 +59,7 @@ export default class DocHistory extends EventEmitter {
     this.staged.id = this._nextFrameId;
     this._nextFrameId++;
 
-    this._currentIndex++;
+    this.currentIndex++;
 
     delete this.staged;
     this.trigger('commit');
@@ -79,24 +82,26 @@ export default class DocHistory extends EventEmitter {
   }
 
   canUndo() {
-    return this._currentIndex > 0;
+    return this.currentIndex > 0;
   }
 
   undo(doc) {
     if (this.canUndo()) {
       this.head.undo(doc);
-      this._currentIndex--;
+      this.currentIndex--;
+      console.log(this.currentIndex, this.head.actions);
     }
   }
 
   canRedo() {
-    return this.frames.length - 1 > this._currentIndex;
+    return this.frames.length - 1 > this.currentIndex;
   }
 
   redo(doc) {
     if (this.canRedo()) {
-      this.frames[this._currentIndex + 1].perform(doc);
-      this._currentIndex++;
+      this.frames[this.currentIndex + 1].perform(doc);
+      this.currentIndex++;
+      console.log(this.currentIndex, this.head.actions);
     }
   }
 
