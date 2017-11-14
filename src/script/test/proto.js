@@ -65,8 +65,8 @@ describe('Proto', function() {
     testRoundTrip(
       new actions.ScaleAction({
         indexes: [new Index([0, 3, 4])],
-        xs: 2.02,
-        ys: 1.4
+        x: 2.02,
+        y: 1.4
       })
     );
 
@@ -106,7 +106,7 @@ describe('Proto', function() {
     done();
   });
 
-  it('actions: AddHandleAction  ', done => {
+  it('actions: AddHandleAction', done => {
     testRoundTrip(
       new actions.AddHandleAction({
         index: new Index([1, 4]),
@@ -118,7 +118,7 @@ describe('Proto', function() {
     done();
   });
 
-  it('actions: RemoveHandleAction  ', done => {
+  it('actions: RemoveHandleAction', done => {
     testRoundTrip(
       new actions.RemoveHandleAction({
         index: new Index([1, 4]),
@@ -130,7 +130,7 @@ describe('Proto', function() {
     done();
   });
 
-  it('actions: InsertAction  ', done => {
+  it('actions: InsertAction', done => {
     let doc = Doc.fromSVG(googleSVG, 'google.svg');
 
     let items = [doc.elementsFlat[0]];
@@ -149,6 +149,105 @@ describe('Proto', function() {
       );
     }
 
+    done();
+  });
+
+  it('actions: ShiftSegmentAction', done => {
+    testRoundTrip(
+      new actions.ShiftSegmentAction({
+        index: new Index([1, 4, 2, 10]),
+        n: 3
+      })
+    );
+
+    done();
+  });
+
+  it('actions: ReverseSegmentAction', done => {
+    testRoundTrip(
+      new actions.ReverseSegmentAction({
+        index: new Index([1, 4, 2, 10])
+      })
+    );
+
+    done();
+  });
+
+  it('actions: CloseSegmentAction', done => {
+    testRoundTrip(
+      new actions.CloseSegmentAction({
+        index: new Index([1, 4, 2, 10])
+      })
+    );
+
+    done();
+  });
+
+  it('actions: OpenSegmentAction', done => {
+    testRoundTrip(
+      new actions.OpenSegmentAction({
+        index: new Index([1, 4, 2, 10])
+      })
+    );
+
+    done();
+  });
+
+  it('actions: GroupAction', done => {
+    testRoundTrip(
+      new actions.GroupAction({
+        groupIndex: new Index([1, 4, 2]),
+        childIndexes: [new Index([1, 4, 2, 3]), new Index([1, 4, 2, 10])]
+      })
+    );
+
+    done();
+  });
+
+  it('actions: UngroupAction', done => {
+    testRoundTrip(
+      new actions.UngroupAction({
+        groupIndex: new Index([1, 4, 2]),
+        childIndexes: [new Index([1, 4, 2, 3]), new Index([1, 4, 2, 10])]
+      })
+    );
+
+    done();
+  });
+
+  it('actions: SplitPathAction', done => {
+    testRoundTrip(
+      new actions.SplitPathAction({
+        splitIndex: new Index([1, 4, 2])
+      })
+    );
+
+    done();
+  });
+
+  it('actions: UnsplitPathAction', done => {
+    testRoundTrip(
+      new actions.UnsplitPathAction({
+        splitIndex: new Index([1, 4, 2])
+      })
+    );
+
+    done();
+  });
+
+  it('actions: ToggleMetadataAction', done => {
+    done();
+  });
+
+  it('actions: SetDocDimensionsAction', done => {
+    done();
+  });
+
+  it('actions: SetDocNameAction', done => {
+    done();
+  });
+
+  it('actions: SetAttributeAction', done => {
     done();
   });
 });

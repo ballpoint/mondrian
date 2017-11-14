@@ -191,25 +191,25 @@ export class InsertAction extends HistoryAction {
     for (let pair of this.data.items) {
       let { item, index } = pair;
       let parent = doc.getFromIndex(index.parent);
-      parent.insert(item, index.last);
+      parent.insert(item.clone(), index.last);
       doc.cacheIndexes();
     }
   }
 
   opposite() {
-    return new DeleteAction({
+    return new RemoveAction({
       items: this.data.items
     });
   }
 }
 
-export class DeleteAction extends HistoryAction {
+export class RemoveAction extends HistoryAction {
   get displayTitle() {
     return 'Delete';
   }
 
   static forItems(items) {
-    return new DeleteAction({
+    return new RemoveAction({
       items: items.map(item => {
         return {
           index: item.index,

@@ -13,7 +13,6 @@ export default class Item {
     this.data = data;
 
     //this.points = [];
-    this.transform = {};
     this.boundsCached = null;
 
     if (data.id) {
@@ -97,11 +96,7 @@ export default class Item {
   clone() {
     this.commitData();
     let cloneData = _.clone(this.data);
-
-    let cloneTransform = _.clone(this.transform);
-    delete cloneData.id;
     let clone = new this.constructor(cloneData);
-    clone.transform = cloneTransform;
     return clone;
   }
 
@@ -172,10 +167,4 @@ export default class Item {
   }
 
   lineSegments() {}
-}
-
-function __guard__(value, transform) {
-  return typeof value !== 'undefined' && value !== null
-    ? transform(value)
-    : undefined;
 }

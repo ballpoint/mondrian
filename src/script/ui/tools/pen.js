@@ -134,7 +134,7 @@ export default class Pen extends Tool {
       // Insert new PathPoint
       let frame = new HistoryFrame(
         [
-          new actions.DeleteAction({
+          new actions.RemoveAction({
             items: [
               {
                 item: this.closest.pathPoint.prec,
@@ -423,11 +423,11 @@ export default class Pen extends Tool {
 
             let alone = pt.segment.list.segments.length === 1;
             if (alone) {
-              this._endpointCleanupAction = actions.DeleteAction.forItems([
+              this._endpointCleanupAction = actions.RemoveAction.forItems([
                 pt.segment.list.path
               ]);
             } else {
-              this._endpointCleanupAction = actions.DeleteAction.forItems([
+              this._endpointCleanupAction = actions.RemoveAction.forItems([
                 pt.segment
               ]);
             }

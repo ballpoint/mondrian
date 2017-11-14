@@ -89,7 +89,6 @@ export default class DocHistory extends EventEmitter {
     if (this.canUndo()) {
       this.head.undo(doc);
       this.currentIndex--;
-      console.log(this.currentIndex, this.head.actions);
     }
   }
 
@@ -101,7 +100,6 @@ export default class DocHistory extends EventEmitter {
     if (this.canRedo()) {
       this.frames[this.currentIndex + 1].perform(doc);
       this.currentIndex++;
-      console.log(this.currentIndex, this.head.actions);
     }
   }
 

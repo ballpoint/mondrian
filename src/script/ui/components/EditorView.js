@@ -34,6 +34,14 @@ class EditorView extends React.Component {
     this.state = {
       editor
     };
+
+    editor.on('history:step', () => {
+      try {
+        editor.doc.location.save(editor.doc);
+      } catch (e) {
+        console.error('Error saving document', e);
+      }
+    });
   }
 
   componentDidMount() {
@@ -46,14 +54,6 @@ class EditorView extends React.Component {
   async loadFromURL() {
     let doc = await backend.parseDocFromURL();
     this.openDoc(doc);
-
-    doc.history.on(['commit', 'step'], () => {
-      try {
-        doc.location.save(doc);
-      } catch (e) {
-        console.error('Error saving document', e);
-      }
-    });
   }
 
   componentDidUpdate(prevProps, prevState) {

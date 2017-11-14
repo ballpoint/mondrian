@@ -57,7 +57,7 @@ class ChildCtrlButton extends React.Component {
         break;
       case 'delete':
         frame = new HistoryFrame(
-          [actions.DeleteAction.forItems([this.props.child])],
+          [actions.RemoveAction.forItems([this.props.child])],
           'Remove element'
         );
 

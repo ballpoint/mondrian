@@ -9,7 +9,11 @@ import { NONE } from 'ui/color';
 export default class Path extends Item {
   constructor(data) {
     super(data);
-    if (this.data && this.data.d) {
+
+    // TODO this is shit
+    if (this.data && this.data.points) {
+      this.points = this.data.points;
+    } else if (this.data && this.data.d) {
       this.importNewPoints(this.data.d);
     } else {
       this.points = new PointsList([], this);
@@ -18,6 +22,12 @@ export default class Path extends Item {
 
   get type() {
     return 'path';
+  }
+
+  clone() {
+    let data = _.clone(this.data);
+    data.points = this.points.clone();
+    return new Path(data);
   }
 
   setPoints(points) {

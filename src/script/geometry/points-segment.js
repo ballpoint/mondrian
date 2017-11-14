@@ -37,11 +37,13 @@ export default class PointsSegment {
   }
 
   clone() {
-    return new PointsSegment(
+    let ps = new PointsSegment(
       this.points.map(p => {
         return p.clone();
       })
     );
+    if (this.closed) ps.close();
+    return ps;
   }
 
   get length() {

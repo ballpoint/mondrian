@@ -658,7 +658,7 @@ export default class Editor extends EventEmitter {
         // Simple when removing elements; remove them whole
         frame = new HistoryFrame(
           [
-            new actions.DeleteAction({
+            new actions.RemoveAction({
               items: this.doc.state.selection.map(item => {
                 return { item, index: item.index };
               })
@@ -685,7 +685,7 @@ export default class Editor extends EventEmitter {
 
           if (segment.closed) {
             // If we have a closed segment, we just remove the point and open it
-            as.push(actions.DeleteAction.forItems([point]));
+            as.push(actions.RemoveAction.forItems([point]));
             as.push(
               new actions.ShiftSegmentAction({
                 index: segmentIndex,
@@ -695,10 +695,10 @@ export default class Editor extends EventEmitter {
 
             as.push(new actions.OpenSegmentAction({ index: segmentIndex }));
           } else if (point === segment.first || point === segment.last) {
-            as.push(actions.DeleteAction.forItems([point]));
+            as.push(actions.RemoveAction.forItems([point]));
           } else {
             // If the segment is already open, we split it into two segments
-            as.push(actions.DeleteAction.forItems([point]));
+            as.push(actions.RemoveAction.forItems([point]));
             as.push(actions.SplitPathAction.forPoint(this.doc, point));
           }
           frame = new HistoryFrame(as.slice(0), 'Remove points');
@@ -762,7 +762,7 @@ export default class Editor extends EventEmitter {
     }
 
     if (markedForRemoval.length > 0) {
-      let cleanUpAction = new actions.DeleteAction({
+      let cleanUpAction = new actions.RemoveAction({
         items: markedForRemoval.map(item => {
           return { item, index: item.index };
         })
@@ -1076,7 +1076,7 @@ export default class Editor extends EventEmitter {
 
     let frame = new HistoryFrame(
       [
-        new actions.DeleteAction({
+        new actions.RemoveAction({
           items: this.doc.state.selection.map(item => {
             return { item, index: item.index };
           })
@@ -1161,7 +1161,7 @@ export default class Editor extends EventEmitter {
       // Delete instead
 
       let frame = new HistoryFrame([
-        actions.DeleteAction.forItems([handler.item])
+        actions.RemoveAction.forItems([handler.item])
       ]);
       this.stageFrame(frame);
       this.commitFrame();

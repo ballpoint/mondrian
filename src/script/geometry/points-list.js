@@ -78,6 +78,14 @@ export default class PointsList {
     return list;
   }
 
+  clone() {
+    return new PointsList(
+      this.segments.map(s => {
+        return s.clone();
+      })
+    );
+  }
+
   get firstSegment() {
     return this.segments[0];
   }

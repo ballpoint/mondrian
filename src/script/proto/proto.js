@@ -208,6 +208,78 @@ const proto = {
         };
         return schema.history.InsertAction.fromObject(d);
 
+      case actions.RemoveAction:
+        d = {
+          items: value.data.items.map(item => {
+            return {
+              index: this.serialize(item.index),
+              item: this.serializeChild(item.item)
+            };
+          })
+        };
+        return schema.history.RemoveAction.fromObject(d);
+
+      case actions.ShiftSegmentAction:
+        return schema.history.ShiftSegmentAction.fromObject(
+          this.serialize(value.data)
+        );
+
+      case actions.ReverseSegmentAction:
+        return schema.history.ReverseSegmentAction.fromObject(
+          this.serialize(value.data)
+        );
+
+      case actions.CloseSegmentAction:
+        return schema.history.CloseSegmentAction.fromObject(
+          this.serialize(value.data)
+        );
+
+      case actions.OpenSegmentAction:
+        return schema.history.OpenSegmentAction.fromObject(
+          this.serialize(value.data)
+        );
+
+      // Group/Ungroup
+      case actions.GroupAction:
+        return schema.history.GroupAction.fromObject(
+          this.serialize(value.data)
+        );
+
+      case actions.UngroupAction:
+        return schema.history.UngroupAction.fromObject(
+          this.serialize(value.data)
+        );
+
+      case actions.SplitPathAction:
+        return schema.history.SplitPathAction.fromObject(
+          this.serialize(value.data)
+        );
+
+      case actions.UnsplitPathAction:
+        return schema.history.UnsplitPathAction.fromObject(
+          this.serialize(value.data)
+        );
+
+      case actions.ToggleMetadataAction:
+        return schema.history.ToggleMetadataAction.fromObject(
+          this.serialize(value.data)
+        );
+
+      case actions.SetDocDimensionsAction:
+        return schema.history.SetDocDimensionsAction.fromObject(
+          this.serialize(value.data)
+        );
+
+      case actions.SetDocNameAction:
+        return schema.history.SetDocNameAction.fromObject(
+          this.serialize(value.data)
+        );
+
+      case actions.SetAttributeAction:
+        return schema.history.SetAttributeAction.fromObject(
+          this.serialize(value.data)
+        );
+
       default:
         console.error('proto serialize failed on:', value);
         throw new Error('Unable to serialize');
@@ -365,6 +437,54 @@ const proto = {
           })
         };
         return new actions.InsertAction(d);
+
+      case schema.history.RemoveAction:
+        d = {
+          items: value.items.map(item => {
+            return {
+              index: this.parse(item.index),
+              item: this.parseChild(item.item)
+            };
+          })
+        };
+        return new actions.RemoveAction(d);
+
+      case schema.history.ShiftSegmentAction:
+        return new actions.RemoveHandleAction(this.parse(value.toJSON()));
+
+      case schema.history.ReverseSegmentAction:
+        return new actions.ReverseSegmentAction(this.parse(value.toJSON()));
+
+      case schema.history.CloseSegmentAction:
+        return new actions.CloseSegmentAction(this.parse(value.toJSON()));
+
+      case schema.history.OpenSegmentAction:
+        return new actions.RemoveHandleAction(this.parse(value.toJSON()));
+
+      // Group/Ungroup
+      case schema.history.GroupAction:
+        return new actions.GroupAction(this.parse(value.toJSON()));
+
+      case schema.history.UngroupAction:
+        return new actions.UngroupAction(this.parse(value.toJSON()));
+
+      case schema.history.SplitPathAction:
+        return new actions.SplitPathAction(this.parse(value.toJSON()));
+
+      case schema.history.UnsplitPathAction:
+        return new actions.UnsplitPathAction(this.parse(value.toJSON()));
+
+      case schema.history.ToggleMetadataAction:
+        return new actions.ToggleMetadataAction(this.parse(value.toJSON()));
+
+      case schema.history.SetDocDimensionsAction:
+        return new actions.SetDocDimensionsAction(this.parse(value.toJSON()));
+
+      case schema.history.SetDocNameAction:
+        return new actions.SetDocNameAction(this.parse(value.toJSON()));
+
+      case schema.history.SetAttributeAction:
+        return new actions.SetAttributeAction(this.parse(value.toJSON()));
 
       default:
         console.error('proto parse failed on:', value);
