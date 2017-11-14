@@ -191,6 +191,7 @@ export class InsertAction extends HistoryAction {
     for (let pair of this.data.items) {
       let { item, index } = pair;
       let parent = doc.getFromIndex(index.parent);
+      debugger;
       parent.insert(item.clone(), index.last);
       doc.cacheIndexes();
     }

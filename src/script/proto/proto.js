@@ -152,7 +152,6 @@ const proto = {
         });
 
       case Doc:
-        console.log(value.history);
         return schema.document.Document.fromObject({
           id: value.__id__,
           name: value.name,
@@ -260,8 +259,8 @@ const proto = {
           this.serialize(value.data)
         );
 
-      case actions.ToggleMetadataAction:
-        return schema.history.ToggleMetadataAction.fromObject(
+      case actions.ToggleMetadataBoolAction:
+        return schema.history.ToggleMetadataBoolAction.fromObject(
           this.serialize(value.data)
         );
 
@@ -375,8 +374,6 @@ const proto = {
         });
 
       case schema.document.Document:
-        console.log(value.history);
-
         return new Doc({
           __id__: value.id,
           name: value.name,
@@ -407,25 +404,26 @@ const proto = {
         return this.parse(value[value.action]);
 
       case schema.history.InitAction:
-        return new actions.InitAction(this.parse(value.toJSON()));
+        return new actions.InitAction(this.parse(this.asObject(value)));
 
       case schema.history.NudgeAction:
-        return new actions.NudgeAction(this.parse(value.toJSON()));
+        return new actions.NudgeAction(this.parse(this.asObject(value)));
 
       case schema.history.ScaleAction:
-        return new actions.ScaleAction(this.parse(value.toJSON()));
+        return new actions.ScaleAction(this.parse(this.asObject(value)));
 
       case schema.history.RotateAction:
-        return new actions.RotateAction(this.parse(value.toJSON()));
+        debugger;
+        return new actions.RotateAction(this.parse(this.asObject(value)));
 
       case schema.history.NudgeHandleAction:
-        return new actions.NudgeHandleAction(this.parse(value.toJSON()));
+        return new actions.NudgeHandleAction(this.parse(this.asObject(value)));
 
       case schema.history.AddHandleAction:
-        return new actions.AddHandleAction(this.parse(value.toJSON()));
+        return new actions.AddHandleAction(this.parse(this.asObject(value)));
 
       case schema.history.RemoveHandleAction:
-        return new actions.RemoveHandleAction(this.parse(value.toJSON()));
+        return new actions.RemoveHandleAction(this.parse(this.asObject(value)));
 
       case schema.history.InsertAction:
         d = {
@@ -450,46 +448,60 @@ const proto = {
         return new actions.RemoveAction(d);
 
       case schema.history.ShiftSegmentAction:
-        return new actions.RemoveHandleAction(this.parse(value.toJSON()));
+        return new actions.RemoveHandleAction(this.parse(this.asObject(value)));
 
       case schema.history.ReverseSegmentAction:
-        return new actions.ReverseSegmentAction(this.parse(value.toJSON()));
+        return new actions.ReverseSegmentAction(
+          this.parse(this.asObject(value))
+        );
 
       case schema.history.CloseSegmentAction:
-        return new actions.CloseSegmentAction(this.parse(value.toJSON()));
+        return new actions.CloseSegmentAction(this.parse(this.asObject(value)));
 
       case schema.history.OpenSegmentAction:
-        return new actions.RemoveHandleAction(this.parse(value.toJSON()));
+        return new actions.RemoveHandleAction(this.parse(this.asObject(value)));
 
       // Group/Ungroup
       case schema.history.GroupAction:
-        return new actions.GroupAction(this.parse(value.toJSON()));
+        return new actions.GroupAction(this.parse(this.asObject(value)));
 
       case schema.history.UngroupAction:
-        return new actions.UngroupAction(this.parse(value.toJSON()));
+        return new actions.UngroupAction(this.parse(this.asObject(value)));
 
       case schema.history.SplitPathAction:
-        return new actions.SplitPathAction(this.parse(value.toJSON()));
+        return new actions.SplitPathAction(this.parse(this.asObject(value)));
 
       case schema.history.UnsplitPathAction:
-        return new actions.UnsplitPathAction(this.parse(value.toJSON()));
+        return new actions.UnsplitPathAction(this.parse(this.asObject(value)));
 
-      case schema.history.ToggleMetadataAction:
-        return new actions.ToggleMetadataAction(this.parse(value.toJSON()));
+      case schema.history.ToggleMetadataBoolAction:
+        return new actions.ToggleMetadataBoolAction(
+          this.parse(this.asObject(value))
+        );
 
       case schema.history.SetDocDimensionsAction:
-        return new actions.SetDocDimensionsAction(this.parse(value.toJSON()));
+        return new actions.SetDocDimensionsAction(
+          this.parse(this.asObject(value))
+        );
 
       case schema.history.SetDocNameAction:
-        return new actions.SetDocNameAction(this.parse(value.toJSON()));
+        return new actions.SetDocNameAction(this.parse(this.asObject(value)));
 
       case schema.history.SetAttributeAction:
-        return new actions.SetAttributeAction(this.parse(value.toJSON()));
+        return new actions.SetAttributeAction(this.parse(this.asObject(value)));
 
       default:
         console.error('proto parse failed on:', value);
         throw new Error('Unable to parse');
     }
+  },
+
+  asObject(value) {
+    let obj = {};
+    for (let key in value.$type.fields) {
+      obj[key] = value[key];
+    }
+    return obj;
   },
 
   parseChild(child) {

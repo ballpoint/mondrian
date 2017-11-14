@@ -235,11 +235,27 @@ describe('Proto', function() {
     done();
   });
 
-  it('actions: ToggleMetadataAction', done => {
+  it('actions: ToggleMetadataBoolAction', done => {
+    testRoundTrip(
+      new actions.ToggleMetadataBoolAction({
+        indexes: [new Index([1, 4, 2]), new Index([1, 4, 3])],
+        key: 'visible'
+      })
+    );
+
     done();
   });
 
   it('actions: SetDocDimensionsAction', done => {
+    testRoundTrip(
+      new actions.SetDocDimensionsAction({
+        width: 1000,
+        prevWidth: 500,
+        height: 800,
+        prevHeight: 400
+      })
+    );
+
     done();
   });
 

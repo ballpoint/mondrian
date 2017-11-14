@@ -18,6 +18,8 @@ export default class Path extends Item {
     } else {
       this.points = new PointsList([], this);
     }
+
+    this.points.path = this;
   }
 
   get type() {
