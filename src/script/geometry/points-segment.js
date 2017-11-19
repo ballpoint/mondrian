@@ -270,16 +270,26 @@ export default class PointsSegment {
 
   lineSegments() {
     let points = this.points;
+
     if (!this.closed) {
       points = points.slice(1);
+
+      // Add straight line going from start to end
     }
-    return points
+
+    let lss = points
       .map(p => {
         return p.toLineSegment();
       })
       .filter(ls => {
         return ls !== null;
       });
+
+    if (!this.closed) {
+      lss.push(new LineSegment(this.first, this.last));
+    }
+
+    return lss;
   }
 
   nextChildIndex() {
