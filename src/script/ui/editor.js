@@ -826,7 +826,7 @@ export default class Editor extends EventEmitter {
 
     for (let item of elems) {
       items.push({ item, index: nextIndex });
-      nextIndex.plus(1);
+      nextIndex = nextIndex.plus(1);
     }
 
     let action = new actions.InsertAction({ items });
