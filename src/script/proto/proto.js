@@ -294,6 +294,8 @@ const proto = {
       return { groupItem: this.serialize(child) };
     } else if (child instanceof Text) {
       return { textItem: this.serialize(child) };
+    } else if (child instanceof PathPoint) {
+      return { pathPoint: this.serialize(child) };
     }
   },
 
@@ -546,7 +548,10 @@ const proto = {
       _.extend(data, this.parseItemStyle(child.pathItem.style));
 
       return new Path(data, this.parseItemMetadata(child.pathItem.metadata));
+    } else if (child.pathPoint) {
+      return this.parse(child.pathPoint);
     } else if (child.textItem) {
+      // TODO
       return null;
     } else if (child.groupItem) {
       return new Group(

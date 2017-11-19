@@ -217,7 +217,7 @@ export default class Pen extends Tool {
       );
     }
 
-    let pointToSelect;
+    let indexToSelect;
 
     if (this._endpointStart) {
       // Starting to draw from existing endpoint
@@ -242,7 +242,7 @@ export default class Pen extends Tool {
         );
       }
 
-      pointToSelect = this._endpointStart;
+      indexToSelect = this._endpointStart.index;
 
       title = 'Modify point';
     } else if (this._endpointEnd) {
@@ -269,7 +269,7 @@ export default class Pen extends Tool {
           new actions.CloseSegmentAction({ index: this.rootSegmentIndex })
         );
 
-        pointToSelect = this._endpointEnd;
+        indexToSelect = this._endpointEnd.index;
       } else {
         let removeIndex;
 
@@ -298,7 +298,7 @@ export default class Pen extends Tool {
 
         frame.push(new actions.InsertAction({ items: insertions }));
 
-        pointToSelect = newSeg.first;
+        indexToSelect = newSeg.first.index;
 
         frame.push(this._endpointCleanupAction);
       }
@@ -324,20 +324,18 @@ export default class Pen extends Tool {
         })
       );
 
-      pointToSelect = pp;
+      indexToSelect = this.currentPointIndex;
     }
 
     frame.title = title;
 
     this.editor.perform(frame);
 
-    /*
-    if (pointToSelect) {
-      this.editor.selectItems([pointToSelect]);
+    if (indexToSelect) {
+      this.editor.selectFromIndexes([indexToSelect]);
     } else {
       this.editor.selectItems([]);
     }
-    */
   }
 
   refresh(layer, context) {
