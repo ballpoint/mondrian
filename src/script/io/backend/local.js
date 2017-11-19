@@ -14,8 +14,12 @@ class LocalBackend {
   async load(path) {
     let id = path.split('-')[0];
     let bytes = await this.store.getItem(id);
+
     let doc = schema.document.Document.decode(bytes);
     doc = proto.parse(doc);
+
+    console.log(`${bytes.length} bytes, ${doc.history.frames.length} frames`);
+
     return doc;
   }
 

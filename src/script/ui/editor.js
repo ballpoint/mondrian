@@ -1034,7 +1034,7 @@ export default class Editor extends EventEmitter {
     let frame = new HistoryFrame([
       new actions.RotateAction({
         indexes: this.doc.state.selection.indexes,
-        a: angle,
+        angle,
         origin
       })
     ]);

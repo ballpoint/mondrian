@@ -75,19 +75,21 @@ export class RotateAction extends HistoryAction {
   }
 
   perform(doc) {
+    if (this.data.angle == 0) return;
+
     let items = this.data.indexes.map(index => {
       return doc.getFromIndex(index);
     });
 
     for (let item of items) {
-      item.rotate(this.data.a, this.data.origin);
+      item.rotate(this.data.angle, this.data.origin);
     }
   }
 
   opposite() {
     return new RotateAction({
       indexes: this.data.indexes,
-      a: -this.data.a,
+      angle: -this.data.angle,
       origin: this.data.origin
     });
   }
