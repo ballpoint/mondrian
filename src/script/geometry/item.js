@@ -25,11 +25,6 @@ export default class Item {
 
     this.setDefaultAttrs();
 
-    // Apply
-    if (this.data['mondrian:angle'] != null) {
-      this.metadata.angle = parseFloat(this.data['mondrian:angle'], 10);
-    }
-
     // Internal ID only to be used for caching session-specific state
     // like thumbnails. Never persisted.
     this.__nonce__ = 1;

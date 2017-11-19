@@ -88,6 +88,8 @@ export default class TransformerUIElement extends UIElement {
   }
 
   _refresh(layer, context) {
+    if (!this.editor.doc) return;
+
     let selection = this.editor.doc.state.selection;
 
     if (selection.empty) {
@@ -395,7 +397,7 @@ export default class TransformerUIElement extends UIElement {
         },
         'drag:stop': (e, cursor) => {
           e.stopPropagation();
-          this.editor.doc.history.commitFrame();
+          this.editor.commitFrame();
         }
       },
       {
@@ -451,7 +453,7 @@ export default class TransformerUIElement extends UIElement {
 
       'drag:stop': e => {
         e.stopPropagation();
-        this.editor.doc.history.commitFrame();
+        this.editor.commitFrame();
       }
     });
 

@@ -27,7 +27,7 @@ export default class Pen extends Tool {
     this.pathItemCommitted = false;
     this.nextChildIndex = this.editor.doc.state.layer.nextChildIndex();
 
-    delete this.rootSegment;
+    delete this.rootSegmentIndex;
     delete this._endedPath;
   }
 
@@ -46,7 +46,8 @@ export default class Pen extends Tool {
       return;
     }
 
-    if (this.rootSegment) {
+    if (this.rootSegmentIndex) {
+      // This means we're working on a path and are not in path splitting mode
       return;
     }
 
@@ -174,7 +175,7 @@ export default class Pen extends Tool {
       this.currentPointIndex = this.currentPointIndex.plus(1);
 
       if (this._endedPath) {
-        delete this.rootSegment;
+        delete this.rootSegmentIndex;
         this.resetState();
       }
       delete this._endpointStart;
@@ -206,9 +207,8 @@ export default class Pen extends Tool {
 
       let pathIndex = this.nextChildIndex;
 
-      this.currentPointIndex = pathIndex.concat([0, 0]);
-
-      this.rootSegment = path.points.lastSegment;
+      this.rootSegmentIndex = pathIndex.concat([0]);
+      this.currentPointIndex = this.rootSegmentIndex.concat([0]);
 
       frame.push(
         new actions.InsertAction({
@@ -225,7 +225,7 @@ export default class Pen extends Tool {
       if (this._endpointBwd) {
         frame.push(
           new actions.ReverseSegmentAction({
-            index: this.rootSegment.index
+            index: this.rootSegmentIndex
           })
         );
       }
@@ -264,9 +264,9 @@ export default class Pen extends Tool {
 
       this._endedPath = true;
 
-      if (this._endpointEnd.segment === this.rootSegment) {
+      if (this._endpointEnd.segment.index.equal(this.rootSegmentIndex)) {
         frame.push(
-          new actions.CloseSegmentAction({ index: this.rootSegment.index })
+          new actions.CloseSegmentAction({ index: this.rootSegmentIndex })
         );
 
         pointToSelect = this._endpointEnd;
@@ -331,11 +331,13 @@ export default class Pen extends Tool {
 
     this.editor.perform(frame);
 
+    /*
     if (pointToSelect) {
       this.editor.selectItems([pointToSelect]);
     } else {
       this.editor.selectItems([]);
     }
+    */
   }
 
   refresh(layer, context) {
@@ -405,13 +407,13 @@ export default class Pen extends Tool {
           e.stopPropagation();
         },
         mousedown: (e, cursor) => {
-          if (!this.rootSegment) {
+          if (!this.rootSegmentIndex) {
             this._endpointStart = pt;
 
             this._endpointIndex = pt.segment.index.concat([
               pt.segment.length - 1
             ]);
-            this.rootSegment = pt.segment;
+            this.rootSegmentIndex = pt.segment.index;
 
             this._endpointBwd = pt === pt.segment.first;
           } else {
@@ -419,7 +421,9 @@ export default class Pen extends Tool {
             this._endpointSegment = pt.segment.clone();
             this._endpointBwd = pt === pt.segment.last;
 
-            this._segmentEndIndex = this.rootSegment.last.index;
+            this._segmentEndIndex = this.editor.doc.getFromIndex(
+              this.rootSegmentIndex
+            ).last.index;
 
             let alone = pt.segment.list.segments.length === 1;
             if (alone) {

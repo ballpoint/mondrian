@@ -58,6 +58,8 @@ export default class CursorHandler extends EventEmitter {
   }
 
   handleEvent(name, event, cursor) {
+    if (!this.projection) return;
+
     let data = {
       // Bool values
       dragging: cursor.dragging,

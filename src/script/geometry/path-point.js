@@ -367,6 +367,7 @@ export default class PathPoint extends Posn {
 
   get index() {
     let segment = this.segment;
+    if (!segment) debugger;
     let segmentIndex = this.segment.index;
     let pointIndex = segment.indexOf(this);
     return segmentIndex.concat([pointIndex]);

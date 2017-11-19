@@ -97,12 +97,14 @@ const proto = {
       case Path:
         return schema.document.PathItem.fromObject({
           style: this.serializeItemStyle(value),
+          metadata: this.serializeItemMetadata(value.metadata),
           points: this.serialize(value.points.segments)
         });
 
       case Group:
         return schema.document.GroupItem.fromObject({
-          children: value.children.map(this.serializeChild.bind(this))
+          children: value.children.map(this.serializeChild.bind(this)),
+          metadata: this.serializeItemMetadata(value.metadata)
         });
 
       // Document types
@@ -305,6 +307,14 @@ const proto = {
     };
   },
 
+  serializeItemMetadata(metadata) {
+    return {
+      locked: metadata.locked,
+      visible: metadata.visible,
+      angle: metadata.angle
+    };
+  },
+
   parse(value) {
     if (value === undefined || value === null) return undefined;
 
@@ -413,7 +423,6 @@ const proto = {
         return new actions.ScaleAction(this.parse(this.asObject(value)));
 
       case schema.history.RotateAction:
-        debugger;
         return new actions.RotateAction(this.parse(this.asObject(value)));
 
       case schema.history.NudgeHandleAction:
@@ -427,23 +436,31 @@ const proto = {
 
       case schema.history.InsertAction:
         d = {
-          items: value.items.map(item => {
-            return {
-              index: this.parse(item.index),
-              item: this.parseChild(item.item)
-            };
-          })
+          items: value.items
+            .filter(item => {
+              return !!item.item;
+            })
+            .map(item => {
+              return {
+                index: this.parse(item.index),
+                item: this.parseChild(item.item)
+              };
+            })
         };
         return new actions.InsertAction(d);
 
       case schema.history.RemoveAction:
         d = {
-          items: value.items.map(item => {
-            return {
-              index: this.parse(item.index),
-              item: this.parseChild(item.item)
-            };
-          })
+          items: value.items
+            .filter(item => {
+              return !!item.item;
+            })
+            .map(item => {
+              return {
+                index: this.parse(item.index),
+                item: this.parseChild(item.item)
+              };
+            })
         };
         return new actions.RemoveAction(d);
 
@@ -528,12 +545,13 @@ const proto = {
 
       _.extend(data, this.parseItemStyle(child.pathItem.style));
 
-      return new Path(data);
+      return new Path(data, this.parseItemMetadata(child.pathItem.metadata));
     } else if (child.textItem) {
       return null;
     } else if (child.groupItem) {
       return new Group(
-        child.groupItem.children.map(this.parseChild.bind(this))
+        child.groupItem.children.map(this.parseChild.bind(this)),
+        this.parseItemMetadata(child.groupItem.metadata)
       );
     }
   },
@@ -543,7 +561,16 @@ const proto = {
       fill: this.parse(style.fill),
       stroke: this.parse(style.stroke),
       strokeLineCap: 'butt',
-      strokeLineJoin: 'miter'
+      strokeLineJoin: 'miter',
+      opacity: style.opacity
+    };
+  },
+
+  parseItemMetadata(metadata) {
+    return {
+      locked: metadata.locked,
+      visible: metadata.visible,
+      angle: metadata.angle
     };
   },
 

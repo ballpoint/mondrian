@@ -19,6 +19,7 @@ export default class DocumentPointsUIElement extends UIElement {
 
   _refresh(layer, context) {
     this.reset();
+    if (!this.editor.doc) return;
 
     let tool = this.editor.state.tool;
 
@@ -42,7 +43,10 @@ export default class DocumentPointsUIElement extends UIElement {
       }
 
       // Draw hovered point
-      if (tool.hovering && !this.editor.doc.state.selection.has(tool.hovering)) {
+      if (
+        tool.hovering &&
+        !this.editor.doc.state.selection.has(tool.hovering)
+      ) {
         this.handlePoint(tool.hovering, layer);
       }
     }

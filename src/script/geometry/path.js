@@ -7,8 +7,8 @@ import Posn from 'geometry/posn';
 import { NONE } from 'ui/color';
 
 export default class Path extends Item {
-  constructor(data) {
-    super(data);
+  constructor(data, metadata) {
+    super(data, metadata);
 
     // TODO this is shit
     if (this.data && this.data.points) {

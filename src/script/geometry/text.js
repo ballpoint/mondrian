@@ -14,7 +14,7 @@ export class TextLine {
 }
 
 export default class Text extends Item {
-  constructor(data) {
+  constructor(data, metadata) {
     if (data.x === undefined) data.x = 100;
     if (data.y === undefined) data.y = 100;
     if (data['font-size'] === undefined) data['font-size'] = 12;
@@ -36,7 +36,7 @@ export default class Text extends Item {
     if (data.align === undefined) data.align = 'left';
     if (data.valign === undefined) data.valign = 'top';
 
-    super(data);
+    super(data, metadata);
   }
 
   get type() {
