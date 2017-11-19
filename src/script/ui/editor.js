@@ -22,6 +22,7 @@ import PointsSegment from 'geometry/points-segment';
 import bool from 'lib/bool';
 
 import Layer from 'io/layer';
+import clipboard from 'io/clipboard';
 
 import HistoryFrame from 'history/Frame';
 import * as actions from 'history/actions/actions';
@@ -1267,16 +1268,14 @@ export default class Editor extends EventEmitter {
     this.trigger('change');
   }
 
-  copy(e) {
-    this.state.clipboard = this.doc.state.selection.items.map(e => {
-      return e.clone();
-    });
+  async copy(e) {
+    clipboard.write(this.doc.state.selection.items);
     this.trigger('change');
   }
 
-  paste(e) {
-    if (this.state.clipboard) {
-      let items = this.state.clipboard.slice(0).reverse();
+  async paste(e) {
+    let items = await clipboard.read();
+    if (items) {
       let frame = this.insertElements(items);
       let indexes = frame.actions[0].data.items.map(item => {
         return item.index;

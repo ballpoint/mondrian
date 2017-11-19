@@ -22,9 +22,7 @@ class LocalBackend {
   async save(doc, path) {
     let serialized = proto.serialize(doc);
     let bytes = serialized.$type.encode(serialized).finish();
-
     let id = path.split('-')[0];
-
     return await this.store.setItem(id, bytes);
   }
 

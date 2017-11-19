@@ -7,5 +7,6 @@ window.proot = root;
 export default {
   geometry: root.lookup('geometry'),
   history: root.lookup('history'),
-  document: root.lookup('document')
+  document: root.lookup('document'),
+  editor: root.lookup('editor')
 };

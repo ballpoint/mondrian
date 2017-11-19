@@ -103,7 +103,7 @@ const proto = {
 
       case Group:
         return schema.document.GroupItem.fromObject({
-          children: value.children.map(this.serializeChild.bind(this)),
+          children: value.children.map(this.serializeItem.bind(this)),
           metadata: this.serializeItemMetadata(value.metadata)
         });
 
@@ -112,7 +112,7 @@ const proto = {
       case Layer:
         return schema.document.Layer.fromObject({
           id: value.id,
-          children: value.children.map(this.serializeChild.bind(this))
+          children: value.children.map(this.serializeItem.bind(this))
         });
 
       case DocLocation:
@@ -203,7 +203,7 @@ const proto = {
           items: value.data.items.map(item => {
             return {
               index: this.serialize(item.index),
-              item: this.serializeChild(item.item)
+              item: this.serializeItem(item.item)
             };
           })
         };
@@ -214,7 +214,7 @@ const proto = {
           items: value.data.items.map(item => {
             return {
               index: this.serialize(item.index),
-              item: this.serializeChild(item.item)
+              item: this.serializeItem(item.item)
             };
           })
         };
@@ -307,7 +307,7 @@ const proto = {
     }
   },
 
-  serializeChild(child) {
+  serializeItem(child) {
     if (child instanceof Path) {
       return { pathItem: this.serialize(child) };
     } else if (child instanceof Group) {
@@ -417,7 +417,7 @@ const proto = {
       case schema.document.Layer:
         return new Layer({
           id: value.id,
-          children: value.children.map(this.parseChild.bind(this))
+          children: value.children.map(this.parseItem.bind(this))
         });
 
       case schema.document.Document:
@@ -480,7 +480,7 @@ const proto = {
             .map(item => {
               return {
                 index: this.parse(item.index),
-                item: this.parseChild(item.item)
+                item: this.parseItem(item.item)
               };
             })
         };
@@ -495,7 +495,7 @@ const proto = {
             .map(item => {
               return {
                 index: this.parse(item.index),
-                item: this.parseChild(item.item)
+                item: this.parseItem(item.item)
               };
             })
         };
@@ -580,7 +580,7 @@ const proto = {
     return obj;
   },
 
-  parseChild(child) {
+  parseItem(child) {
     if (child.pathItem) {
       let data = {
         d: new PointsList(
@@ -612,7 +612,7 @@ const proto = {
       return null;
     } else if (child.groupItem) {
       return new Group(
-        child.groupItem.children.map(this.parseChild.bind(this)),
+        child.groupItem.children.map(this.parseItem.bind(this)),
         this.parseItemMetadata(child.groupItem.metadata)
       );
     }
