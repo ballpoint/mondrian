@@ -264,6 +264,28 @@ describe('Proto', function() {
   });
 
   it('actions: SetAttributeAction', done => {
+    let vals = [
+      { key: 'x', value: 12910394810, oldValue: 20.2 },
+      { key: 'x', value: 2.501, oldValue: 92910394810 },
+      { key: 'name', value: 'hola', oldValue: 'hello' },
+      { key: 'fill', value: new Color(10, 10, 10), oldValue: 'none' }
+    ];
+
+    for (let val of vals) {
+      testRoundTrip(
+        new actions.SetAttributeAction({
+          key: val.key,
+          items: [
+            {
+              index: new Index([20, 1, 9]),
+              value: val.value,
+              oldValue: val.oldValue
+            }
+          ]
+        })
+      );
+    }
+
     done();
   });
 });

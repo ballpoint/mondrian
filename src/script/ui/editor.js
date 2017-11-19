@@ -834,6 +834,8 @@ export default class Editor extends EventEmitter {
 
     this.stageFrame(frame);
     this.commitFrame();
+
+    return frame;
   }
 
   changeAttribute(type, key, value, title) {
@@ -1273,12 +1275,15 @@ export default class Editor extends EventEmitter {
   }
 
   paste(e) {
-    let items = this.state.clipboard.slice(0).reverse();
     if (this.state.clipboard) {
-      this.insertElements(items);
+      let items = this.state.clipboard.slice(0).reverse();
+      let frame = this.insertElements(items);
+      let indexes = frame.actions[0].data.items.map(item => {
+        return item.index;
+      });
+      this.selectFromIndexes(indexes);
+      this.trigger('change');
     }
-    this.selectItems(items);
-    this.trigger('change');
   }
 
   refreshTool(layer, context) {

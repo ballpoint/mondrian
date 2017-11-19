@@ -271,6 +271,8 @@ export default class PointsSegment {
   lineSegments() {
     let points = this.points;
 
+    if (this.empty) return [];
+
     if (!this.closed) {
       points = points.slice(1);
 

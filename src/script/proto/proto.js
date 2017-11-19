@@ -277,9 +277,29 @@ const proto = {
         );
 
       case actions.SetAttributeAction:
-        return schema.history.SetAttributeAction.fromObject(
-          this.serialize(value.data)
-        );
+        d = {
+          key: value.data.key,
+          items: value.data.items.map(item => {
+            return {
+              index: this.serialize(item.index),
+              value: this.serializeAttrValue(item.value),
+              oldValue: this.serializeAttrValue(item.oldValue)
+            };
+          })
+        };
+        return schema.history.SetAttributeAction.fromObject(d);
+
+      case actions.ShiftIndexAction:
+        d = {
+          items: value.data.items.map(item => {
+            return schema.history.ShiftIndexAction.ItemIndexDelta.fromObject({
+              index: this.serialize(item.index),
+              delta: item.delta
+            });
+          })
+        };
+
+        return schema.history.ShiftIndexAction.fromObject(d);
 
       default:
         console.error('proto serialize failed on:', value);
@@ -315,6 +335,21 @@ const proto = {
       visible: metadata.visible,
       angle: metadata.angle
     };
+  },
+
+  serializeAttrValue(value) {
+    // Type-free language, meet strictly-typed serialization format
+    if (_.isNumber(value)) {
+      if (value % 1 == 0) {
+        return { intValue: value };
+      } else {
+        return { floatValue: value };
+      }
+    } else if (_.isString(value)) {
+      return { stringValue: value };
+    } else if (value instanceof Color) {
+      return { colorValue: this.serialize(value) };
+    }
   },
 
   parse(value) {
@@ -507,7 +542,29 @@ const proto = {
         return new actions.SetDocNameAction(this.parse(this.asObject(value)));
 
       case schema.history.SetAttributeAction:
-        return new actions.SetAttributeAction(this.parse(this.asObject(value)));
+        d = {
+          key: value.key,
+          items: value.items.map(item => {
+            return {
+              index: this.parse(item.index),
+              value: this.parseAttrValue(item.value),
+              oldValue: this.parseAttrValue(item.oldValue)
+            };
+          })
+        };
+        return new actions.SetAttributeAction(d);
+
+      case schema.history.ShiftIndexAction:
+        d = {
+          items: value.items.map(item => {
+            return {
+              index: this.parse(item.index),
+              delta: item.delta
+            };
+          })
+        };
+
+        return new actions.ShiftIndexAction(d);
 
       default:
         console.error('proto parse failed on:', value);
@@ -577,6 +634,18 @@ const proto = {
       visible: metadata.visible,
       angle: metadata.angle
     };
+  },
+
+  parseAttrValue(value) {
+    if (value.stringValue) {
+      return value.stringValue;
+    } else if (value.intValue) {
+      return value.intValue;
+    } else if (value.floatValue) {
+      return value.floatValue;
+    } else if (value.colorValue) {
+      return this.parse(value.colorValue);
+    }
   },
 
   isNative(value) {
