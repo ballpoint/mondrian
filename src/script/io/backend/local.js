@@ -15,6 +15,10 @@ class LocalBackend {
     let id = path.split('-')[0];
     let bytes = await this.store.getItem(id);
 
+    if (_.isNil(bytes)) {
+      throw new Error('Document not found');
+    }
+
     let doc = schema.document.Document.decode(bytes);
     doc = proto.parse(doc);
 

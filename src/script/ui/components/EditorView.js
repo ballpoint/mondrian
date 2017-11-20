@@ -41,8 +41,12 @@ class EditorView extends React.Component {
   }
 
   async loadFromURL() {
-    let doc = await backend.parseDocFromURL();
-    this.openDoc(doc);
+    try {
+      let doc = await backend.parseDocFromURL();
+      this.openDoc(doc);
+    } catch (e) {
+      console.error('Error opening file', e);
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -72,11 +76,14 @@ class EditorView extends React.Component {
   }
 
   newDoc() {
-    let doc = Doc.empty(
-      this.state.activeDoc.width,
-      this.state.activeDoc.height,
-      'untitled'
-    );
+    let width = 1000;
+    let height = 600;
+
+    if (this.state.activeDoc) {
+      width = this.state.activeDoc.width;
+      height = this.state.activeDoc.height;
+    }
+    let doc = Doc.empty(width, height, 'untitled');
     this.openDoc(doc);
   }
 
