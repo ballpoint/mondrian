@@ -92,7 +92,7 @@ export default class Pen extends Tool {
             pathPoint: pt,
             d: d,
             splits: ls.splitAt(closestPosn),
-            bounds: ls.bounds()
+            bounds: Bounds.forLineSegment(ls)
           };
         }
       }
@@ -181,7 +181,7 @@ export default class Pen extends Tool {
       delete this._endpointStart;
       delete this._endpointEnd;
       delete this._endpointBwd;
-      delete this._endpointSegment;
+      delete this._endpointSegmentIndex;
       delete this._endpointCleanupAction;
     }
   }
@@ -265,17 +265,19 @@ export default class Pen extends Tool {
       this._endedPath = true;
 
       if (this._endpointEnd.segment.index.equal(this.rootSegmentIndex)) {
+        // We are closing a single path (both points belong to it)
         frame.push(
           new actions.CloseSegmentAction({ index: this.rootSegmentIndex })
         );
 
         indexToSelect = this._endpointEnd.index;
       } else {
+        // We are joining two different paths
         let removeIndex;
 
         // Copy endpoint's segment onto rootSegment
 
-        let newSeg = this._endpointSegment;
+        let newSeg = this.editor.doc.getFromIndex(this._endpointSegmentIndex);
 
         if (this._endpointBwd) {
           newSeg = newSeg.clone();
@@ -298,7 +300,7 @@ export default class Pen extends Tool {
 
         frame.push(new actions.InsertAction({ items: insertions }));
 
-        indexToSelect = newSeg.first.index;
+        //indexToSelect = newSeg.first.index;
 
         frame.push(this._endpointCleanupAction);
       }
@@ -416,7 +418,7 @@ export default class Pen extends Tool {
             this._endpointBwd = pt === pt.segment.first;
           } else {
             this._endpointEnd = pt;
-            this._endpointSegment = pt.segment.clone();
+            this._endpointSegmentIndex = pt.segment.index;
             this._endpointBwd = pt === pt.segment.last;
 
             this._segmentEndIndex = this.editor.doc.getFromIndex(

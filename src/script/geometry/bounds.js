@@ -77,6 +77,14 @@ export default class Bounds {
     return new Bounds(x, y, x2 - x, y2 - y);
   }
 
+  static fromRanges(xrs, yrs) {
+    return new Bounds(xrs.min, yrs.min, xrs.length, yrs.length);
+  }
+
+  static forLineSegment(ls) {
+    return this.fromRanges(ls.xRange(), ls.yRange());
+  }
+
   sharp() {
     return new Bounds(
       math.sharpen(this.x),

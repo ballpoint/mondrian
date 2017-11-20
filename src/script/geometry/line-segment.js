@@ -96,28 +96,9 @@ export default class LineSegment {
     return new LineSegment(this.b, this.a);
   }
 
-  /*
   bounds(useCached) {
-    if (useCached == null) {
-      useCached = false;
-    }
-    if (this.boundsCached != null && useCached) {
-      return this.boundsCached;
-    }
-
-    let minx = Math.min(this.a.x, this.b.x);
-    let maxx = Math.max(this.a.x, this.b.x);
-    let miny = Math.min(this.a.y, this.b.y);
-    let maxy = Math.max(this.a.y, this.b.y);
-
-    let width = this.width();
-    let height = this.height();
-
-    // Cache the bounds and return them at the same time
-
-    return (this.boundsCached = new Bounds(minx, miny, width, height));
+    throw new Error('change to Bounds.forLineSegment');
   }
-  */
 
   rotate(angle, origin) {
     return new LineSegment(

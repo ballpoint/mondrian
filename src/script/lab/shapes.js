@@ -223,7 +223,7 @@ export default {
 
       var abounds;
       if (aline instanceof CubicBezier) {
-        abounds = aline.bounds(true);
+        abounds = Bounds.forLineSegment(aline);
       }
 
       let a = aline instanceof LineSegment ? aline.a : aline.p1;

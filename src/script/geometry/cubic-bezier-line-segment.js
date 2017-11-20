@@ -1,7 +1,6 @@
 import Range from 'geometry/range';
 import Posn from 'geometry/posn';
 import LineSegment from 'geometry/line-segment';
-import Bounds from 'geometry/bounds';
 
 const EPSILON = 1e-12;
 
@@ -137,43 +136,15 @@ export default class CubicBezier {
   }
 
   xRange() {
-    return this.bounds().xr;
+    return this.getRanges().xrs;
   }
 
   yRange() {
-    return this.bounds().yr;
+    return this.getRanges().yrs;
   }
 
-  ends() {
-    return [this.p1, this.p4];
-  }
-
-  nearestPercTo(posn) {
-    let nearestPerc;
-    let nearestDist = Infinity;
-
-    for (let i = 0; i < 100; i++) {
-      let p = this.posnAt(1 / i);
-    }
-  }
-
-  posnAt(perc) {
-    let result = this.splitAt(perc);
-    return result[0].p4;
-  }
-
-  midPoint() {
-    return this.posnAt(0.5);
-  }
-
-  bounds(useCached) {
+  getRanges() {
     let height, maxy, miny, width;
-    if (useCached == null) {
-      useCached = false;
-    }
-    if (this.boundsCached != null && useCached) {
-      return this.boundsCached;
-    }
 
     let minx = (miny = Infinity);
     let maxx = (maxy = -Infinity);
@@ -221,7 +192,36 @@ export default class CubicBezier {
 
     // Cache the bounds and return them at the same time
 
-    return (this.boundsCached = new Bounds(minx, miny, width, height));
+    return {
+      xrs: new Range(minx, maxx),
+      yrs: new Range(miny, maxy)
+    };
+  }
+
+  ends() {
+    return [this.p1, this.p4];
+  }
+
+  nearestPercTo(posn) {
+    let nearestPerc;
+    let nearestDist = Infinity;
+
+    for (let i = 0; i < 100; i++) {
+      let p = this.posnAt(1 / i);
+    }
+  }
+
+  posnAt(perc) {
+    let result = this.splitAt(perc);
+    return result[0].p4;
+  }
+
+  midPoint() {
+    return this.posnAt(0.5);
+  }
+
+  bounds() {
+    throw new Error('change to Bounds.forLineSegment');
   }
 
   intoLineSegments(n) {
