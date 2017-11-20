@@ -4,14 +4,10 @@ export default {
     let href;
     let shouldRevoke = false;
 
-    if (_.isString(content)) {
-      href = `data:${contentType};charset=utf-8;base64,${btoa(content)}`;
-    } else {
-      // Byte array
-      let blob = new Blob([content], { type: 'octet/stream' });
-      href = window.URL.createObjectURL(blob);
-      shouldRevoke = true;
-    }
+    // Byte array
+    let blob = new Blob([content], { type: contentType });
+    href = window.URL.createObjectURL(blob);
+    shouldRevoke = true;
 
     element.setAttribute('href', href);
     element.setAttribute('download', name);

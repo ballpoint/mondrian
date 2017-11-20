@@ -2,6 +2,7 @@ import Posn from 'geometry/posn';
 import PathPoint from 'geometry/path-point';
 import Index from 'geometry/index';
 import Doc from 'io/doc';
+import svg from 'io/formats/svg';
 
 import proto from 'proto/proto';
 import assert from 'assert';
@@ -44,7 +45,7 @@ describe('Proto', function() {
   });
 
   it('roundtrip: Document', done => {
-    let doc = Doc.fromSVG(googleSVG, 'google.svg');
+    let doc = svg.parse(googleSVG, 'google.svg');
     roundTrip(doc);
     done();
   });
@@ -134,7 +135,7 @@ describe('Proto', function() {
   });
 
   it('actions: InsertAction', done => {
-    let doc = Doc.fromSVG(googleSVG, 'google.svg');
+    let doc = svg.parse(googleSVG, 'google.svg');
 
     let items = [doc.elementsFlat[0]];
 

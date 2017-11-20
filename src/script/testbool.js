@@ -7,6 +7,8 @@ import Layer from 'io/layer';
 import Canvas from 'ui/canvas';
 import bool from 'lib/bool';
 
+import svg from 'io/formats/svg';
+
 import rect1 from 'booltest/rect1.svg';
 import rect2 from 'booltest/rect2.svg';
 import rect3 from 'booltest/rect3.svg';
@@ -68,8 +70,12 @@ function appendDoc(section, doc, label) {
   cnv.setDimensions(w, h);
 
   let proj = new Projection(
-    scaleLinear().domain([0, w]).range([0, w]),
-    scaleLinear().domain([0, h]).range([0, h]),
+    scaleLinear()
+      .domain([0, w])
+      .range([0, w]),
+    scaleLinear()
+      .domain([0, h])
+      .range([0, h]),
     1
   );
 
@@ -125,7 +131,7 @@ for (let key in testFiles) {
   }
 
   let file = testFiles[key];
-  let doc = Doc.fromSVG(file);
+  let doc = svg.parse(file);
 
   if (doc.elements.length === 0) debugger;
 

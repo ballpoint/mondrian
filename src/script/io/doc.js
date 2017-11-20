@@ -1,4 +1,3 @@
-import io from 'io/io';
 import Layer from 'io/layer';
 import DocHistory from 'history/history';
 import HistoryFrame from 'history/Frame';
@@ -30,7 +29,9 @@ export default class Doc {
   constructor(attrs) {
     this.layers = attrs.layers;
     this.setDimens(attrs.width, attrs.height);
+
     this.name = attrs.name;
+    if (this.name === '') this.name = 'untitled';
 
     this.cacheIndexes(this);
 
@@ -41,57 +42,6 @@ export default class Doc {
     }
 
     this.__id__ = attrs.__id__ || shortid.generate();
-  }
-
-  static fromSVG(str, name) {
-    let doc = new DOMParser().parseFromString(str, MIMETYPE);
-
-    /*
-    // TODO check how this works in firefox etc. this is for chrome.
-    let parserError = doc.querySelector('parsererror');
-    if (parserError) {
-      let errorDiv = parserError.querySelector('div');
-      throw new Error(errorDiv.innerHTML);
-    }
-    */
-
-    // Parse SVG document
-    let root = doc.getElementsByTagName('svg')[0];
-    if (!root) {
-      throw new Error('No svg node in given doc');
-    }
-
-    let children = [];
-
-    if (!window.__RENDERER__) {
-      // REMOVE to enable full backend parsing
-      // Costs about 50-100ms more on backend but UI renders more correctly
-      children = io.parse(root);
-    }
-
-    let { width, height, transform } = this.parseDimensions(root);
-
-    io.applyRootAttrs(root, children);
-
-    // Apply viewbox transformation
-    if (transform) {
-      for (let child of children) {
-        transform(child);
-      }
-    }
-
-    // TODO parse layers from SVG mondrian: attr
-    let layer = new Layer({
-      id: 'main',
-      children
-    });
-
-    return new Doc({
-      layers: [layer],
-      width,
-      height,
-      name
-    });
   }
 
   static empty(width, height, name) {
@@ -118,55 +68,12 @@ export default class Doc {
   }
 
   clone() {
-    return Doc.fromSVG(this.toSVG());
+    // TODO
+    throw new Error('TODO');
   }
 
   nextChildIndex() {
     return new Index([this.layers.length]);
-  }
-
-  static parseDimensions(root) {
-    let width, height, transform;
-
-    let widthAttr = root.getAttribute('width');
-    let heightAttr = root.getAttribute('height');
-    let viewboxAttr =
-      root.getAttribute('viewBox') || root.getAttribute('viewbox');
-
-    if (viewboxAttr) {
-      let parts = viewboxAttr.split(' ').filter(p => {
-        return p !== '';
-      });
-
-      if (parts.length === 4) {
-        parts = parts.map(parseFloat);
-        let x = parts[0];
-        let y = parts[1];
-        let w = parts[2];
-        let h = parts[3];
-
-        width = w;
-        height = h;
-
-        if (x !== 0 || y !== 0) {
-          transform = item => {
-            item.nudge(-x, -y);
-          };
-        }
-      }
-    } else {
-      if (widthAttr) {
-        width = parseFloat(widthAttr);
-      }
-      if (heightAttr) {
-        height = parseFloat(heightAttr);
-      }
-    }
-
-    if (width === undefined || isNaN(width)) width = 1000;
-    if (height === undefined || isNaN(height)) height = 1000;
-
-    return { width, height, transform };
   }
 
   get elements() {
@@ -194,19 +101,6 @@ export default class Doc {
 
   child(i) {
     return this.layers[i];
-  }
-
-  toDocument() {
-    let doc = io.createSVGElement('svg');
-
-    doc.setAttribute('width', this.width);
-    doc.setAttribute('height', this.height);
-
-    for (let item of this.elements) {
-      doc.appendChild(io.itemToElement(item));
-    }
-
-    return doc;
   }
 
   stageFrame(frame) {
@@ -243,25 +137,6 @@ export default class Doc {
 
   jumpToHistoryDepth(d) {
     this.history.jumpToDepth(this, d);
-  }
-
-  toSVG() {
-    let doc = this.toDocument();
-    doc.setAttribute('xmlns:mondrian', 'https://mondrian.io/xml');
-
-    let str = new XMLSerializer().serializeToString(doc);
-    // Make better whitespace management happen later
-    str = str.replace(/>/gi, '>\n');
-
-    return '<!-- Made in Mondrian.io -->\n' + str;
-  }
-
-  toBase64() {
-    return btoa(this.toSVG());
-  }
-
-  toBase64URI() {
-    return `data:image/svg+xml;charset=utf-8;base64,${this.toBase64URI()}`;
   }
 
   isLocked(child) {
@@ -364,10 +239,6 @@ export default class Doc {
 
   toString() {
     return new XMLSerializer().serializeToString(this.doc);
-  }
-
-  toBase64() {
-    return `data:${MIMETYPE};charset=${CHARSET};base64,${this.toString()}`;
   }
 
   cacheIndexes(root = this, accum = []) {

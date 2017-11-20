@@ -75,8 +75,9 @@ export default class Editor extends EventEmitter {
       // New doc we haven't opened yet
       isNew = true;
       this.docs[id] = doc;
-      doc.state = DocState.forDoc(doc);
     }
+
+    if (!doc.state) doc.state = DocState.forDoc(doc);
 
     this.doc = doc;
 
