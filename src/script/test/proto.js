@@ -66,7 +66,8 @@ describe('Proto', function() {
       new actions.ScaleAction({
         indexes: [new Index([0, 3, 4])],
         x: 2.02,
-        y: 1.4
+        y: 1.4,
+        origin: new Posn(20, 20)
       })
     );
 
@@ -77,7 +78,8 @@ describe('Proto', function() {
     testRoundTrip(
       new actions.RotateAction({
         indexes: [new Index([0, 3, 4])],
-        angle: 12.2
+        angle: 12.2,
+        origin: new Posn(20, 20)
       })
     );
 
@@ -111,6 +113,7 @@ describe('Proto', function() {
       new actions.AddHandleAction({
         index: new Index([1, 4]),
         handle: 'sHandle',
+        posn: new Posn(20, 90.2),
         reflect: true
       })
     );

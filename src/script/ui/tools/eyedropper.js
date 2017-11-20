@@ -76,6 +76,7 @@ export default class Eyedropper extends Tool {
 
         this.editor.stageFrame(this.frame);
       } else {
+        console.log(chosen, fill, stroke);
         this.editor.setDefaultColor('fill', fill);
         this.editor.setDefaultColor('stroke', stroke);
       }

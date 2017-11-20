@@ -18,12 +18,15 @@ class Toolbar extends React.Component {
   };
 
   componentDidMount() {
-    this.props.editor.on(['change:selection', 'change:tool'], () => {
-      this.setState({
-        selection: this.props.editor.doc.state.selection,
-        tool: this.props.editor.state.tool
-      });
-    });
+    this.props.editor.on(
+      ['change:selection', 'change:tool', 'change:doc'],
+      () => {
+        this.setState({
+          selection: this.props.editor.doc.state.selection,
+          tool: this.props.editor.state.tool
+        });
+      }
+    );
   }
 
   renderHistoryGroup = () => {

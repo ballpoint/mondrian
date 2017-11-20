@@ -86,6 +86,8 @@ export default class Editor extends EventEmitter {
         this.fitToScreen();
       }
     }
+
+    this.trigger('change:doc');
   }
 
   save() {}
@@ -274,6 +276,9 @@ export default class Editor extends EventEmitter {
     hotkeys.on('down', 'T', () => {
       this.selectTool(new tools.Type(this));
     });
+    hotkeys.on('down', 'I', () => {
+      this.selectTool(new tools.Eyedropper(this));
+    });
     hotkeys.on('down', 'space', () => {
       this.selectTool(new tools.Paw(this));
     });
@@ -293,7 +298,7 @@ export default class Editor extends EventEmitter {
 
     hotkeys.on('down', 'ctrl-S', e => {
       e.preventDefault();
-      this.trigger('hotkey:save');
+      //this.trigger('hotkey:save');
     });
 
     hotkeys.on('down', 'ctrl-E', e => {

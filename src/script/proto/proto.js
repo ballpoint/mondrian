@@ -463,13 +463,19 @@ const proto = {
         return new actions.RotateAction(this.parse(this.asObject(value)));
 
       case schema.history.NudgeHandleAction:
-        return new actions.NudgeHandleAction(this.parse(this.asObject(value)));
+        d = this.parse(this.asObject(value));
+        d.handle = schema.geometry.nested.Handle.valuesById[value.handle];
+        return new actions.NudgeHandleAction(d);
 
       case schema.history.AddHandleAction:
-        return new actions.AddHandleAction(this.parse(this.asObject(value)));
+        d = this.parse(this.asObject(value));
+        d.handle = schema.geometry.nested.Handle.valuesById[value.handle];
+        return new actions.AddHandleAction(d);
 
       case schema.history.RemoveHandleAction:
-        return new actions.RemoveHandleAction(this.parse(this.asObject(value)));
+        d = this.parse(this.asObject(value));
+        d.handle = schema.geometry.nested.Handle.valuesById[value.handle];
+        return new actions.RemoveHandleAction(d);
 
       case schema.history.InsertAction:
         d = {

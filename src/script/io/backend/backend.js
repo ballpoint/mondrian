@@ -29,8 +29,6 @@ const backend = {
       return part !== '';
     });
 
-    console.log(parts);
-
     if (parts.length <= 1) {
       return this.newDoc();
     }
@@ -41,6 +39,8 @@ const backend = {
     backend = {
       local: LocalBackend
     }[backend];
+
+    window.backend = backend;
 
     let loc = new DocLocation({ backend, path });
     let doc = await loc.backend.load(loc.path);

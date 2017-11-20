@@ -1,6 +1,10 @@
 import MenuBody from 'ui/components/menus/MenuBody';
 import MenuItem from 'ui/components/menus/MenuItem';
+import MenuGroup from 'ui/components/menus/MenuGroup';
 import Doc from 'io/doc';
+import download from 'io/download';
+import proto from 'proto/proto';
+import bps from 'io/formats/bps';
 import 'menus/file-menu.scss';
 
 class FileMenu extends React.Component {
@@ -13,14 +17,24 @@ class FileMenu extends React.Component {
       let fn = files[0].name;
 
       reader.onload = e => {
-        let text = e.target.result;
+        let doc;
 
-        let doc = Doc.fromSVG(text, fn.split('.')[0]);
+        let buffer = reader.result;
+        let bytes = new Uint8Array(buffer);
+
+        if (bps.headerValid(bytes)) {
+          console.info('decoding as BPS', bytes);
+          doc = bps.parse(bytes);
+        } else {
+          let dec = new TextDecoder('utf-8');
+          let text = dec.decode(bytes);
+          doc = Doc.fromSVG(text, fn.split('.')[0]);
+        }
 
         this.props.openDoc(doc);
       };
 
-      reader.readAsText(files[0]);
+      reader.readAsArrayBuffer(files[0]);
     } else {
       console.warn('Failed to read files');
     }
@@ -34,34 +48,49 @@ class FileMenu extends React.Component {
   };
 
   render() {
-    let downloadHref;
-    let downloadName;
-
-    if (this.props.editor.doc) {
-      downloadHref = this.docSVGHref();
-      downloadName = this.props.editor.doc.filename('svg');
-    }
-
     return (
       <MenuBody
         absoluteTop={this.props.absoluteTop}
         absoluteLeft={this.props.absoluteLeft}>
-        <MenuItem label="New..." hotkey="Ctrl-N" action={this.props.newDoc} />
+        <MenuGroup>
+          <MenuItem label="New..." hotkey="Ctrl-N" action={this.props.newDoc} />
 
-        <MenuItem className="menu-item--file-input" hotkey="Ctrl-O">
-          <input ref="fileInput" type="file" onChange={this.openFile} />
-          Open...
-        </MenuItem>
+          <MenuItem className="menu-item--file-input" hotkey="Ctrl-O">
+            <input ref="fileInput" type="file" onChange={this.openFile} />
+            Open...
+          </MenuItem>
+        </MenuGroup>
+        <MenuGroup>
+          <MenuItem disabled={!this.props.editor.doc}>
+            <a
+              className="menu-item__cover"
+              ref="downloadAnchor"
+              onClick={() => {
+                let bytes = bps.serialize(this.props.editor.doc);
 
-        <MenuItem hotkey="Ctrl-S" disabled={!this.props.editor.doc}>
-          <a
-            className="menu-item__cover"
-            ref="downloadAnchor"
-            href={downloadHref}
-            download={downloadName}
-          />
-          Save as SVG
-        </MenuItem>
+                console.log(bytes);
+
+                download.download(this.props.editor.doc.name + '.bps', bytes);
+              }}
+            />
+            Export source (BPS)
+          </MenuItem>
+
+          <MenuItem disabled={!this.props.editor.doc}>
+            <a
+              className="menu-item__cover"
+              ref="downloadAnchor"
+              onClick={() => {
+                download.download(
+                  this.props.editor.doc.name + '.svg',
+                  this.props.editor.doc.toSVG(),
+                  'image/svg+xml'
+                );
+              }}
+            />
+            Export as SVG
+          </MenuItem>
+        </MenuGroup>
       </MenuBody>
     );
   }
