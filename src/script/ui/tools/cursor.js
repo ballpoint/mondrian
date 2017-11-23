@@ -106,7 +106,7 @@ export default class Cursor extends Tool {
 
       let position = item.cursorPositionAtPosn(posn);
 
-      this.editor.editText(item, position);
+      this.editor.editText(item.index, position);
     }
 
     // TODO group drill-down handling

@@ -1,10 +1,12 @@
 import Posn from 'geometry/posn';
 import PathPoint from 'geometry/path-point';
 import Index from 'geometry/index';
+import Text from 'geometry/text';
 import Doc from 'io/doc';
 import svg from 'io/formats/svg';
 
 import proto from 'proto/proto';
+import schema from 'proto/schema';
 import assert from 'assert';
 
 import googleSVG from 'google.svg';
@@ -20,8 +22,21 @@ function roundTrip(value) {
   return parsed;
 }
 
+function roundTripItem(value) {
+  let serialized = proto.serializeItem(value);
+  let bytes = schema.document.Item.encode(serialized).finish();
+  let message = schema.document.Item.decode(bytes);
+  let parsed = proto.parseItem(message);
+
+  return parsed;
+}
+
 function testRoundTrip(value) {
   assert.deepEqual(value, roundTrip(value));
+}
+
+function testRoundTripItem(value) {
+  assert.deepEqual(value, roundTripItem(value));
 }
 
 describe('Proto', function() {
@@ -47,6 +62,19 @@ describe('Proto', function() {
   it('roundtrip: Document', done => {
     let doc = svg.parse(googleSVG, 'google.svg');
     roundTrip(doc);
+    done();
+  });
+
+  it('roundtrip: Text', done => {
+    let text = new Text({
+      x: 10,
+      y: 20,
+      width: 200,
+      height: 400,
+      value: 'lol hello'
+    });
+
+    roundTripItem(text);
     done();
   });
 

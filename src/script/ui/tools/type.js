@@ -24,7 +24,7 @@ export default class Type extends Tool {
 
   handleDragStop(e, cursor) {
     this.editor.commitFrame();
-    this.editor.editText(this.currentItem);
+    this.editor.editText(this.nextIndex);
     delete this._dragRect;
   }
 
@@ -45,7 +45,7 @@ export default class Type extends Tool {
     } else {
       this.insertTextItem(cursor.posnCurrent);
       this.editor.commitFrame();
-      this.editor.editText(this.currentItem);
+      this.editor.editText(this.nextIndex);
     }
   }
 

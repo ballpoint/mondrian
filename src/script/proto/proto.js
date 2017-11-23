@@ -6,6 +6,8 @@ import PointsList from 'geometry/points-list';
 import PointsSegment from 'geometry/points-segment';
 import PathPoint from 'geometry/path-point';
 
+import Text from 'geometry/text';
+
 import Color from 'ui/color';
 import { NONE } from 'ui/color';
 import Index from 'geometry/index';
@@ -99,6 +101,26 @@ const proto = {
           style: this.serializeItemStyle(value),
           metadata: this.serializeItemMetadata(value.metadata),
           points: this.serialize(value.points.segments)
+        });
+
+      case Text:
+        return schema.document.TextItem.fromObject({
+          style: this.serializeItemStyle(value),
+          metadata: this.serializeItemMetadata(value.metadata),
+          attrs: this.serialize({
+            origin: new Posn(value.data.x, value.data.y),
+            value: value.data.value,
+            width: value.data.width,
+            height: value.data.height,
+            lineHeight: value.data['line-height'],
+            fontSize: value.data['font-size'],
+            alignHorizontal:
+              schema.document.nested.TextAlignHorizonal.values[
+                value.data.align
+              ],
+            alignVertical:
+              schema.document.nested.TextAlignVertical.values[value.data.valign]
+          })
         });
 
       case Group:
@@ -404,7 +426,7 @@ const proto = {
         return new Color(value.r, value.g, value.b, value.a);
 
       case schema.document.Item:
-        return null;
+        return this.parseItem(value);
 
       // Document
 
@@ -614,8 +636,19 @@ const proto = {
     } else if (child.pathPoint) {
       return this.parse(child.pathPoint);
     } else if (child.textItem) {
-      // TODO
-      return null;
+      let data = {
+        x: child.textItem.attrs.origin.x,
+        y: child.textItem.attrs.origin.y,
+        width: child.textItem.attrs.width,
+        height: child.textItem.attrs.height,
+        'line-height': child.textItem.attrs.lineHeight,
+        'font-size': child.textItem.attrs.fontSize,
+        value: child.textItem.attrs.value
+      };
+
+      _.extend(data, this.parseItemStyle(child.textItem.style));
+
+      return new Text(data, this.parseItemMetadata(child.textItem.metadata));
     } else if (child.groupItem) {
       return new Group(
         child.groupItem.children.map(this.parseItem.bind(this)),
@@ -643,14 +676,13 @@ const proto = {
   },
 
   parseAttrValue(value) {
-    if (value.stringValue) {
-      return value.stringValue;
-    } else if (value.intValue) {
-      return value.intValue;
-    } else if (value.floatValue) {
-      return value.floatValue;
-    } else if (value.colorValue) {
-      return this.parse(value.colorValue);
+    switch (value.value) {
+      case 'stringValue':
+      case 'intValue':
+      case 'floatValue':
+        return value[value.value];
+      case 'colorValue':
+        return this.parse(value.colorValue);
     }
   },
 

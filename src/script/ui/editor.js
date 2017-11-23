@@ -1124,7 +1124,8 @@ export default class Editor extends EventEmitter {
     }
   }
 
-  editText(item, position) {
+  editText(index, position) {
+    let item = this.doc.getFromIndex(index);
     let handler = new TextEditHandler(item);
 
     handler.setCursorPosition(position, position);
