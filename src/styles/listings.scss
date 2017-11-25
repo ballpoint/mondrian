@@ -38,6 +38,7 @@
       .doc-listing__thumb {
         height: 140px;
         display: flex;
+        margin: 5px;
 
         img {
           max-height: 140px;
@@ -46,9 +47,35 @@
       }
 
       .doc-listing__name {
+        height: 30px;
         border-top: 1px solid $mid-grey;
         padding: 5px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
       }
+    }
+
+    .doc-listing-new {
+      display: block;
+      height: 180px;
+      width: 180px;
+      margin: 5px;
+      border: 1px solid $fg-grey;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      &,
+      &:visited {
+        color: black;
+      }
+      &:hover {
+        color: $blue;
+        border-color: $blue;
+      }
+      text-decoration: none;
     }
   }
 }

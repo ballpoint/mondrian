@@ -15,6 +15,11 @@ const backend = {
     let backend = parts[1];
     let path = parts.slice(2).join('/');
 
+    if (path === 'new') {
+      // Create new file
+      return this.newDoc();
+    }
+
     backend = {
       local: LocalBackend
     }[backend];
@@ -32,6 +37,7 @@ const backend = {
   newDoc() {
     let doc = Doc.empty(600, 400, 'untitled');
     doc.location = LocalBackend.assign(doc);
+    LocalBackend.save(doc);
     return doc;
   },
 

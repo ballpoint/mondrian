@@ -13,7 +13,6 @@ export default class Thumb {
   }
 
   drawTo(layer) {
-    console.trace();
     let boundsList = [];
     for (let elem of this.elems) {
       if (_.isFunction(elem.bounds)) {

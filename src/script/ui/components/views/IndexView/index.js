@@ -10,7 +10,8 @@ class IndexView extends React.Component {
   constructor() {
     super();
     this.state = {
-      files: []
+      files: [],
+      loading: true
     };
   }
 
@@ -31,21 +32,36 @@ class IndexView extends React.Component {
       return b.modified.valueOf() - a.modified.valueOf();
     });
 
-    this.setState({ files });
+    this.setState({ files, loading: false });
   }
 
   renderLinks() {
-    return this.state.files.map(doc => {
-      return <Listing doc={doc} />;
-    });
+    if (this.state.loading) {
+      return null;
+    }
+    if (this.state.files.length > 0) {
+      let items = [
+        <a href="/files/local/new" className="doc-listing-new">
+          New file
+        </a>
+      ].concat(
+        this.state.files.map(doc => {
+          return <Listing doc={doc} />;
+        })
+      );
+      return items;
+    } else {
+      return <a href="/files/local/new">New file</a>;
+    }
   }
 
   render() {
     return (
-      <div id="app-main">
-        <header id="editor-header">
-          <Logo />
-          Files
+      <div id="app-index">
+        <header>
+          <div id="logo-container">
+            <Logo />
+          </div>
         </header>
         <div id="listings">
           <div className="listings-group">{this.renderLinks()}</div>

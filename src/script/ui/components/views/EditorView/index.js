@@ -94,9 +94,9 @@ class EditorView extends React.Component {
     let showEditor = !this.state.indexView;
 
     return (
-      <div id="app-main">
-        <header id="editor-header">
-          <a id="logo">
+      <div id="app-editor">
+        <header>
+          <a id="logo-container" href="/files">
             <Logo />
           </a>
           <div id="app-controls">

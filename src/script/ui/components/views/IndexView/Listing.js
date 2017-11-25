@@ -34,7 +34,6 @@ class Listing extends React.Component {
       <a
         className="doc-listing"
         key={doc.path}
-        target={'doc:' + doc.path}
         style={style}
         href={`/files/${doc.backend.id}/${doc.path}`}>
         <div className="doc-listing__thumb">{thumb}</div>

@@ -66,12 +66,7 @@ class FileMenu extends React.Component {
         <MenuGroup>
           <MenuItem label="New..." hotkey="Ctrl-N" action={this.props.newDoc} />
 
-          <MenuItem
-            label="Open..."
-            hotkey="Ctrl-O"
-            href="/files"
-            target="files-index"
-          />
+          <MenuItem label="Open..." hotkey="Ctrl-O" href="/files" />
         </MenuGroup>
         <MenuGroup>
           <MenuItem className="menu-item--file-input" hotkey="Ctrl-I">
