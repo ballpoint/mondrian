@@ -39,20 +39,20 @@ class IndexView extends React.Component {
     if (this.state.loading) {
       return null;
     }
+    let items = [
+      <a href="/files/local/new" className="doc-listing-new">
+        New file
+      </a>
+    ];
+
     if (this.state.files.length > 0) {
-      let items = [
-        <a href="/files/local/new" className="doc-listing-new">
-          New file
-        </a>
-      ].concat(
+      items = items.concat(
         this.state.files.map(doc => {
           return <Listing doc={doc} />;
         })
       );
-      return items;
-    } else {
-      return <a href="/files/local/new">New file</a>;
     }
+    return items;
   }
 
   render() {

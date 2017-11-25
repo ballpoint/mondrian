@@ -37,7 +37,7 @@ const backend = {
   newDoc() {
     let doc = Doc.empty(600, 400, 'untitled');
     doc.location = LocalBackend.assign(doc);
-    LocalBackend.save(doc);
+    doc.location.save(doc);
     return doc;
   },
 
