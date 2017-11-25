@@ -2,7 +2,7 @@ import shortid from 'shortid';
 import localForage from 'localforage';
 import schema from 'proto/schema';
 import proto from 'proto/proto';
-import DocMetadata from 'io/backend/location';
+import DocMetadata from 'io/backend/metadata';
 
 class LocalBackend {
   constructor() {
@@ -44,14 +44,19 @@ class LocalBackend {
   }
 
   async save(doc, path) {
+    console.trace();
     let serialized = proto.serialize(doc);
     let bytes = serialized.$type.encode(serialized).finish();
     let id = path.split('-')[0];
 
+    console.log(doc.width, doc.height);
+
     await this.metadataStore.setItem(id, {
       id,
       name: doc.name,
-      modified: new Date()
+      modified: new Date(),
+      width: doc.width,
+      height: doc.height
     });
 
     return await this.store.setItem(id, bytes);
@@ -61,8 +66,6 @@ class LocalBackend {
     let locs = [];
     let ids = await this.metadataStore.keys();
 
-    console.log(ids);
-
     for (let id of ids) {
       let metadata = await this.metadataStore.getItem(id);
       locs.push(
@@ -70,7 +73,9 @@ class LocalBackend {
           backend: this,
           path: id,
           name: metadata.name,
-          modified: metadata.modified
+          modified: metadata.modified,
+          width: metadata.width,
+          height: metadata.height
         })
       );
     }

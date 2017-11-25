@@ -3,6 +3,8 @@ export default class DocMetadata {
     this.backend = attrs.backend;
     this.name = attrs.name;
     this.path = attrs.path;
+    this.width = attrs.width;
+    this.height = attrs.height;
     // Timestamps
     this.created = attrs.created;
     this.modified = attrs.modified;

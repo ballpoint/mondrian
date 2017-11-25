@@ -1,3 +1,5 @@
+import 'views/index.scss';
+
 import Logo from 'ui/components/views/Logo';
 import Listing from './Listing';
 
@@ -29,8 +31,8 @@ class IndexView extends React.Component {
   }
 
   renderLinks() {
-    return this.state.files.map(loc => {
-      return <Listing loc={loc} />;
+    return this.state.files.map(doc => {
+      return <Listing doc={doc} />;
     });
   }
 
@@ -40,7 +42,9 @@ class IndexView extends React.Component {
         <header id="app-header">
           <Logo />
         </header>
-        <div className="loc-listings">{this.renderLinks()}</div>
+        <div id="listings">
+          <div className="listings-group">{this.renderLinks()}</div>
+        </div>
       </div>
     );
   }

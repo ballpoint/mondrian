@@ -1,35 +1,44 @@
 @import '~vars.scss';
 @import '~mixins.scss';
 
-.loc-listings {
-  display: flex;
+#listings {
   background: $bg-grey;
   flex-grow: 1;
-  flex-wrap: wrap;
-  align-items: flex-start;
 
-  .loc-listing {
-    background: white;
+  .listings-group {
     display: flex;
-    text-decoration: none;
-    color: black;
-    width: calc(20% - 20px);
-    height: 200px;
-    padding: 10px;
-    margin: 10px;
-    border: 1px solid $fg-grey;
+    background: $bg-grey;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    padding: 5px;
 
-    &:hover {
-      color: $blue;
-    }
-
-    .loc-listing__thumb {
+    .doc-listing {
+      background: white;
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: black;
+      flex-grow: 1;
+      flex-shrink: 0;
+      flex-basis: 200px;
+      max-width: 400px;
       padding: 5px;
-      height: 160px;
-    }
+      margin: 5px;
+      border: 1px solid $fg-grey;
 
-    .loc-listing__name {
-      padding: 5px;
+      &:hover {
+        color: $blue;
+        border-color: $blue;
+      }
+
+      .doc-listing__thumb {
+        padding: 5px;
+        height: 140px;
+      }
+
+      .doc-listing__name {
+        padding: 5px;
+      }
     }
   }
 }

@@ -12,7 +12,7 @@ import Color from 'ui/color';
 import { NONE } from 'ui/color';
 import Index from 'geometry/index';
 
-import DocMetadata from 'io/backend/location';
+import DocMetadata from 'io/backend/metadata';
 import Doc from 'io/doc';
 import DocHistory from 'history/history';
 import HistoryFrame from 'history/Frame';

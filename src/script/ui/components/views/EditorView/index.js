@@ -2,7 +2,7 @@ import 'views/editor.scss';
 
 import Editor from 'ui/editor';
 import Doc from 'io/doc';
-import DocMetadata from 'io/backend/location';
+import DocMetadata from 'io/backend/metadata';
 
 import Logo from 'ui/components/views/Logo';
 

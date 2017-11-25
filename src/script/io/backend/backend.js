@@ -1,5 +1,5 @@
 import LocalBackend from 'io/backend/local';
-import DocMetadata from 'io/backend/location';
+import DocMetadata from 'io/backend/metadata';
 import Doc from 'io/doc';
 
 const backend = {
