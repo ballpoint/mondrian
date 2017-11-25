@@ -43,8 +43,9 @@ class IndexView extends React.Component {
   render() {
     return (
       <div id="app-main">
-        <header id="app-header">
+        <header id="editor-header">
           <Logo />
+          Files
         </header>
         <div id="listings">
           <div className="listings-group">{this.renderLinks()}</div>

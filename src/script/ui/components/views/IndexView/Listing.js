@@ -7,8 +7,6 @@ class Listing extends React.Component {
     let style = {};
     let thumb;
 
-    console.log(doc.thumb);
-
     if (doc.width !== undefined && doc.height !== undefined) {
       let ratio = doc.width / doc.height;
       let basis;

@@ -29,6 +29,11 @@
         color: $blue;
         border-color: $blue;
       }
+      &:active {
+        .doc-listing__name {
+          background: $bg-grey;
+        }
+      }
 
       .doc-listing__thumb {
         height: 140px;

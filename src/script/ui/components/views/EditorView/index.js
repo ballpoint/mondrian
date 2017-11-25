@@ -95,8 +95,10 @@ class EditorView extends React.Component {
 
     return (
       <div id="app-main">
-        <header id="app-header">
-          <Logo />
+        <header id="editor-header">
+          <a id="logo">
+            <Logo />
+          </a>
           <div id="app-controls">
             <div id="app-title">
               <Title
