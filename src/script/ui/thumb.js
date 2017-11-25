@@ -13,6 +13,7 @@ export default class Thumb {
   }
 
   drawTo(layer) {
+    console.trace();
     let boundsList = [];
     for (let elem of this.elems) {
       if (_.isFunction(elem.bounds)) {
@@ -34,7 +35,6 @@ export default class Thumb {
 
   drawAndFetchRaw(width, height) {
     let canvas = document.createElement('canvas');
-    document.querySelector('body').appendChild(canvas);
     canvas.width = width;
     canvas.height = height;
     let layer = new Layer('thumb', canvas);
@@ -43,7 +43,6 @@ export default class Thumb {
     return new Promise(function(resolve, reject) {
       canvas.toBlob(blob => {
         console.log(blob);
-        document.querySelector('body').removeChild(canvas);
         resolve(blob);
       }, 'image/png');
     });

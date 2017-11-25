@@ -30,7 +30,9 @@ class Utils extends React.Component {
       if (editor.doc.history.head.id !== undefined) {
         nextFrame = window.requestAnimationFrame(() => {
           this.setState({
-            frameId: editor.doc.history.head.id,
+            frameId: editor.doc.history.head.committed
+              ? editor.doc.history.head.id
+              : editor.doc.history.head.id - 1,
 
             selection: editor.doc.state.selection,
             hasSelectedElements:

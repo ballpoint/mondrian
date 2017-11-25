@@ -18,11 +18,10 @@
       flex-direction: column;
       text-decoration: none;
       color: black;
-      flex-grow: 1;
+      flex-grow: 0;
       flex-shrink: 0;
       flex-basis: 200px;
       max-width: 400px;
-      padding: 5px;
       margin: 5px;
       border: 1px solid $fg-grey;
 
@@ -32,15 +31,17 @@
       }
 
       .doc-listing__thumb {
-        padding: 5px;
         height: 140px;
+        display: flex;
 
         img {
           max-height: 140px;
+          margin: auto;
         }
       }
 
       .doc-listing__name {
+        border-top: 1px solid $mid-grey;
         padding: 5px;
       }
     }
