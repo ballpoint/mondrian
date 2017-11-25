@@ -1,6 +1,10 @@
+import 'views/editor.scss';
+
 import Editor from 'ui/editor';
 import Doc from 'io/doc';
-import { DocLocation } from 'io/backend/backend';
+import DocMetadata from 'io/backend/location';
+
+import Logo from 'ui/components/views/Logo';
 
 import Utils from 'ui/components/utils/Utils';
 import Tools from 'ui/components/tools/Tools';
@@ -12,6 +16,7 @@ import Filetabs from 'ui/components/filetabs/Filetabs';
 import google from 'google.svg';
 
 import backend from 'io/backend/backend';
+import LocalBackend from 'io/backend/local';
 
 // Main view
 class EditorView extends React.Component {
@@ -21,6 +26,11 @@ class EditorView extends React.Component {
     let editor = new Editor();
 
     this.state = {
+      // For file index view:
+      //indexView: true,
+      indexBackend: null,
+
+      // For file edit view:
       editor
     };
 
@@ -67,7 +77,7 @@ class EditorView extends React.Component {
     });
 
     if (!doc.location) {
-      doc.location = DocLocation.defaultLocal(doc);
+      doc.location = LocalBackend.assign(doc);
     }
 
     doc.location.save(doc);
@@ -88,17 +98,12 @@ class EditorView extends React.Component {
   }
 
   render() {
+    let showEditor = !this.state.indexView;
+
     return (
       <div id="app-main">
         <header id="app-header">
-          <a id="logo">
-            <svg width="40" height="40">
-              <rect x="0" y="0" width="40" height="40" className="logo-bg" />
-              <rect x="6" y="8" width="6" height="22" className="logo-fg" />
-              <rect x="17" y="8" width="6" height="10" className="logo-fg" />
-              <rect x="28" y="8" width="6" height="22" className="logo-fg" />
-            </svg>
-          </a>
+          <Logo />
           <div id="app-controls">
             <div id="app-title">
               <Title

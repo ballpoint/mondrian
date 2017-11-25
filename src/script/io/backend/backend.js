@@ -1,27 +1,6 @@
 import LocalBackend from 'io/backend/local';
+import DocMetadata from 'io/backend/location';
 import Doc from 'io/doc';
-
-export class DocLocation {
-  constructor(attrs) {
-    this.backend = attrs.backend;
-    this.path = attrs.path;
-  }
-
-  static defaultLocal(doc) {
-    return new DocLocation({
-      backend: LocalBackend,
-      path: doc.__id__
-    });
-  }
-
-  save(doc) {
-    this.backend.save(doc, this.path);
-  }
-
-  get uri() {
-    return `/files/${this.backend.id}/${this.path}`;
-  }
-}
 
 const backend = {
   async parseDocFromURL() {
@@ -42,7 +21,7 @@ const backend = {
 
     window.backend = backend;
 
-    let loc = new DocLocation({ backend, path });
+    let loc = new DocMetadata({ backend, path });
     let doc = await loc.backend.load(loc.path);
 
     doc.location = loc;
@@ -52,7 +31,7 @@ const backend = {
 
   newDoc() {
     let doc = Doc.empty(600, 400, 'untitled');
-    doc.location = DocLocation.defaultLocal(doc);
+    doc.location = LocalBackend.assign(doc);
     return doc;
   },
 

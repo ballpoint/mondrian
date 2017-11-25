@@ -52,20 +52,10 @@
       padding: 5px 10px;
       position: relative;
       display: flex;
-
-      a {
-        color: black;
-        text-decoration: none;
-        cursor: default;
-
-        &.menu-item__cover {
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          left: 0;
-          right: 0;
-        }
-      }
+      color: black;
+      text-decoration: none;
+      cursor: default;
+      height: 28px;
 
       + .app-menu-item {
         border-top: 1px solid $bg-grey;

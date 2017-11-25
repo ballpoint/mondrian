@@ -1,0 +1,35 @@
+@import '~vars.scss';
+@import '~mixins.scss';
+
+.loc-listings {
+  display: flex;
+  background: $bg-grey;
+  flex-grow: 1;
+  flex-wrap: wrap;
+  align-items: flex-start;
+
+  .loc-listing {
+    background: white;
+    display: flex;
+    text-decoration: none;
+    color: black;
+    width: calc(20% - 20px);
+    height: 200px;
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid $fg-grey;
+
+    &:hover {
+      color: $blue;
+    }
+
+    .loc-listing__thumb {
+      padding: 5px;
+      height: 160px;
+    }
+
+    .loc-listing__name {
+      padding: 5px;
+    }
+  }
+}

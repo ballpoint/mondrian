@@ -12,7 +12,7 @@ import Color from 'ui/color';
 import { NONE } from 'ui/color';
 import Index from 'geometry/index';
 
-import { DocLocation } from 'io/backend/backend';
+import DocMetadata from 'io/backend/location';
 import Doc from 'io/doc';
 import DocHistory from 'history/history';
 import HistoryFrame from 'history/Frame';
@@ -114,6 +114,7 @@ const proto = {
             height: value.data.height,
             lineHeight: value.data['line-height'],
             fontSize: value.data['font-size'],
+            fontFamily: value.data['font-family'],
             alignHorizontal:
               schema.document.nested.TextAlignHorizonal.values[
                 value.data.align
@@ -137,7 +138,7 @@ const proto = {
           children: value.children.map(this.serializeItem.bind(this))
         });
 
-      case DocLocation:
+      case DocMetadata:
         return schema.document.DocumentLocation.fromObject({
           backend: value.backend,
           path: value.path
@@ -431,7 +432,7 @@ const proto = {
       // Document
 
       case schema.document.DocumentLocation:
-        return new DocLocation({
+        return new DocMetadata({
           backend: value.backend,
           path: value.path
         });
@@ -643,6 +644,7 @@ const proto = {
         height: child.textItem.attrs.height,
         'line-height': child.textItem.attrs.lineHeight,
         'font-size': child.textItem.attrs.fontSize,
+        'font-family': child.textItem.attrs.fontFamily,
         value: child.textItem.attrs.value
       };
 

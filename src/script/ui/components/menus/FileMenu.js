@@ -62,44 +62,45 @@ class FileMenu extends React.Component {
         <MenuGroup>
           <MenuItem label="New..." hotkey="Ctrl-N" action={this.props.newDoc} />
 
-          <MenuItem className="menu-item--file-input" hotkey="Ctrl-O">
-            <input ref="fileInput" type="file" onChange={this.openFile} />
-            Open...
-          </MenuItem>
+          <MenuItem
+            label="Open..."
+            hotkey="Ctrl-O"
+            href="/files"
+            target="files-index"
+          />
         </MenuGroup>
         <MenuGroup>
-          <MenuItem disabled={!this.props.editor.doc}>
-            <a
-              className="menu-item__cover"
-              ref="downloadAnchor"
-              onClick={() => {
-                let bytes = bps.serialize(this.props.editor.doc);
+          <MenuItem className="menu-item--file-input" hotkey="Ctrl-I">
+            <input ref="fileInput" type="file" onChange={this.openFile} />
+            Import file...
+          </MenuItem>
 
-                console.log(bytes);
+          <MenuItem
+            disabled={!this.props.editor.doc}
+            ref="downloadAnchor"
+            action={() => {
+              let bytes = bps.serialize(this.props.editor.doc);
 
-                download.download(
-                  this.props.editor.doc.name + '.bps',
-                  bytes,
-                  'image/svg+xml'
-                );
-              }}
-            />
+              download.download(
+                this.props.editor.doc.name + '.bps',
+                bytes,
+                'image/svg+xml'
+              );
+            }}>
             Export source (BPS)
           </MenuItem>
 
-          <MenuItem disabled={!this.props.editor.doc}>
-            <a
-              className="menu-item__cover"
-              ref="downloadAnchor"
-              onClick={() => {
-                let str = svg.serialize(this.props.editor.doc);
-                download.download(
-                  this.props.editor.doc.name + '.svg',
-                  str,
-                  'image/svg+xml'
-                );
-              }}
-            />
+          <MenuItem
+            disabled={!this.props.editor.doc}
+            ref="downloadAnchor"
+            action={() => {
+              let str = svg.serialize(this.props.editor.doc);
+              download.download(
+                this.props.editor.doc.name + '.svg',
+                str,
+                'image/svg+xml'
+              );
+            }}>
             Export as SVG
           </MenuItem>
         </MenuGroup>

@@ -1,7 +1,16 @@
-@import 'vars.scss';
-@import 'components.scss';
-@import 'canvas.scss';
-@import 'icons.scss';
+@import '~base.scss';
+@import '~vars.scss';
+@import '~components.scss';
+@import '~canvas.scss';
+@import '~icons.scss';
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: 'Roboto', sans-serif;
+}
 
 body {
   margin: 0;

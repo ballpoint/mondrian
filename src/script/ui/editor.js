@@ -292,7 +292,7 @@ export default class Editor extends EventEmitter {
       this.selectAll();
     });
 
-    hotkeys.on('down', 'ctrl-O', e => {
+    hotkeys.on('down', 'ctrl-I', e => {
       e.preventDefault();
       this.trigger('hotkey:open');
     });

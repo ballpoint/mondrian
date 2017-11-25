@@ -1,14 +1,30 @@
+import shortid from 'shortid';
 import localForage from 'localforage';
 import schema from 'proto/schema';
 import proto from 'proto/proto';
+import DocMetadata from 'io/backend/location';
 
 class LocalBackend {
   constructor() {
     this.store = localForage.createInstance({ name: 'documents' });
+    this.metadataStore = localForage.createInstance({
+      name: 'documents:metadata'
+    });
   }
 
   get id() {
     return 'local';
+  }
+
+  assign(doc) {
+    let id = shortid.generate();
+
+    return new DocMetadata({
+      path: id,
+      backend: this,
+      name: doc.name,
+      created: new Date()
+    });
   }
 
   async load(path) {
@@ -31,11 +47,35 @@ class LocalBackend {
     let serialized = proto.serialize(doc);
     let bytes = serialized.$type.encode(serialized).finish();
     let id = path.split('-')[0];
+
+    await this.metadataStore.setItem(id, {
+      id,
+      name: doc.name,
+      modified: new Date()
+    });
+
     return await this.store.setItem(id, bytes);
   }
 
   async list() {
-    return await this.store.keys();
+    let locs = [];
+    let ids = await this.metadataStore.keys();
+
+    console.log(ids);
+
+    for (let id of ids) {
+      let metadata = await this.metadataStore.getItem(id);
+      locs.push(
+        new DocMetadata({
+          backend: this,
+          path: id,
+          name: metadata.name,
+          modified: metadata.modified
+        })
+      );
+    }
+
+    return locs;
   }
 }
 
