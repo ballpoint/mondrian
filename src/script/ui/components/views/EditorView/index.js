@@ -16,7 +16,6 @@ import Filetabs from 'ui/components/filetabs/Filetabs';
 import google from 'google.svg';
 
 import backend from 'io/backend/backend';
-import LocalBackend from 'io/backend/local';
 
 // Main view
 class EditorView extends React.Component {
@@ -75,12 +74,6 @@ class EditorView extends React.Component {
     this.setState({
       activeDoc: doc
     });
-
-    if (!doc.location) {
-      doc.location = LocalBackend.assign(doc);
-    }
-
-    doc.location.save(doc);
 
     backend.replaceLocation(doc);
   }

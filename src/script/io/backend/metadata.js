@@ -5,6 +5,7 @@ export default class DocMetadata {
     this.path = attrs.path;
     this.width = attrs.width;
     this.height = attrs.height;
+    this.thumb = attrs.thumb;
     // Timestamps
     this.created = attrs.created;
     this.modified = attrs.modified;

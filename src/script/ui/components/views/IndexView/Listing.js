@@ -5,8 +5,9 @@ class Listing extends React.Component {
     let doc = this.props.doc;
     let thumbHeight = 140;
     let style = {};
+    let thumb;
 
-    console.log(doc);
+    console.log(doc.thumb);
 
     if (doc.width !== undefined && doc.height !== undefined) {
       let ratio = doc.width / doc.height;
@@ -17,6 +18,18 @@ class Listing extends React.Component {
         style.flexBasis = basis + 'px';
         style.maxWidth = basis * 1.2 + 'px';
       }
+
+      if (doc.thumb) {
+        thumb = (
+          <img
+            src={doc.thumb}
+            style={{
+              maxWidth: basis,
+              maxHeight: 140
+            }}
+          />
+        );
+      }
     }
 
     return (
@@ -26,7 +39,7 @@ class Listing extends React.Component {
         target="_blank"
         style={style}
         href={`/files/${doc.backend.id}/${doc.path}`}>
-        <div className="doc-listing__thumb" />
+        <div className="doc-listing__thumb">{thumb}</div>
         <div className="doc-listing__name">{doc.name}</div>
       </a>
     );

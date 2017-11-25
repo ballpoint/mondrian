@@ -4,6 +4,7 @@ import MenuGroup from 'ui/components/menus/MenuGroup';
 import Doc from 'io/doc';
 import download from 'io/download';
 import proto from 'proto/proto';
+import LocalBackend from 'io/backend/local';
 
 import bps from 'io/formats/bps';
 import svg from 'io/formats/svg';
@@ -42,6 +43,9 @@ class FileMenu extends React.Component {
             doc = svg.parse(bytes, fn);
             break;
         }
+
+        doc.location = LocalBackend.assign(doc);
+        doc.location.save(doc);
 
         if (doc) {
           this.props.openDoc(doc);

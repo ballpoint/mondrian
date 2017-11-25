@@ -34,6 +34,10 @@
       .doc-listing__thumb {
         padding: 5px;
         height: 140px;
+
+        img {
+          max-height: 140px;
+        }
       }
 
       .doc-listing__name {
