@@ -79,7 +79,6 @@ class LocalBackend {
       maxWidth: thumbBounds.width,
       maxHeight: thumbBounds.height
     });
-    console.log(thumbBounds.width, thumbBounds.height);
     let blob = await thumb.drawAndFetchRaw(
       thumbBounds.width,
       thumbBounds.height
@@ -91,6 +90,12 @@ class LocalBackend {
 
     console.timeEnd('Save ' + path);
     return await this.store.setItem(id, bytes);
+  }
+
+  async destroy(path) {
+    this.store.removeItem(path);
+    this.metadataStore.removeItem(path);
+    this.thumbStore.removeItem(path);
   }
 
   async list() {

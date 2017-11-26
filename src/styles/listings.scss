@@ -26,10 +26,15 @@
       max-width: 400px;
       margin: 5px;
       border: 1px solid $fg-grey;
+      position: relative;
 
       &:hover {
         color: $blue;
         border-color: $blue;
+
+        .doc-listing__remove {
+          display: block;
+        }
       }
       &:active {
         .doc-listing__name {
@@ -55,6 +60,13 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+      }
+
+      .doc-listing__remove {
+        display: none;
+        position: absolute;
+        top: 0;
+        right: 0;
       }
     }
 

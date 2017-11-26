@@ -48,7 +48,29 @@ class IndexView extends React.Component {
     if (this.state.files.length > 0) {
       items = items.concat(
         this.state.files.map(doc => {
-          return <Listing doc={doc} />;
+          return (
+            <Listing
+              doc={doc}
+              remove={e => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (
+                  !confirm('Are you sure you want to delete ' + doc.name + '?')
+                ) {
+                  return;
+                }
+
+                doc.backend.destroy(doc.path);
+
+                this.setState({
+                  files: this.state.files.filter(f => {
+                    return f.path !== doc.path;
+                  })
+                });
+              }}
+            />
+          );
         })
       );
     }
