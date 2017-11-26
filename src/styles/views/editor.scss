@@ -18,16 +18,6 @@ body[data-view='editor'] {
       cursor: $cursor;
     }
   }
-
-  > main {
-    width: 100%;
-    height: 100%;
-
-    > div {
-      width: 100%;
-      height: 100%;
-    }
-  }
 }
 
 #app-editor {
