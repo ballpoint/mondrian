@@ -53,6 +53,12 @@ class Menus extends React.Component {
     });
 
     this.props.editor.on('hotkey:open', e => {
+      setTimeout(() => {
+        window.location = '/files';
+      }, 100);
+    });
+
+    this.props.editor.on('hotkey:import', e => {
       this.activateMenu(fileMenu);
       setTimeout(() => {
         let inputNode = ReactDOM.findDOMNode(

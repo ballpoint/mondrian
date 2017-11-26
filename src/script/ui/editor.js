@@ -294,12 +294,12 @@ export default class Editor extends EventEmitter {
 
     hotkeys.on('down', 'ctrl-I', e => {
       e.preventDefault();
-      this.trigger('hotkey:open');
+      this.trigger('hotkey:import');
     });
 
-    hotkeys.on('down', 'ctrl-S', e => {
+    hotkeys.on('down', 'ctrl-O', e => {
       e.preventDefault();
-      //this.trigger('hotkey:save');
+      this.trigger('hotkey:open');
     });
 
     hotkeys.on('down', 'ctrl-E', e => {

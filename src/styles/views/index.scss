@@ -1,6 +1,12 @@
 @import '~base.scss';
 @import '~vars.scss';
 
+body[data-view='index'] {
+  overflow: hidden;
+  display: flex;
+  height: 100%;
+}
+
 #app-index {
   flex-grow: 1;
   display: flex;

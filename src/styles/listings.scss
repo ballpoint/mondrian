@@ -11,6 +11,8 @@
     flex-wrap: wrap;
     align-items: flex-start;
     padding: 5px;
+    overflow-y: scroll;
+    max-height: calc(100% - 60px);
 
     .doc-listing {
       background: white;
