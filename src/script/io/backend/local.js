@@ -16,6 +16,12 @@ class LocalBackend {
     this.metadataStore = localForage.createInstance({
       name: 'documents:metadata'
     });
+
+    window.clearFiles = () => {
+      this.store.clear();
+      this.thumbStore.clear();
+      this.metadataStore.clear();
+    };
   }
 
   get id() {

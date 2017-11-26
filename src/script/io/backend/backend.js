@@ -9,7 +9,15 @@ const backend = {
     });
 
     if (parts.length <= 1) {
-      return this.newDoc();
+      // Root path
+      let locs = await LocalBackend.list();
+      if (locs.length === 0) {
+        return this.newDoc();
+      } else {
+        let doc = await LocalBackend.load(locs[0].path);
+        doc.location = locs[0];
+        return doc;
+      }
     }
 
     let backend = parts[1];
