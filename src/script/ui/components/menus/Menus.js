@@ -33,10 +33,6 @@ if (window.localStorage && localStorage.getItem('debug') === '1') {
   });
 }
 
-const fileMenu = menus[0];
-const editMenu = menus[1];
-const viewMenu = menus[2];
-
 class Menus extends React.Component {
   state = {
     active: null
