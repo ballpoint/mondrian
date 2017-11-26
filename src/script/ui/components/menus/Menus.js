@@ -33,6 +33,8 @@ if (window.localStorage && localStorage.getItem('debug') === '1') {
   });
 }
 
+const fileMenu = menus[0];
+
 class Menus extends React.Component {
   state = {
     active: null
