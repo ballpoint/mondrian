@@ -58,6 +58,9 @@ export default class Doc {
   }
 
   setDimens(w, h) {
+    if (w <= 0) w = 1;
+    if (h <= 0) h = 1;
+
     this.width = w;
     this.height = h;
     this.bounds = new Bounds(0, 0, this.width, this.height);
