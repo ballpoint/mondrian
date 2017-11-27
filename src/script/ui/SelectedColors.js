@@ -1,6 +1,5 @@
 import consts from 'consts';
 import Color from 'ui/color';
-import { NONE } from 'ui/color';
 
 export default class SelectedColors {
   constructor(fill = new Color('#7eb9c9'), stroke = consts.black) {
@@ -15,7 +14,7 @@ export default class SelectedColors {
       case 'solid':
         return this._fill;
       case 'none':
-        return NONE;
+        return Color.none();
     }
   }
 
@@ -45,11 +44,7 @@ export default class SelectedColors {
 
   equal(which, color) {
     let existing = this.get(which);
-    if (color === NONE || existing === NONE) {
-      return color === existing;
-    } else {
-      return color.equal(existing);
-    }
+    return color.equal(existing);
   }
 
   setMode(which, mode) {
@@ -68,7 +63,7 @@ export default class SelectedColors {
       case 'solid':
         return this._stroke;
       case 'none':
-        return NONE;
+        return Color.none();
     }
   }
 

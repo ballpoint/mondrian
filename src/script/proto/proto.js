@@ -9,7 +9,6 @@ import PathPoint from 'geometry/path-point';
 import Text from 'geometry/text';
 
 import Color from 'ui/color';
-import { NONE } from 'ui/color';
 import Index from 'geometry/index';
 
 import DocMetadata from 'io/backend/metadata';
@@ -42,9 +41,9 @@ const proto = {
     }
 
     // I dislike this:
-    if (value === NONE) {
+    if (value.isNone) {
       return schema.document.Color.fromObject({
-        isNone: true
+        none: true
       });
     }
 
@@ -85,7 +84,7 @@ const proto = {
           g: value.g,
           b: value.b,
           a: value.a,
-          isNone: value === NONE
+          none: value.isNone
         });
 
       // Item types
@@ -423,7 +422,7 @@ const proto = {
         return new Index(value.parts);
 
       case schema.document.Color:
-        if (value.isNone) return NONE;
+        if (value.none) return Color.none();
         return new Color(value.r, value.g, value.b, value.a);
 
       case schema.document.Item:

@@ -14,7 +14,7 @@ export default class Selection {
     this.doc = doc;
     this.items = items;
 
-    if (this.empty) return 'NONE';
+    if (this.empty) return;
 
     if (type === null) {
       let sample = this.items[0];

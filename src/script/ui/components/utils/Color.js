@@ -8,7 +8,6 @@ import Util from 'ui/components/utils/Util';
 import TextInput from 'ui/components/utils/TextInput';
 import CursorTracking from 'ui/cursor-tracking';
 import Color from 'ui/color';
-import { NONE } from 'ui/color';
 import CanvasLayer from 'ui/layer';
 import 'utils/color.scss';
 
@@ -47,7 +46,7 @@ class ColorUtil extends React.Component {
 
     if (this.state.modifying !== which) return null;
 
-    if (color === NONE) return null;
+    if (color.isNone) return null;
 
     let r = 0;
     let g = 0;
@@ -156,7 +155,7 @@ class ColorUtil extends React.Component {
       }
     }
 
-    if (color === NONE || color === VARIOUS) {
+    if (color.isNone || color === VARIOUS) {
       this.setState({ expanded: false });
       return;
     }
@@ -185,7 +184,7 @@ class ColorUtil extends React.Component {
 
     let offset = this.state.pickerOffset;
 
-    if (!posn && color !== NONE) posn = this.posnOfColor(color);
+    if (!posn && !color.isNone) posn = this.posnOfColor(color);
 
     if (posn) {
       // Jump offset
@@ -223,7 +222,7 @@ class ColorUtil extends React.Component {
     if (colors.length === 1) {
       let color = colors[0];
       if (color === null) {
-        return NONE;
+        return Color.none();
       } else {
         return color;
       }
@@ -295,7 +294,7 @@ class ColorUtil extends React.Component {
 
     switch (mode) {
       case 'none':
-        this.setColor(which, NONE);
+        this.setColor(which, Color.none());
         break;
       case 'solid':
         this.setColor(which, editor.state.attributes[which]._color);
@@ -379,7 +378,7 @@ class ColorUtil extends React.Component {
     let selectedPosn;
 
     if (!canvas) return;
-    if (selectedColor === NONE) return;
+    if (selectedColor.isNone) return;
 
     let context = this._layerGradient.context;
     context.clearRect(0, 0, PICKER_WIDTH, PICKER_WIDTH);
@@ -517,7 +516,7 @@ class ColorUtil extends React.Component {
 
   renderSwatch = (which, color, onClick, mini = false) => {
     let baseClass = `color-util__row__${mini ? 'mini-swatch' : 'swatch'}`;
-    if (color === NONE) {
+    if (color.isNone) {
       return (
         <div className={`${baseClass} ${baseClass}--empty`} onClick={onClick}>
           {false ? (
@@ -555,7 +554,7 @@ class ColorUtil extends React.Component {
           onChange={e => {
             this.onColorModeChange(e, which);
           }}
-          defaultValue={color === NONE ? 'none' : 'solid'}>
+          value={color.isNone ? 'none' : 'solid'}>
           <option value="solid">Solid</option>
           <option value="none">None</option>
         </select>
@@ -583,7 +582,7 @@ class ColorUtil extends React.Component {
 
       color = VARIOUS;
 
-      swatch = this.renderSwatch(which, NONE, () => {
+      swatch = this.renderSwatch(which, Color.none(), () => {
         this.setState({ modifying: which });
         this.toggle(which);
       });

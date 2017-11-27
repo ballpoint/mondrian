@@ -1,5 +1,4 @@
 import Color from 'ui/color';
-import { NONE } from 'ui/color';
 
 export default class DefaultColor {
   constructor(color) {
@@ -11,12 +10,12 @@ export default class DefaultColor {
     if (this._mode === 'solid') {
       return this._color;
     } else {
-      return NONE;
+      return Color.none();
     }
   }
 
   set color(color) {
-    if (color === NONE) {
+    if (color.isNone) {
       this._mode = 'none';
     } else {
       this._color = color;
@@ -30,11 +29,7 @@ export default class DefaultColor {
 
   equal(other) {
     let color = this.color;
-    if (color === NONE || other === NONE) {
-      return color === other;
-    } else {
-      return this.color.equal(other);
-    }
+    return this.color.equal(other);
   }
 
   toString() {

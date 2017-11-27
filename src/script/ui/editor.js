@@ -2,8 +2,6 @@ import { PIXEL_RATIO } from 'lib/math';
 import { scaleLinear } from 'd3-scale';
 import consts from 'consts';
 import Color from 'ui/color';
-import SelectedColors from 'ui/SelectedColors';
-import { NONE } from 'ui/color';
 
 import DefaultAttributes from 'ui/DefaultAttributes';
 import DocState from 'ui/DocState';

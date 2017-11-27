@@ -1,27 +1,28 @@
 // Color class
-//
-// Special value
-export const NONE = 'none';
+// I really need to rewrite this or clean it up
+// It's still mostly auto-converted coffeescript that I wrote 6 years ago
 
 export default class Color {
   constructor(r, g, b, a = 1.0) {
+    // Clone existing color
     if (r instanceof Color) {
       this.r = r.r;
       this.g = r.g;
       this.b = r.b;
       this.a = r.a;
       this.hex = r.hex;
-      return;
+      return this;
     }
 
+    // Handle none
     if (r === null || r === 'none') {
-      // Default to black
-      this.hex = 'none';
+      // None value
       this.r = 0;
       this.g = 0;
       this.b = 0;
       this.a = 0;
-      return;
+      this.isNone = true;
+      return this;
     }
 
     if (typeof r === 'string') {
@@ -64,6 +65,10 @@ export default class Color {
     this.b = Math.max(this.b, 0);
   }
 
+  static none() {
+    return new Color(null);
+  }
+
   static fromHSL(h, s, l) {
     let r, g, b;
 
@@ -95,14 +100,14 @@ export default class Color {
 
   static fromString(str) {
     if (str === 'none') {
-      return NONE;
+      return this.none();
     } else if (str.charAt(0) === '#' || str.length === 6) {
       return Color.fromHex(str);
     } else if (str.match(/rgba?\(.*\)/gi) != null) {
       return Color.fromRGBString(str);
     } else {
       console.error('cannot parse color ' + str);
-      return NONE;
+      return this.none();
     }
   }
 
@@ -286,6 +291,7 @@ export default class Color {
 
   toString() {
     this.removeNaNs(); // HACK
+
     return this.toRGBString();
   }
 

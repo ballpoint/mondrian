@@ -1,6 +1,5 @@
 import consts from 'consts';
 import Color from 'ui/color';
-import { NONE } from 'ui/color';
 import Bounds from 'geometry/bounds';
 import Metadata from 'geometry/metadata';
 import Range from 'geometry/range';
@@ -51,7 +50,7 @@ export default class Item {
         this.data.stroke = Color.fromString(this.data.stroke);
       }
     } else {
-      this.data.stroke = NONE;
+      this.data.stroke = Color.none();
     }
   }
 

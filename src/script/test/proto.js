@@ -54,6 +54,12 @@ describe('Proto', function() {
     done();
   });
 
+  it('roundtrip: Color', done => {
+    testRoundTrip(new Color(100, 100, 200, 0.5));
+    testRoundTrip(new Color(null));
+    done();
+  });
+
   it('roundtrip: Index', done => {
     testRoundTrip(new Index([0, 1, 5, 6, 1, 0]));
     done();

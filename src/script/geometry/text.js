@@ -4,8 +4,8 @@ import Range from 'geometry/range';
 import Bounds from 'geometry/bounds';
 import Item from 'geometry/item';
 import LineSegment from 'geometry/line-segment';
+import Color from 'ui/color';
 import { measure } from 'lib/text';
-import { NONE } from 'ui/color';
 
 export class TextLine {
   constructor(data) {
@@ -26,7 +26,7 @@ export default class Text extends Item {
     if (data['line-height'] === undefined) data['line-height'] = 1.5;
 
     if (data.fill === undefined) data.fill = consts.black;
-    if (data.stroke === undefined) data.stroke = NONE;
+    if (data.stroke === undefined) data.stroke = Color.none();
 
     data.x = parseFloat(data.x);
     data.y = parseFloat(data.y);
@@ -177,13 +177,13 @@ export default class Text extends Item {
       context.scale(z, z);
       context.rotate(this.metadata.angle * (Math.PI / 180));
 
-      if (fill !== NONE) {
+      if (!fill.isNone) {
         context.fillStyle = fill;
         context.fillText(span.data.value, 0, 0);
       }
 
       let lineWidth = parseFloat(this.data['stroke-width']);
-      if (stroke !== NONE && lineWidth > 0) {
+      if (!stroke.isNone && lineWidth > 0) {
         context.lineCap = this.data['stroke-linecap']; // lol
         context.lineJoin = this.data['stroke-linejoin'];
         context.lineWidth = lineWidth;
