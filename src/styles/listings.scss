@@ -32,8 +32,8 @@
         color: $blue;
         border-color: $blue;
 
-        .doc-listing__remove {
-          display: block;
+        .doc-listing__header .doc-listing__remove {
+          opacity: 1;
         }
       }
       &:active {
@@ -52,21 +52,22 @@
           margin: auto;
         }
       }
-
-      .doc-listing__name {
+      .doc-listing__header {
+        display: flex;
         height: 30px;
         border-bottom: 1px solid $mid-grey;
-        padding: 5px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
 
-      .doc-listing__remove {
-        display: none;
-        position: absolute;
-        top: 4px;
-        right: 4px;
+        .doc-listing__name {
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          flex-grow: 1;
+          padding: 5px;
+        }
+
+        .doc-listing__remove {
+          opacity: 0;
+        }
       }
     }
 

@@ -88,6 +88,12 @@ export function renderIcon(name, opts = {}) {
     style.height = opts.height;
   }
 
+  if (opts.padding) {
+    style.padding = opts.padding;
+    style.width += opts.padding * 2;
+    style.height += opts.padding * 2;
+  }
+
   return (
     <span
       className={classnames({
