@@ -88,33 +88,29 @@ class IndexView extends React.Component {
 
     console.log(items);
 
-    let done = 0;
-    let total = 0;
+    let files = [];
 
     for (let item of items) {
-      total++;
+      files.push(item.getAsFile());
     }
 
-    for (let item of items) {
-      console.log(item);
-      let file = item.getAsFile();
+    let readNext = async () => {
+      let file = files[0];
+      files = files.slice(1);
 
-      // Warning: this code is retarded because I can't get the simple async/await
-      // code to work inside of a for-loop. So each file gets its own setTimeout instead.
+      let doc = await io.parseNativeFile(file);
+      doc.metadata = LocalBackend.assign(doc);
 
-      setTimeout(async () => {
-        let doc = await io.parseNativeFile(file);
-        doc.metadata = LocalBackend.assign(doc);
+      await doc.save();
 
-        await doc.save();
+      if (files.length === 0) {
+        this.fetchFiles();
+      } else {
+        setTimeout(readNext(), 10);
+      }
+    };
 
-        done++;
-
-        if (done === total) {
-          this.fetchFiles();
-        }
-      }, 1);
-    }
+    readNext();
   }
 
   render() {
