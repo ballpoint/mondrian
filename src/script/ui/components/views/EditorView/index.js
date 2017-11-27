@@ -13,9 +13,11 @@ import Title from 'ui/components/title/Title';
 import Menus from 'ui/components/menus/Menus';
 import Filetabs from 'ui/components/filetabs/Filetabs';
 
-import google from 'google.svg';
+import io from 'io/io';
 
 import backend from 'io/backend/backend';
+
+import LocalBackend from 'io/backend/local';
 
 // Main view
 class EditorView extends React.Component {
@@ -78,6 +80,30 @@ class EditorView extends React.Component {
     backend.replaceLocation(doc);
   }
 
+  async importNativeFile(file) {
+    let doc = await io.parseNativeFile(file);
+    // If we have a fresh, empty doc open currently, we overwrite it
+    let currentDoc = this.state.editor.doc;
+    if (currentDoc.history.frames.length === 1) {
+      doc.metadata = currentDoc.metadata;
+    } else {
+      doc.metadata = LocalBackend.assign(doc);
+    }
+
+    doc.save();
+
+    if (doc) {
+      this.openDoc(doc);
+    }
+  }
+
+  drop(e) {
+    e = e.nativeEvent || e;
+    e.preventDefault();
+    let file = e.dataTransfer.items[0].getAsFile();
+    this.importNativeFile(file);
+  }
+
   newDoc() {
     let width = 1000;
     let height = 600;
@@ -94,7 +120,12 @@ class EditorView extends React.Component {
     let showEditor = !this.state.indexView;
 
     return (
-      <div id="app-editor">
+      <div
+        id="app-editor"
+        onDrop={this.drop.bind(this)}
+        onDragOver={e => {
+          e.preventDefault();
+        }}>
         <header>
           <a id="logo-container" href="/files">
             <Logo />

@@ -58,9 +58,9 @@ export default class Doc {
     return this.name.split('.')[0] + '.' + extension;
   }
 
-  save() {
+  async save() {
     if (this.metadata) {
-      this.metadata.save(this);
+      return await this.metadata.save(this);
     }
   }
 

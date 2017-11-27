@@ -4,59 +4,19 @@ import MenuGroup from 'ui/components/menus/MenuGroup';
 import Doc from 'io/doc';
 import download from 'io/download';
 import proto from 'proto/proto';
-import LocalBackend from 'io/backend/local';
 
+import io from 'io/io';
 import bps from 'io/formats/bps';
 import svg from 'io/formats/svg';
 
 import 'menus/file-menu.scss';
 
 class FileMenu extends React.Component {
-  openFile = e => {
+  importFile(e) {
     e = e.nativeEvent || e;
-
-    let files = e.target.files;
-    if (files) {
-      let reader = new FileReader();
-      let fn = files[0].name;
-
-      reader.onload = e => {
-        let doc;
-
-        // We read all files as bytes, and let the io/format libraries handle decoding that
-
-        let buffer = reader.result;
-        let bytes = new Uint8Array(buffer);
-
-        let ext = fn
-          .split('.')
-          .last()
-          .toLowerCase();
-
-        switch (ext) {
-          case 'bps':
-            if (bps.headerValid(bytes)) {
-              doc = bps.parse(bytes, fn);
-            }
-            break;
-          case 'svg':
-            doc = svg.parse(bytes, fn);
-            break;
-        }
-
-        doc.metadata = LocalBackend.assign(doc);
-        doc.save();
-
-        if (doc) {
-          this.props.openDoc(doc);
-        }
-      };
-
-      reader.readAsArrayBuffer(files[0]);
-    } else {
-      console.warn('Failed to read files');
-    }
-  };
+    let file = e.target.files[0];
+    this.props.importNativeFile(file);
+  }
 
   render() {
     return (
@@ -70,7 +30,11 @@ class FileMenu extends React.Component {
         </MenuGroup>
         <MenuGroup>
           <MenuItem className="menu-item--file-input" hotkey="Ctrl-I">
-            <input ref="fileInput" type="file" onChange={this.openFile} />
+            <input
+              ref="fileInput"
+              type="file"
+              onChange={this.importFile.bind(this)}
+            />
             Import file...
           </MenuItem>
 

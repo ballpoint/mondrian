@@ -1,5 +1,7 @@
 import 'views/index.scss';
 
+import io from 'io/io';
+
 import Logo from 'ui/components/views/Logo';
 import Listing from './Listing';
 
@@ -17,6 +19,8 @@ class IndexView extends React.Component {
 
   componentDidMount() {
     this.fetchFiles();
+
+    //this.refs.root.addEventListener('drop', this.drop.bind(this));
   }
 
   async fetchFiles() {
@@ -40,7 +44,7 @@ class IndexView extends React.Component {
       return null;
     }
     let items = [
-      <a href="/files/local/new" className="doc-listing-new">
+      <a key="newFile" href="/files/local/new" className="doc-listing-new">
         New file
       </a>
     ];
@@ -50,6 +54,7 @@ class IndexView extends React.Component {
         this.state.files.map(doc => {
           return (
             <Listing
+              key={doc.path}
               doc={doc}
               remove={e => {
                 e.preventDefault();
@@ -77,9 +82,52 @@ class IndexView extends React.Component {
     return items;
   }
 
+  async drop(e) {
+    e = e.nativeEvent || e;
+    let items = e.dataTransfer.items;
+
+    console.log(items);
+
+    let done = 0;
+    let total = 0;
+
+    for (let item of items) {
+      total++;
+    }
+
+    for (let item of items) {
+      console.log(item);
+      let file = item.getAsFile();
+
+      // Warning: this code is retarded because I can't get the simple async/await
+      // code to work inside of a for-loop. So each file gets its own setTimeout instead.
+
+      setTimeout(async () => {
+        let doc = await io.parseNativeFile(file);
+        doc.metadata = LocalBackend.assign(doc);
+
+        await doc.save();
+
+        done++;
+
+        if (done === total) {
+          this.fetchFiles();
+        }
+      }, 1);
+    }
+  }
+
   render() {
     return (
-      <div id="app-index">
+      <div
+        id="app-index"
+        onDrop={e => {
+          e.preventDefault();
+          this.drop(e);
+        }}
+        onDragOver={e => {
+          e.preventDefault();
+        }}>
         <header>
           <div id="logo-container">
             <Logo />
