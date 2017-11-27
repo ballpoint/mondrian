@@ -35,7 +35,7 @@ class EditorView extends React.Component {
 
     editor.on('history:step', () => {
       try {
-        editor.doc.location.save(editor.doc);
+        editor.doc.save();
       } catch (e) {
         console.error('Error saving document', e);
       }

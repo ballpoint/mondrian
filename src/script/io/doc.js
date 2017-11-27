@@ -58,6 +58,12 @@ export default class Doc {
     return this.name.split('.')[0] + '.' + extension;
   }
 
+  save() {
+    if (this.metadata) {
+      this.metadata.save(this);
+    }
+  }
+
   setDimens(w, h) {
     if (w <= 0) w = 1;
     if (h <= 0) h = 1;

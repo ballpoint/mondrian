@@ -10,12 +10,13 @@ const backend = {
 
     if (parts.length <= 1) {
       // Root path
-      let locs = await LocalBackend.list();
-      if (locs.length === 0) {
+      let metas = await LocalBackend.list();
+      if (metas.length === 0) {
         return this.newDoc();
       } else {
-        let doc = await LocalBackend.load(locs[0].path);
-        doc.location = locs[0];
+        let latest = metas[0];
+        let doc = await LocalBackend.load(latest.path);
+        doc.metadata = latest;
         return doc;
       }
     }
@@ -32,25 +33,23 @@ const backend = {
       local: LocalBackend
     }[backend];
 
-    window.backend = backend;
+    let meta = new DocMetadata({ backend, path });
+    let doc = await meta.backend.load(meta.path);
 
-    let loc = new DocMetadata({ backend, path });
-    let doc = await loc.backend.load(loc.path);
-
-    doc.location = loc;
+    doc.metadata = meta;
 
     return doc;
   },
 
   newDoc() {
     let doc = Doc.empty(600, 400, 'untitled');
-    doc.location = LocalBackend.assign(doc);
-    doc.location.save(doc);
+    doc.metadata = LocalBackend.assign(doc);
+    doc.save();
     return doc;
   },
 
   replaceLocation(doc) {
-    history.replaceState({}, doc.name, doc.location.uri);
+    history.replaceState({}, doc.name, doc.metadata.uri);
   }
 };
 

@@ -44,8 +44,8 @@ class FileMenu extends React.Component {
             break;
         }
 
-        doc.location = LocalBackend.assign(doc);
-        doc.location.save(doc);
+        doc.metadata = LocalBackend.assign(doc);
+        doc.save();
 
         if (doc) {
           this.props.openDoc(doc);

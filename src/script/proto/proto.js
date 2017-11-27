@@ -137,12 +137,6 @@ const proto = {
           children: value.children.map(this.serializeItem.bind(this))
         });
 
-      case DocMetadata:
-        return schema.document.DocumentLocation.fromObject({
-          backend: value.backend,
-          path: value.path
-        });
-
       case DocHistory:
         return schema.history.DocHistory.fromObject({
           frames: this.serialize(value.frames),
@@ -178,7 +172,6 @@ const proto = {
       case Doc:
         return schema.document.Document.fromObject({
           name: value.name,
-          location: this.serialize(value.location),
           history: this.serialize(value.history),
           width: value.width,
           height: value.height,
@@ -429,12 +422,6 @@ const proto = {
 
       // Document
 
-      case schema.document.DocumentLocation:
-        return new DocMetadata({
-          backend: value.backend,
-          path: value.path
-        });
-
       case schema.document.Layer:
         return new Layer({
           id: value.id,
@@ -449,7 +436,6 @@ const proto = {
           height: value.height,
 
           history: this.parse(value.history),
-          location: this.parse(value.location),
           layers: this.parse(value.layers)
         });
 
