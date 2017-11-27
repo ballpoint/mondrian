@@ -37,8 +37,8 @@ class Listing extends React.Component {
         key={doc.path}
         style={style}
         href={`/files/${doc.backend.id}/${doc.path}`}>
-        <div className="doc-listing__thumb">{thumb}</div>
         <div className="doc-listing__name">{doc.name}</div>
+        <div className="doc-listing__thumb">{thumb}</div>
         <div className="doc-listing__remove" onClick={this.props.remove}>
           {renderIcon('del')}
         </div>
