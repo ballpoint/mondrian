@@ -41,7 +41,8 @@ export default class Doc {
       this.history = new DocHistory();
     }
 
-    this.__id__ = attrs.__id__ || shortid.generate();
+    // Session-based ID, not persisted
+    this.__id__ = shortid.generate();
   }
 
   static empty(width, height, name) {

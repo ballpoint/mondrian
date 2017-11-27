@@ -177,7 +177,6 @@ const proto = {
 
       case Doc:
         return schema.document.Document.fromObject({
-          id: value.__id__,
           name: value.name,
           location: this.serialize(value.location),
           history: this.serialize(value.history),
@@ -444,7 +443,6 @@ const proto = {
 
       case schema.document.Document:
         return new Doc({
-          __id__: value.id,
           name: value.name,
 
           width: value.width,
