@@ -86,8 +86,6 @@ class IndexView extends React.Component {
     e = e.nativeEvent || e;
     let items = e.dataTransfer.items;
 
-    console.log(items);
-
     let files = [];
 
     for (let item of items) {
@@ -98,10 +96,14 @@ class IndexView extends React.Component {
       let file = files[0];
       files = files.slice(1);
 
-      let doc = await io.parseNativeFile(file);
-      doc.metadata = LocalBackend.assign(doc);
+      try {
+        let doc = await io.parseNativeFile(file);
+        doc.metadata = LocalBackend.assign(doc);
 
-      await doc.save();
+        await doc.save();
+      } catch (e) {
+        console.error('Error parsing', file, e);
+      }
 
       if (files.length === 0) {
         this.fetchFiles();

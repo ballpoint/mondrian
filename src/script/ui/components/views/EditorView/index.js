@@ -145,6 +145,7 @@ class EditorView extends React.Component {
                 doc={this.state.activeDoc}
                 openDoc={this.openDoc.bind(this)}
                 newDoc={this.newDoc.bind(this)}
+                importNativeFile={this.importNativeFile.bind(this)}
               />
             </div>
             <div id="app-toolbar">

@@ -157,7 +157,7 @@ export default {
     let lines = [];
 
     for (let i = 0; i < node.childNodes.length; i++) {
-      let node = container.childNodes[i];
+      let child = node.childNodes[i];
       if (child.nodeName.toLowerCase() === 'text') {
         lines.push(this.innerTextValue(child));
       }
@@ -172,7 +172,7 @@ export default {
     let value = '';
 
     for (let i = 0; i < node.childNodes.length; i++) {
-      let node = container.childNodes[i];
+      let child = node.childNodes[i];
       switch (child.nodeName) {
         case 'tspan':
           // <tspan>
