@@ -276,22 +276,20 @@ export default class Color {
   }
 
   toRGBString() {
-    if (this.r === null) {
-      return 'none';
-    } else {
-      return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a === undefined
-        ? 1
-        : this.a})`;
-    }
+    if (this.isNone) return 'none';
+
+    return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a === undefined
+      ? 1
+      : this.a})`;
   }
 
   toHexString() {
+    if (this.isNone) return 'none';
     return `#${this.hex}`;
   }
 
   toString() {
-    this.removeNaNs(); // HACK
-
+    if (this.isNone) return 'none';
     return this.toRGBString();
   }
 
