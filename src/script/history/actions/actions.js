@@ -527,7 +527,7 @@ export class SetDocNameAction extends HistoryAction {
   }
 
   opposite() {
-    return new SetDocDimensionsAction({
+    return new SetDocNameAction({
       name: this.data.prevName,
       prevName: this.data.name
     });
