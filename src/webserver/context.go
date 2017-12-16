@@ -6,11 +6,15 @@ import (
 	"io"
 	"net/http"
 	"strings"
+
+	"github.com/ballpoint/mondrian/src/conf"
 )
 
 type Context struct {
 	http.ResponseWriter
 	*http.Request
+
+	Env conf.Environment
 
 	View view
 
@@ -24,6 +28,7 @@ func NewContext(w http.ResponseWriter, req *http.Request) *Context {
 		ResponseWriter: w,
 		Request:        req,
 		ResponseCode:   200,
+		Env:            conf.Env,
 	}
 }
 

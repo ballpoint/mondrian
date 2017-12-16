@@ -4,6 +4,8 @@
     <link rel="stylesheet" href='{{ .Bundle "app.css" }}' />
     <link rel="icon" href='{{ .AssetURL "/assets/images/favicon.png" }}' type="image/png" />
 
+    {{ if $.Env.Production }}
+
     <script type="text/javascript">
 
       var _gaq = _gaq || [];
@@ -17,6 +19,8 @@
       })();
 
     </script>
+
+    {{ end }}
 
     <title>{{ .FormatTitle }}</title>
   </head>
