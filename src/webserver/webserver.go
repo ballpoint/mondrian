@@ -39,8 +39,11 @@ func New() *Webserver {
 		// Build HTTPS config
 		c := &tls.Config{}
 		c.Certificates = []tls.Certificate{}
-		cert, _ := tls.LoadX509KeyPair(os.Getenv("MONDRIAN_TLS_CERT"), os.Getenv("MONDRIAN_TLS_KEY"))
-		c.Certificates = append(c.Certificates, cert)
+
+		cert1, _ := tls.LoadX509KeyPair(os.Getenv("MONDRIAN_TLS_CERT"), os.Getenv("MONDRIAN_TLS_KEY"))
+		cert2, _ := tls.LoadX509KeyPair(os.Getenv("BALLPOINT_TLS_CERT"), os.Getenv("BALLPOINT_TLS_KEY"))
+
+		c.Certificates = append(c.Certificates, cert1, cert2)
 
 		s.httpsServer = &http.Server{
 			Addr: ":443",
