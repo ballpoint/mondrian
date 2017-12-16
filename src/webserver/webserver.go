@@ -45,6 +45,8 @@ func New() *Webserver {
 
 		c.Certificates = append(c.Certificates, cert1, cert2)
 
+		c.BuildNameToCertificate()
+
 		s.httpsServer = &http.Server{
 			Addr: ":443",
 			Handler: http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
