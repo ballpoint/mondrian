@@ -1,12 +1,28 @@
+import localForage from 'localforage';
 import request from 'superagent';
+import { renderIcon } from 'ui/components/icons';
+import Cookies from 'js-cookie';
 
 class NewsletterForm extends React.Component {
   constructor() {
     super();
 
+    let dismissed = !!Cookies.get('newsletter-dismissed');
+
     this.state = {
-      pending: false
+      pending: false,
+      confirming: false,
+      dismissed
     };
+  }
+
+  dismiss() {
+    this.setState({ dismissed: true });
+    this.persistDismiss();
+  }
+
+  persistDismiss() {
+    Cookies.set('newsletter-dismissed', 1, { expires: 365 * 100 });
   }
 
   onSubmit(e) {
@@ -14,7 +30,9 @@ class NewsletterForm extends React.Component {
 
     let email = e.target.querySelector('[name=email]').value;
 
-    console.log(email);
+    if (email === '' || !/.*@.*/.test(email)) {
+      return;
+    }
 
     this.setState({ pending: true });
 
@@ -23,30 +41,53 @@ class NewsletterForm extends React.Component {
       .send({ email })
       .end((err, res) => {
         console.log(err, res);
-        this.setState({ pending: false });
+        this.persistDismiss();
+        this.setState({ pending: false, confirming: true });
       });
   }
 
   render() {
-    return (
-      <div id="app-newsletter">
-        <i>
-          This is new software, under active development.<br />Subscribe for
-          periodic email updates (every month or two)
-        </i>
-        <form
-          onSubmit={this.onSubmit.bind(this)}
-          method="POST"
-          action="/newsletter/subscribe">
-          <input type="email" placeholder="Email address" name="email" />
-          <input
-            disabled={this.state.pending}
-            type="submit"
-            value="Subscribe"
-          />
-        </form>
-      </div>
-    );
+    if (this.state.dismissed) return null;
+
+    if (this.state.confirming) {
+      return (
+        <div id="app-newsletter">
+          {"Thanks for your interest! We'll send you a confirmation email."}
+          <button onClick={this.dismiss.bind(this)}>OK</button>
+          <div id="app-newsletter__close" onClick={this.dismiss.bind(this)}>
+            {renderIcon('del', { width: 14, height: 14, padding: 4 })}
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div id="app-newsletter">
+          <i>
+            This is new software, under active development.<br />Subscribe for
+            periodic email updates (every month or two).
+          </i>
+          <form
+            onSubmit={this.onSubmit.bind(this)}
+            method="POST"
+            action="/newsletter/subscribe">
+            <input
+              type="email"
+              placeholder="Email address"
+              name="email"
+              required
+            />
+            <input
+              disabled={this.state.pending}
+              type="submit"
+              value="Subscribe"
+            />
+          </form>
+          <div id="app-newsletter__close" onClick={this.dismiss.bind(this)}>
+            {renderIcon('del', { width: 14, height: 14, padding: 4 })}
+          </div>
+        </div>
+      );
+    }
   }
 }
 

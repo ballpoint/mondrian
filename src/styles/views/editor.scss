@@ -59,15 +59,22 @@ body[data-view='editor'] {
 
     #app-newsletter {
       flex-grow: 0;
-      padding: 10px;
-      width: 400px;
+      padding: 16px;
+      width: 410px;
+      position: relative;
+      font-size: 13px;
 
       display: flex;
       flex-direction: column;
       justify-content: center;
 
+      button {
+        width: 50px;
+        margin-top: 10px;
+      }
+
       i {
-        font-size: 13px;
+        opacity: 0.8;
       }
 
       form {
@@ -76,6 +83,12 @@ body[data-view='editor'] {
         input[type='submit'] {
           margin-left: 10px;
         }
+      }
+
+      #app-newsletter__close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
       }
     }
   }
