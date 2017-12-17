@@ -73,6 +73,8 @@ func New() *Webserver {
 
 	s.Handle("/test/unit", mochaHandler)
 
+	s.Handle("/dev/emails", emailListHandler)
+
 	// Support old URL posted to Hacker News
 	s.Handle("/contributing", aliasHandler("/"))
 
