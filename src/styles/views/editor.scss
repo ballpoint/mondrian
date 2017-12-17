@@ -57,9 +57,26 @@ body[data-view='editor'] {
       border-right: 1px solid $blue-grey;
     }
 
-    #app-account {
+    #app-newsletter {
       flex-grow: 0;
-      width: 630px;
+      padding: 10px;
+      width: 400px;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      i {
+        font-size: 13px;
+      }
+
+      form {
+        margin: 10px 0 0 0;
+
+        input[type='submit'] {
+          margin-left: 10px;
+        }
+      }
     }
   }
 

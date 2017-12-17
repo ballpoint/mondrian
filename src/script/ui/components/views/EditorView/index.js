@@ -12,6 +12,7 @@ import Toolbar from 'ui/components/toolbar/Toolbar';
 import Title from 'ui/components/title/Title';
 import Menus from 'ui/components/menus/Menus';
 import Filetabs from 'ui/components/filetabs/Filetabs';
+import NewsletterForm from './NewsletterForm';
 
 import io from 'io/io';
 
@@ -152,6 +153,8 @@ class EditorView extends React.Component {
               <Toolbar editor={this.state.editor} doc={this.state.activeDoc} />
             </div>
           </div>
+
+          <NewsletterForm />
         </header>
 
         <div id="app-view">
