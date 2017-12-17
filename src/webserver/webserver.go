@@ -71,28 +71,29 @@ func New() *Webserver {
 	r.PathPrefix("/build/").Handler(http.StripPrefix("/build/", http.FileServer(http.Dir("build/dev"))))
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir("src"))))
 
-	s.Handle("/test/unit", mochaHandler)
+	s.Handle("GET", "/test/unit", mochaHandler)
 
-	s.Handle("/dev/emails", emailListHandler)
+	s.Handle("GET", "/dev/emails", emailListHandler)
+	s.Handle("POST", "/newsletter/subscribe", newsletterSubscribeHandler)
 
 	// Support old URL posted to Hacker News
-	s.Handle("/contributing", aliasHandler("/"))
+	s.Handle("GET", "/contributing", aliasHandler("/"))
 
 	s.Prefix("/files/{backend}/", editorViewHandler)
 	s.Prefix("/files", indexViewHandler)
-	s.Handle("/", editorViewHandler)
+	s.Handle("GET", "/", editorViewHandler)
 
 	return s
 }
 
-func (s *Webserver) Handle(route string, h Handler) {
+func (s *Webserver) Handle(method, route string, h Handler) {
 	do := func(w http.ResponseWriter, req *http.Request) {
 		context := NewContext(w, req)
 
 		h(context)
 	}
 
-	s.r.HandleFunc(route, do)
+	s.r.Path(route).Methods(method).HandlerFunc(do)
 }
 
 func (s *Webserver) Prefix(prefix string, h Handler) {
