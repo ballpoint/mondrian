@@ -18,6 +18,10 @@ func emailListHandler(ctxt *Context) error {
 
 		rows, err := db.Query("SELECT email, created FROM newsletter_subscribers")
 
+		if err != nil {
+			return err
+		}
+
 		for rows.Next() {
 			var (
 				email   string
