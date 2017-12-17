@@ -17,7 +17,6 @@ func emailListHandler(ctxt *Context) error {
 	err := postgres.Do("ballpoint", func(db *sql.DB) error {
 
 		rows, err := db.Query("SELECT email, created FROM newsletter_subscribers")
-		log.Println(rows, err)
 
 		for rows.Next() {
 			var (
@@ -26,8 +25,6 @@ func emailListHandler(ctxt *Context) error {
 			)
 
 			scanErr := rows.Scan(&email, &created)
-
-			fmt.Println(scanErr, email, created)
 
 			emails = append(emails, fmt.Sprintf("%-40s %s", email, created.String()))
 		}
