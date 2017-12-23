@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/ballpoint/lib/db/postgres"
+	"github.com/ballpoint/mondrian/src/email"
 )
 
 func emailListHandler(ctxt *Context) error {
@@ -30,7 +31,9 @@ func emailListHandler(ctxt *Context) error {
 
 			scanErr := rows.Scan(&email, &created)
 
-			emails = append(emails, fmt.Sprintf("%-40s %s", email, created.String()))
+			if scanErr == nil {
+				emails = append(emails, fmt.Sprintf("%-40s %s", email, created.String()))
+			}
 		}
 		return nil
 	})
@@ -47,8 +50,9 @@ func newsletterSubscribeHandler(ctxt *Context) error {
 		_, err := db.Exec("INSERT INTO newsletter_subscribers (email, created) VALUES ($1, $2)", email, time.Now())
 		log.Println(err)
 		return nil
-
 	})
+
+	email.SendTemplate("me@artur.co", "test email", "newsletter/welcome", struct{ Email, UnsubToken string }{Email: "x", UnsubToken: "x"})
 
 	return nil
 }

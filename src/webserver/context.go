@@ -34,9 +34,9 @@ func NewContext(w http.ResponseWriter, req *http.Request) *Context {
 
 func (ctxt *Context) FormatTitle() string {
 	if ctxt.Title != "" {
-		return ctxt.Title + " - Mondrian"
+		return ctxt.Title + " - Ballpoint"
 	} else {
-		return "Mondrian"
+		return "Ballpoint"
 	}
 }
 
