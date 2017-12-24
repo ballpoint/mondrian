@@ -13,8 +13,8 @@ export default class DocState {
       position: doc.center(),
       layer: doc.layers[0],
       zoomLevel: 1,
-      selection: new Selection([]),
-      hovering: new Selection([]),
+      selection: new Selection(doc, []),
+      hovering: new Selection(doc, []),
       scope: new Index([0])
     });
   }

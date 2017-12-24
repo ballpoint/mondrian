@@ -8,21 +8,15 @@ export const ELEMENTS = 'elements';
 export const POINTS = 'points';
 export const PHANDLE = 'pHandle';
 export const SHANDLE = 'sHandle';
+export const NONE = 'none';
 
 export default class Selection {
   constructor(doc, items = [], type = null) {
     this.doc = doc;
     this.items = items;
 
-    if (this.empty) return;
-
     if (type === null) {
-      let sample = this.items[0];
-      if (sample instanceof PathPoint) {
-        this.type = POINTS;
-      } else {
-        this.type = ELEMENTS;
-      }
+      this.determineType();
     } else {
       this.type = type;
     }
@@ -30,6 +24,19 @@ export default class Selection {
 
   [Symbol.iterator]() {
     return this.items;
+  }
+
+  determineType() {
+    if (this.items.length === 0) {
+      this.type = NONE;
+    } else {
+      let sample = this.items[0];
+      if (sample instanceof PathPoint) {
+        this.type = POINTS;
+      } else {
+        this.type = ELEMENTS;
+      }
+    }
   }
 
   map(func) {
@@ -50,10 +57,16 @@ export default class Selection {
 
   push(item) {
     this.items.push(item);
+
+    this.clearCache();
+    this.determineType();
   }
 
   remove(item) {
     this.items = this.items.removeIndex(this.items.indexOf(item));
+
+    this.clearCache();
+    this.determineType();
   }
 
   clearCache() {
@@ -130,6 +143,8 @@ export default class Selection {
   }
 
   cleanUp() {
+    if (this.empty) return;
+
     // Filter out deleted items
     this.items = this.items.filter(item => {
       return this.doc.getFromIndex(item.index) === item;
@@ -144,6 +159,10 @@ export default class Selection {
     let bounds;
     let angle = 0;
     let center;
+
+    if (this.type === undefined) {
+      debugger;
+    }
 
     if (this.type === ELEMENTS) {
       let angleFreq = {};
@@ -293,6 +312,12 @@ export default class Selection {
       .sort((a, b) => {
         return a.compare(b);
       });
+  }
+
+  get itemsSorted() {
+    return this.items.slice(0).sort((a, b) => {
+      return a.index.compare(b.index);
+    });
   }
 
   get fingerprint() {

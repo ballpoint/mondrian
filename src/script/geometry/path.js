@@ -257,7 +257,8 @@ export default class Path extends Item {
     let fill = this.data.fill;
     if (fill && fill !== 'none') {
       context.fillStyle = fill;
-      context.fill();
+      context.mozFillRule = 'evenodd';
+      context.fill('evenodd');
     }
 
     let stroke = this.data.stroke;

@@ -46,7 +46,5 @@ export default {
         break;
       }
     }
-
-    debugger;
   }
 };

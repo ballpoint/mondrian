@@ -366,23 +366,12 @@ export default class Editor extends EventEmitter {
     if (cached) {
       cached = JSON.parse(cached);
       this.state = {
-        zoomLevel: cached.zoomLevel,
-        position: new Posn(cached.position),
-        selection: new Selection([]),
-        hovering: new Selection([]),
-        scope: new Index([0]),
-
         // to keep
         tool: new tools.Cursor(this),
         attributes: new DefaultAttributes()
       };
     } else {
       this.state = {
-        zoomLevel: 1,
-        selection: new Selection([]),
-        hovering: new Selection([]),
-        scope: new Index([0]),
-
         // to keep
         tool: new tools.Cursor(this),
         attributes: new DefaultAttributes()
@@ -514,6 +503,8 @@ export default class Editor extends EventEmitter {
   }
 
   setSelection(sel) {
+    if (sel.type === undefined) debugger;
+
     let oldSelection = this.doc.state.selection;
 
     this.doc.state.selection = sel;
@@ -1077,7 +1068,7 @@ export default class Editor extends EventEmitter {
   }
 
   booleanSelected(op) {
-    let result = bool[op](this.doc.state.selection.items.slice(0));
+    let result = bool[op](this.doc.state.selection.itemsSorted.reverse());
 
     let index = this.doc.state.selection.indexes[0];
 

@@ -41,6 +41,7 @@ export default class Projection {
   }
 
   bounds(bounds) {
+    if (!bounds) debugger;
     return bounds.transform(this.x, this.y, this.z);
   }
 
