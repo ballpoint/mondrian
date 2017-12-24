@@ -66,6 +66,12 @@ export default class Group {
       }, 0);
   }
 
+  getPoints() {
+    return this.children.reduce((a, b) => {
+      return a.concat(b.getPoints());
+    }, []);
+  }
+
   child(i) {
     return this.children[i];
   }
