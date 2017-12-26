@@ -255,8 +255,8 @@ export default class Path extends Item {
     }
 
     let fill = this.data.fill;
-    if (fill && fill !== 'none') {
-      context.fillStyle = fill;
+    if (fill && !fill.isNone) {
+      context.fillStyle = fill.toString();
       context.mozFillRule = 'evenodd';
       context.fill('evenodd');
     }
