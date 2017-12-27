@@ -264,8 +264,10 @@ export default class PointsSegment {
   }
 
   fixLinks() {
-    this.first.prec = this.last;
-    this.last.succ = this.first;
+    if (this.first && this.last) {
+      this.first.prec = this.last;
+      this.last.succ = this.first;
+    }
   }
 
   lineSegments() {
