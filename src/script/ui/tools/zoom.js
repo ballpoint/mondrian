@@ -50,7 +50,7 @@ export default class Zoom extends Tool {
 
     let zs = Math.min(xs, ys);
 
-    this.editor.setZoom(this.editor.doc.state.zoomLevel * zs);
+    this.editor.setZoom(this.editor.state.zoomLevel * zs);
 
     this.editor.setPosition(center);
 

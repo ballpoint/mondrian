@@ -11,9 +11,9 @@ export default class DocumentPointsUIElement extends UIElement {
     if (!this.editor.doc) return;
 
     let tool = this.editor.state.tool;
-    let selection = this.editor.doc.state.selection;
+    let selection = this.editor.state.selection;
 
-    if (this.editor.doc.state.selection.type === ELEMENTS) {
+    if (this.editor.state.selection.type === ELEMENTS) {
       if (this.editor.state.textEditHandler === undefined) {
         for (let elem of selection.items) {
           this.drawOutlines(elem, layer);
@@ -21,7 +21,7 @@ export default class DocumentPointsUIElement extends UIElement {
       }
     }
 
-    let hovering = this.editor.doc.state.hovering;
+    let hovering = this.editor.state.hovering;
 
     for (let elem of hovering.items) {
       if (elem.metadata.visible && !this.editor.isSelected(elem)) {

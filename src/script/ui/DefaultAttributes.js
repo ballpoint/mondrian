@@ -1,15 +1,17 @@
 import Color from 'ui/color';
-import DefaultColor from 'ui/DefaultColor';
 
 import Path from 'geometry/path';
 import Text from 'geometry/text';
 
 export default class DefaultAttributes {
-  constructor() {
+  constructor(attrs = {}) {
     // set defaults
     let defaults = DefaultAttributes.defaults;
     for (let key in defaults) {
-      this[key] = defaults[key];
+      if (attrs[key] === undefined) attrs[key] = defaults[key];
+    }
+    for (let key in attrs) {
+      this[key] = attrs[key];
     }
   }
 

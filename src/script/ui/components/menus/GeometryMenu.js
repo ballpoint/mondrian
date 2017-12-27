@@ -10,8 +10,8 @@ class GeometryMenu extends React.Component {
   };
 
   render() {
-    let selectionExists = !this.props.editor.doc.state.selection.empty;
-    let selectionMultiple = this.props.editor.doc.state.selection.length > 1;
+    let selectionExists = !this.props.editor.state.selection.empty;
+    let selectionMultiple = this.props.editor.state.selection.length > 1;
     let editor = this.props.editor;
 
     return (

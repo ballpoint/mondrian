@@ -10,7 +10,7 @@ import Eyedropper from 'ui/tools/eyedropper';
 
 export { Cursor, SubCursor, Zoom, Pen, Rect, Ellipse, Paw, Type, Eyedropper };
 
-export let mapping = {
+export let toolsMapping = {
   cursor: Cursor,
   subcursor: SubCursor,
   zoom: Zoom,

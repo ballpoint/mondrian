@@ -22,7 +22,7 @@ class Toolbar extends React.Component {
       ['change:selection', 'change:tool', 'change:doc'],
       () => {
         this.setState({
-          selection: this.props.editor.doc.state.selection,
+          selection: this.props.editor.state.selection,
           tool: this.props.editor.state.tool
         });
       }

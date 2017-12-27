@@ -5,7 +5,7 @@ import 'menus/menus.scss';
 
 class EditMenu extends React.Component {
   render() {
-    let selectionExists = this.props.editor.doc.state.selection.length > 0;
+    let selectionExists = this.props.editor.state.selection.length > 0;
     let editor = this.props.editor;
     let history = this.props.editor.doc.history;
     return (

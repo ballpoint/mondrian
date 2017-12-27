@@ -34,13 +34,13 @@ class Utils extends React.Component {
               ? editor.doc.history.head.id
               : editor.doc.history.head.id - 1,
 
-            selection: editor.doc.state.selection,
+            selection: editor.state.selection,
             hasSelectedElements:
-              editor.doc.state.selection.length > 0 &&
-              editor.doc.state.selection.type === ELEMENTS,
+              editor.state.selection.length > 0 &&
+              editor.state.selection.type === ELEMENTS,
             hasSelectedPoints:
-              editor.doc.state.selection.length > 0 &&
-              editor.doc.state.selection.type === POINTS
+              editor.state.selection.length > 0 &&
+              editor.state.selection.type === POINTS
           });
           nextFrame = null;
         });

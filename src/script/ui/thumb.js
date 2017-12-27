@@ -21,7 +21,7 @@ export default class Thumb {
         boundsList.push(elem.bounds);
       }
     }
-    let bounds = Bounds.fromBounds(boundsList);
+    let bounds = Bounds.fromBounds(boundsList).padded(5);
     let maxWidth = this.opts.maxWidth || 100;
     let maxHeight = this.opts.maxHeight || 100;
     this.projection = Projection.forBoundsFit(bounds, maxWidth, maxHeight);
