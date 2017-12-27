@@ -367,12 +367,14 @@ export default class Editor extends EventEmitter {
     let loaded = false;
 
     try {
-      let store = localForage.createInstance({ name: 'editor' });
-      let bytes = await store.getItem('state');
+      let store = localForage.createInstance({ name: 'editor:state' });
+      let bytes = await store.getItem(doc.metadata.uri);
 
-      // We parse the protobuf message directly in here because we require both the doc and the editor
-      this.state = editorProto.parseState(bytes, this, doc);
-      loaded = true;
+      if (bytes) {
+        // We parse the protobuf message directly in here because we require both the doc and the editor
+        this.state = editorProto.parseState(bytes, this, doc);
+        loaded = true;
+      }
     } catch (e) {
       console.error(e);
       // fall thru
@@ -381,6 +383,7 @@ export default class Editor extends EventEmitter {
     if (!loaded) {
       // If we fail to load, fall back to a default state
       this.state = EditorState.forDoc(this, this.doc);
+      this.fitToScreen();
     }
 
     // Has to be done for initialization reasons
@@ -395,8 +398,8 @@ export default class Editor extends EventEmitter {
     console.time('cacheState');
     try {
       let bytes = editorProto.serializeState(this.state, this, this.doc);
-      let store = localForage.createInstance({ name: 'editor' });
-      store.setItem('state', bytes);
+      let store = localForage.createInstance({ name: 'editor:state' });
+      store.setItem(this.doc.metadata.uri, bytes);
     } catch (e) {
       console.error(e);
     }
@@ -1192,8 +1195,6 @@ export default class Editor extends EventEmitter {
       [actions.SetDocNameAction.forDoc(this.doc, name)],
       'Rename document'
     );
-
-    console.log(name);
 
     this.stageFrame(frame);
     this.commitFrame();

@@ -1,17 +1,15 @@
 import consts from 'consts';
 import Color from 'ui/color';
-import Bounds from 'geometry/bounds';
-import Metadata from 'geometry/metadata';
-import Range from 'geometry/range';
 import Posn from 'geometry/posn';
-import Thumb from 'ui/thumb';
-import UUIDV4 from 'uuid/v4';
+import Bounds from 'geometry/bounds';
+import Range from 'geometry/range';
+
+import Metadata from 'geometry/metadata';
 
 export default class Item {
   constructor(data = {}, metadata = {}) {
     this.data = data;
 
-    //this.points = [];
     this.boundsCached = null;
 
     if (data.id) {
@@ -24,7 +22,7 @@ export default class Item {
 
     this.setDefaultAttrs();
 
-    // Internal ID only to be used for caching session-specific state
+    // Internal nonce only to be used for caching session-specific state
     // like thumbnails. Never persisted.
     this.__nonce__ = 1;
   }

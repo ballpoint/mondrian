@@ -654,7 +654,6 @@ const proto = {
   },
 
   parseItemStyle(style) {
-    console.log(style);
     return {
       fill: this.parse(style.fill),
       stroke: this.parse(style.stroke),
