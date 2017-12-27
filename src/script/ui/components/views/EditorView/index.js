@@ -36,9 +36,13 @@ class EditorView extends React.Component {
       editor
     };
 
+    let saveDebounced = _.debounce(() => {
+      editor.doc.save();
+    }, 500);
+
     editor.on('history:step', () => {
       try {
-        editor.doc.save();
+        saveDebounced();
       } catch (e) {
         console.error('Error saving document', e);
       }
