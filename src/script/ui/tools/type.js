@@ -11,7 +11,7 @@ export default class Type extends Tool {
   constructor(editor) {
     super(editor);
 
-    this.nextIndex = this.editor.doc.state.layer.nextChildIndex();
+    this.nextIndex = this.editor.state.layer.nextChildIndex();
   }
 
   get id() {

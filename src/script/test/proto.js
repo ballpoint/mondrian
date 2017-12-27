@@ -4,7 +4,6 @@ import Index from 'geometry/index';
 import Text from 'geometry/text';
 
 import Doc from 'io/doc';
-import DocState from 'ui/DocState';
 
 import svg from 'io/formats/svg';
 

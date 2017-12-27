@@ -174,8 +174,8 @@ class ColorUtil extends React.Component {
     let frame;
 
     if (
-      editor.doc.state.selection.type === ELEMENTS &&
-      editor.doc.state.selection.length > 0
+      editor.state.selection.type === ELEMENTS &&
+      editor.state.selection.length > 0
     ) {
       frame = this.props.editor.setColor(which, color);
     } else {
@@ -234,10 +234,10 @@ class ColorUtil extends React.Component {
   getColors = which => {
     let editor = this.props.editor;
     if (
-      editor.doc.state.selection.type === ELEMENTS &&
-      editor.doc.state.selection.length > 0
+      editor.state.selection.type === ELEMENTS &&
+      editor.state.selection.length > 0
     ) {
-      return this.props.editor.doc.state.selection.getAttrValues(Item, which);
+      return this.props.editor.state.selection.getAttrValues(Item, which);
     } else {
       return [editor.state.attributes.get(which)];
     }

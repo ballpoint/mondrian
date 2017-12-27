@@ -47,9 +47,15 @@ const config = [
 ];
 
 class Tools extends React.Component {
-  state = {
-    selected: this.props.editor.state.tool
-  };
+  constructor() {
+    super();
+
+    this.state = {};
+
+    if (this.props && this.props.editor.state) {
+      this.state.selected = this.props.editor.state.tool;
+    }
+  }
 
   componentDidMount() {
     this.props.editor.on('change:tool', () => {

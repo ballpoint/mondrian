@@ -14,11 +14,9 @@ import Index from 'geometry/index';
 import DocMetadata from 'io/backend/metadata';
 import Doc from 'io/doc';
 import Layer from 'io/layer';
-import DocState from 'ui/DocState';
 import DocHistory from 'history/history';
 import Selection from 'ui/selection';
 
-import EditorState from 'ui/EditorState';
 import * as tools from 'ui/tools/tools';
 
 import HistoryFrame from 'history/Frame';
@@ -323,29 +321,6 @@ const proto = {
         };
         return schema.history.ShiftIndexAction.fromObject(d);
 
-      case DocState:
-        d = {
-          position: this.serialize(value.position),
-          layer: this.serialize(value.layer.index), // Serialize layer as its index
-          zoomLevel: value.zoomLevel,
-          selection: [], // TODO
-          scope: this.serialize(new Index([0])),
-          tool: schema.document.nested.Tool.values[value.tool.id],
-          defaultAttributes: []
-        };
-
-        for (let key in value.attributes) {
-          let val = value.attributes[key];
-          d.defaultAttributes.push({
-            key,
-            value: this.attributeValueAsObject(val)
-          });
-        }
-
-        console.log(d);
-
-        return schema.document.DocumentState.fromObject(d);
-
       default:
         console.error('proto serialize failed on:', value);
         throw new Error('Unable to serialize');
@@ -469,21 +444,6 @@ const proto = {
           history: this.parse(value.history),
           layers: this.parse(value.layers)
         });
-
-        if (value.state) {
-          doc.state = new DocState(doc, {
-            position: this.parse(value.state.position),
-            layer: doc.layers[0],
-            zoomLevel: value.state.zoomLevel,
-
-            selection: new Selection(doc, []),
-            hovering: new Selection(doc, []),
-
-            scope: new Index([0])
-          });
-        }
-
-        console.log(doc.state.position);
 
         return doc;
 
@@ -625,12 +585,6 @@ const proto = {
         };
 
         return new actions.ShiftIndexAction(d);
-
-      case schema.document.DocState:
-        d = {
-          position: this.parse(position)
-        };
-        console.log(value);
 
       default:
         console.error('proto parse failed on:', value);

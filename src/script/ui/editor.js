@@ -4,8 +4,7 @@ import consts from 'consts';
 import Color from 'ui/color';
 
 import localForage from 'localforage';
-import proto from 'proto/proto';
-import schema from 'proto/schema';
+import editorProto from 'proto/editor';
 
 import EditorState from 'ui/EditorState';
 import DefaultAttributes from 'ui/DefaultAttributes';
@@ -38,7 +37,7 @@ import CursorHandler from 'ui/cursor-handler';
 import { TextEditHandler } from 'lib/text';
 
 import * as tools from 'ui/tools/tools';
-import { mapping } from 'ui/tools/tools';
+
 import RulersUIElement from 'ui/editor/rulers';
 import TransformerUIElement from 'ui/editor/transformer';
 import DocumentPointsUIElement from 'ui/editor/doc_pts';
@@ -56,6 +55,9 @@ export default class Editor extends EventEmitter {
     this.docs = {};
 
     this.initState();
+
+    // Set up debounced copies
+    this.cacheStateDebounced = _.debounce(this.cacheState.bind(this), 500);
   }
 
   mount(root) {
@@ -70,7 +72,7 @@ export default class Editor extends EventEmitter {
     }
   }
 
-  open(doc) {
+  async open(doc) {
     let id = doc.__id__;
     let isNew = false;
 
@@ -81,6 +83,8 @@ export default class Editor extends EventEmitter {
     }
 
     this.doc = doc;
+
+    await this.loadState(doc);
 
     if (this.root) {
       this.initDoc();
@@ -196,7 +200,7 @@ export default class Editor extends EventEmitter {
       if (shouldZoom) {
         let zd = 1 - delta / 1000;
         let anchor = this.cursor.lastPosn;
-        this.setZoom(this.doc.state.zoomLevel * zd, anchor);
+        this.setZoom(this.state.zoomLevel * zd, anchor);
       } else {
         this.nudge(0, this.projection.zInvert(delta));
       }
@@ -332,12 +336,6 @@ export default class Editor extends EventEmitter {
       this.redo();
     });
 
-    /*
-    hotkeys.on('down', 'ctrl-V', () => { 
-      this.paste();
-    });
-    */
-
     document.addEventListener('copy', e => {
       this.copy(e);
     });
@@ -360,24 +358,49 @@ export default class Editor extends EventEmitter {
     if (this.canvas) this.canvas.refresh(...ids);
   }
 
-  async initState() {
-    this.state = EditorState.defaultState(this);
+  initState() {
+    this.state = EditorState.empty();
+  }
 
-    let store = localForage.createInstance({ name: 'editor' });
-    let cachedState = await store.getItem('editorState');
+  async loadState(doc) {
+    console.time('loadState');
+    let loaded = false;
 
-    this.selectTool(new tools.Cursor(this));
+    try {
+      let store = localForage.createInstance({ name: 'editor' });
+      let bytes = await store.getItem('state');
+
+      // We parse the protobuf message directly in here because we require both the doc and the editor
+      this.state = editorProto.parseState(bytes, this, doc);
+      loaded = true;
+    } catch (e) {
+      console.error(e);
+      // fall thru
+    }
+
+    if (!loaded) {
+      // If we fail to load, fall back to a default state
+      this.state = EditorState.forDoc(this, this.doc);
+    }
 
     // Has to be done for initialization reasons
+    this.selectTool(this.state.tool);
+
+    console.timeEnd('loadState');
+    this.calculateScales();
+    this.refreshAll();
   }
 
   cacheState() {
-    return;
-    let msg = proto.serialize(this.state);
-    console.log(msg);
-    let bytes = msg.$type.encode(msg).finish();
-    let store = localForage.createInstance({ name: 'editor' });
-    store.setItem('editorState', bytes);
+    console.time('cacheState');
+    try {
+      let bytes = editorProto.serializeState(this.state, this, this.doc);
+      let store = localForage.createInstance({ name: 'editor' });
+      store.setItem('state', bytes);
+    } catch (e) {
+      console.error(e);
+    }
+    console.timeEnd('cacheState');
   }
 
   setDefaultColor(which, color) {
@@ -393,8 +416,8 @@ export default class Editor extends EventEmitter {
     let frame;
 
     if (
-      this.doc.state.selection.length > 0 &&
-      this.doc.state.selection.type === ELEMENTS
+      this.state.selection.length > 0 &&
+      this.state.selection.type === ELEMENTS
     ) {
       // Undo current frame if we can to get original colors back
       this.doc.resetStage();
@@ -402,7 +425,7 @@ export default class Editor extends EventEmitter {
       frame = new HistoryFrame(
         [
           actions.SetAttributeAction.forItems(
-            this.doc.state.selection.items,
+            this.state.selection.items,
             which,
             color
           )
@@ -419,29 +442,30 @@ export default class Editor extends EventEmitter {
   }
 
   setPosition(posn) {
-    this.doc.state.position = posn;
+    this.state.position = posn;
     if (this.canvas && this.doc) {
       this.calculateScales();
     }
     this.refreshAll();
+    this.cacheStateDebounced();
   }
 
   nudge(x, y) {
-    this.setPosition(this.doc.state.position.nudge(x, y));
+    this.setPosition(this.state.position.nudge(x, y));
   }
 
   zoomIn(anchor = null) {
-    this.setZoom(this.doc.state.zoomLevel * 1.2, anchor);
+    this.setZoom(this.state.zoomLevel * 1.2, anchor);
   }
 
   zoomOut(anchor = null) {
-    this.setZoom(this.doc.state.zoomLevel * 0.8, anchor);
+    this.setZoom(this.state.zoomLevel * 0.8, anchor);
   }
 
   setZoom(zl, anchor = null) {
     zl = Math.min(100, Math.max(0.01, zl));
 
-    this.doc.state.zoomLevel = zl;
+    this.state.zoomLevel = zl;
 
     let anchorBefore;
     if (anchor) {
@@ -461,6 +485,7 @@ export default class Editor extends EventEmitter {
     }
 
     this.refreshAll();
+    this.cacheStateDebounced();
   }
 
   actualSize() {
@@ -492,13 +517,13 @@ export default class Editor extends EventEmitter {
   setSelection(sel) {
     if (sel.type === undefined) debugger;
 
-    let oldSelection = this.doc.state.selection;
+    let oldSelection = this.state.selection;
 
-    this.doc.state.selection = sel;
+    this.state.selection = sel;
 
     window.$s = sel; // DEBUG
 
-    if (!oldSelection.equal(this.doc.state.selection)) {
+    if (!oldSelection.equal(this.state.selection)) {
       this.trigger('change');
       this.trigger('change:selection');
     }
@@ -511,7 +536,7 @@ export default class Editor extends EventEmitter {
   }
 
   narrowSelectionByAttr(key, value) {
-    let sel = this.doc.state.selection.withAttrValue(key, value);
+    let sel = this.state.selection.withAttrValue(key, value);
     this.setSelection(sel);
   }
 
@@ -525,7 +550,7 @@ export default class Editor extends EventEmitter {
   }
 
   toggleInSelection(items) {
-    let sel = this.doc.state.selection.clone();
+    let sel = this.state.selection.clone();
     for (let item of items) {
       if (!sel.contains(item)) {
         sel.push(item);
@@ -537,10 +562,10 @@ export default class Editor extends EventEmitter {
   }
 
   setHovering(items) {
-    let oldHovering = this.doc.state.hovering;
-    this.doc.state.hovering = new Selection(this.doc, items);
+    let oldHovering = this.state.hovering;
+    this.state.hovering = new Selection(this.doc, items);
 
-    if (!oldHovering.equal(this.doc.state.hovering)) {
+    if (!oldHovering.equal(this.state.hovering)) {
       this.trigger('change');
       this.trigger('change:hovering');
 
@@ -549,30 +574,27 @@ export default class Editor extends EventEmitter {
   }
 
   getAttribute(type, key) {
-    if (
-      this.doc.state.selection.empty ||
-      this.doc.state.selection.type === POINTS
-    ) {
+    if (this.state.selection.empty || this.state.selection.type === POINTS) {
       return this.state.attributes[key];
     } else {
-      return this.doc.state.selection.getAttr(type, key);
+      return this.state.selection.getAttr(type, key);
     }
   }
 
   isSelected(item) {
     if (item instanceof Layer) {
-      return this.doc.state.layer === item;
-    } else if (this.doc.state.selection.type === PHANDLE) {
-      return this.doc.state.selection.items[0].pHandle === item;
-    } else if (this.doc.state.selection.type === SHANDLE) {
-      return this.doc.state.selection.items[0].sHandle === item;
+      return this.state.layer === item;
+    } else if (this.state.selection.type === PHANDLE) {
+      return this.state.selection.items[0].pHandle === item;
+    } else if (this.state.selection.type === SHANDLE) {
+      return this.state.selection.items[0].sHandle === item;
     } else {
-      return this.doc.state.selection.contains(item);
+      return this.state.selection.contains(item);
     }
   }
 
   setCurrentLayer(layer) {
-    this.doc.state.layer = layer;
+    this.state.layer = layer;
 
     this.refreshAll();
 
@@ -588,7 +610,7 @@ export default class Editor extends EventEmitter {
       // No layer!
       let layer = this.createLayer();
       this.setCurrentLayer(layer);
-    } else if (this.doc.layers.indexOf(this.doc.state.layer) === -1) {
+    } else if (this.doc.layers.indexOf(this.state.layer) === -1) {
       // Layer was removed;
       this.setCurrentLayer(this.layers[0]);
     }
@@ -620,16 +642,16 @@ export default class Editor extends EventEmitter {
 
     this.refreshAll();
     if (this.doc) {
-      this.doc.state.selection.clearCache();
+      this.state.selection.clearCache();
     }
     this.trigger('change');
     this.trigger('change:tool');
 
-    this.cacheState();
+    this.cacheStateDebounced();
   }
 
   deleteSelection() {
-    if (this.doc.state.selection.empty) {
+    if (this.state.selection.empty) {
       return;
     }
 
@@ -638,13 +660,13 @@ export default class Editor extends EventEmitter {
     // to remove empty parents.
     let shouldCleanUp = true;
 
-    switch (this.doc.state.selection.type) {
+    switch (this.state.selection.type) {
       case ELEMENTS:
         // Simple when removing elements; remove them whole
         frame = new HistoryFrame(
           [
             new actions.RemoveAction({
-              items: this.doc.state.selection.map(item => {
+              items: this.state.selection.map(item => {
                 return { item, index: item.index };
               })
             })
@@ -656,7 +678,7 @@ export default class Editor extends EventEmitter {
       case POINTS:
         // If we're removing points that's harder. We have to open and split
         // PointsSegments to handle this properly.
-        let selection = this.doc.state.selection.items;
+        let selection = this.state.selection.items;
 
         let as = [];
 
@@ -692,15 +714,12 @@ export default class Editor extends EventEmitter {
         break;
       case PHANDLE:
       case SHANDLE:
-        let item = this.doc.state.selection.items[0];
+        let item = this.state.selection.items[0];
 
         // Delete control point
         frame = new HistoryFrame(
           [
-            actions.RemoveHandleAction.forPoint(
-              item,
-              this.doc.state.selection.type
-            )
+            actions.RemoveHandleAction.forPoint(item, this.state.selection.type)
           ],
           'Remove control handle'
         );
@@ -758,7 +777,7 @@ export default class Editor extends EventEmitter {
   }
 
   ungroupSelection() {
-    let groupsSelected = this.doc.state.selection.filter(item => {
+    let groupsSelected = this.state.selection.filter(item => {
       return item instanceof Group;
     });
 
@@ -787,12 +806,12 @@ export default class Editor extends EventEmitter {
   }
 
   groupSelection() {
-    if (this.doc.state.selection.empty) {
+    if (this.state.selection.empty) {
       return;
     }
 
     let frame = new HistoryFrame([
-      actions.GroupAction.forChildren(this.doc, this.doc.state.selection)
+      actions.GroupAction.forChildren(this.doc, this.state.selection)
     ]);
 
     this.stageFrame(frame);
@@ -805,7 +824,7 @@ export default class Editor extends EventEmitter {
 
   insertElements(elems) {
     let items = [];
-    let parent = this.doc.getFromIndex(this.doc.state.scope);
+    let parent = this.doc.getFromIndex(this.state.scope);
     let nextIndex = parent.nextChildIndex();
 
     for (let item of elems) {
@@ -824,14 +843,11 @@ export default class Editor extends EventEmitter {
   }
 
   changeAttribute(type, key, value, title) {
-    if (
-      !this.doc.state.selection.empty &&
-      this.doc.state.selection.type === ELEMENTS
-    ) {
+    if (!this.state.selection.empty && this.state.selection.type === ELEMENTS) {
       let frame = new HistoryFrame(
         [
           actions.SetAttributeAction.forItems(
-            this.doc.state.selection.ofType(type),
+            this.state.selection.ofType(type),
             key,
             value
           )
@@ -864,15 +880,13 @@ export default class Editor extends EventEmitter {
   calculateScales() {
     // Calculate scales
     let offsetLeft =
-      (this.canvas.width - this.doc.width * this.doc.state.zoomLevel) / 2;
+      (this.canvas.width - this.doc.width * this.state.zoomLevel) / 2;
     offsetLeft +=
-      (this.doc.width / 2 - this.doc.state.position.x) *
-      this.doc.state.zoomLevel;
+      (this.doc.width / 2 - this.state.position.x) * this.state.zoomLevel;
     let offsetTop =
-      (this.canvas.height - this.doc.height * this.doc.state.zoomLevel) / 2;
+      (this.canvas.height - this.doc.height * this.state.zoomLevel) / 2;
     offsetTop +=
-      (this.doc.height / 2 - this.doc.state.position.y) *
-      this.doc.state.zoomLevel;
+      (this.doc.height / 2 - this.state.position.y) * this.state.zoomLevel;
 
     // Account for windows on right side
     offsetLeft -= UTILS_WIDTH / 2;
@@ -882,19 +896,13 @@ export default class Editor extends EventEmitter {
 
     let x = scaleLinear()
       .domain([0, this.doc.width])
-      .range([
-        offsetLeft,
-        offsetLeft + this.doc.width * this.doc.state.zoomLevel
-      ]);
+      .range([offsetLeft, offsetLeft + this.doc.width * this.state.zoomLevel]);
 
     let y = scaleLinear()
       .domain([0, this.doc.height])
-      .range([
-        offsetTop,
-        offsetTop + this.doc.height * this.doc.state.zoomLevel
-      ]);
+      .range([offsetTop, offsetTop + this.doc.height * this.state.zoomLevel]);
 
-    this.projection = new Projection(x, y, this.doc.state.zoomLevel);
+    this.projection = new Projection(x, y, this.state.zoomLevel);
 
     this.cursorHandler.projection = this.projection;
   }
@@ -931,11 +939,11 @@ export default class Editor extends EventEmitter {
   }
 
   nudgeSelected(xd, yd) {
-    if (this.doc.state.selection.empty) return;
+    if (this.state.selection.empty) return;
 
     let frame = new HistoryFrame([
       new actions.NudgeAction({
-        indexes: this.doc.state.selection.indexes,
+        indexes: this.state.selection.indexes,
         xd,
         yd
       })
@@ -945,7 +953,7 @@ export default class Editor extends EventEmitter {
   }
 
   nudgeHandle(index, handle, xd, yd) {
-    if (this.doc.state.selection.empty) {
+    if (this.state.selection.empty) {
       return;
     }
 
@@ -962,13 +970,13 @@ export default class Editor extends EventEmitter {
   }
 
   scaleSelected(x, y, origin) {
-    if (this.doc.state.selection.empty) {
+    if (this.state.selection.empty) {
       return;
     }
 
     let frame = new HistoryFrame([
       new actions.ScaleAction({
-        indexes: this.doc.state.selection.indexes,
+        indexes: this.state.selection.indexes,
         x,
         y,
         origin
@@ -997,10 +1005,10 @@ export default class Editor extends EventEmitter {
     let frame = new HistoryFrame(
       [
         new actions.ScaleAction({
-          indexes: this.doc.state.selection.indexes,
+          indexes: this.state.selection.indexes,
           x,
           y,
-          origin: this.doc.state.selection.center
+          origin: this.state.selection.center
         })
       ],
       title
@@ -1011,13 +1019,13 @@ export default class Editor extends EventEmitter {
   }
 
   rotateSelected(angle, origin) {
-    if (this.doc.state.selection.empty) {
+    if (this.state.selection.empty) {
       return;
     }
 
     let frame = new HistoryFrame([
       new actions.RotateAction({
-        indexes: this.doc.state.selection.indexes,
+        indexes: this.state.selection.indexes,
         angle,
         origin
       })
@@ -1027,11 +1035,11 @@ export default class Editor extends EventEmitter {
   }
 
   shiftSelected(delta) {
-    if (this.doc.state.selection.empty) {
+    if (this.state.selection.empty) {
       return;
     }
 
-    let indexes = this.doc.state.selection.indexes;
+    let indexes = this.state.selection.indexes;
     let indexesIdx = {};
     for (let index of indexes) {
       indexesIdx[index.toString()] = true;
@@ -1057,14 +1065,14 @@ export default class Editor extends EventEmitter {
   }
 
   booleanSelected(op) {
-    let result = bool[op](this.doc.state.selection.itemsSorted.reverse());
+    let result = bool[op](this.state.selection.itemsSorted.reverse());
 
-    let index = this.doc.state.selection.indexes[0];
+    let index = this.state.selection.indexes[0];
 
     let frame = new HistoryFrame(
       [
         new actions.RemoveAction({
-          items: this.doc.state.selection.map(item => {
+          items: this.state.selection.map(item => {
             return { item, index: item.index };
           })
         }),
@@ -1197,7 +1205,7 @@ export default class Editor extends EventEmitter {
   stageFrame(frame) {
     this.doc.stageFrame(frame);
 
-    this.doc.state.selection.clearCache();
+    this.state.selection.clearCache();
     this.refreshAll();
     this.trigger('change');
   }
@@ -1216,14 +1224,14 @@ export default class Editor extends EventEmitter {
   // TODO remove
   perform(h) {
     this.doc.perform(h);
-    this.doc.state.selection.clearCache();
+    this.state.selection.clearCache();
     this.refreshAll();
     this.trigger('change');
   }
 
   undo() {
     this.doc.undo();
-    this.doc.state.selection.clearCache();
+    this.state.selection.clearCache();
     this.refreshAll();
     this.trigger('change');
     this.trigger('history:step');
@@ -1231,7 +1239,7 @@ export default class Editor extends EventEmitter {
 
   redo() {
     this.doc.redo();
-    this.doc.state.selection.clearCache();
+    this.state.selection.clearCache();
     this.refreshAll();
     this.trigger('change');
     this.trigger('history:step');
@@ -1239,14 +1247,14 @@ export default class Editor extends EventEmitter {
 
   jumpToHistoryDepth(depth) {
     this.doc.jumpToHistoryDepth(depth);
-    this.doc.state.selection.clearCache();
+    this.state.selection.clearCache();
     this.refreshAll();
     this.trigger('change');
     this.trigger('history:step');
   }
 
   cut(e) {
-    this.state.clipboard = this.doc.state.selection.items.map(e => {
+    this.state.clipboard = this.state.selection.items.map(e => {
       return e.clone();
     });
     this.deleteSelection();
@@ -1254,7 +1262,7 @@ export default class Editor extends EventEmitter {
   }
 
   async copy(e) {
-    clipboard.write(this.doc.state.selection.items);
+    clipboard.write(this.state.selection.items);
     this.trigger('change');
   }
 
