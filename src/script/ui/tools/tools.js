@@ -9,3 +9,15 @@ import Type from 'ui/tools/type';
 import Eyedropper from 'ui/tools/eyedropper';
 
 export { Cursor, SubCursor, Zoom, Pen, Rect, Ellipse, Paw, Type, Eyedropper };
+
+export let mapping = {
+  cursor: Cursor,
+  subcursor: SubCursor,
+  zoom: Zoom,
+  pen: Pen,
+  rect: Rect,
+  ellipse: Ellipse,
+  paw: Paw,
+  type: Type,
+  eyedropper: Eyedropper
+};

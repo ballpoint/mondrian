@@ -2,7 +2,10 @@ import Posn from 'geometry/posn';
 import PathPoint from 'geometry/path-point';
 import Index from 'geometry/index';
 import Text from 'geometry/text';
+
 import Doc from 'io/doc';
+import DocState from 'ui/DocState';
+
 import svg from 'io/formats/svg';
 
 import proto from 'proto/proto';

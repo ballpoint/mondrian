@@ -13,14 +13,22 @@ import Index from 'geometry/index';
 
 import DocMetadata from 'io/backend/metadata';
 import Doc from 'io/doc';
-import DocHistory from 'history/history';
-import HistoryFrame from 'history/Frame';
 import Layer from 'io/layer';
+import DocState from 'ui/DocState';
+import DocHistory from 'history/history';
+import Selection from 'ui/selection';
 
-import schema from 'proto/schema';
+import EditorState from 'ui/EditorState';
+import * as tools from 'ui/tools/tools';
+
+import HistoryFrame from 'history/Frame';
 import * as actions from 'history/actions/actions';
 
+import schema from 'proto/schema';
+
 window.schema = schema;
+
+// Handles serializing and parsing objects (mostly documents) using protobuf format
 
 const proto = {
   serialize(value) {
@@ -138,7 +146,7 @@ const proto = {
         });
 
       case DocHistory:
-        return schema.history.DocHistory.fromObject({
+        return schema.history.DocumentHistory.fromObject({
           frames: this.serialize(value.frames),
           currentIndex: value.currentIndex
         });
@@ -175,7 +183,8 @@ const proto = {
           history: this.serialize(value.history),
           width: value.width,
           height: value.height,
-          layers: this.serialize(value.layers)
+          layers: this.serialize(value.layers),
+          state: this.serialize(value.state)
         });
 
       // Actions
@@ -296,8 +305,8 @@ const proto = {
           items: value.data.items.map(item => {
             return {
               index: this.serialize(item.index),
-              value: this.serializeAttrValue(item.value),
-              oldValue: this.serializeAttrValue(item.oldValue)
+              value: this.attributeValueAsObject(item.value),
+              oldValue: this.attributeValueAsObject(item.oldValue)
             };
           })
         };
@@ -312,8 +321,30 @@ const proto = {
             });
           })
         };
-
         return schema.history.ShiftIndexAction.fromObject(d);
+
+      case DocState:
+        d = {
+          position: this.serialize(value.position),
+          layer: this.serialize(value.layer.index), // Serialize layer as its index
+          zoomLevel: value.zoomLevel,
+          selection: [], // TODO
+          scope: this.serialize(new Index([0])),
+          tool: schema.document.nested.Tool.values[value.tool.id],
+          defaultAttributes: []
+        };
+
+        for (let key in value.attributes) {
+          let val = value.attributes[key];
+          d.defaultAttributes.push({
+            key,
+            value: this.attributeValueAsObject(val)
+          });
+        }
+
+        console.log(d);
+
+        return schema.document.DocumentState.fromObject(d);
 
       default:
         console.error('proto serialize failed on:', value);
@@ -351,7 +382,7 @@ const proto = {
     };
   },
 
-  serializeAttrValue(value) {
+  attributeValueAsObject(value) {
     // Type-free language, meet strictly-typed serialization format
     if (_.isNumber(value)) {
       if (value % 1 == 0) {
@@ -429,7 +460,7 @@ const proto = {
         });
 
       case schema.document.Document:
-        return new Doc({
+        let doc = new Doc({
           name: value.name,
 
           width: value.width,
@@ -439,7 +470,24 @@ const proto = {
           layers: this.parse(value.layers)
         });
 
-      case schema.history.DocHistory:
+        if (value.state) {
+          doc.state = new DocState(doc, {
+            position: this.parse(value.state.position),
+            layer: doc.layers[0],
+            zoomLevel: value.state.zoomLevel,
+
+            selection: new Selection(doc, []),
+            hovering: new Selection(doc, []),
+
+            scope: new Index([0])
+          });
+        }
+
+        console.log(doc.state.position);
+
+        return doc;
+
+      case schema.history.DocumentHistory:
         return new DocHistory(this.parse(value.frames), value.currentIndex);
 
       case schema.history.HistoryFrame:
@@ -559,8 +607,8 @@ const proto = {
           items: value.items.map(item => {
             return {
               index: this.parse(item.index),
-              value: this.parseAttrValue(item.value),
-              oldValue: this.parseAttrValue(item.oldValue)
+              value: this.attributeValueFromObject(item.value),
+              oldValue: this.attributeValueFromObject(item.oldValue)
             };
           })
         };
@@ -577,6 +625,12 @@ const proto = {
         };
 
         return new actions.ShiftIndexAction(d);
+
+      case schema.document.DocState:
+        d = {
+          position: this.parse(position)
+        };
+        console.log(value);
 
       default:
         console.error('proto parse failed on:', value);
@@ -660,15 +714,8 @@ const proto = {
     };
   },
 
-  parseAttrValue(value) {
-    switch (value.value) {
-      case 'stringValue':
-      case 'intValue':
-      case 'floatValue':
-        return value[value.value];
-      case 'colorValue':
-        return this.parse(value.colorValue);
-    }
+  attributeValueFromObject(value) {
+    return this.parse(value[value.value]);
   },
 
   isNative(value) {

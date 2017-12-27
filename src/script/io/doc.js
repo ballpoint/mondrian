@@ -11,6 +11,7 @@ import Path from 'geometry/path';
 import PathPoint from 'geometry/path-point';
 import PointsSegment from 'geometry/points-segment';
 import Item from 'geometry/item';
+import DocState from 'ui/DocState';
 
 import UUIDV4 from 'uuid/v4';
 import shortid from 'shortid';
@@ -40,6 +41,8 @@ export default class Doc {
     } else {
       this.history = new DocHistory();
     }
+
+    this.state = DocState.forDoc(this);
 
     // Session-based ID, not persisted
     this.__id__ = shortid.generate();

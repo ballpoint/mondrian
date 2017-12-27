@@ -21,29 +21,17 @@ export default class DefaultAttributes {
       'stroke-width': 1,
       'stroke-linecap': 'butt',
       'stroke-linejoin': 'miter',
-      fill: new DefaultColor(new Color('#7eb9c9')),
-      stroke: new DefaultColor(new Color('#000000'))
+      fill: new Color('#7eb9c9'),
+      stroke: new Color('#000000')
     };
   }
 
   get(key) {
-    switch (key) {
-      case 'fill':
-      case 'stroke':
-        return this[key].color;
-      default:
-        return this[key];
-    }
+    return this[key];
   }
 
   set(key, val) {
-    switch (key) {
-      case 'fill':
-      case 'stroke':
-        return (this[key].color = val);
-      default:
-        return (this[key] = val);
-    }
+    return (this[key] = val);
   }
 
   forType(type, toAdd = {}) {

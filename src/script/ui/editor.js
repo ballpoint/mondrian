@@ -3,8 +3,12 @@ import { scaleLinear } from 'd3-scale';
 import consts from 'consts';
 import Color from 'ui/color';
 
+import localForage from 'localforage';
+import proto from 'proto/proto';
+import schema from 'proto/schema';
+
+import EditorState from 'ui/EditorState';
 import DefaultAttributes from 'ui/DefaultAttributes';
-import DocState from 'ui/DocState';
 
 import EventEmitter from 'lib/events';
 import Canvas from 'ui/canvas';
@@ -34,6 +38,7 @@ import CursorHandler from 'ui/cursor-handler';
 import { TextEditHandler } from 'lib/text';
 
 import * as tools from 'ui/tools/tools';
+import { mapping } from 'ui/tools/tools';
 import RulersUIElement from 'ui/editor/rulers';
 import TransformerUIElement from 'ui/editor/transformer';
 import DocumentPointsUIElement from 'ui/editor/doc_pts';
@@ -75,15 +80,10 @@ export default class Editor extends EventEmitter {
       this.docs[id] = doc;
     }
 
-    if (!doc.state) doc.state = DocState.forDoc(doc);
-
     this.doc = doc;
 
     if (this.root) {
       this.initDoc();
-      if (isNew) {
-        this.fitToScreen();
-      }
     }
 
     this.trigger('change:doc');
@@ -360,41 +360,30 @@ export default class Editor extends EventEmitter {
     if (this.canvas) this.canvas.refresh(...ids);
   }
 
-  initState() {
-    let cached;
-    if (window.sessionStorage) cached = sessionStorage.getItem('editor:state');
-    if (cached) {
-      cached = JSON.parse(cached);
-      this.state = {
-        // to keep
-        tool: new tools.Cursor(this),
-        attributes: new DefaultAttributes()
-      };
-    } else {
-      this.state = {
-        // to keep
-        tool: new tools.Cursor(this),
-        attributes: new DefaultAttributes()
-      };
-    }
+  async initState() {
+    this.state = EditorState.defaultState(this);
+
+    let store = localForage.createInstance({ name: 'editor' });
+    let cachedState = await store.getItem('editorState');
 
     this.selectTool(new tools.Cursor(this));
+
+    // Has to be done for initialization reasons
   }
 
   cacheState() {
-    sessionStorage.setItem(
-      'editor:state',
-      JSON.stringify({
-        zoomLevel: this.doc.state.zoomLevel,
-        position: this.doc.state.position
-      })
-    );
+    return;
+    let msg = proto.serialize(this.state);
+    console.log(msg);
+    let bytes = msg.$type.encode(msg).finish();
+    let store = localForage.createInstance({ name: 'editor' });
+    store.setItem('editorState', bytes);
   }
 
   setDefaultColor(which, color) {
     let s = this.state.attributes[which];
     if (!s.equal(color)) {
-      s.color = color;
+      this.state.attributes[which] = color;
       this.trigger('change');
       this.trigger('change:colors');
     }
@@ -435,7 +424,6 @@ export default class Editor extends EventEmitter {
       this.calculateScales();
     }
     this.refreshAll();
-    this.cacheState();
   }
 
   nudge(x, y) {
@@ -473,7 +461,6 @@ export default class Editor extends EventEmitter {
     }
 
     this.refreshAll();
-    this.cacheState();
   }
 
   actualSize() {
@@ -637,6 +624,8 @@ export default class Editor extends EventEmitter {
     }
     this.trigger('change');
     this.trigger('change:tool');
+
+    this.cacheState();
   }
 
   deleteSelection() {
