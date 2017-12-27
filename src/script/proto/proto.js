@@ -343,8 +343,11 @@ const proto = {
     return {
       fill: this.serialize(value.data.fill),
       stroke: this.serialize(value.data.stroke),
-      strokeLineCap: schema.document.StrokeLineCap[value.data.strokeLineCap],
-      strokeLineJoin: schema.document.StrokeLineJoin[value.data.strokeLineJoin],
+      strokeLineCap:
+        schema.document.StrokeLineCap[value.data['stroke-linecap']],
+      strokeLineJoin:
+        schema.document.StrokeLineJoin[value.data['stroke-linejoin']],
+      strokeWidth: value.data['stroke-width'],
       opacity: 1.0
     };
   },
@@ -651,11 +654,15 @@ const proto = {
   },
 
   parseItemStyle(style) {
+    console.log(style);
     return {
       fill: this.parse(style.fill),
       stroke: this.parse(style.stroke),
-      strokeLineCap: 'butt',
-      strokeLineJoin: 'miter',
+      'stroke-linecap':
+        schema.document.nested.StrokeLineCap.valuesById[style.strokeLineCap],
+      'stroke-linejoin':
+        schema.document.nested.StrokeLineJoin.valuesById[style.strokeLineJoin],
+      'stroke-width': style.strokeWidth,
       opacity: style.opacity
     };
   },

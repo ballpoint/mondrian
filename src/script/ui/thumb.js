@@ -10,6 +10,20 @@ export default class Thumb {
   constructor(elems, opts = {}) {
     this.elems = elems;
     this.opts = opts;
+
+    // Find max stroke-width for padding
+    this.padding = 0;
+    /*
+    for (let elem of elems) {
+      if (elem.data) {
+        let sw = parseInt(elem.data['stroke-width'], 10);
+        sw /= 2;
+        if (!isNaN(sw) && this.padding < sw) {
+          this.padding = sw;
+        }
+      }
+    }
+    */
   }
 
   drawTo(layer) {
@@ -21,7 +35,7 @@ export default class Thumb {
         boundsList.push(elem.bounds);
       }
     }
-    let bounds = Bounds.fromBounds(boundsList).padded(5);
+    let bounds = Bounds.fromBounds(boundsList).padded(this.padding || 0);
     let maxWidth = this.opts.maxWidth || 100;
     let maxHeight = this.opts.maxHeight || 100;
     this.projection = Projection.forBoundsFit(bounds, maxWidth, maxHeight);

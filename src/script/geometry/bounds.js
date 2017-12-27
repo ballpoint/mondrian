@@ -213,14 +213,21 @@ export default class Bounds {
     return nb;
   }
 
-  padded(n) {
+  padded(nw, nh = nw) {
     return new Bounds(
-      this.l - n,
-      this.t - n,
-      this.width + n * 2,
-      this.height + n * 2,
+      this.l - nw,
+      this.t - nw,
+      this.width + nw * 2,
+      this.height + nw * 2,
       this.angle
     );
+  }
+
+  paddedPercent(p) {
+    let nw = this.width * p;
+    let nh = this.height * p;
+
+    return this.padded(nw, nh);
   }
 
   squareSmaller(anchor) {

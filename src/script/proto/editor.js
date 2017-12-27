@@ -18,7 +18,6 @@ const editorProto = {
     for (let attr of cachedState.defaultAttributes) {
       attrs[attr.key] = proto.attributeValueFromObject(attr.value);
     }
-    console.log('loaded', attrs.fill);
 
     return new EditorState(editor, doc, {
       position: proto.parse(cachedState.position),
@@ -53,8 +52,6 @@ const editorProto = {
         value: proto.attributeValueAsObject(val)
       });
     }
-
-    console.log(d.defaultAttributes);
 
     let msg = schema.editor.EditorState.fromObject(d);
     return msg.$type.encode(msg).finish();

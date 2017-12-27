@@ -321,6 +321,7 @@ export default {
 
   parseElement(elem) {
     let data = this.makeData(elem);
+    console.log(elem, data);
     let type = elem.nodeName.toLowerCase();
     let result;
 

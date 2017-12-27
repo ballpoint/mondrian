@@ -292,15 +292,8 @@ class ColorUtil extends React.Component {
     let editor = this.props.editor;
     let mode = e.target.value;
 
-    switch (mode) {
-      case 'none':
-        this.setColor(which, Color.none());
-        break;
-      case 'solid':
-        this.setColor(which, editor.state.attributes[which]._color);
-        break;
-    }
-
+    editor.state.attributes[which].isNone = which === 'none';
+    this.setColor(which, editor.state.attributes[which]);
     this.commitColor();
   };
 
