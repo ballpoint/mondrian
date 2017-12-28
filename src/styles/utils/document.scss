@@ -117,4 +117,9 @@
 .doc-util__ctrls {
   padding: 5px;
   border-top: 1px solid $blue-grey;
+
+  a {
+    display: block;
+    width: 20px;
+  }
 }

@@ -1,5 +1,6 @@
 <!-- Made in Mondrian.io -->
 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" xmlns:mondrian="https://mondrian.io/xml">
-<line x1="30%" x2="70%" y1="30%" y2="70%" />
-<line x1="70%" x2="30%" y1="30%" y2="70%" />
+<line x1="50%" x2="50%" y1="20%" y2="80%" />
+<line x1="80%" x2="20%" y1="50%" y2="50%" />
 </svg>
+

@@ -16,6 +16,7 @@ import invisible from 'icons/invisible.svg';
 import locked from 'icons/locked.svg';
 import unlocked from 'icons/unlocked.svg';
 import del from 'icons/delete.svg';
+import insert from 'icons/insert.svg';
 
 import alignLeft from 'icons/align_left.svg';
 import alignCenter from 'icons/align_center.svg';
@@ -56,6 +57,7 @@ const ICONS = {
   locked,
   unlocked,
   del,
+  insert,
 
   alignLeft,
   alignCenter,

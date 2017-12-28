@@ -316,7 +316,7 @@ class DocumentUtil extends React.Component {
             })}
         </div>
         <div className="doc-util__ctrls">
-          <a onClick={this.createLayer}> +</a>
+          <a onClick={this.createLayer}>{renderIcon('insert')}</a>
         </div>
       </Util>
     );
