@@ -39,7 +39,7 @@ export default class Text extends Item {
     super(data, metadata);
   }
 
-  static get type() {
+  get type() {
     return 'text';
   }
 

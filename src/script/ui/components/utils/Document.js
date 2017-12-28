@@ -176,7 +176,7 @@ class DocumentUtilChild extends React.Component {
         className={classnames({
           'doc-util__item': true,
           'doc-util__item--parent': child.children && child.children.length > 0,
-          ['doc-util__item--' + child.constructor.type]: true,
+          ['doc-util__item--' + child.type]: true,
           selected: isSelected
         })}>
         <div

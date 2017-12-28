@@ -9,7 +9,7 @@ export default class Group {
     this.metadata = new Metadata(metadata);
   }
 
-  get type() {
+  static get type() {
     return 'group';
   }
 
