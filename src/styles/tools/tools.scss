@@ -3,7 +3,7 @@
 
 #app-tools {
   width: $app-toolbar-width;
-  border-right: 1px solid $fg-grey;
+  border-right: 1px solid $blue-grey;
   font-size: 14px;
 
   .app-tool {
@@ -12,16 +12,15 @@
     padding: 6px 0;
     border-bottom: 1px solid $blue-grey;
     cursor: default;
-  }
 
-  $color-swatch-margin: 12px;
+    &.selected {
+      svg {
+        stroke: $blue;
+      }
+    }
 
-  #current-colors {
-    margin: $color-swatch-margin;
-
-    .color-indicator {
-      width: $app-toolbar-width - ($color-swatch-margin*2);
-      height: $app-toolbar-width - ($color-swatch-margin*2);
+    &:active {
+      background-color: $bg-grey;
     }
   }
 }

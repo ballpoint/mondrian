@@ -83,7 +83,6 @@ class Tools extends React.Component {
               key={t.icon}
               className={classnames({
                 'app-tool': true,
-                icon: true,
                 selected: isSelected
               })}
               onClick={() => {

@@ -30,7 +30,7 @@ body[data-view='editor'] {
     height: $app-header-height;
     flex-grow: 0;
     flex-shrink: 0;
-    border-bottom: 1px solid $fg-grey;
+    border-bottom: 1px solid $blue-grey;
     display: flex;
     z-index: 100;
 
@@ -39,9 +39,9 @@ body[data-view='editor'] {
       padding: 10px 10px;
       width: $app-toolbar-width;
       height: $app-header-height;
-      background-color: $blue-grey;
-      border-right: 1px solid darken($blue-grey, 20%);
-      border-bottom: 1px solid darken($blue-grey, 20%);
+      //background-color: $blue-grey;
+      border-right: 1px solid $blue-grey;
+      border-bottom: 1px solid $blue-grey;
 
       &:hover {
         background-color: $midblue;
