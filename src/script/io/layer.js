@@ -4,10 +4,18 @@ import Group from 'geometry/group';
 import UUIDV4 from 'uuid/v4';
 
 export default class Layer {
-  constructor(attrs, metadata = {}) {
+  constructor(attrs = {}, metadata = {}) {
     this.id = attrs.id;
     this.children = attrs.children;
     this.metadata = new Metadata(metadata);
+  }
+
+  clone() {
+    let layer = new Layer();
+    layer.id = this.id;
+    layer.children = this.children;
+    layer.metadata = this.metadata;
+    return layer;
   }
 
   get type() {

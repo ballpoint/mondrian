@@ -1038,11 +1038,14 @@ export default class Editor extends EventEmitter {
   }
 
   shiftSelected(delta) {
+    let indexes = [];
+
     if (this.state.selection.empty) {
-      return;
+      indexes = [this.state.layer.index];
+    } else {
+      indexes = this.state.selection.indexes;
     }
 
-    let indexes = this.state.selection.indexes;
     let indexesIdx = {};
     for (let index of indexes) {
       indexesIdx[index.toString()] = true;
