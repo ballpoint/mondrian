@@ -18,7 +18,7 @@ export default class Layer {
     return layer;
   }
 
-  get type() {
+  static get type() {
     return 'layer';
   }
 
