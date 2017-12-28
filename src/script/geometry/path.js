@@ -21,7 +21,7 @@ export default class Path extends Item {
     this.points.path = this;
   }
 
-  get type() {
+  static get type() {
     return 'path';
   }
 
