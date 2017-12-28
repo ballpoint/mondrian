@@ -3,23 +3,18 @@ package webserver
 import "html/template"
 
 var (
-	mochaTemplate *template.Template
+	mochaTemplate, boolTemplate *template.Template
 )
 
 func init() {
-	templ, err := Asset("templates/mocha.html")
-
-	if err != nil {
-		panic(err)
-	}
-
-	mochaTemplate, err = template.New("mocha.html").Parse(string(templ))
-
-	if err != nil {
-		panic(err)
-	}
+	mochaTemplate = loadTemplate("templates/mocha.html")
+	boolTemplate = loadTemplate("templates/bool.html")
 }
 
-func mochaHandler(ctxt *Context) error {
+func testMochaHandler(ctxt *Context) error {
 	return ctxt.Render(mochaTemplate)
+}
+
+func testBooleanHandler(ctxt *Context) error {
+	return ctxt.Render(boolTemplate)
 }

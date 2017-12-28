@@ -28,11 +28,6 @@ class EditorView extends React.Component {
     let editor = new Editor();
 
     this.state = {
-      // For file index view:
-      //indexView: true,
-      indexBackend: null,
-
-      // For file edit view:
       editor
     };
 

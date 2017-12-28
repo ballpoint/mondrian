@@ -1,11 +1,11 @@
 <html>
-  <link rel="stylesheet" href="/build/styles/bundles/testbool.css" />
+  <link rel="stylesheet" href='{{ .Bundle "testbool.css" }}' />
   <body>
     <h1>Boolean tests</h1>
     <main></main>
   </body>
-  <script type="text/javascript" src="/build/bundles/vendor.bundle.js"></script>
-  <script type="text/javascript" src="/build/bundles/testbool.bundle.js"></script>
+  <script type="text/javascript" src='{{ .Bundle "vendor.js" }}'></script>
+  <script type="text/javascript" src='{{ .Bundle "testbool.js" }}'></script>
 </html>
 
 

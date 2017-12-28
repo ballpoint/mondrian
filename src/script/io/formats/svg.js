@@ -32,7 +32,7 @@ export default {
     return '<!-- Made in Mondrian.io -->\n' + str;
   },
 
-  parse(bytes, filename) {
+  parse(bytes, filename = '') {
     let str;
     if (_.isString(bytes)) {
       str = bytes;

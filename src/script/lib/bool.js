@@ -69,8 +69,6 @@ export class Edge {
     let lsa = this.lineSegment;
     let lsb = other.lineSegment;
 
-    //console.log(this.toString(), other.toString(), shapes.intersections(lsa, lsb));
-
     return shapes.intersections(lsa, lsb);
   }
 

@@ -125,6 +125,11 @@ export class AddHandleAction extends HistoryAction {
 
   perform(doc) {
     let pp = doc.getFromIndex(this.data.index);
+    if (!(pp instanceof PathPoint)) {
+      // Fuck
+      console.warn('Invalid invocation: not a PathPoint', pp);
+      return;
+    }
     pp.setHandle(this.data.handle, this.data.posn);
     if (this.data.reflect) {
       pp.reflectHandle(this.data.handle);
@@ -153,6 +158,13 @@ export class RemoveHandleAction extends HistoryAction {
 
   perform(doc) {
     let pp = doc.getFromIndex(this.data.index);
+
+    if (!(pp instanceof PathPoint)) {
+      // Fuck
+      console.warn('Invalid invocation: not a PathPoint', pp);
+      return;
+    }
+
     pp.unsetHandle(this.data.handle);
     if (this.data.reflect) {
       pp.unsetHandle(this.data.handle === 'pHandle' ? 'sHandle' : 'pHandle');

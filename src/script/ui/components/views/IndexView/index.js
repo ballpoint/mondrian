@@ -32,10 +32,6 @@ class IndexView extends React.Component {
       files.push(loc);
     }
 
-    files = files.sort((a, b) => {
-      return b.modified.valueOf() - a.modified.valueOf();
-    });
-
     this.setState({ files, loading: false });
   }
 

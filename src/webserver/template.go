@@ -35,6 +35,22 @@ func init() {
 	}
 }
 
+func loadTemplate(fp string) *template.Template {
+	templ, err := Asset(fp)
+
+	if err != nil {
+		panic(err)
+	}
+
+	compiled, compileErr := template.New("main").Parse(string(templ))
+
+	if compileErr != nil {
+		panic(compileErr)
+	}
+
+	return compiled
+}
+
 type props map[string]interface{}
 
 type view struct {

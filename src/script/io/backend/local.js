@@ -124,6 +124,10 @@ class LocalBackend {
       );
     }
 
+    locs = locs.sort((a, b) => {
+      return b.modified.valueOf() - a.modified.valueOf();
+    });
+
     return locs;
   }
 }

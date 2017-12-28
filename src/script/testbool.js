@@ -24,6 +24,7 @@ import oog from 'booltest/oog.svg';
 import overlapcircle from 'booltest/overlapcircle.svg';
 import overlapcircle_rotate from 'booltest/overlapcircle_rotate.svg';
 import overlapcircle_rotate2 from 'booltest/overlapcircle_rotate2.svg';
+import talon from 'booltest/talon.svg';
 
 const testFiles = {
   rect1,
@@ -40,7 +41,8 @@ const testFiles = {
   overlapcircle_rotate2,
   hazmat,
   zia,
-  oog
+  oog,
+  talon
 };
 
 let main = document.querySelector('main');
@@ -84,7 +86,7 @@ function appendDoc(section, doc, label) {
   let sourceElem = document.createElement('a');
   sourceElem.innerHTML = '[source]';
   sourceElem.target = '_blank';
-  sourceElem.href = 'data:image/svg+xml;utf8,' + doc.toSVG();
+  sourceElem.href = 'data:image/svg+xml;utf8,' + svg.serialize(doc);
   sourceElem.style.marginLeft = '10px';
 
   container.appendChild(sourceElem);
@@ -99,7 +101,7 @@ function appendDoc(section, doc, label) {
 }
 
 function boolDoc(doc, op) {
-  let children = doc.elements;
+  let children = doc.elements.slice(0).reverse();
 
   let t1 = window.performance.now();
   children = [bool[op](children)];

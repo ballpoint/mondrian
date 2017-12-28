@@ -71,7 +71,8 @@ func New() *Webserver {
 	r.PathPrefix("/build/").Handler(http.StripPrefix("/build/", http.FileServer(http.Dir("build/dev"))))
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir("src"))))
 
-	s.Handle("GET", "/test/unit", mochaHandler)
+	s.Handle("GET", "/test/unit", testMochaHandler)
+	s.Handle("GET", "/test/boolean", testBooleanHandler)
 
 	s.Handle("GET", "/dev/emails", emailListHandler)
 	s.Handle("POST", "/newsletter/subscribe", newsletterSubscribeHandler)
