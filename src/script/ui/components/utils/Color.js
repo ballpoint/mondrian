@@ -541,12 +541,21 @@ class ColorUtil extends React.Component {
 
     let selector;
     let swatch;
+
+    let clickable = false;
+
     if (colors.length === 1) {
       color = colors[0];
+
+      clickable = !color.isNone;
+
       selector = (
         <select
           onChange={e => {
             this.onColorModeChange(e, which);
+          }}
+          onClick={e => {
+            e.stopPropagation();
           }}
           value={color.isNone ? 'none' : 'solid'}>
           <option value="solid">Solid</option>
@@ -559,6 +568,8 @@ class ColorUtil extends React.Component {
         this.toggle(which);
       });
     } else {
+      clickable = true;
+
       selector = (
         <div className="color-util__row__mini-swatches">
           {colors.map(color => {
@@ -577,13 +588,24 @@ class ColorUtil extends React.Component {
       color = VARIOUS;
 
       swatch = this.renderSwatch(which, Color.none(), () => {
-        this.setState({ modifying: which });
+        this.modify(which, true);
         this.toggle(which);
       });
     }
 
     return [
-      <div className="color-util__row" key={`${which}-row`}>
+      <a
+        className={classnames({
+          'color-util__row': true,
+          clickable: clickable
+        })}
+        key={`${which}-row`}
+        onClick={() => {
+          if (clickable) {
+            this.modify(which, true);
+            this.toggle(which);
+          }
+        }}>
         <div className="color-util__row__label">
           {{ fill: 'Fill', stroke: 'Stroke' }[which]}
         </div>
@@ -592,7 +614,7 @@ class ColorUtil extends React.Component {
           {selector}
           {swatch}
         </div>
-      </div>,
+      </a>,
 
       this.renderPicker(which, color)
     ];

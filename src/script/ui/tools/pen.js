@@ -25,8 +25,8 @@ export default class Pen extends Tool {
 
   resetState() {
     this.pathItemCommitted = false;
-    this.nextChildIndex = this.editor.state.layer.nextChildIndex();
 
+    delete this.nextChildIndex;
     delete this.rootSegmentIndex;
     delete this._endedPath;
   }
@@ -204,6 +204,10 @@ export default class Pen extends Tool {
     if (!this.pathItemCommitted) {
       // In this case we're starting a new path item
       path = new Path(this.editor.state.attributes.forType(Path));
+
+      if (this.nextChildIndex === undefined) {
+        this.nextChildIndex = this.editor.state.layer.nextChildIndex();
+      }
 
       let pathIndex = this.nextChildIndex;
 

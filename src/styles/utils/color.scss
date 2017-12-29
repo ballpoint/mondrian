@@ -1,12 +1,18 @@
+@import '~mixins.scss';
 @import '~vars.scss';
 
 .color-util {
-  width: 256px;
+  width: 266px;
+  @include no-select;
 
   .color-util__row {
     width: 100%;
-    padding: 5px;
     display: flex;
+    cursor: default;
+
+    &.clickable:hover {
+      color: $blue;
+    }
 
     &:not(:first-child) {
       border-top: 1px solid $blue-grey;
@@ -14,11 +20,15 @@
 
     .color-util__row__label {
       line-height: 32px;
+
+      width: 60px;
+      padding: 5px;
     }
 
     .color-util__row__value {
       display: flex;
       margin-left: auto;
+      padding: 5px;
 
       .color-util__row__swatch {
         width: 32px;
@@ -67,6 +77,7 @@
   }
 
   .color-util__picker {
+    padding: 5px;
     .color-util__picker__slider {
       display: flex;
       justify-content: center;

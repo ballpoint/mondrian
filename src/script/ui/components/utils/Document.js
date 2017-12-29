@@ -190,8 +190,13 @@ class DocumentUtilChild extends React.Component {
               if (!isAvailable) return;
               if (child instanceof Layer) {
                 this.props.editor.setCurrentLayer(child);
+                this.props.editor.selectItems([]);
               } else {
-                this.props.editor.selectItems([child]);
+                if (e.shiftKey) {
+                  this.props.editor.toggleInSelection([child]);
+                } else {
+                  this.props.editor.selectItems([child]);
+                }
               }
             }}
             onDoubleClick={() => {

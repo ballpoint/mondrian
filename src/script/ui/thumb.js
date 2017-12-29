@@ -55,7 +55,6 @@ export default class Thumb {
 
     return new Promise(function(resolve, reject) {
       canvas.toBlob(blob => {
-        console.log(blob);
         resolve(blob);
       }, 'image/png');
     });

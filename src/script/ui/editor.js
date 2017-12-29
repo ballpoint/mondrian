@@ -44,7 +44,7 @@ import DocumentPointsUIElement from 'ui/editor/doc_pts';
 import DocumentElemsUIElement from 'ui/editor/doc_elems';
 import TextEditUIElement from 'ui/editor/text_edit';
 
-const UTILS_WIDTH = 320 + 270;
+const UTILS_WIDTH = 320 + 276 + 10;
 
 export default class Editor extends EventEmitter {
   constructor() {
@@ -732,6 +732,7 @@ export default class Editor extends EventEmitter {
     }
 
     this.selectItems([]);
+    this.setHovering([]);
 
     if (shouldCleanUp) {
       this.cleanUpEmptyItems(frame.actions[0]);
