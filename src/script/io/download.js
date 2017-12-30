@@ -4,8 +4,14 @@ export default {
     let href;
     let shouldRevoke = false;
 
-    // Byte array
-    let blob = new Blob([content], { type: contentType });
+    let blob;
+
+    if (content instanceof Blob) {
+      blob = content;
+    } else {
+      // Byte array
+      blob = new Blob([content], { type: contentType });
+    }
     href = window.URL.createObjectURL(blob);
     shouldRevoke = true;
 

@@ -32,6 +32,18 @@ export default class Projection {
     return new Projection(x, y, z);
   }
 
+  static simple(width, height, scale) {
+    return new Projection(
+      scaleLinear()
+        .domain([0, width])
+        .range([0, width * scale]),
+      scaleLinear()
+        .domain([0, height])
+        .range([0, height * scale]),
+      1
+    );
+  }
+
   posn(posn) {
     return new Posn(this.x(posn.x), this.y(posn.y));
   }

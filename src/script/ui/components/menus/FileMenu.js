@@ -9,6 +9,7 @@ import io from 'io/io';
 import bps from 'io/formats/bps';
 import svg from 'io/formats/svg';
 import pdf from 'io/formats/pdf';
+import png from 'io/formats/png';
 
 import 'menus/file-menu.scss';
 
@@ -80,6 +81,20 @@ class FileMenu extends React.Component {
               );
             }}>
             Export as PDF
+          </MenuItem>
+
+          <MenuItem
+            disabled={!this.props.editor.doc}
+            ref="downloadAnchor"
+            action={async () => {
+              let str = await png.serialize(this.props.editor.doc);
+              download.download(
+                this.props.editor.doc.name + '.png',
+                str,
+                'image/png'
+              );
+            }}>
+            Export as PNG
           </MenuItem>
         </MenuGroup>
       </MenuBody>

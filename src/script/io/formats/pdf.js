@@ -10,8 +10,6 @@ export default {
       orientation: doc.width > doc.height ? 'l' : 'p'
     });
 
-    console.log(doc.width, doc.height);
-
     let elements = doc.elementsFlat;
 
     for (let elem of elements) {
