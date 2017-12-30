@@ -34,6 +34,10 @@ export default class Color {
       this.b = b;
       this.a = a;
 
+      if (r === 0 && g === 0 && b === 0 && a === 0) {
+        this.isNone = true;
+      }
+
       if (isNaN(g)) debugger;
 
       if (this.g == null && this.b == null) {
@@ -278,9 +282,9 @@ export default class Color {
   toRGBString() {
     if (this.isNone) return 'none';
 
-    return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a === undefined
-      ? 1
-      : this.a})`;
+    return `rgba(${this.r}, ${this.g}, ${this.b}, ${
+      this.a === undefined ? 1 : this.a
+    })`;
   }
 
   toHexString() {

@@ -8,6 +8,7 @@ import proto from 'proto/proto';
 import io from 'io/io';
 import bps from 'io/formats/bps';
 import svg from 'io/formats/svg';
+import pdf from 'io/formats/pdf';
 
 import 'menus/file-menu.scss';
 
@@ -65,6 +66,20 @@ class FileMenu extends React.Component {
               );
             }}>
             Export as SVG
+          </MenuItem>
+
+          <MenuItem
+            disabled={!this.props.editor.doc}
+            ref="downloadAnchor"
+            action={() => {
+              let str = pdf.serialize(this.props.editor.doc);
+              download.download(
+                this.props.editor.doc.name + '.pdf',
+                str,
+                'application/pdf'
+              );
+            }}>
+            Export as PDF
           </MenuItem>
         </MenuGroup>
       </MenuBody>
