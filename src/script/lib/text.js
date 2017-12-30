@@ -38,6 +38,11 @@ export class TextEditHandler extends EventEmitter {
       this.trigger('change', e, textarea.value);
     };
 
+    textarea.onpaste = e => {
+      e.stopPropagation();
+      this.trigger('change', e, textarea.value);
+    };
+
     this.trigger('change', null, textarea.value);
 
     textarea.style.width = item.data.width + 'px';

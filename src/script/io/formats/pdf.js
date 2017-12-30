@@ -1,4 +1,5 @@
 import Path from 'geometry/path';
+import Text from 'geometry/text';
 import jsPDF from 'jspdf';
 
 export default {
@@ -92,8 +93,25 @@ export default {
           }
 
           pdf.lines(args, x, y, [1.0, 1.0], st, false);
+        }
+      } else if (elem instanceof Text) {
+        let lines = elem.lines();
 
-          console.log(args, x, y);
+        // Convert px font size to pt
+        let size = parseInt(elem.data['font-size'], 10);
+        if (_.isNumber(size)) {
+          size /= 3 / 4;
+        } else {
+          // Fall back to 12
+          size = 12;
+        }
+
+        pdf.setFont(elem.fontFamily());
+        pdf.setFontSize(size);
+        pdf.setTextColor(elem.data.fill.r, elem.data.fill.g, elem.data.fill.b);
+
+        for (let line of lines) {
+          pdf.text(line.data.x, line.data.y, line.data.value);
         }
       }
     }
