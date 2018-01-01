@@ -4,7 +4,6 @@ import Tool from 'ui/tools/tool';
 
 import Posn from 'geometry/posn';
 import Bounds from 'geometry/bounds';
-import Circle from 'geometry/circle';
 import Text from 'geometry/text';
 
 import HistoryFrame from 'history/Frame';
@@ -33,7 +32,7 @@ export default class Cursor extends Tool {
     if (this.dragSelectStart) return;
     if (!this.editor.doc) return;
 
-    let z3 = this.editor.projection.zInvert(3);
+    let z3 = this.editor.projection.sInvert(3);
     let posn = cursor.posnCurrent;
     let posnPadded = Bounds.centeredOnPosn(posn, z3, z3);
 

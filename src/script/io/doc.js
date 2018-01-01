@@ -17,6 +17,8 @@ import shortid from 'shortid';
 
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
 
+import units from 'lib/units';
+
 const MIMETYPE = 'image/svg+xml';
 const CHARSET = 'utf-8';
 
@@ -25,10 +27,13 @@ const DOC_BACKENDS = {
   LOCAL: 1
 };
 
+window.units = units;
+
 export default class Doc {
   constructor(attrs) {
     this.layers = attrs.layers;
     this.setDimens(attrs.width, attrs.height);
+    this.setUnit(attrs.unit);
 
     this.name = attrs.name;
     if (this.name === '') this.name = 'untitled';
@@ -71,6 +76,10 @@ export default class Doc {
     this.width = w;
     this.height = h;
     this.bounds = new Bounds(0, 0, this.width, this.height);
+  }
+
+  setUnit(unit = UNITS.PX) {
+    this.unit = unit;
   }
 
   setName(name) {

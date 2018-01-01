@@ -40,7 +40,7 @@ export default class RulersUIElement extends UIElement {
     );
 
     let step = 0.00000001;
-    let target = Math.max(0.1, this.editor.projection.zInvert(100));
+    let target = Math.max(0.1, this.editor.projection.sInvert(100));
     let i = 0;
     stepLoop: while (step < target) {
       switch (i) {

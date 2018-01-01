@@ -138,8 +138,8 @@ export default class Bounds {
     return new Bounds(
       x(this.x),
       y(this.y),
-      z(this.width),
-      z(this.height),
+      x(this.x2) - x(this.x),
+      y(this.y2) - y(this.y),
       this.angle
     );
   }

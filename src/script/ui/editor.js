@@ -1,5 +1,6 @@
 import { PIXEL_RATIO } from 'lib/math';
 import { scaleLinear } from 'd3-scale';
+import units from 'lib/units';
 import consts from 'consts';
 import Color from 'ui/color';
 
@@ -83,6 +84,7 @@ export default class Editor extends EventEmitter {
     }
 
     this.doc = doc;
+    this.pixelScale = units.pxScaleFactor(this.doc.unit);
 
     await this.loadState(doc);
 
@@ -185,7 +187,7 @@ export default class Editor extends EventEmitter {
       if (shouldZoom) {
         // noop
       } else {
-        this.nudge(this.projection.zInvert(delta), 0);
+        this.nudge(this.projection.sInvert(delta), 0);
       }
     });
 
@@ -202,7 +204,7 @@ export default class Editor extends EventEmitter {
         let anchor = this.cursor.lastPosn;
         this.setZoom(this.state.zoomLevel * zd, anchor);
       } else {
-        this.nudge(0, this.projection.zInvert(delta));
+        this.nudge(0, this.projection.sInvert(delta));
       }
     });
 
@@ -503,6 +505,8 @@ export default class Editor extends EventEmitter {
     let fb = this.doc.bounds.fitTo(vb);
 
     let z = fb.width / this.doc.bounds.width;
+
+    z /= this.pixelScale;
 
     let center = this.doc.bounds.center();
     this.setPosition(center);
@@ -828,7 +832,7 @@ export default class Editor extends EventEmitter {
 
   insertElements(elems) {
     let items = [];
-    let parent = this.state.layer.index;
+    let parent = this.state.layer;
     let nextIndex = parent.nextChildIndex();
 
     for (let item of elems) {
@@ -882,15 +886,21 @@ export default class Editor extends EventEmitter {
   }
 
   calculateScales() {
+    // We create two projections:
+    // - pxProjection     (doc dimens -> pixel dimens)
+    // - screenProjection (pixel dimens -> screen pixel dimens)
+
+    let sl = units.pxScaleFactor(this.doc.unit);
+    let zl = this.state.zoomLevel;
+
+    let dw = this.doc.width * sl;
+    let dh = this.doc.height * sl;
+
     // Calculate scales
-    let offsetLeft =
-      (this.canvas.width - this.doc.width * this.state.zoomLevel) / 2;
-    offsetLeft +=
-      (this.doc.width / 2 - this.state.position.x) * this.state.zoomLevel;
-    let offsetTop =
-      (this.canvas.height - this.doc.height * this.state.zoomLevel) / 2;
-    offsetTop +=
-      (this.doc.height / 2 - this.state.position.y) * this.state.zoomLevel;
+    let offsetLeft = (this.canvas.width - dw * zl) / 2;
+    offsetLeft += (dw / 2 - this.state.position.x * sl) * zl;
+    let offsetTop = (this.canvas.height - dh * zl) / 2;
+    offsetTop += (dh / 2 - this.state.position.y * sl) * zl;
 
     // Account for windows on right side
     offsetLeft -= UTILS_WIDTH / 2;
@@ -900,13 +910,13 @@ export default class Editor extends EventEmitter {
 
     let x = scaleLinear()
       .domain([0, this.doc.width])
-      .range([offsetLeft, offsetLeft + this.doc.width * this.state.zoomLevel]);
+      .range([offsetLeft, offsetLeft + dw * zl]);
 
     let y = scaleLinear()
       .domain([0, this.doc.height])
-      .range([offsetTop, offsetTop + this.doc.height * this.state.zoomLevel]);
+      .range([offsetTop, offsetTop + dh * zl]);
 
-    this.projection = new Projection(x, y, this.state.zoomLevel);
+    this.projection = new Projection(x, y, sl, zl);
 
     this.cursorHandler.projection = this.projection;
   }
@@ -916,9 +926,7 @@ export default class Editor extends EventEmitter {
   }
 
   screenBounds() {
-    return this.projection.bounds(
-      new Bounds(0, 0, this.doc.width, this.doc.height)
-    );
+    return this.projection.bounds(this.docBounds());
   }
 
   viewportBounds() {

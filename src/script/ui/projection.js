@@ -6,17 +6,39 @@ import { scaleLinear } from 'd3-scale';
 import math from 'lib/math';
 
 export default class Projection {
-  constructor(xScale, yScale, zoomLevel) {
+  constructor(xScale, yScale, scaleLevel, zoomLevel) {
     this.x = xScale;
     this.xInvert = xScale.invert;
+
     this.y = yScale;
     this.yInvert = yScale.invert;
+
+    this.s = n => {
+      return n * scaleLevel * zoomLevel;
+    };
+
+    this.sInvert = n => {
+      return n / (scaleLevel * zoomLevel);
+    };
+
     this.z = n => {
       return n * zoomLevel;
     };
     this.zInvert = n => {
       return n / zoomLevel;
     };
+  }
+
+  chain(xScale, yScale, zoomLevel) {
+    return new Projection(
+      n => {
+        return xScale(this.x(n));
+      },
+      n => {
+        return yScale(this.y(n));
+      },
+      z * this.z
+    );
   }
 
   static forBoundsFit(bounds, width, height) {

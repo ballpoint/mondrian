@@ -5,7 +5,7 @@ import jsPDF from 'jspdf';
 export default {
   serialize(doc) {
     let pdf = new jsPDF({
-      unit: 'pt',
+      unit: doc.unit,
       format: [doc.width, doc.height],
       orientation: doc.width > doc.height ? 'l' : 'p'
     });

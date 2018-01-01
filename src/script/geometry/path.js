@@ -263,6 +263,7 @@ export default class Path extends Item {
 
     let stroke = this.data.stroke;
     let lineWidth = parseFloat(this.data['stroke-width']);
+
     if (!stroke.isNone && lineWidth > 0) {
       context.strokeStyle = this.data.stroke.toString();
       context.lineCap = this.data['stroke-linecap']; // lol
