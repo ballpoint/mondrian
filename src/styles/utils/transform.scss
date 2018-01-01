@@ -155,6 +155,11 @@ $sel-thumb-width: 100px;
     }
   }
 
+  weak {
+    opacity: 0.5;
+    cursor: default;
+  }
+
   .sel-util__middle {
     display: flex;
     justify-content: center;

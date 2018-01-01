@@ -59,10 +59,16 @@ class TextInput extends React.Component {
       />
     );
 
+    let unit;
+    if (this.props.unit) {
+      unit = <weak> {this.props.unit}</weak>;
+    }
+
     return (
       <span className="text-input">
         {label}
         {input}
+        {unit}
       </span>
     );
   }

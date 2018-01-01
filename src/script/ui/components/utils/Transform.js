@@ -6,6 +6,7 @@ import Projection from 'ui/projection';
 import TextInput from 'ui/components/utils/TextInput';
 import { ELEMENTS, POINTS, PHANDLE, SHANDLE } from 'ui/selection';
 import units from 'lib/units';
+import math from 'lib/math';
 
 import 'utils/transform.scss';
 
@@ -30,9 +31,9 @@ class TransformUtil extends React.Component {
     let doc = this.props.editor.doc;
 
     if (doc.media === 'digital') {
-      return v;
+      return math.fmtFloat(v);
     } else {
-      return units.fromPt(v, doc.printUnit);
+      return math.fmtFloat(units.fromPt(v, doc.printUnit));
     }
   }
 
@@ -290,7 +291,7 @@ class TransformUtil extends React.Component {
 
       onSubmit = val => {
         if (val > 0) {
-          this.props.editor.setDocDimens(this.parseValue(doc.width), val);
+          this.props.editor.setDocDimens(doc.width, this.parseValue(val));
         }
       };
     } else if (editor.state.selection) {
@@ -315,13 +316,14 @@ class TransformUtil extends React.Component {
             id="selection-h"
             value={this.formatValue(value)}
             onSubmit={onSubmit}
+            unit={this.unitLabel()}
           />
         </div>
       </div>
     );
   };
 
-  renderWidth = () => {
+  renderWidth() {
     let { editor } = this.props;
     let doc = editor.doc;
     if (!doc) return;
@@ -358,11 +360,21 @@ class TransformUtil extends React.Component {
             id="selection-w"
             value={this.formatValue(value)}
             onSubmit={onSubmit}
+            unit={this.unitLabel()}
           />
         </div>
       </div>
     );
-  };
+  }
+
+  unitLabel() {
+    let l = 'px';
+    let doc = this.props.editor.doc;
+    if (doc.media === 'print') {
+      l = doc.printUnit;
+    }
+    return l;
+  }
 
   render() {
     return (

@@ -101,7 +101,7 @@ export default class RulersUIElement extends UIElement {
       { stroke: '#000000' }
     );
 
-    layer.drawText(new Posn(x + 4, 15), this.formatLabel(label), {
+    layer.drawText(new Posn(x + 4, 15), math.fmtFloat(label), {
       fill: 'black'
     });
   }
@@ -116,17 +116,9 @@ export default class RulersUIElement extends UIElement {
       { stroke: '#000000' }
     );
 
-    layer.drawText(new Posn(15, y - 4), this.formatLabel(label), {
+    layer.drawText(new Posn(15, y - 4), math.fmtFloat(label), {
       fill: 'black',
       rotate: -90
     });
-  }
-
-  formatLabel(val) {
-    if (Math.round(val) !== val) {
-      return val.toFixed(1);
-    } else {
-      return val.toFixed(0);
-    }
   }
 }

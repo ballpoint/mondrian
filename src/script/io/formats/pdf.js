@@ -1,6 +1,5 @@
 import Path from 'geometry/path';
 import Text from 'geometry/text';
-import jsPDF from 'jspdf';
 
 export default {
   serialize(doc) {

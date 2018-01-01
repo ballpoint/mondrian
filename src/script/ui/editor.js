@@ -494,7 +494,16 @@ export default class Editor extends EventEmitter {
   actualSize() {
     let center = this.doc.bounds.center();
     this.setPosition(center);
-    this.setZoom(1);
+
+    let zl = 1.0;
+
+    if (this.doc.media === 'print') {
+      // Adjust zoom to match physical dimensions on screen
+      let pxs = units.ppi() / 72;
+      zl *= pxs;
+    }
+
+    this.setZoom(zl);
   }
 
   fitToScreen() {
@@ -882,15 +891,13 @@ export default class Editor extends EventEmitter {
   }
 
   calculateScales() {
+    let zl = this.state.zoomLevel;
+
     // Calculate scales
-    let offsetLeft =
-      (this.canvas.width - this.doc.width * this.state.zoomLevel) / 2;
-    offsetLeft +=
-      (this.doc.width / 2 - this.state.position.x) * this.state.zoomLevel;
-    let offsetTop =
-      (this.canvas.height - this.doc.height * this.state.zoomLevel) / 2;
-    offsetTop +=
-      (this.doc.height / 2 - this.state.position.y) * this.state.zoomLevel;
+    let offsetLeft = (this.canvas.width - this.doc.width * zl) / 2;
+    offsetLeft += (this.doc.width / 2 - this.state.position.x) * zl;
+    let offsetTop = (this.canvas.height - this.doc.height * zl) / 2;
+    offsetTop += (this.doc.height / 2 - this.state.position.y) * zl;
 
     // Account for windows on right side
     offsetLeft -= UTILS_WIDTH / 2;
@@ -900,13 +907,13 @@ export default class Editor extends EventEmitter {
 
     let x = scaleLinear()
       .domain([0, this.doc.width])
-      .range([offsetLeft, offsetLeft + this.doc.width * this.state.zoomLevel]);
+      .range([offsetLeft, offsetLeft + this.doc.width * zl]);
 
     let y = scaleLinear()
       .domain([0, this.doc.height])
-      .range([offsetTop, offsetTop + this.doc.height * this.state.zoomLevel]);
+      .range([offsetTop, offsetTop + this.doc.height * zl]);
 
-    this.projection = new Projection(x, y, this.state.zoomLevel);
+    this.projection = new Projection(x, y, zl);
 
     this.cursorHandler.projection = this.projection;
   }

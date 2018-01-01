@@ -32,7 +32,14 @@ export default {
     return rad * (180 / Math.PI);
   },
 
-  fmtFloat(n, prec) {
-    return n.toFixed(prec).replace(/\.?0+$/, '');
+  fmtFloat(n, prec = 4) {
+    let val = n.toFixed(prec);
+
+    let parts = val.split('.');
+    if (parts.length === 1) return val;
+
+    val = val.replace(/0+$/, '');
+    val = val.replace(/\.$/, '');
+    return val;
   }
 };
