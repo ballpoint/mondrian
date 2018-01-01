@@ -5,6 +5,7 @@ import Util from 'ui/components/utils/Util';
 import Projection from 'ui/projection';
 import TextInput from 'ui/components/utils/TextInput';
 import { ELEMENTS, POINTS, PHANDLE, SHANDLE } from 'ui/selection';
+import units from 'lib/units';
 
 import 'utils/transform.scss';
 
@@ -23,6 +24,26 @@ class TransformUtil extends React.Component {
       return !this.props.selection.bounds.equal(nextProps.selection.bounds);
     }
     return true;
+  }
+
+  formatValue(v) {
+    let doc = this.props.editor.doc;
+
+    if (doc.media === 'digital') {
+      return v;
+    } else {
+      return units.fromPt(v, doc.printUnit);
+    }
+  }
+
+  parseValue(v) {
+    let doc = this.props.editor.doc;
+
+    if (doc.media === 'digital') {
+      return v;
+    } else {
+      return units.toPt(v, doc.printUnit);
+    }
   }
 
   renderSubheader = () => {
@@ -233,9 +254,9 @@ class TransformUtil extends React.Component {
               <TextInput
                 label="x"
                 id="selection-x"
-                value={origin.x}
+                value={this.formatValue(origin.x)}
                 onSubmit={val => {
-                  this.onChangeCoord(val, 'x');
+                  this.onChangeCoord(this.parseValue(val), 'x');
                 }}
               />
             </div>
@@ -243,9 +264,9 @@ class TransformUtil extends React.Component {
               <TextInput
                 label="y"
                 id="selection-y"
-                value={origin.y}
+                value={this.formatValue(origin.y)}
                 onSubmit={val => {
-                  this.onChangeCoord(val, 'y');
+                  this.onChangeCoord(this.parseValue(val), 'y');
                 }}
               />
             </div>
@@ -269,7 +290,7 @@ class TransformUtil extends React.Component {
 
       onSubmit = val => {
         if (val > 0) {
-          this.props.editor.setDocDimens(doc.width, val);
+          this.props.editor.setDocDimens(this.parseValue(doc.width), val);
         }
       };
     } else if (editor.state.selection) {
@@ -277,7 +298,7 @@ class TransformUtil extends React.Component {
 
       if (bounds) {
         onSubmit = val => {
-          this.onChangeScale(val, 'h');
+          this.onChangeScale(this.parseValue(val), 'h');
         };
         value = bounds.height;
       }
@@ -290,7 +311,11 @@ class TransformUtil extends React.Component {
     return (
       <div className="sel-util__top__right">
         <div className="sel-util__top__right__input">
-          <TextInput id="selection-h" value={value} onSubmit={onSubmit} />
+          <TextInput
+            id="selection-h"
+            value={this.formatValue(value)}
+            onSubmit={onSubmit}
+          />
         </div>
       </div>
     );
@@ -308,7 +333,7 @@ class TransformUtil extends React.Component {
 
       onSubmit = val => {
         if (val > 0) {
-          this.props.editor.setDocDimens(val, doc.height);
+          this.props.editor.setDocDimens(this.parseValue(val), doc.height);
         }
       };
     } else if (editor.state.selection) {
@@ -316,7 +341,7 @@ class TransformUtil extends React.Component {
 
       if (bounds) {
         onSubmit = val => {
-          this.onChangeScale(val, 'w');
+          this.onChangeScale(this.parseValue(val), 'w');
         };
         value = bounds.width;
       }
@@ -329,7 +354,11 @@ class TransformUtil extends React.Component {
     return (
       <div className="sel-util__width">
         <div className="sel-util__width__input">
-          <TextInput id="selection-w" value={value} onSubmit={onSubmit} />
+          <TextInput
+            id="selection-w"
+            value={this.formatValue(value)}
+            onSubmit={onSubmit}
+          />
         </div>
       </div>
     );
