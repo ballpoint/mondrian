@@ -4,11 +4,18 @@ let ppiCached;
 
 const CM_TO_IN = 0.393701;
 
+// Print unit conversions
+const PT_TO_MM = 0.352778;
+const PT_TO_CM = 0.0352778;
+const PT_TO_IN = 1 / 72;
+const PT_TO_PC = 1 / 12;
+
 const units = {
-  PX: 'px',
   MM: 'mm',
   CM: 'cm',
   IN: 'in',
+  PT: 'pt',
+  PC: 'pc',
 
   ppi() {
     if (ppiCached === undefined) {
@@ -29,39 +36,33 @@ const units = {
     return ppiCached;
   },
 
-  pxScaleFactor(unit) {
+  fromPt(n, unit) {
     switch (unit) {
-      case this.PX:
-        return 1;
-      case this.IN:
-        return this.ppi();
+      case this.MM:
+        return n * PT_TO_MM;
       case this.CM:
-        return CM_TO_IN * this.ppi();
+        return n * PT_TO_CM;
+      case this.IN:
+        return n * PT_TO_IN;
+      case this.PT:
+        return n;
+      case this.PC:
+        return n * PT_TO_PC;
     }
   },
 
-  convert(n, from, to) {
-    if (from === this.MM) {
-      n /= 100.0;
-      from = this.CM;
-    }
-
-    if (from === to) {
-      return n;
-    }
-
-    if (from === this.CM && to === this.IN) {
-      return n * CM_TO_IN;
-    } else if (from === this.IN && to === this.CM) {
-      return n / CM_TO_IN;
-    } else if (from === this.IN && to === this.PX) {
-      return n * this.ppi();
-    } else if (from === this.CM && to === this.PX) {
-      return this.convert(n, this.CM, this.IN) * this.ppi();
-    } else if (from === this.PX && to === this.IN) {
-      return n / this.ppi();
-    } else if (from === this.PX && to === this.CM) {
-      return this.convert(n * this.ppi(), this.IN, this.CM);
+  toPt(n, unit) {
+    switch (unit) {
+      case this.MM:
+        return n / PT_TO_MM;
+      case this.CM:
+        return n / PT_TO_CM;
+      case this.IN:
+        return n / PT_TO_IN;
+      case this.PT:
+        return n;
+      case this.PC:
+        return n / PT_TO_PC;
     }
   }
 };

@@ -181,7 +181,11 @@ const proto = {
           history: this.serialize(value.history),
           width: value.width,
           height: value.height,
-          unit: schema.document.nested.DocumentUnit.values[value.unit],
+
+          media: schema.document.nested.DocumentMedia.values[value.media],
+
+          printUnit:
+            schema.document.nested.DocumentPrintUnit.values[value.printUnit],
           layers: this.serialize(value.layers),
           state: this.serialize(value.state)
         });
@@ -445,7 +449,12 @@ const proto = {
           width: value.width,
           height: value.height,
 
-          unit: schema.document.nested.DocumentUnit.valuesById[value.unit],
+          printUnit:
+            schema.document.nested.DocumentPrintUnit.valuesById[
+              value.printUnit
+            ],
+
+          media: schema.document.nested.DocumentMedia.valuesById[value.media],
 
           history: this.parse(value.history),
           layers: this.parse(value.layers)

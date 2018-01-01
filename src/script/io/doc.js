@@ -33,7 +33,12 @@ export default class Doc {
   constructor(attrs) {
     this.layers = attrs.layers;
     this.setDimens(attrs.width, attrs.height);
-    this.setUnit(attrs.unit);
+
+    if (attrs.media === 'print') {
+      this.setPrint(attrs.printUnit);
+    } else {
+      this.setDigital();
+    }
 
     this.name = attrs.name;
     if (this.name === '') this.name = 'untitled';
@@ -78,8 +83,13 @@ export default class Doc {
     this.bounds = new Bounds(0, 0, this.width, this.height);
   }
 
-  setUnit(unit = UNITS.PX) {
-    this.unit = unit;
+  setPrint(unit) {
+    this.media = 'print';
+    this.printUnit = unit;
+  }
+
+  setDigital() {
+    this.media = 'digital';
   }
 
   setName(name) {

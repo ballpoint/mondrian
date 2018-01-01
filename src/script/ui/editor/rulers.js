@@ -2,6 +2,7 @@ import Posn from 'geometry/posn';
 import Bounds from 'geometry/bounds';
 import UIElement from 'ui/editor/ui_element';
 import math from 'lib/math';
+import units from 'lib/units';
 
 const RULER_DIMEN = math.sharpen(20);
 
@@ -39,7 +40,21 @@ export default class RulersUIElement extends UIElement {
       { stroke: '#c9c9c9' }
     );
 
-    let step = 0.00000001;
+    let step; // In either pixels or points
+    let convert;
+
+    if (this.editor.doc.media === 'print') {
+      step = units.toPt(0.0000001, this.editor.doc.printUnit);
+      convert = n => {
+        return units.fromPt(n, this.editor.doc.printUnit);
+      };
+    } else {
+      step = 0.0000001;
+      convert = n => {
+        return n;
+      };
+    }
+
     let target = Math.max(0.1, this.editor.projection.zInvert(100));
     let i = 0;
     stepLoop: while (step < target) {
@@ -64,7 +79,7 @@ export default class RulersUIElement extends UIElement {
       x < this.editor.projection.xInvert(this.editor.canvas.width);
       x += step
     ) {
-      this.drawRulerXTick(layer, x);
+      this.drawRulerXTick(layer, x, convert(x));
     }
 
     for (
@@ -72,11 +87,11 @@ export default class RulersUIElement extends UIElement {
       y < this.editor.projection.yInvert(this.editor.canvas.height);
       y += step
     ) {
-      this.drawRulerYTick(layer, y);
+      this.drawRulerYTick(layer, y, convert(y));
     }
   }
 
-  drawRulerXTick(layer, xval) {
+  drawRulerXTick(layer, xval, label) {
     let x = this.editor.projection.x(xval);
     if (x <= RULER_DIMEN) return;
 
@@ -86,12 +101,12 @@ export default class RulersUIElement extends UIElement {
       { stroke: '#000000' }
     );
 
-    layer.drawText(new Posn(x + 4, 15), this.formatLabel(xval), {
+    layer.drawText(new Posn(x + 4, 15), this.formatLabel(label), {
       fill: 'black'
     });
   }
 
-  drawRulerYTick(layer, yval) {
+  drawRulerYTick(layer, yval, label) {
     let y = this.editor.projection.y(yval);
     if (y <= RULER_DIMEN) return;
 
@@ -101,7 +116,7 @@ export default class RulersUIElement extends UIElement {
       { stroke: '#000000' }
     );
 
-    layer.drawText(new Posn(15, y - 4), this.formatLabel(yval), {
+    layer.drawText(new Posn(15, y - 4), this.formatLabel(label), {
       fill: 'black',
       rotate: -90
     });
