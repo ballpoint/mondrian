@@ -828,7 +828,7 @@ export default class Editor extends EventEmitter {
 
   insertElements(elems) {
     let items = [];
-    let parent = this.state.layer.index;
+    let parent = this.state.layer;
     let nextIndex = parent.nextChildIndex();
 
     for (let item of elems) {
