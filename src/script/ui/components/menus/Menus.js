@@ -98,6 +98,7 @@ class Menus extends React.Component {
           ref="activeMenu"
           absoluteTop={box.bottom}
           absoluteLeft={box.left}
+          close={this.closeActive.bind(this)}
           {...this.props}
         />
       );

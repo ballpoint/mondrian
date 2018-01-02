@@ -12,7 +12,7 @@ const backend = {
       // Root path
       let metas = await LocalBackend.list();
       if (metas.length === 0) {
-        return this.newDoc();
+        return await this.newDoc();
       } else {
         let latest = metas[0];
         let doc = await LocalBackend.load(latest.path);
@@ -26,7 +26,7 @@ const backend = {
 
     if (path === 'new') {
       // Create new file
-      return this.newDoc();
+      return await this.newDoc();
     }
 
     backend = {
@@ -41,7 +41,20 @@ const backend = {
     return doc;
   },
 
-  newDoc() {
+  async newDoc() {
+    let store = localForage.createInstance({ name: 'local' });
+
+    let params = await store.getItem('newDocumentParams');
+
+    if (!params) {
+      params = {
+        media: 'digital',
+        width: 600,
+        height: 400,
+        unit: 'px'
+      };
+    }
+
     let doc = Doc.empty(600, 400, 'untitled');
     doc.metadata = LocalBackend.assign(doc);
     doc.save();

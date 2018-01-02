@@ -1,0 +1,93 @@
+@import '~vars.scss';
+
+.dialog-body {
+  font-size: 14px;
+}
+
+.dialog-buttons {
+  border-top: 1px solid $blue-grey;
+  padding: 5px;
+
+  text-align: right;
+
+  button + button {
+    margin-left: 10px;
+  }
+}
+
+.new-doc-dialog {
+  width: 400px;
+
+  .dialog-body {
+    height: 240px;
+    padding: 5px;
+    display: flex;
+
+    .new-doc-options {
+      width: 240px;
+
+      .new-doc-options-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+
+        &.new-doc-options-row--solo {
+          margin-bottom: 20px;
+        }
+
+        legend {
+          width: 70px;
+        }
+
+        article {
+          display: flex;
+        }
+
+        .new-doc-media-option {
+          margin-right: 10px;
+          width: 70px;
+          text-align: center;
+
+          input {
+            display: none;
+          }
+
+          label {
+            border: 1px solid $fg-grey;
+            padding: 5px;
+            display: block;
+            cursor: pointer;
+
+            strong {
+              display: block;
+              font-size: 24px;
+              margin: 5px 0 10px 0;
+            }
+          }
+
+          &:hover label {
+            border-color: $blue;
+            color: $blue;
+          }
+
+          input:checked + label {
+            border-color: $midblue;
+            background-color: $weakblue;
+            color: $blue;
+          }
+        }
+      }
+    }
+
+    .new-doc-preview {
+      width: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .new-doc-preview-outline {
+        border: 1px solid $blue-grey;
+      }
+    }
+  }
+}

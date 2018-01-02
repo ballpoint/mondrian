@@ -17,8 +17,11 @@ import NewsletterForm from './NewsletterForm';
 import io from 'io/io';
 
 import backend from 'io/backend/backend';
-
 import LocalBackend from 'io/backend/local';
+
+import initEditorHotkeys from 'ui/components/views/EditorView/hotkeys';
+
+import NewDocumentDialog from 'ui/components/views/EditorView/dialogs/NewDocument';
 
 // Main view
 class EditorView extends React.Component {
@@ -34,6 +37,8 @@ class EditorView extends React.Component {
     let saveDebounced = _.debounce(() => {
       editor.doc.save();
     }, 500);
+
+    initEditorHotkeys.call(this, editor);
 
     editor.on('history:step', () => {
       try {
@@ -104,16 +109,54 @@ class EditorView extends React.Component {
     this.importNativeFile(file);
   }
 
-  newDoc() {
-    let width = 1000;
-    let height = 600;
+  openNewDocDialog() {
+    this.setState({ dialog: 'newDoc' });
+  }
 
-    if (this.state.activeDoc) {
-      width = this.state.activeDoc.width;
-      height = this.state.activeDoc.height;
-    }
-    let doc = Doc.empty(width, height, 'untitled');
+  newDoc(params) {
+    console.log(params);
+    let doc = Doc.empty(params.width, params.height, 'untitled');
+    doc.metadata = LocalBackend.assign(doc);
+    doc.save();
     this.openDoc(doc);
+  }
+
+  closeDialog() {
+    this.setState({ dialog: null });
+  }
+
+  renderDialog() {
+    let dialog;
+    let dialogTitle;
+
+    switch (this.state.dialog) {
+      case 'newDoc':
+        dialogTitle = 'New Document';
+        dialog = (
+          <NewDocumentDialog
+            close={this.closeDialog.bind(this)}
+            create={this.newDoc.bind(this)}
+          />
+        );
+    }
+
+    if (!dialog || !dialogTitle) {
+      return null;
+    }
+
+    return (
+      <div id="app-dialog" onClick={this.closeDialog.bind(this)}>
+        <div
+          id="app-dialog-window"
+          onClick={e => {
+            e.stopPropagation();
+          }}>
+          <div id="app-dialog-header">{dialogTitle}</div>
+
+          <div id="app-dialog-body">{dialog}</div>
+        </div>
+      </div>
+    );
   }
 
   render() {
@@ -144,7 +187,7 @@ class EditorView extends React.Component {
                 editor={this.state.editor}
                 doc={this.state.activeDoc}
                 openDoc={this.openDoc.bind(this)}
-                newDoc={this.newDoc.bind(this)}
+                newDoc={this.openNewDocDialog.bind(this)}
                 importNativeFile={this.importNativeFile.bind(this)}
               />
             </div>
@@ -166,6 +209,8 @@ class EditorView extends React.Component {
           <div id="app-windows">
             <Utils editor={this.state.editor} />
           </div>
+
+          {this.renderDialog()}
         </div>
       </div>
     );

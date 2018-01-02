@@ -1,5 +1,6 @@
 @import '~base.scss';
 @import '~vars.scss';
+@import '~mixins.scss';
 @import '~components.scss';
 @import '~canvas.scss';
 @import '~icons.scss';
@@ -96,12 +97,47 @@ body[data-view='editor'] {
   #app-view {
     display: flex;
     height: 100%;
+    position: relative;
 
     #app-render {
       position: relative;
       flex-grow: 1;
       height: 100%;
       background: $bg-grey;
+    }
+
+    #app-dialog {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba($bg-grey, 0.8);
+      padding-right: (320px + 276px + 10px);
+      padding-left: $app-toolbar-width + 20px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      #app-dialog-window {
+        min-width: 100px;
+        background: white;
+        @include card-shadow-medium;
+
+        #app-dialog-header {
+          padding: 3px;
+          font-size: 14px;
+
+          background-color: $blue-grey;
+
+          border-bottom: 1px solid darken($blue-grey, 10%);
+          @include no-select;
+        }
+
+        #app-dialog-body {
+        }
+      }
     }
   }
 

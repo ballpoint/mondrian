@@ -26,7 +26,13 @@ class FileMenu extends React.Component {
         absoluteTop={this.props.absoluteTop}
         absoluteLeft={this.props.absoluteLeft}>
         <MenuGroup>
-          <MenuItem label="New..." hotkey="Ctrl-N" href="/files/local/new" />
+          <MenuItem
+            label="New..."
+            action={() => {
+              this.props.newDoc();
+              this.props.close();
+            }}
+          />
 
           <MenuItem label="Open..." hotkey="Ctrl-O" href="/files" />
         </MenuGroup>

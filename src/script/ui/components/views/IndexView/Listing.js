@@ -41,7 +41,7 @@ class Listing extends React.Component {
           <div className="doc-listing__name">{doc.name}</div>
 
           <div className="doc-listing__remove" onClick={this.props.remove}>
-            {renderIcon('del', { width: 14, height: 14, padding: 7 })}
+            {renderIcon('del', { width: 18, height: 18, padding: 5 })}
           </div>
         </div>
         <div className="doc-listing__thumb">{thumb}</div>
