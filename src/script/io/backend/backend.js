@@ -1,4 +1,5 @@
 import LocalBackend from 'io/backend/local';
+import localForage from 'localforage';
 import DocMetadata from 'io/backend/metadata';
 import Doc from 'io/doc';
 
@@ -41,21 +42,29 @@ const backend = {
     return doc;
   },
 
-  async newDoc() {
+  async newDoc(params) {
     let store = localForage.createInstance({ name: 'local' });
 
-    let params = await store.getItem('newDocumentParams');
-
     if (!params) {
-      params = {
-        media: 'digital',
-        width: 600,
-        height: 400,
-        unit: 'px'
-      };
+      params = await store.getItem('newDocumentParams');
+
+      if (!params) {
+        params = {
+          media: 'digital',
+          width: 600,
+          height: 400,
+          unit: 'px'
+        };
+      }
     }
 
-    let doc = Doc.empty(600, 400, 'untitled');
+    let doc = Doc.empty(
+      params.media,
+      params.unit,
+      params.width,
+      params.height,
+      'untitled'
+    );
     doc.metadata = LocalBackend.assign(doc);
     doc.save();
     return doc;

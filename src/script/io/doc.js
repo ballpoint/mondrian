@@ -55,9 +55,11 @@ export default class Doc {
     this.__id__ = shortid.generate();
   }
 
-  static empty(width, height, name) {
+  static empty(media, printUnit, width, height, name) {
     return new Doc({
       layers: [new Layer({ id: 'main', children: [] })],
+      media,
+      printUnit,
       width,
       height,
       name

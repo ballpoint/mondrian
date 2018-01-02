@@ -73,13 +73,26 @@ class NewDocumentDialog extends React.Component {
   }
 
   async cacheConfiguration() {
-    let store = localForage.createInstance({ name: 'local' });
+    let store = localForage.createInstance({ name: 'editor' });
+
+    let width, height;
+    let unit;
+
+    if (this.state.printPreset) {
+      unit = this.state.printPreset.unit;
+      width = units.toPt(this.state.printPreset.width, unit);
+      height = units.toPt(this.state.printPreset.height, unit);
+    } else {
+      width = this.state.width;
+      height = this.state.height;
+      unit = this.state.unit;
+    }
 
     let params = {
       media: this.state.media,
-      width: parseFloat(this.state.width),
-      height: parseFloat(this.state.height),
-      unit: this.state.unit
+      width,
+      height,
+      unit
     };
 
     await store.setItem('newDocumentParams', params);
@@ -101,10 +114,7 @@ class NewDocumentDialog extends React.Component {
                 for (let preset of printPresets) {
                   if (preset.name === e.target.value) {
                     this.setState({
-                      printPreset: preset,
-                      width: preset.width,
-                      height: preset.height,
-                      unit: preset.unit
+                      printPreset: preset
                     });
                   }
                 }

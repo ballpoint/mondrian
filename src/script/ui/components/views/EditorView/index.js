@@ -113,11 +113,9 @@ class EditorView extends React.Component {
     this.setState({ dialog: 'newDoc' });
   }
 
-  newDoc(params) {
+  async newDoc(params) {
     console.log(params);
-    let doc = Doc.empty(params.width, params.height, 'untitled');
-    doc.metadata = LocalBackend.assign(doc);
-    doc.save();
+    let doc = await backend.newDoc(params);
     this.openDoc(doc);
   }
 
