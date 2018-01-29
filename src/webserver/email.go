@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/ballpoint/lib/db/postgres"
-	"github.com/ballpoint/mondrian/src/email"
 )
 
 func emailListHandler(ctxt *Context) error {
@@ -52,7 +51,7 @@ func newsletterSubscribeHandler(ctxt *Context) error {
 		return nil
 	})
 
-	email.SendTemplate("me@artur.co", "test email", "newsletter/welcome", struct{ Email, UnsubToken string }{Email: "x", UnsubToken: "x"})
+	//email.SendTemplate("me@artur.co", "test email", "newsletter/welcome", struct{ Email, UnsubToken string }{Email: "x", UnsubToken: "x"})
 
 	return nil
 }
