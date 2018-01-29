@@ -141,7 +141,7 @@ class NewDocumentDialog extends React.Component {
         <TextInput
           value={this.state.width}
           onSubmit={v => {
-            this.setState({ width: v });
+            this.setState({ width: parseFloat(v) });
           }}
         />
       );
@@ -166,7 +166,7 @@ class NewDocumentDialog extends React.Component {
         <TextInput
           value={this.state.height}
           onSubmit={v => {
-            this.setState({ height: v });
+            this.setState({ height: parseFloat(v) });
           }}
         />
       );

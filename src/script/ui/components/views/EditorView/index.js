@@ -53,15 +53,31 @@ class EditorView extends React.Component {
     let render = this.refs.render;
     this.state.editor.mount(render);
 
-    this.loadFromURL();
+    this.parseURL();
   }
 
-  async loadFromURL() {
-    try {
-      let doc = await backend.parseDocFromURL();
-      this.openDoc(doc);
-    } catch (e) {
-      console.error('Error opening file', e);
+  async parseURL() {
+    let fileParams = backend.parseParamsFromURL();
+    let doc;
+
+    console.info(fileParams);
+
+    if (fileParams.backend && fileParams.path) {
+      if (fileParams.path === 'new') {
+        this.openNewDocDialog();
+      } else {
+        doc = await backend.loadFromParams(fileParams.backend, fileParams.path);
+      }
+    } else {
+      doc = await backend.loadLastModifiedDoc();
+    }
+
+    if (doc) {
+      try {
+        this.openDoc(doc);
+      } catch (e) {
+        console.error('Error opening doc', doc, e);
+      }
     }
   }
 

@@ -4,32 +4,25 @@ import DocMetadata from 'io/backend/metadata';
 import Doc from 'io/doc';
 
 const backend = {
-  async parseDocFromURL() {
+  parseParamsFromURL() {
     let parts = window.location.pathname.split('/').filter(part => {
       return part !== '';
     });
 
-    if (parts.length <= 1) {
-      // Root path
-      let metas = await LocalBackend.list();
-      if (metas.length === 0) {
-        return await this.newDoc();
-      } else {
-        let latest = metas[0];
-        let doc = await LocalBackend.load(latest.path);
-        doc.metadata = latest;
-        return doc;
-      }
+    let backend, path;
+
+    if (parts.length > 2) {
+      backend = parts[1];
+      path = parts.slice(2).join('/');
     }
 
-    let backend = parts[1];
-    let path = parts.slice(2).join('/');
+    return {
+      backend,
+      path
+    };
+  },
 
-    if (path === 'new') {
-      // Create new file
-      return await this.newDoc();
-    }
-
+  async loadFromParams(backend, path) {
     backend = {
       local: LocalBackend
     }[backend];
@@ -40,6 +33,19 @@ const backend = {
     doc.metadata = meta;
 
     return doc;
+  },
+
+  async loadLastModifiedDoc() {
+    // Root path
+    let metas = await LocalBackend.list();
+    if (metas.length === 0) {
+      return await this.newDoc();
+    } else {
+      let latest = metas[0];
+      let doc = await LocalBackend.load(latest.path);
+      doc.metadata = latest;
+      return doc;
+    }
   },
 
   async newDoc(params) {
