@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"database/sql"
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
 	"github.com/ballpoint/lib/db/postgres"
+	"github.com/ballpoint/mondrian/src/email"
 )
 
 func emailListHandler(ctxt *Context) error {
@@ -43,15 +43,11 @@ func emailListHandler(ctxt *Context) error {
 }
 
 func newsletterSubscribeHandler(ctxt *Context) error {
-	postgres.Do("ballpoint", func(db *sql.DB) error {
-		email := ctxt.Request.PostFormValue("email")
+	var (
+		addr = ctxt.Request.PostFormValue("email")
+	)
 
-		_, err := db.Exec("INSERT INTO newsletter_subscribers (email, created) VALUES ($1, $2)", email, time.Now())
-		log.Println(err)
-		return nil
-	})
-
-	//email.SendTemplate("me@artur.co", "test email", "newsletter/welcome", struct{ Email, UnsubToken string }{Email: "x", UnsubToken: "x"})
+	email.AddSubscriber(addr)
 
 	return nil
 }

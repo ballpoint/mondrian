@@ -9,8 +9,6 @@ class NewsletterForm extends React.Component {
 
     let dismissed = !!Cookies.get('newsletter-dismissed');
 
-    dismissed = !Cookies.get('newsletter-force');
-
     this.state = {
       pending: false,
       confirming: false,
@@ -40,6 +38,7 @@ class NewsletterForm extends React.Component {
 
     request
       .post('/newsletter/subscribe')
+      .type('form')
       .send({ email })
       .end((err, res) => {
         console.log(err, res);
@@ -54,7 +53,7 @@ class NewsletterForm extends React.Component {
     if (this.state.confirming) {
       return (
         <div id="app-newsletter">
-          {"Thanks for your interest! We'll send you a confirmation email."}
+          {"Thanks for your interest! We'll keep in touch."}
           <button onClick={this.dismiss.bind(this)}>OK</button>
           <div id="app-newsletter__close" onClick={this.dismiss.bind(this)}>
             {renderIcon('del', { width: 14, height: 14, padding: 4 })}
