@@ -9,6 +9,8 @@ class NewsletterForm extends React.Component {
 
     let dismissed = !!Cookies.get('newsletter-dismissed');
 
+    dismissed = !Cookies.get('newsletter-force');
+
     this.state = {
       pending: false,
       confirming: false,
