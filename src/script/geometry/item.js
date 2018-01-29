@@ -106,12 +106,16 @@ export default class Item {
       return cached;
     } else {
       let { xrs, yrs } = this.getRanges();
-      return (this.boundsCached = new Bounds(
-        xrs.min,
-        yrs.min,
-        xrs.length(),
-        yrs.length()
-      ));
+      if (xrs.isFinite && yrs.isFinite) {
+        return (this.boundsCached = new Bounds(
+          xrs.min,
+          yrs.min,
+          xrs.length(),
+          yrs.length()
+        ));
+      } else {
+        return new Bounds(0, 0, 0, 0);
+      }
     }
   }
 

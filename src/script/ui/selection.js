@@ -196,7 +196,11 @@ export default class Selection {
         if (angle !== 0) {
           elem.rotate(-angle, new Posn(0, 0));
         }
-        boundsList.push(elem.bounds());
+
+        let b = elem.bounds();
+        if (b.empty) continue;
+        boundsList.push(b);
+
         if (angle !== 0) {
           elem.rotate(angle, new Posn(0, 0));
         }

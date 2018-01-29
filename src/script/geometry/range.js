@@ -37,6 +37,10 @@ export default class Range {
     return new this(min, max);
   }
 
+  get isFinite() {
+    return isFinite(this.min) && isFinite(this.max);
+  }
+
   nudge(amt) {
     this.min += amt;
     return (this.max += amt);

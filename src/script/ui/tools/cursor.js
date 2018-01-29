@@ -94,7 +94,9 @@ export default class Cursor extends Tool {
   handleMouseup(e, cursor) {}
 
   handleClick(e, cursor) {
-    this.skipClick++;
+    if (e.altKey) {
+      this.skipClick++;
+    }
   }
 
   handleDoubleClick(e, cursor) {

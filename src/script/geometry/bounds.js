@@ -85,6 +85,10 @@ export default class Bounds {
     return this.fromRanges(ls.xRange(), ls.yRange());
   }
 
+  get empty() {
+    return this.width === 0 && this.height === 0;
+  }
+
   sharp() {
     return new Bounds(
       math.sharpen(this.x),

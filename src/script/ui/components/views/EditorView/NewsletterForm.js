@@ -9,8 +9,6 @@ class NewsletterForm extends React.Component {
 
     let dismissed = !!Cookies.get('newsletter-dismissed');
 
-    dismissed = true; // TODO remove
-
     this.state = {
       pending: false,
       confirming: false,
