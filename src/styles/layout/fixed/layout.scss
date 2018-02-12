@@ -1,0 +1,64 @@
+@import '~base.scss';
+@import '~vars.scss';
+
+.layout-fixed-width {
+  width: 920px;
+  margin: 0 auto;
+
+  header {
+    padding: 10px;
+    border-bottom: 1px solid $fg-grey;
+    display: flex;
+
+    h1 {
+      margin: 0;
+      font-weight: normal;
+      font-size: 24px;
+
+      a {
+        text-decoration: none;
+        color: black;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        &:hover {
+          color: $blue;
+        }
+
+        img {
+          margin-right: 14px;
+        }
+      }
+    }
+
+    #launch-cta {
+      color: black;
+      border: 1px solid $blue;
+      margin: auto 0 auto auto;
+      text-decoration: none;
+      padding: 5px;
+
+      &:hover {
+        color: $blue;
+      }
+    }
+  }
+
+  h2 {
+    font-size: 20px;
+    margin-top: 30px;
+  }
+
+  a {
+    color: $blue;
+
+    &:active {
+      color: $red;
+    }
+  }
+
+  article {
+    padding: 10px;
+  }
+}

@@ -74,11 +74,13 @@ func New() *Webserver {
 	s.Handle("GET", "/test/unit", testMochaHandler)
 	s.Handle("GET", "/test/boolean", testBooleanHandler)
 
-	s.Handle("GET", "/dev/emails", emailListHandler)
+	// Mailchimp API handler
 	s.Handle("POST", "/newsletter/subscribe", newsletterSubscribeHandler)
 
 	// Support old URL posted to Hacker News
 	s.Handle("GET", "/contributing", aliasHandler("/"))
+
+	s.Handle("GET", "/about", aboutViewHandler)
 
 	s.Prefix("/files/{backend}/", editorViewHandler)
 	s.Prefix("/files", indexViewHandler)

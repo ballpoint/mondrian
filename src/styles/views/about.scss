@@ -1,0 +1,23 @@
+@import '~base.scss';
+@import '~vars.scss';
+
+@import '~layout/fixed/layout.scss';
+
+div[data-react-view='about'] {
+  background: $bg-grey;
+
+  > div {
+    background: white;
+
+    .example-doc {
+      padding: 5px;
+      border: 1px solid $fg-grey;
+      display: inline-block;
+
+      &:hover {
+        cursor: pointer;
+        border-color: $blue;
+      }
+    }
+  }
+}

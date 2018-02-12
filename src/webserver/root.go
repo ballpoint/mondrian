@@ -7,3 +7,7 @@ func indexViewHandler(ctxt *Context) error {
 func editorViewHandler(ctxt *Context) error {
 	return ctxt.RenderView("editor", props{})
 }
+
+func aboutViewHandler(ctxt *Context) error {
+	return ctxt.RenderView("about", props{})
+}
