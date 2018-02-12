@@ -17,7 +17,7 @@ class AboutView extends React.Component {
           </p>
           <p>
             <h2>Features</h2>
-            The current implementation has support for:
+            The current version has support for:
           </p>
           <ul>
             <li>Vector shapes composed of lines and cubic bezier curves</li>
@@ -39,7 +39,16 @@ class AboutView extends React.Component {
           </p>
           <p>
             <a href="/files/examples/lego" className="example-doc">
-              <img src="/assets/images/examples/ex1_lego.svg" width={200} />
+              <img src="/assets/images/examples/ex1_lego.svg" height={200} />
+              <sub>LEGO logo, imported from SVG</sub>
+            </a>
+
+            <a href="/files/examples/gumby-pippy" className="example-doc">
+              <img
+                src="/assets/images/examples/ex2_gumby_pippy.svg"
+                height={200}
+              />
+              <sub>Gumby and Pippy, drawn from scratch (try undo/redo!)</sub>
             </a>
           </p>
         </article>

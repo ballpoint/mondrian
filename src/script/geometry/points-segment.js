@@ -186,6 +186,10 @@ export default class PointsSegment {
   toSVGString() {
     let s = '';
 
+    if (this.points.length === 0) {
+      return s;
+    }
+
     for (let i = 0; i < this.points.length; i++) {
       let pt = this.points[i];
       if (i === 0) {

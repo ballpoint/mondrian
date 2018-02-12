@@ -13,10 +13,19 @@ div[data-react-view='about'] {
       padding: 5px;
       border: 1px solid $fg-grey;
       display: inline-block;
+      margin-right: 10px;
+      text-decoration: none;
+      color: black;
 
       &:hover {
         cursor: pointer;
         border-color: $blue;
+        color: $blue;
+      }
+
+      sub {
+        display: block;
+        margin-top: 5px;
       }
     }
   }

@@ -8,7 +8,7 @@ class FixedHeader extends React.Component {
             Ballpoint
           </a>
         </h1>
-        <a id="launch-cta" href="/files/local/new">
+        <a id="launch-cta" href="/">
           Launch Editor
         </a>
       </header>
