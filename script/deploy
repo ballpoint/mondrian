@@ -25,6 +25,12 @@ scp build/prod/views.*js mondrian:/app/mondrian/releases/$gitrev/views.js
 scp renderer.js mondrian:/app/mondrian/releases/$gitrev
 scp package-server.json mondrian:/app/mondrian/releases/$gitrev/package.json
 
+# JANK
+ssh mondrian mkdir -p /app/mondrian/releases/$gitrev/src/{bps,images}
+scp -r src/images/* mondrian:/app/mondrian/releases/$gitrev/src/images/
+scp src/bps/* mondrian:/app/mondrian/releases/$gitrev/src/bps/
+
+
 ssh mondrian <<CMDS
 cd /app/mondrian/releases/$gitrev
 npm install
