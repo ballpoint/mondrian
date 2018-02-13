@@ -24,6 +24,7 @@ class ExamplesBackend {
           let doc = bps.parse(bytes);
           // Clone to local backend
           doc.metadata = LocalBackend.assign(doc);
+          doc.save();
           resolve(doc);
         } else {
           reject('Error loading document');

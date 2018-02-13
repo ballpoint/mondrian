@@ -43,10 +43,15 @@ const backend = {
     if (metas.length === 0) {
       return await this.newDoc();
     } else {
-      let latest = metas[0];
-      let doc = await LocalBackend.load(latest.path);
-      doc.metadata = latest;
-      return doc;
+      try {
+        let latest = metas[0];
+        let doc = await LocalBackend.load(latest.path);
+        doc.metadata = latest;
+        return doc;
+      } catch (e) {
+        // Fall back to fresh doc
+        return await this.newDoc();
+      }
     }
   },
 

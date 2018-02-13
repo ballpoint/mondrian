@@ -33,16 +33,15 @@
     }
 
     #launch-cta {
-      color: black;
-      border: 1px solid $midblue;
-      background: $paleblue;
+      background: $bg-grey;
+      color: $blue;
       margin: auto 0 auto auto;
       text-decoration: none;
       padding: 5px;
 
       &:hover {
-        color: $blue;
-        border-color: $midblue;
+        background: $midblue;
+        color: white;
       }
     }
   }
