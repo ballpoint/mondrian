@@ -83,7 +83,6 @@ class LocalBackend {
       thumbBounds.width,
       thumbBounds.height
     );
-    console.log(id, blob);
     this.thumbStore.setItem(id, blob);
 
     // Save doc source

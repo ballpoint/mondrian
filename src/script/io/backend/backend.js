@@ -1,4 +1,5 @@
 import LocalBackend from 'io/backend/local';
+import ExamplesBackend from 'io/backend/examples';
 import localForage from 'localforage';
 import DocMetadata from 'io/backend/metadata';
 import Doc from 'io/doc';
@@ -24,13 +25,14 @@ const backend = {
 
   async loadFromParams(backend, path) {
     backend = {
-      local: LocalBackend
+      local: LocalBackend,
+      examples: ExamplesBackend
     }[backend];
 
     let meta = new DocMetadata({ backend, path });
     let doc = await meta.backend.load(meta.path);
 
-    doc.metadata = meta;
+    if (!doc.metadata) doc.metadata = meta;
 
     return doc;
   },

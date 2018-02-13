@@ -130,7 +130,6 @@ class EditorView extends React.Component {
   }
 
   async newDoc(params) {
-    console.log(params);
     let doc = await backend.newDoc(params);
     this.openDoc(doc);
   }
