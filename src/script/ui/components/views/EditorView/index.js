@@ -105,7 +105,7 @@ class EditorView extends React.Component {
     let doc = await io.parseNativeFile(file);
     // If we have a fresh, empty doc open currently, we overwrite it
     let currentDoc = this.state.editor.doc;
-    if (currentDoc.history.frames.length === 1) {
+    if (currentDoc && currentDoc.history.frames.length === 1) {
       doc.metadata = currentDoc.metadata;
     } else {
       doc.metadata = LocalBackend.assign(doc);
