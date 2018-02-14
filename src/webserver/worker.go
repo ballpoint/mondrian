@@ -14,9 +14,11 @@ func serviceWorkerHandler(ctxt *Context) error {
 		fmt.Println(err)
 		return err
 	} else {
-		var deps []string
-		for _, v := range assetsManifest {
-			deps = append(deps, "'/build/"+v+"'")
+		// These are the three files required for minimal offline functionality
+		var deps = []string{
+			assetsManifest["app.css"],
+			assetsManifest["app.js"],
+			assetsManifest["vendor.js"],
 		}
 		out := strings.Replace(string(base), "DEPENDENCIES_PLACEHOLDER", strings.Join(deps, ",\n"), 1)
 

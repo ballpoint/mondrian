@@ -21,6 +21,10 @@ func init() {
 	}
 }
 
+func (env Environment) Development() bool {
+	return env == Development
+}
+
 func (env Environment) Production() bool {
 	return env == Production
 }
