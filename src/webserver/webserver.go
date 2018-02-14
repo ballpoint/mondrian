@@ -50,6 +50,12 @@ func New() *Webserver {
 		s.httpsServer = &http.Server{
 			Addr: ":443",
 			Handler: http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+				// Redirect old domain name
+				if req.URL.Host == "mondrian.io" {
+					http.Redirect(w, req, "https://ballpoint.io"+req.URL.RawPath, 301)
+					return
+				}
+
 				w.Header().Set("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
 				r.ServeHTTP(w, req)
 			}),
