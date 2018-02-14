@@ -10,5 +10,5 @@ webserver-prod:
 
 webserver:
 	go-bindata -pkg email -o $(GOPATH)/src/github.com/ballpoint/mondrian/src/email/templates_generated.go templates/email/*
-	go-bindata -pkg webserver -o $(GOPATH)/src/github.com/ballpoint/mondrian/src/webserver/templates_generated.go templates/*.html
+	go-bindata -pkg webserver -o $(GOPATH)/src/github.com/ballpoint/mondrian/src/webserver/templates_generated.go templates/*.html build/dev/manifest.json
 	go build -o bin/webserver webserver.go

@@ -132,12 +132,14 @@ function initEditorHotkeys(editor) {
     editor.redo();
   });
 
-  document.addEventListener('copy', e => {
-    editor.copy(e);
-  });
-  document.addEventListener('paste', e => {
-    editor.paste(e);
-  });
+  if (window.document) {
+    document.addEventListener('copy', e => {
+      editor.copy(e);
+    });
+    document.addEventListener('paste', e => {
+      editor.paste(e);
+    });
+  }
 }
 
 export default initEditorHotkeys;

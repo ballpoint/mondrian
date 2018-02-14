@@ -41,8 +41,10 @@ export default class HotkeyTracking extends EventEmitter {
       up: {}
     };
 
-    document.onkeydown = this.onKeydown.bind(this);
-    document.onkeyup = this.onKeyup.bind(this);
+    if (window.document) {
+      document.onkeydown = this.onKeydown.bind(this);
+      document.onkeyup = this.onKeyup.bind(this);
+    }
   }
 
   on(direction, hotkey, fn) {

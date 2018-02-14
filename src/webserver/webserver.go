@@ -88,6 +88,9 @@ func New() *Webserver {
 
 	s.Handle("GET", "/about", aboutViewHandler)
 
+	// Service worker
+	s.Handle("GET", "/cache.js", serviceWorkerHandler)
+
 	s.Prefix("/files/{backend}/", editorViewHandler)
 	s.Prefix("/files", indexViewHandler)
 	s.Handle("GET", "/", editorViewHandler)

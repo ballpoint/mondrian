@@ -10,15 +10,21 @@ import (
 var assetsManifest = make(map[string]string)
 
 func init() {
+	var manifestPath string
+
 	if conf.Env.Production() {
-		manifest, mErr := Asset("build/prod/manifest.json")
-		if mErr != nil {
-			panic(mErr)
-		}
-		err := json.Unmarshal(manifest, &assetsManifest)
-		if err != nil {
-			panic(err)
-		}
+		manifestPath = "build/prod/manifest.json"
+	} else {
+		manifestPath = "build/dev/manifest.json"
+
+	}
+	manifest, mErr := Asset(manifestPath)
+	if mErr != nil {
+		panic(mErr)
+	}
+	err := json.Unmarshal(manifest, &assetsManifest)
+	if err != nil {
+		panic(err)
 	}
 }
 
