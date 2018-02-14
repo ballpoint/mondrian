@@ -30,11 +30,6 @@ ssh mondrian mkdir -p /app/mondrian/releases/$gitrev/src/{bps,images}
 scp -r src/images/* mondrian:/app/mondrian/releases/$gitrev/src/images/
 scp src/bps/* mondrian:/app/mondrian/releases/$gitrev/src/bps/
 
-
-ssh mondrian mkdir -p /app/mondrian/releases/$gitrev/build/prod/
-scp build/prod/{app*css,app*js,vendor*js} mondrian:/app/mondrian/releases/$gitrev/build/prod/
-
-
 ssh mondrian <<CMDS
 cd /app/mondrian/releases/$gitrev
 npm install
