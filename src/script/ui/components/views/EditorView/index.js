@@ -30,9 +30,7 @@ class EditorView extends React.Component {
 
     let editor = new Editor();
 
-    this.state = {
-      editor
-    };
+    this.state = { editor };
 
     let saveDebounced = _.debounce(() => {
       editor.doc.save();
@@ -59,8 +57,6 @@ class EditorView extends React.Component {
   async parseURL() {
     let fileParams = backend.parseParamsFromURL();
     let doc;
-
-    console.info(fileParams);
 
     if (fileParams.backend && fileParams.path) {
       if (fileParams.path === 'new') {
