@@ -3,13 +3,12 @@ package webserver
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"strings"
 )
 
 func serviceWorkerHandler(ctxt *Context) error {
 
-	base, err := ioutil.ReadFile("src/script/cache.js")
+	base, err := Asset("src/script/cache.js")
 
 	if err != nil {
 		fmt.Println(err)
