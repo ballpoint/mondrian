@@ -3,6 +3,7 @@ package webserver
 import (
 	"bytes"
 	"fmt"
+	"path/filepath"
 	"strings"
 )
 
@@ -16,9 +17,9 @@ func serviceWorkerHandler(ctxt *Context) error {
 	} else {
 		// These are the three files required for minimal offline functionality
 		var deps = []string{
-			assetsManifest["app.css"],
-			assetsManifest["app.js"],
-			assetsManifest["vendor.js"],
+			"'" + ctxt.AssetURL(filepath.Join("/build", assetsManifest["app.css"])) + "'",
+			"'" + ctxt.AssetURL(filepath.Join("/build", assetsManifest["app.js"])) + "'",
+			"'" + ctxt.AssetURL(filepath.Join("/build", assetsManifest["vendor.js"])) + "'",
 		}
 		out := strings.Replace(string(base), "DEPENDENCIES_PLACEHOLDER", strings.Join(deps, ",\n"), 1)
 

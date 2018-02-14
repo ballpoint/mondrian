@@ -74,11 +74,7 @@ func New() *Webserver {
 		}
 	}
 
-	if conf.Env.Development() {
-		r.PathPrefix("/build/").Handler(http.StripPrefix("/build/", http.FileServer(http.Dir("build/dev"))))
-	} else {
-		r.PathPrefix("/build/").Handler(http.StripPrefix("/build/", http.FileServer(http.Dir("build/prod"))))
-	}
+	r.PathPrefix("/build/").Handler(http.StripPrefix("/build/", http.FileServer(http.Dir("build/dev"))))
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir("src"))))
 
 	s.Handle("GET", "/test/unit", testMochaHandler)
