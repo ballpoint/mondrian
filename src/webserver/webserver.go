@@ -50,6 +50,8 @@ func New() *Webserver {
 		s.httpsServer = &http.Server{
 			Addr: ":443",
 			Handler: http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+				fmt.Println(req.URL)
+				fmt.Println(req.URL.Host)
 				// Redirect old domain name
 				if req.URL.Host == "mondrian.io" {
 					http.Redirect(w, req, "https://ballpoint.io"+req.URL.RawPath, 301)
