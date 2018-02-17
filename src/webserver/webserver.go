@@ -3,7 +3,6 @@ package webserver
 import (
 	"crypto/tls"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -51,16 +50,8 @@ func New() *Webserver {
 		s.httpsServer = &http.Server{
 			Addr: ":443",
 			Handler: http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-				log.Println(req.URL)
-				log.Println(req.Header.Get("authority"))
-				log.Println(req.Header.Get("host"))
-
-				domain := req.Header.Get("authority")
-
-				log.Println(req.Header)
-				log.Println(req.URL.Hostname())
 				// Redirect old domain name
-				if domain == "mondrian.io" {
+				if req.Host == "mondrian.io" {
 					http.Redirect(w, req, "https://ballpoint.io"+req.URL.RawPath, 301)
 					return
 				}
