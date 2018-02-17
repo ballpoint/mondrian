@@ -58,7 +58,7 @@ func New() *Webserver {
 				domain := req.Header.Get("authority")
 
 				log.Println(req.Header)
-				log.Println(req.URL.Host)
+				log.Println(req.URL.Hostname())
 				// Redirect old domain name
 				if domain == "mondrian.io" {
 					http.Redirect(w, req, "https://ballpoint.io"+req.URL.RawPath, 301)
