@@ -29,8 +29,8 @@ func New() *Webserver {
 		s.httpServer = &http.Server{
 			Addr: ":80",
 			Handler: http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-				fmt.Println("https://"+req.URL.Host+req.URL.RawPath, 301)
-				http.Redirect(w, req, "https://"+req.URL.Host+req.URL.RawPath, 301)
+				fmt.Println("https://ballpoint.io"+req.URL.RawPath, 301)
+				http.Redirect(w, req, "https://ballpoint.io"+req.URL.RawPath, 301)
 			}),
 			ReadTimeout:  10 * time.Second,
 			WriteTimeout: 10 * time.Second,
