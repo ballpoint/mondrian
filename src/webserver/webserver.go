@@ -52,7 +52,7 @@ func New() *Webserver {
 			Addr: ":443",
 			Handler: http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 				log.Println(req.URL)
-				log.Println(req.Header.Get(":authority"))
+				log.Println(req.Header.Get("authority"))
 				log.Println(req.Header.Get("host"))
 				log.Println(req.Header)
 				log.Println(req.URL.Host)
