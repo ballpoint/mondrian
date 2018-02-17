@@ -31,6 +31,7 @@ class AboutView extends React.Component {
               BPS, "ballpoint source" file format which persists editor state
               like undo/redo history
             </li>
+            <li>Offline support</li>
           </ul>
           <p>
             <h2>Examples</h2>
