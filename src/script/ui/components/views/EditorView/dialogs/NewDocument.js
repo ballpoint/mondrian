@@ -2,6 +2,7 @@ import 'dialogs/dialogs.scss';
 import units from 'lib/units';
 import TextInput from 'ui/components/utils/TextInput';
 import localForage from 'localforage';
+import Bounds from 'geometry/bounds';
 
 class DocPreset {
   constructor(name, unit, w, h) {
@@ -207,6 +208,30 @@ class NewDocumentDialog extends React.Component {
     );
   }
 
+  renderThumbnail() {
+    let w = this.state.printPreset
+      ? this.state.printPreset.width
+      : this.state.width;
+    let h = this.state.printPreset
+      ? this.state.printPreset.height
+      : this.state.height;
+
+    let b = new Bounds(0, 0, w, h);
+    b = b.fitToDimension(100);
+
+    return (
+      <div className="new-doc-preview">
+        <div
+          className="new-doc-preview-outline"
+          style={{
+            width: b.width,
+            height: b.height
+          }}
+        />
+      </div>
+    );
+  }
+
   render() {
     return (
       <div className="new-doc-dialog">
@@ -247,15 +272,8 @@ class NewDocumentDialog extends React.Component {
             {this.renderHeight()}
             {this.renderUnit()}
           </div>
-          <div className="new-doc-preview">
-            <div
-              className="new-doc-preview-outline"
-              style={{
-                width: 85,
-                height: 110
-              }}
-            />
-          </div>
+
+          {this.renderThumbnail()}
         </div>
         <div className="dialog-buttons">
           <button onClick={this.props.close}>Cancel</button>
