@@ -92,7 +92,7 @@ class ColorUtil extends React.Component {
               width={30}
               value={color.r}
               id="picker-r"
-              onSubmit={val => {
+              onSubmit={(val) => {
                 this.onRGBChange(val, 'r');
               }}
               onBlur={this.commitColor}
@@ -102,7 +102,7 @@ class ColorUtil extends React.Component {
               width={30}
               value={color.g}
               id="picker-g"
-              onSubmit={val => {
+              onSubmit={(val) => {
                 this.onRGBChange(val, 'g');
               }}
               onBlur={this.commitColor}
@@ -112,7 +112,7 @@ class ColorUtil extends React.Component {
               width={30}
               value={color.b}
               id="picker-b"
-              onSubmit={val => {
+              onSubmit={(val) => {
                 this.onRGBChange(val, 'b');
               }}
               onBlur={this.commitColor}
@@ -130,7 +130,7 @@ class ColorUtil extends React.Component {
     );
   };
 
-  toggle = which => {
+  toggle = (which) => {
     if (this.state.modifying === which) {
       this.setState({ expanded: !this.state.expanded });
     } else {
@@ -173,10 +173,7 @@ class ColorUtil extends React.Component {
 
     let frame;
 
-    if (
-      editor.state.selection.type === ELEMENTS &&
-      editor.state.selection.length > 0
-    ) {
+    if (editor.state.selection.type === ELEMENTS && editor.state.selection.length > 0) {
       frame = this.props.editor.setColor(which, color);
     } else {
       this.props.editor.setDefaultColor(which, color);
@@ -215,7 +212,7 @@ class ColorUtil extends React.Component {
     }
   };
 
-  getColor = which => {
+  getColor = (which) => {
     let editor = this.props.editor;
     let colors = this.getColors(which);
 
@@ -231,19 +228,16 @@ class ColorUtil extends React.Component {
     }
   };
 
-  getColors = which => {
+  getColors = (which) => {
     let editor = this.props.editor;
-    if (
-      editor.state.selection.type === ELEMENTS &&
-      editor.state.selection.length > 0
-    ) {
+    if (editor.state.selection.type === ELEMENTS && editor.state.selection.length > 0) {
       return this.props.editor.state.selection.getAttrValues(Item, which);
     } else {
       return [editor.state.attributes.get(which)];
     }
   };
 
-  onSliderChange = e => {
+  onSliderChange = (e) => {
     let val = parseFloat(e.target.value) / 1000;
 
     this.setState({
@@ -253,7 +247,7 @@ class ColorUtil extends React.Component {
     e.stopPropagation();
   };
 
-  onSaturationInputChange = val => {
+  onSaturationInputChange = (val) => {
     let sat = parseFloat(val) / 100;
     sat = Math.min(1, Math.max(0, sat));
 
@@ -298,7 +292,7 @@ class ColorUtil extends React.Component {
     this.commitColor();
   };
 
-  onHexChange = val => {
+  onHexChange = (val) => {
     let color = Color.fromHex(val);
 
     this.setColor(this.state.modifying, color, null, {
@@ -391,12 +385,7 @@ class ColorUtil extends React.Component {
 
     let yTop = -offset;
 
-    let gradTop = context.createLinearGradient(
-      0,
-      yTop,
-      0,
-      yTop + PICKER_HEIGHT
-    );
+    let gradTop = context.createLinearGradient(0, yTop, 0, yTop + PICKER_HEIGHT);
     let gradBottom = context.createLinearGradient(
       0,
       yTop + PICKER_HEIGHT,
@@ -423,12 +412,7 @@ class ColorUtil extends React.Component {
     context.fillRect(0, -offset, PICKER_WIDTH, PICKER_HEIGHT);
 
     context.fillStyle = gradBottom;
-    context.fillRect(
-      0,
-      -offset + PICKER_HEIGHT - 1,
-      PICKER_WIDTH,
-      PICKER_HEIGHT * 2
-    );
+    context.fillRect(0, -offset + PICKER_HEIGHT - 1, PICKER_WIDTH, PICKER_HEIGHT * 2);
 
     let gradLightDark = context.createLinearGradient(0, 0, PICKER_WIDTH, 0);
 
@@ -443,8 +427,7 @@ class ColorUtil extends React.Component {
     this._layerUi.context.clearRect(0, 0, PICKER_WIDTH, PICKER_WIDTH);
 
     if (selectedPosn) {
-      this._layerUi.context.strokeStyle =
-        selectedColor.lightness() > 0.5 ? 'black' : 'white';
+      this._layerUi.context.strokeStyle = selectedColor.lightness() > 0.5 ? 'black' : 'white';
 
       let rectDimen = 8;
 
@@ -457,7 +440,7 @@ class ColorUtil extends React.Component {
     }
   };
 
-  onPickerScroll = e => {
+  onPickerScroll = (e) => {
     let pickerOffset = this.state.pickerOffset + e.deltaY / 2;
 
     pickerOffset %= PICKER_HEIGHT;
@@ -481,19 +464,15 @@ class ColorUtil extends React.Component {
 
     let posn = new Posn(x, y + this.state.pickerOffset);
 
-    let imgData = this._layerGradient.context.getImageData(
-      x * PIXEL_RATIO,
-      y * PIXEL_RATIO,
-      1,
-      1
-    ).data;
+    let imgData = this._layerGradient.context.getImageData(x * PIXEL_RATIO, y * PIXEL_RATIO, 1, 1)
+      .data;
 
     let color = new Color(imgData[0], imgData[1], imgData[2]);
 
     this.setColor(this.state.modifying, color, posn);
   };
 
-  posnOfColor = color => {
+  posnOfColor = (color) => {
     if (color === VARIOUS) {
       return new Posn(-1, -1);
     }
@@ -535,7 +514,7 @@ class ColorUtil extends React.Component {
     }
   };
 
-  renderSection = which => {
+  renderSection = (which) => {
     let colors = this.getColors(which);
     let color;
 
@@ -551,13 +530,14 @@ class ColorUtil extends React.Component {
 
       selector = (
         <select
-          onChange={e => {
+          onChange={(e) => {
             this.onColorModeChange(e, which);
           }}
-          onClick={e => {
+          onClick={(e) => {
             e.stopPropagation();
           }}
-          value={color.isNone ? 'none' : 'solid'}>
+          value={color.isNone ? 'none' : 'solid'}
+        >
           <option value="solid">Solid</option>
           <option value="none">None</option>
         </select>
@@ -572,7 +552,7 @@ class ColorUtil extends React.Component {
 
       selector = (
         <div className="color-util__row__mini-swatches">
-          {colors.map(color => {
+          {colors.map((color) => {
             return this.renderSwatch(
               which,
               color,
@@ -605,10 +585,9 @@ class ColorUtil extends React.Component {
             this.modify(which, true);
             this.toggle(which);
           }
-        }}>
-        <div className="color-util__row__label">
-          {{ fill: 'Fill', stroke: 'Stroke' }[which]}
-        </div>
+        }}
+      >
+        <div className="color-util__row__label">{{ fill: 'Fill', stroke: 'Stroke' }[which]}</div>
 
         <div className="color-util__row__value" key={`${which}-picker`}>
           {selector}

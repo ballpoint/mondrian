@@ -178,8 +178,7 @@ export default class Editor extends EventEmitter {
       if (!this.canvas.owns(e.target)) return;
 
       let shouldZoom =
-        (this.state.tool.id === 'zoom' && !e.altKey) ||
-        (this.state.tool.id !== 'zoom' && e.altKey);
+        (this.state.tool.id === 'zoom' && !e.altKey) || (this.state.tool.id !== 'zoom' && e.altKey);
 
       if (shouldZoom) {
         // noop
@@ -193,8 +192,7 @@ export default class Editor extends EventEmitter {
       if (!this.canvas.owns(e.target)) return;
 
       let shouldZoom =
-        (this.state.tool.id === 'zoom' && !e.altKey) ||
-        (this.state.tool.id !== 'zoom' && e.altKey);
+        (this.state.tool.id === 'zoom' && !e.altKey) || (this.state.tool.id !== 'zoom' && e.altKey);
 
       if (shouldZoom) {
         let zd = 1 - delta / 1000;
@@ -205,7 +203,7 @@ export default class Editor extends EventEmitter {
       }
     });
 
-    this.canvas.on('resize', e => {
+    this.canvas.on('resize', (e) => {
       this.calculateScales();
     });
 
@@ -280,21 +278,12 @@ export default class Editor extends EventEmitter {
   setColor(which, color) {
     let frame;
 
-    if (
-      this.state.selection.length > 0 &&
-      this.state.selection.type === ELEMENTS
-    ) {
+    if (this.state.selection.length > 0 && this.state.selection.type === ELEMENTS) {
       // Undo current frame if we can to get original colors back
       this.doc.resetStage();
 
       frame = new HistoryFrame(
-        [
-          actions.SetAttributeAction.forItems(
-            this.state.selection.items,
-            which,
-            color
-          )
-        ],
+        [actions.SetAttributeAction.forItems(this.state.selection.items, which, color)],
         'Change color'
       );
 
@@ -496,10 +485,7 @@ export default class Editor extends EventEmitter {
       children
     });
 
-    let frame = new HistoryFrame(
-      [actions.InsertAction.forItem(this.doc, layer)],
-      'Create layer'
-    );
+    let frame = new HistoryFrame([actions.InsertAction.forItem(this.doc, layer)], 'Create layer');
 
     this.stageFrame(frame);
     this.commitFrame();
@@ -540,7 +526,7 @@ export default class Editor extends EventEmitter {
         frame = new HistoryFrame(
           [
             new actions.RemoveAction({
-              items: this.state.selection.map(item => {
+              items: this.state.selection.map((item) => {
                 return { item, index: item.index };
               })
             })
@@ -592,9 +578,7 @@ export default class Editor extends EventEmitter {
 
         // Delete control point
         frame = new HistoryFrame(
-          [
-            actions.RemoveHandleAction.forPoint(item, this.state.selection.type)
-          ],
+          [actions.RemoveHandleAction.forPoint(item, this.state.selection.type)],
           'Remove control handle'
         );
         this.stageFrame(frame);
@@ -642,7 +626,7 @@ export default class Editor extends EventEmitter {
 
     if (markedForRemoval.length > 0) {
       let cleanUpAction = new actions.RemoveAction({
-        items: markedForRemoval.map(item => {
+        items: markedForRemoval.map((item) => {
           return { item, index: item.index };
         })
       });
@@ -652,7 +636,7 @@ export default class Editor extends EventEmitter {
   }
 
   ungroupSelection() {
-    let groupsSelected = this.state.selection.filter(item => {
+    let groupsSelected = this.state.selection.filter((item) => {
       return item instanceof Group;
     });
 
@@ -665,7 +649,7 @@ export default class Editor extends EventEmitter {
     });
 
     let frame = new HistoryFrame(
-      groupsSelected.map(g => {
+      groupsSelected.map((g) => {
         return actions.UngroupAction.forGroup(this.doc, g);
       })
     );
@@ -685,9 +669,7 @@ export default class Editor extends EventEmitter {
       return;
     }
 
-    let frame = new HistoryFrame([
-      actions.GroupAction.forChildren(this.doc, this.state.selection)
-    ]);
+    let frame = new HistoryFrame([actions.GroupAction.forChildren(this.doc, this.state.selection)]);
 
     this.stageFrame(frame);
     this.commitFrame();
@@ -720,13 +702,7 @@ export default class Editor extends EventEmitter {
   changeAttribute(type, key, value, title) {
     if (!this.state.selection.empty && this.state.selection.type === ELEMENTS) {
       let frame = new HistoryFrame(
-        [
-          actions.SetAttributeAction.forItems(
-            this.state.selection.ofType(type),
-            key,
-            value
-          )
-        ],
+        [actions.SetAttributeAction.forItems(this.state.selection.ofType(type), key, value)],
         title
       );
 
@@ -739,7 +715,7 @@ export default class Editor extends EventEmitter {
   }
 
   selectFromIndexes(indexes) {
-    let sel = indexes.map(index => {
+    let sel = indexes.map((index) => {
       return this.doc.getFromIndex(index);
     });
 
@@ -785,9 +761,7 @@ export default class Editor extends EventEmitter {
   }
 
   screenBounds() {
-    return this.projection.bounds(
-      new Bounds(0, 0, this.doc.width, this.doc.height)
-    );
+    return this.projection.bounds(new Bounds(0, 0, this.doc.width, this.doc.height));
   }
 
   viewportBounds() {
@@ -948,7 +922,7 @@ export default class Editor extends EventEmitter {
     let frame = new HistoryFrame(
       [
         new actions.RemoveAction({
-          items: this.state.selection.map(item => {
+          items: this.state.selection.map((item) => {
             return { item, index: item.index };
           })
         }),
@@ -1032,9 +1006,7 @@ export default class Editor extends EventEmitter {
     if (finalValue === '') {
       // Delete instead
 
-      let frame = new HistoryFrame([
-        actions.RemoveAction.forItems([handler.item])
-      ]);
+      let frame = new HistoryFrame([actions.RemoveAction.forItems([handler.item])]);
       this.stageFrame(frame);
       this.commitFrame();
     } else if (finalValue === handler.originalValue) {
@@ -1128,7 +1100,7 @@ export default class Editor extends EventEmitter {
   }
 
   cut(e) {
-    this.state.clipboard = this.state.selection.items.map(e => {
+    this.state.clipboard = this.state.selection.items.map((e) => {
       return e.clone();
     });
     this.deleteSelection();
@@ -1144,7 +1116,7 @@ export default class Editor extends EventEmitter {
     let items = await clipboard.read();
     if (items) {
       let frame = this.insertElements(items);
-      let indexes = frame.actions[0].data.items.map(item => {
+      let indexes = frame.actions[0].data.items.map((item) => {
         return item.index;
       });
       this.selectFromIndexes(indexes);

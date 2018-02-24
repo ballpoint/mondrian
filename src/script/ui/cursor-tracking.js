@@ -22,7 +22,10 @@ export default class CursorTracking extends EventEmitter {
     document.addEventListener('mouseup', this._mouseup.bind(this));
     document.addEventListener('mousemove', this._mousemove.bind(this));
     document.addEventListener('mouseover', this._mouseover.bind(this));
+
+    document.addEventListener('wheel', this._scroll.bind(this));
     document.addEventListener('mousewheel', this._scroll.bind(this));
+
     document.addEventListener('contextmenu', this._contextmenu.bind(this));
   }
 
@@ -159,10 +162,7 @@ export default class CursorTracking extends EventEmitter {
 
     // Initiate dragging, or continue it if it's been initiated.
     if (this.down) {
-      if (
-        this.dragging ||
-        this.currentPosn.distanceFrom(this.lastDown) > DRAG_THRESHOLD
-      ) {
+      if (this.dragging || this.currentPosn.distanceFrom(this.lastDown) > DRAG_THRESHOLD) {
         if (this.dragging) {
           this.draggingJustBegan = false;
           // Allow for slight movement without triggering drag
@@ -181,6 +181,18 @@ export default class CursorTracking extends EventEmitter {
   _mouseover(e) {}
 
   _scroll(e) {
+    // Create a copy of the event so we can modify it
+    // because Firefox is a steaming pile of shit
+    if (e.deltaMode == 1) {
+      e = {
+        deltaX: e.deltaX * 16,
+        deltaY: e.deltaY * 16,
+        altKey: e.altKey,
+        target: e.target,
+        stopPropagation: e.stopPropagation
+      };
+    }
+
     if (e.deltaY !== 0) {
       this.trigger('scroll:y', e, this);
     }
