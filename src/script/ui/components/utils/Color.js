@@ -63,10 +63,7 @@ class ColorUtil extends React.Component {
     return (
       <div className="color-util__modify">
         <div className="color-util__picker">
-          <div className="color-util__canvas-container">
-            <canvas width={PICKER_WIDTH} height={PICKER_WIDTH} ref="canvas" />
-            <canvas width={PICKER_WIDTH} height={PICKER_WIDTH} ref="canvasUi" />
-          </div>
+          <div className="color-util__canvas-container" ref="canvasContainer" />
 
           <div className="color-util__picker__slider">
             <label htmlFor="saturation-slider">Sat</label>
@@ -301,32 +298,39 @@ class ColorUtil extends React.Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    let canvas = this.refs.canvas;
-    let canvasUi = this.refs.canvasUi;
-
     let needsRefresh = false;
 
-    if (canvas && canvas !== this._canvas) {
-      this._layerGradient = new CanvasLayer('gradient', canvas);
-      this._layerUi = new CanvasLayer('ui', canvasUi);
+    let container = this.refs.canvasContainer;
+
+    if (!container) {
+      delete this._layerGradient;
+      delete this._layerUi;
+    } else {
+      console.log('fuck');
+      while (container.firstChild) {
+        container.removeChild(container.firstChild);
+      }
+
+      this._layerGradient = new CanvasLayer('gradient');
+      this._layerUi = new CanvasLayer('ui');
 
       this._layerGradient.setDimensions(PICKER_WIDTH, PICKER_WIDTH);
       this._layerUi.setDimensions(PICKER_WIDTH, PICKER_WIDTH);
 
-      this._canvas = canvas;
-      this._canvasUi = canvasUi;
-
-      this._cursor = new CursorTracking(canvasUi);
-
-      this._cursor.on('scroll:y', this.onPickerScroll);
-      this._cursor.on('drag', this.pickerSelect);
-      this._cursor.on('mousedown', this.pickerSelect);
-      this._cursor.on('mouseup', () => {
-        this.commitColor();
-      });
+      container.appendChild(this._layerGradient.node);
+      container.appendChild(this._layerUi.node);
 
       needsRefresh = true;
     }
+
+    this._cursor = new CursorTracking(container);
+
+    this._cursor.on('scroll:y', this.onPickerScroll);
+    this._cursor.on('drag', this.pickerSelect);
+    this._cursor.on('mousedown', this.pickerSelect);
+    this._cursor.on('mouseup', () => {
+      this.commitColor();
+    });
 
     if (this.state.expanded && !prevState.expanded) {
       needsRefresh = true;
@@ -361,14 +365,13 @@ class ColorUtil extends React.Component {
   refreshPicker = () => {
     if (!this.state.modifying) return;
 
-    let canvas = this.refs.canvas;
     let selectedColor = this.colorModifying();
     let selectedPosn;
 
-    if (!canvas) return;
     if (selectedColor.isNone) return;
 
     let context = this._layerGradient.context;
+
     context.clearRect(0, 0, PICKER_WIDTH, PICKER_WIDTH);
 
     if (selectedColor !== VARIOUS) {
@@ -438,6 +441,9 @@ class ColorUtil extends React.Component {
         rectDimen
       );
     }
+
+    context.strokeStyle = 'red';
+    context.strokeRect(10, 10, 50, 50);
   };
 
   onPickerScroll = (e) => {
@@ -455,9 +461,13 @@ class ColorUtil extends React.Component {
   };
 
   pickerSelect = (e, cursor) => {
-    let bounds = this._canvas.getBoundingClientRect();
+    if (!this.refs.canvasContainer) return;
+
+    let bounds = this.refs.canvasContainer.getBoundingClientRect();
     let x = Math.round(e.clientX - bounds.left);
     let y = Math.round(e.clientY - bounds.top);
+
+    console.log(e, x, y);
 
     x = Math.max(0, Math.min(PICKER_WIDTH, x));
     y = Math.max(0, Math.min(PICKER_WIDTH, y));
