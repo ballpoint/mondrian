@@ -69,13 +69,9 @@ const proto = {
         };
 
         if (value.hasPHandle())
-          obj.pHandle = schema.geometry.Posn.fromObject(
-            value.pHandle.toObject()
-          );
+          obj.pHandle = schema.geometry.Posn.fromObject(value.pHandle.toObject());
         if (value.hasSHandle())
-          obj.sHandle = schema.geometry.Posn.fromObject(
-            value.sHandle.toObject()
-          );
+          obj.sHandle = schema.geometry.Posn.fromObject(value.sHandle.toObject());
 
         return schema.geometry.PathPoint.fromObject(obj);
 
@@ -120,12 +116,8 @@ const proto = {
             lineHeight: value.data['line-height'],
             fontSize: value.data['font-size'],
             fontFamily: value.data['font-family'],
-            alignHorizontal:
-              schema.document.nested.TextAlignHorizonal.values[
-                value.data.align
-              ],
-            alignVertical:
-              schema.document.nested.TextAlignVertical.values[value.data.valign]
+            alignHorizontal: schema.document.nested.TextAlignHorizonal.values[value.data.align],
+            alignVertical: schema.document.nested.TextAlignVertical.values[value.data.valign]
           })
         });
 
@@ -152,11 +144,10 @@ const proto = {
       case HistoryFrame:
         return schema.history.HistoryFrame.fromObject({
           actions: value.actions
-            .map(action => {
+            .map((action) => {
               let ser = this.serialize(action);
 
-              for (let field of schema.history.DocAction.oneofs.action
-                .fieldsArray) {
+              for (let field of schema.history.DocAction.oneofs.action.fieldsArray) {
                 if (ser.$type.name === field.type) {
                   return schema.history.DocAction.fromObject({
                     [field.name]: ser
@@ -168,7 +159,7 @@ const proto = {
 
               return null;
             })
-            .filter(action => {
+            .filter((action) => {
               return action !== null;
             }),
           timestamp: Math.round(value.timestamp.valueOf() / 1000),
@@ -184,8 +175,7 @@ const proto = {
 
           media: schema.document.nested.DocumentMedia.values[value.media],
 
-          printUnit:
-            schema.document.nested.DocumentPrintUnit.values[value.printUnit],
+          printUnit: schema.document.nested.DocumentPrintUnit.values[value.printUnit],
           layers: this.serialize(value.layers),
           state: this.serialize(value.state)
         });
@@ -195,19 +185,13 @@ const proto = {
         return schema.history.InitAction.fromObject({});
 
       case actions.NudgeAction:
-        return schema.history.NudgeAction.fromObject(
-          this.serialize(value.data)
-        );
+        return schema.history.NudgeAction.fromObject(this.serialize(value.data));
 
       case actions.ScaleAction:
-        return schema.history.ScaleAction.fromObject(
-          this.serialize(value.data)
-        );
+        return schema.history.ScaleAction.fromObject(this.serialize(value.data));
 
       case actions.RotateAction:
-        return schema.history.RotateAction.fromObject(
-          this.serialize(value.data)
-        );
+        return schema.history.RotateAction.fromObject(this.serialize(value.data));
 
       case actions.NudgeHandleAction:
         d = this.serialize(value.data);
@@ -226,7 +210,7 @@ const proto = {
 
       case actions.InsertAction:
         d = {
-          items: value.data.items.map(item => {
+          items: value.data.items.map((item) => {
             return {
               index: this.serialize(item.index),
               item: this.serializeItem(item.item)
@@ -237,7 +221,7 @@ const proto = {
 
       case actions.RemoveAction:
         d = {
-          items: value.data.items.map(item => {
+          items: value.data.items.map((item) => {
             return {
               index: this.serialize(item.index),
               item: this.serializeItem(item.item)
@@ -247,65 +231,43 @@ const proto = {
         return schema.history.RemoveAction.fromObject(d);
 
       case actions.ShiftSegmentAction:
-        return schema.history.ShiftSegmentAction.fromObject(
-          this.serialize(value.data)
-        );
+        return schema.history.ShiftSegmentAction.fromObject(this.serialize(value.data));
 
       case actions.ReverseSegmentAction:
-        return schema.history.ReverseSegmentAction.fromObject(
-          this.serialize(value.data)
-        );
+        return schema.history.ReverseSegmentAction.fromObject(this.serialize(value.data));
 
       case actions.CloseSegmentAction:
-        return schema.history.CloseSegmentAction.fromObject(
-          this.serialize(value.data)
-        );
+        return schema.history.CloseSegmentAction.fromObject(this.serialize(value.data));
 
       case actions.OpenSegmentAction:
-        return schema.history.OpenSegmentAction.fromObject(
-          this.serialize(value.data)
-        );
+        return schema.history.OpenSegmentAction.fromObject(this.serialize(value.data));
 
       // Group/Ungroup
       case actions.GroupAction:
-        return schema.history.GroupAction.fromObject(
-          this.serialize(value.data)
-        );
+        return schema.history.GroupAction.fromObject(this.serialize(value.data));
 
       case actions.UngroupAction:
-        return schema.history.UngroupAction.fromObject(
-          this.serialize(value.data)
-        );
+        return schema.history.UngroupAction.fromObject(this.serialize(value.data));
 
       case actions.SplitPathAction:
-        return schema.history.SplitPathAction.fromObject(
-          this.serialize(value.data)
-        );
+        return schema.history.SplitPathAction.fromObject(this.serialize(value.data));
 
       case actions.UnsplitPathAction:
-        return schema.history.UnsplitPathAction.fromObject(
-          this.serialize(value.data)
-        );
+        return schema.history.UnsplitPathAction.fromObject(this.serialize(value.data));
 
       case actions.ToggleMetadataBoolAction:
-        return schema.history.ToggleMetadataBoolAction.fromObject(
-          this.serialize(value.data)
-        );
+        return schema.history.ToggleMetadataBoolAction.fromObject(this.serialize(value.data));
 
       case actions.SetDocDimensionsAction:
-        return schema.history.SetDocDimensionsAction.fromObject(
-          this.serialize(value.data)
-        );
+        return schema.history.SetDocDimensionsAction.fromObject(this.serialize(value.data));
 
       case actions.SetDocNameAction:
-        return schema.history.SetDocNameAction.fromObject(
-          this.serialize(value.data)
-        );
+        return schema.history.SetDocNameAction.fromObject(this.serialize(value.data));
 
       case actions.SetAttributeAction:
         d = {
           key: value.data.key,
-          items: value.data.items.map(item => {
+          items: value.data.items.map((item) => {
             return {
               index: this.serialize(item.index),
               value: this.attributeValueAsObject(item.value),
@@ -317,7 +279,7 @@ const proto = {
 
       case actions.ShiftIndexAction:
         d = {
-          items: value.data.items.map(item => {
+          items: value.data.items.map((item) => {
             return schema.history.ShiftIndexAction.ItemIndexDelta.fromObject({
               index: this.serialize(item.index),
               delta: item.delta
@@ -348,10 +310,8 @@ const proto = {
     return {
       fill: this.serialize(value.data.fill),
       stroke: this.serialize(value.data.stroke),
-      strokeLineCap:
-        schema.document.StrokeLineCap[value.data['stroke-linecap']],
-      strokeLineJoin:
-        schema.document.StrokeLineJoin[value.data['stroke-linejoin']],
+      strokeLineCap: schema.document.StrokeLineCap[value.data['stroke-linecap']],
+      strokeLineJoin: schema.document.StrokeLineJoin[value.data['stroke-linejoin']],
       strokeWidth: value.data['stroke-width'],
       opacity: 1.0
     };
@@ -449,10 +409,7 @@ const proto = {
           width: value.width,
           height: value.height,
 
-          printUnit:
-            schema.document.nested.DocumentPrintUnit.valuesById[
-              value.printUnit
-            ],
+          printUnit: schema.document.nested.DocumentPrintUnit.valuesById[value.printUnit],
 
           media: schema.document.nested.DocumentMedia.valuesById[value.media],
 
@@ -509,10 +466,10 @@ const proto = {
       case schema.history.InsertAction:
         d = {
           items: value.items
-            .filter(item => {
+            .filter((item) => {
               return !!item.item;
             })
-            .map(item => {
+            .map((item) => {
               return {
                 index: this.parse(item.index),
                 item: this.parseItem(item.item)
@@ -524,10 +481,10 @@ const proto = {
       case schema.history.RemoveAction:
         d = {
           items: value.items
-            .filter(item => {
+            .filter((item) => {
               return !!item.item;
             })
-            .map(item => {
+            .map((item) => {
               return {
                 index: this.parse(item.index),
                 item: this.parseItem(item.item)
@@ -540,9 +497,7 @@ const proto = {
         return new actions.RemoveHandleAction(this.parse(this.asObject(value)));
 
       case schema.history.ReverseSegmentAction:
-        return new actions.ReverseSegmentAction(
-          this.parse(this.asObject(value))
-        );
+        return new actions.ReverseSegmentAction(this.parse(this.asObject(value)));
 
       case schema.history.CloseSegmentAction:
         return new actions.CloseSegmentAction(this.parse(this.asObject(value)));
@@ -564,14 +519,10 @@ const proto = {
         return new actions.UnsplitPathAction(this.parse(this.asObject(value)));
 
       case schema.history.ToggleMetadataBoolAction:
-        return new actions.ToggleMetadataBoolAction(
-          this.parse(this.asObject(value))
-        );
+        return new actions.ToggleMetadataBoolAction(this.parse(this.asObject(value)));
 
       case schema.history.SetDocDimensionsAction:
-        return new actions.SetDocDimensionsAction(
-          this.parse(this.asObject(value))
-        );
+        return new actions.SetDocDimensionsAction(this.parse(this.asObject(value)));
 
       case schema.history.SetDocNameAction:
         return new actions.SetDocNameAction(this.parse(this.asObject(value)));
@@ -579,7 +530,7 @@ const proto = {
       case schema.history.SetAttributeAction:
         d = {
           key: value.key,
-          items: value.items.map(item => {
+          items: value.items.map((item) => {
             return {
               index: this.parse(item.index),
               value: this.attributeValueFromObject(item.value),
@@ -591,7 +542,7 @@ const proto = {
 
       case schema.history.ShiftIndexAction:
         d = {
-          items: value.items.map(item => {
+          items: value.items.map((item) => {
             return {
               index: this.parse(item.index),
               delta: item.delta
@@ -620,12 +571,12 @@ const proto = {
       let data = {
         d: new PointsList(
           child.pathItem.points
-            .filter(ps => {
+            .filter((ps) => {
               return !!ps.points;
             })
-            .map(ps => {
+            .map((ps) => {
               let segment = new PointsSegment(
-                ps.points.map(p => {
+                ps.points.map((p) => {
                   return this.parse(p);
                 })
               );
@@ -651,6 +602,13 @@ const proto = {
         'line-height': child.textItem.attrs.lineHeight,
         'font-size': child.textItem.attrs.fontSize,
         'font-family': child.textItem.attrs.fontFamily,
+        align:
+          schema.document.nested.TextAlignHorizonal.valuesById[
+            child.textItem.attrs.alignHorizontal
+          ],
+        valign:
+          schema.document.nested.TextAlignVertical.valuesById[child.textItem.attrs.alignVertical],
+
         value: child.textItem.attrs.value
       };
 
@@ -669,10 +627,8 @@ const proto = {
     return {
       fill: this.parse(style.fill),
       stroke: this.parse(style.stroke),
-      'stroke-linecap':
-        schema.document.nested.StrokeLineCap.valuesById[style.strokeLineCap],
-      'stroke-linejoin':
-        schema.document.nested.StrokeLineJoin.valuesById[style.strokeLineJoin],
+      'stroke-linecap': schema.document.nested.StrokeLineCap.valuesById[style.strokeLineCap],
+      'stroke-linejoin': schema.document.nested.StrokeLineJoin.valuesById[style.strokeLineJoin],
       'stroke-width': style.strokeWidth,
       opacity: style.opacity
     };
