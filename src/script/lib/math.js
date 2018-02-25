@@ -33,6 +33,7 @@ export default {
   },
 
   fmtFloat(n, prec = 4) {
+    let x = n.toFixed(2);
     if (typeof n === 'string') n = parseFloat(n);
 
     let val = n.toFixed(prec);
