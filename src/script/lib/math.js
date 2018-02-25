@@ -33,6 +33,8 @@ export default {
   },
 
   fmtFloat(n, prec = 4) {
+    if (typeof n === 'string') n = parseFloat(n);
+
     let val = n.toFixed(prec);
 
     let parts = val.split('.');

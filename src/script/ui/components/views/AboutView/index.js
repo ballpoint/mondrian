@@ -82,6 +82,11 @@ class AboutView extends React.Component {
               <sub>Boolean operations</sub>
             </a>
 
+            <a href="/files/examples/google" className="example-doc">
+              <img src="/assets/images/examples/ex9_google.svg" height={200} />
+              <sub>Google logo from SVG</sub>
+            </a>
+
             <a href="/files/examples/gumby-pippy" className="example-doc">
               <img src="/assets/images/examples/ex2_gumby_pippy.svg" height={200} />
               <sub>Gumby and Pippy</sub>
