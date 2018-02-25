@@ -99,7 +99,19 @@ export default class Color {
       b = hue2rgb(p, q, h - 1 / 3);
     }
 
-    return new Color(r * 255, g * 255, b * 255);
+    r *= 255;
+    g *= 255;
+    b *= 255;
+
+    r = Math.round(r);
+    g = Math.round(g);
+    b = Math.round(b);
+
+    r = Math.max(0, Math.min(r, 255));
+    g = Math.max(0, Math.min(g, 255));
+    b = Math.max(0, Math.min(b, 255));
+
+    return new Color(r, g, b);
   }
 
   static fromString(str) {
@@ -126,7 +138,7 @@ export default class Color {
   }
 
   static fromRGBString(str) {
-    let vals = str.match(/[\d\.]+/gi).map(v => {
+    let vals = str.match(/[\d\.]+/gi).map((v) => {
       return parseInt(v, 10);
     });
     let r = vals[0];
@@ -282,9 +294,7 @@ export default class Color {
   toRGBString() {
     if (this.isNone) return 'none';
 
-    return `rgba(${this.r}, ${this.g}, ${this.b}, ${
-      this.a === undefined ? 1 : this.a
-    })`;
+    return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a === undefined ? 1 : this.a})`;
   }
 
   toHexString() {

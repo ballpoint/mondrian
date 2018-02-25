@@ -464,10 +464,12 @@ class ColorUtil extends React.Component {
 
     let posn = new Posn(x, y + this.state.pickerOffset);
 
-    let imgData = this._layerGradient.context.getImageData(x * PIXEL_RATIO, y * PIXEL_RATIO, 1, 1)
-      .data;
+    // Derive chosen color from posn and picker state
+    let hue = posn.y / PICKER_HEIGHT * 360;
+    let sat = this.state.saturation * 100;
+    let light = 100 - posn.x / PICKER_WIDTH * 100;
 
-    let color = new Color(imgData[0], imgData[1], imgData[2]);
+    let color = Color.fromHSL(hue, sat, light);
 
     this.setColor(this.state.modifying, color, posn);
   };
