@@ -10,6 +10,29 @@ div[data-react-view='about'] {
     background: white;
     padding-bottom: 50px;
 
+    #about-features {
+      display: flex;
+
+      > div:first-child {
+        flex-grow: 1;
+      }
+      > div:last-child {
+        flex-grow: 0;
+      }
+
+      #screenshot {
+        margin-top: 90px;
+        margin-right: 20px;
+        padding: 5px;
+        border: 1px solid $bg-grey;
+        display: block;
+
+        &:hover {
+          border-color: $blue;
+        }
+      }
+    }
+
     .example-doc {
       padding: 5px;
       border: 1px solid $fg-grey;

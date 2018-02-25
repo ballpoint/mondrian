@@ -15,23 +15,31 @@ class AboutView extends React.Component {
             Ballpoint is an experimental new vector graphics editor. It's available as a free to use
             web application.
           </p>
-          <p>
-            <h2>Features</h2>
-            The current version has support for:
-          </p>
-          <ul>
-            <li>Vector shapes composed of lines and cubic bezier curves</li>
-            <li>Boolean operations on geometry</li>
-            <li>Multi-line text blocks</li>
-            <li>Undos/redos and other state persisted between sessions</li>
-            <li>Pixel (digital) and point (print) based documents</li>
-            <li>SVG import</li>
-            <li>SVG, PDF, and PNG export</li>
-            <li>
-              BPS, "ballpoint source" file format which persists editor state like undo/redo history
-            </li>
-            <li>Offline support</li>
-          </ul>
+
+          <div id="about-features">
+            <div>
+              <p>
+                <h2>Features</h2>
+                The current version has support for:
+              </p>
+              <ul>
+                <li>Vector shapes composed of lines and cubic bezier curves</li>
+                <li>Boolean operations on geometry</li>
+                <li>Multi-line text blocks</li>
+                <li>Undos/redos and other state persisted between sessions</li>
+                <li>Pixel (digital) and point (print) based documents</li>
+                <li>SVG import</li>
+                <li>SVG, PDF, and PNG export</li>
+                <li>BPS, "ballpoint source" native file format</li>
+                <li>Offline support</li>
+              </ul>
+            </div>
+            <div>
+              <a href="/" id="screenshot">
+                <img width="350" src="/assets/images/screenshot.png" />
+              </a>
+            </div>
+          </div>
 
           <p>
             <h2>Examples</h2>
