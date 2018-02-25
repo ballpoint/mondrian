@@ -34,6 +34,53 @@ class AboutView extends React.Component {
           </ul>
 
           <p>
+            <h2>Examples</h2>
+            Click below to try out a few example documents! Or,{' '}
+            <a href="/files/local/new">create a new document</a> to start fresh.
+          </p>
+          <p>
+            <a href="/files/examples/gopher" className="example-doc">
+              <img src="/assets/images/examples/ex3_gopher.svg" height={200} />
+              <sub>Hard working gopher</sub>
+            </a>
+
+            <a href="/files/examples/go-club" className="example-doc">
+              <img src="/assets/images/examples/ex4_go_club.svg" height={200} />
+              <sub>US Letter sized poster design</sub>
+            </a>
+
+            <a href="/files/examples/lego" className="example-doc">
+              <img src="/assets/images/examples/ex1_lego.svg" height={200} />
+              <sub>LEGO logo from SVG</sub>
+            </a>
+
+            <a href="/files/examples/handicap" className="example-doc">
+              <img src="/assets/images/examples/ex5_handicap.svg" height={200} />
+              <sub>Handicap icon</sub>
+            </a>
+
+            <a href="/files/examples/starbucks" className="example-doc">
+              <img src="/assets/images/examples/ex6_starbucks.svg" height={200} />
+              <sub>Starbucks logo from SVG</sub>
+            </a>
+
+            <a href="/files/examples/spectre" className="example-doc">
+              <img src="/assets/images/examples/ex7_spectre.svg" height={200} />
+              <sub>Spectre logo from SVG</sub>
+            </a>
+
+            <a href="/files/examples/bool-demo-1" className="example-doc">
+              <img src="/assets/images/examples/ex8_bool_demo_1.svg" height={200} />
+              <sub>Boolean operations</sub>
+            </a>
+
+            <a href="/files/examples/gumby-pippy" className="example-doc">
+              <img src="/assets/images/examples/ex2_gumby_pippy.svg" height={200} />
+              <sub>Gumby and Pippy</sub>
+            </a>
+          </p>
+
+          <p>
             <h2>Roadmap</h2>
             Future versions will add support for:
           </p>
@@ -45,30 +92,9 @@ class AboutView extends React.Component {
           </ul>
 
           <p>
-            <h2>Examples</h2>
-            Click below to try out a few example documents! Or,{' '}
-            <a href="/files/local/new">create a new document</a> to start fresh.
-          </p>
-          <p>
-            <a href="/files/examples/gopher" className="example-doc">
-              <img src="/assets/images/examples/ex3_gopher.svg" height={200} />
-              <sub>Hard working gopher</sub>
-            </a>
-
-            <a href="/files/examples/lego" className="example-doc">
-              <img src="/assets/images/examples/ex1_lego.svg" height={200} />
-              <sub>LEGO logo, imported from SVG</sub>
-            </a>
-
-            <a href="/files/examples/go-club" className="example-doc">
-              <img src="/assets/images/examples/ex4_go_club.svg" height={200} />
-              <sub>US Letter sized poster design</sub>
-            </a>
-
-            <a href="/files/examples/gumby-pippy" className="example-doc">
-              <img src="/assets/images/examples/ex2_gumby_pippy.svg" height={200} />
-              <sub>Gumby and Pippy, drawn from scratch (try undo/redo!)</sub>
-            </a>
+            <h2>Contact</h2>
+            Suggestions? Bugs? Something else? We'd love to hear from you!{' '}
+            <a href="mailto:dev@ballpoint.io">dev@ballpoint.io</a>
           </p>
         </article>
       </div>
