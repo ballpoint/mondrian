@@ -245,6 +245,11 @@ class ColorUtil extends React.Component {
     });
 
     e.stopPropagation();
+
+    if (this._selectedPosn) {
+      let color = this.colorAtPosn(this._selectedPosn);
+      this.setColor(this.state.modifying, color, this._selectedPosn);
+    }
   };
 
   onSaturationInputChange = (val) => {
@@ -319,8 +324,8 @@ class ColorUtil extends React.Component {
       this._cursor = new CursorTracking(canvasUi);
 
       this._cursor.on('scroll:y', this.onPickerScroll);
-      this._cursor.on('drag', this.pickerSelect);
-      this._cursor.on('mousedown', this.pickerSelect);
+      this._cursor.on('drag', this.handleCursor);
+      this._cursor.on('mousedown', this.handleCursor);
       this._cursor.on('mouseup', () => {
         this.commitColor();
       });
@@ -364,6 +369,7 @@ class ColorUtil extends React.Component {
     let canvas = this.refs.canvas;
     let selectedColor = this.colorModifying();
     let selectedPosn;
+    let onScreenPosn;
 
     if (!canvas) return;
     if (selectedColor.isNone) return;
@@ -372,9 +378,8 @@ class ColorUtil extends React.Component {
     context.clearRect(0, 0, PICKER_WIDTH, PICKER_WIDTH);
 
     if (selectedColor !== VARIOUS) {
-      selectedPosn = (this.state.posn || this.posnOfColor(selectedColor))
-        .clone()
-        .nudge(0, -this.state.pickerOffset);
+      selectedPosn = (this.state.posn || this.posnOfColor(selectedColor)).clone();
+      onScreenPosn = selectedPosn.clone().nudge(0, -this.state.pickerOffset);
 
       if (selectedPosn.y < 0) {
         selectedPosn.nudge(0, PICKER_HEIGHT);
@@ -431,9 +436,12 @@ class ColorUtil extends React.Component {
 
       let rectDimen = 8;
 
+      this._selectedPosn = selectedPosn;
+      this._onScreenPosn = onScreenPosn;
+
       this._layerUi.context.strokeRect(
-        mathUtils.sharpen(selectedPosn.x - 1 - rectDimen / 2),
-        mathUtils.sharpen(selectedPosn.y - 1 - rectDimen / 2),
+        mathUtils.sharpen(onScreenPosn.x - 1 - rectDimen / 2),
+        mathUtils.sharpen(onScreenPosn.y - 1 - rectDimen / 2),
         rectDimen,
         rectDimen
       );
@@ -454,7 +462,7 @@ class ColorUtil extends React.Component {
     e.stopPropagation();
   };
 
-  pickerSelect = (e, cursor) => {
+  handleCursor = (e) => {
     let bounds = this._canvas.getBoundingClientRect();
     let x = Math.round(e.clientX - bounds.left);
     let y = Math.round(e.clientY - bounds.top);
@@ -464,13 +472,14 @@ class ColorUtil extends React.Component {
 
     let posn = new Posn(x, y + this.state.pickerOffset);
 
-    // Derive chosen color from posn and picker state
-    let hue = posn.y / PICKER_HEIGHT * 360;
-    let sat = this.state.saturation * 100;
-    let light = 100 - posn.x / PICKER_WIDTH * 100;
+    this._selectedPosn = posn;
 
-    let color = Color.fromHSL(hue, sat, light);
+    this.pickerSelect();
+  };
 
+  pickerSelect = () => {
+    let posn = this._selectedPosn;
+    let color = this.colorAtPosn(posn);
     this.setColor(this.state.modifying, color, posn);
   };
 
@@ -487,6 +496,15 @@ class ColorUtil extends React.Component {
     }
 
     return new Posn(x, y);
+  };
+
+  colorAtPosn = (posn) => {
+    // Derive chosen color from posn and picker state
+    let hue = posn.y / PICKER_HEIGHT * 360;
+    let sat = this.state.saturation * 100;
+    let light = 100 - posn.x / PICKER_WIDTH * 100;
+
+    return Color.fromHSL(hue, sat, light);
   };
 
   renderSwatch = (which, color, onClick, mini = false) => {
