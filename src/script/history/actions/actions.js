@@ -77,7 +77,7 @@ export class RotateAction extends HistoryAction {
   perform(doc) {
     if (this.data.angle == 0) return;
 
-    let items = this.data.indexes.map(index => {
+    let items = this.data.indexes.map((index) => {
       return doc.getFromIndex(index);
     });
 
@@ -224,7 +224,7 @@ export class RemoveAction extends HistoryAction {
 
   static forItems(items) {
     return new RemoveAction({
-      items: items.map(item => {
+      items: items.map((item) => {
         return {
           index: item.index,
           item
@@ -243,7 +243,7 @@ export class RemoveAction extends HistoryAction {
   }
 
   perform(doc) {
-    let indexes = this.data.items.map(item => {
+    let indexes = this.data.items.map((item) => {
       return item.index;
     });
 
@@ -365,7 +365,7 @@ export class UngroupAction extends HistoryAction {
 export class GroupAction extends HistoryAction {
   static forChildren(doc, children) {
     let childIndexes = children
-      .map(child => {
+      .map((child) => {
         return child.index;
       })
       .sort((a, b) => {
@@ -390,7 +390,7 @@ export class GroupAction extends HistoryAction {
   perform(doc) {
     let indexes = this.data.childIndexes;
 
-    let items = indexes.map(index => {
+    let items = indexes.map((index) => {
       return doc.getFromIndex(index);
     });
 
@@ -429,10 +429,7 @@ export class SplitPathAction extends HistoryAction {
   perform(doc) {
     let path = doc.getFromIndex(this.data.splitIndex.parent.parent);
 
-    let pl = path.points.popSlice(
-      this.data.splitIndex.parent.last,
-      this.data.splitIndex.last
-    );
+    let pl = path.points.popSlice(this.data.splitIndex.parent.last, this.data.splitIndex.last);
 
     let p2 = path.clone();
     p2.setPoints(pl);
@@ -461,10 +458,7 @@ export class UnsplitPathAction extends HistoryAction {
 
     let segment = doc.getFromIndex(this.data.splitIndex.parent);
 
-    path.points.replaceSegment(
-      segment,
-      segment.concat(newPath.points.segments[0])
-    );
+    path.points.replaceSegment(segment, segment.concat(newPath.points.segments[0]));
 
     doc.removeIndexes([newPathIndex]);
   }
@@ -563,7 +557,11 @@ export class SetAttributeAction extends HistoryAction {
   perform(doc) {
     for (let group of this.data.items) {
       let item = doc.getFromIndex(group.index);
-      item.data[this.data.key] = group.value;
+      let value = group.value;
+      if (_.isFunction(value.clone)) {
+        value = value.clone();
+      }
+      item.data[this.data.key] = value;
       if (item.clearCache) item.clearCache();
     }
   }
@@ -571,7 +569,7 @@ export class SetAttributeAction extends HistoryAction {
   opposite() {
     return new SetAttributeAction({
       key: this.data.key,
-      items: this.data.items.map(item => {
+      items: this.data.items.map((item) => {
         return {
           index: item.index,
           value: item.oldValue,
@@ -601,7 +599,7 @@ export class ShiftIndexAction extends HistoryAction {
 
   opposite() {
     return new ShiftIndexAction({
-      items: this.data.items.map(item => {
+      items: this.data.items.map((item) => {
         return {
           index: item.index.plus(item.delta),
           delta: -item.delta

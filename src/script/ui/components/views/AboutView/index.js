@@ -86,6 +86,8 @@ class AboutView extends React.Component {
           </p>
           <ul>
             <li>Gradients</li>
+            <li>Shareable Documents</li>
+            <li>Integration with Dropbox, GDrive, SkyDrive</li>
             <li>Stroke to fill conversion</li>
             <li>Text to fill conversion</li>
             <li>PDF import</li>

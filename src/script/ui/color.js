@@ -153,7 +153,9 @@ export default class Color {
   }
 
   clone() {
-    return new Color(this.r, this.g, this.b);
+    let c = new Color(this.r, this.g, this.b, this.a);
+    c.isNone = this.isNone;
+    return c;
   }
 
   min() {

@@ -29,7 +29,13 @@ export default class DefaultAttributes {
   }
 
   get(key) {
-    return this[key];
+    let val = this[key];
+    if (val instanceof Color) {
+      // Make a copy of the color object
+      return val.clone();
+    } else {
+      return val;
+    }
   }
 
   set(key, val) {
@@ -37,28 +43,16 @@ export default class DefaultAttributes {
   }
 
   forType(type, toAdd = {}) {
-    let keys = [
-      'stroke',
-      'fill',
-      'stroke-width',
-      'stroke-linecap',
-      'stroke-linejoin'
-    ];
+    let keys = ['stroke', 'fill', 'stroke-width', 'stroke-linecap', 'stroke-linejoin'];
 
     switch (type) {
       case Path:
         // keys stay as-is
         break;
       case Text:
-        keys = keys.concat([
-          'font-family',
-          'font-size',
-          'line-height',
-          'align',
-          'valign'
-        ]);
+        keys = keys.concat(['font-family', 'font-size', 'line-height', 'align', 'valign']);
         // Make new Text have no stroke by default
-        keys = keys.filter(k => {
+        keys = keys.filter((k) => {
           return k !== 'stroke';
         });
         break;

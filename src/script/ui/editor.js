@@ -281,6 +281,7 @@ export default class Editor extends EventEmitter {
     if (this.state.selection.length > 0 && this.state.selection.type === ELEMENTS) {
       // Undo current frame if we can to get original colors back
       this.doc.resetStage();
+      console.log(this.state.selection.items);
 
       frame = new HistoryFrame(
         [actions.SetAttributeAction.forItems(this.state.selection.items, which, color)],
