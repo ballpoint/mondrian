@@ -64,24 +64,12 @@ class NewsletterForm extends React.Component {
       return (
         <div id="app-newsletter">
           <i>
-            This is new software, under active development.<br />Subscribe for
-            periodic email updates (every month or two).
+            This is new software, under active development.<br />Subscribe for periodic email
+            updates!
           </i>
-          <form
-            onSubmit={this.onSubmit.bind(this)}
-            method="POST"
-            action="/newsletter/subscribe">
-            <input
-              type="email"
-              placeholder="Email address"
-              name="email"
-              required
-            />
-            <input
-              disabled={this.state.pending}
-              type="submit"
-              value="Subscribe"
-            />
+          <form onSubmit={this.onSubmit.bind(this)} method="POST" action="/newsletter/subscribe">
+            <input type="email" placeholder="Email address" name="email" required />
+            <input disabled={this.state.pending} type="submit" value="Subscribe" />
           </form>
           <div id="app-newsletter__close" onClick={this.dismiss.bind(this)}>
             {renderIcon('del', { width: 14, height: 14, padding: 4 })}

@@ -142,10 +142,7 @@ class EditorView extends React.Component {
       case 'newDoc':
         dialogTitle = 'New Document';
         dialog = (
-          <NewDocumentDialog
-            close={this.closeDialog.bind(this)}
-            create={this.newDoc.bind(this)}
-          />
+          <NewDocumentDialog close={this.closeDialog.bind(this)} create={this.newDoc.bind(this)} />
         );
     }
 
@@ -157,9 +154,10 @@ class EditorView extends React.Component {
       <div id="app-dialog" onClick={this.closeDialog.bind(this)}>
         <div
           id="app-dialog-window"
-          onClick={e => {
+          onClick={(e) => {
             e.stopPropagation();
-          }}>
+          }}
+        >
           <div id="app-dialog-header">{dialogTitle}</div>
 
           <div id="app-dialog-body">{dialog}</div>
@@ -175,37 +173,58 @@ class EditorView extends React.Component {
       <div
         id="app-editor"
         onDrop={this.drop.bind(this)}
-        onDragOver={e => {
+        onDragOver={(e) => {
           e.preventDefault();
-        }}>
+        }}
+      >
         <header>
-          <a id="logo-container" href="/files">
+          <a id="logo-container" href="/files" title="Open file...">
             <Logo />
           </a>
           <div id="app-controls">
-            <div id="app-title">
-              <Title
-                value={this.state.activeDoc ? this.state.activeDoc.name : ''}
-                rename={name => {
-                  this.state.editor.setDocName(name);
-                }}
-              />
-            </div>
-            <div id="app-menus">
-              <Menus
-                editor={this.state.editor}
-                doc={this.state.activeDoc}
-                openDoc={this.openDoc.bind(this)}
-                newDoc={this.openNewDocDialog.bind(this)}
-                importNativeFile={this.importNativeFile.bind(this)}
-              />
+            <div id="app-controls-top">
+              <div id="app-controls-top-left">
+                <div id="app-title">
+                  <Title
+                    value={this.state.activeDoc ? this.state.activeDoc.name : ''}
+                    rename={(name) => {
+                      this.state.editor.setDocName(name);
+                    }}
+                  />
+                </div>
+                <div id="app-menus">
+                  <Menus
+                    editor={this.state.editor}
+                    doc={this.state.activeDoc}
+                    openDoc={this.openDoc.bind(this)}
+                    newDoc={this.openNewDocDialog.bind(this)}
+                    importNativeFile={this.importNativeFile.bind(this)}
+                  />
+                </div>
+              </div>
+              <div id="app-controls-top-right">
+                <div id="app-controls-meta">
+                  <div id="app-meta">
+                    <nav id="app-nav">
+                      <ul>
+                        <li>
+                          <a href="/about">About</a>
+                        </li>
+                        <li>
+                          <a href="mailto:dev@ballpoint.io">Contact</a>
+                        </li>
+                      </ul>
+                    </nav>
+
+                    <NewsletterForm />
+                  </div>
+                </div>
+              </div>
             </div>
             <div id="app-toolbar">
               <Toolbar editor={this.state.editor} doc={this.state.activeDoc} />
             </div>
           </div>
-
-          <NewsletterForm />
         </header>
 
         <div id="app-view">

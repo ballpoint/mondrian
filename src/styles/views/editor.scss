@@ -11,8 +11,8 @@ body[data-view='editor'] {
   display: flex;
   height: 100%;
 
-  $cursor-list: ne-resize nw-resize se-resize sw-resize ew-resize ns-resize
-    nesw-resize nwse-resize text;
+  $cursor-list: ne-resize nw-resize se-resize sw-resize ew-resize ns-resize nesw-resize nwse-resize
+    text;
 
   @each $cursor in $cursor-list {
     &[cursor='#{$cursor}'] {
@@ -56,40 +56,86 @@ body[data-view='editor'] {
       flex-direction: column;
       height: $app-header-height;
       border-right: 1px solid $blue-grey;
-    }
 
-    #app-newsletter {
-      flex-grow: 0;
-      padding: 16px;
-      width: 410px;
-      position: relative;
-      font-size: 13px;
+      #app-controls-top {
+        display: flex;
+        flex-direction: row;
 
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-
-      button {
-        width: 50px;
-        margin-top: 10px;
-      }
-
-      i {
-        opacity: 0.8;
-      }
-
-      form {
-        margin: 10px 0 0 0;
-
-        input[type='submit'] {
-          margin-left: 10px;
+        #app-controls-top-left {
+          flex-grow: 1;
         }
-      }
+        #app-controls-top-right {
+          flex-grow: 0;
+          width: 600px;
+          border-left: 1px solid $mid-grey;
 
-      #app-newsletter__close {
-        position: absolute;
-        top: 10px;
-        right: 10px;
+          #app-meta {
+            width: 600px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+
+            nav#app-nav {
+              margin: 22px 0;
+
+              ul {
+                margin: 0;
+                li {
+                  padding-left: 0;
+                  display: inline;
+                  list-style: none;
+                  margin-right: 40px;
+                  a {
+                    color: mix(white, black, 50%);
+                    text-decoration: none;
+                    &:hover {
+                      color: $blue;
+                      text-decoration: underline;
+                    }
+                  }
+                }
+              }
+            }
+
+            #app-newsletter {
+              position: absolute;
+              top: 8px;
+              right: 8px;
+              border: 1px solid $paleblue;
+              background: mix($paleblue, white, 30%);
+              padding: 12px;
+              width: 330px;
+              font-size: 13px;
+
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+
+              button {
+                width: 50px;
+                margin-top: 10px;
+              }
+
+              i {
+                opacity: 0.8;
+              }
+
+              form {
+                margin: 10px 0 0 0;
+
+                input[type='submit'] {
+                  margin-left: 10px;
+                }
+              }
+
+              #app-newsletter__close {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+              }
+            }
+          }
+        }
       }
     }
   }
